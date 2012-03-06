@@ -7,6 +7,7 @@ public class MethodCall implements Serializable {
 	
 	private String methodName;
 	private int ObjectID;
+	private String className;
 	
 	public String getMethodName() {
 		return methodName;
@@ -22,6 +23,14 @@ public class MethodCall implements Serializable {
 
 	public void setObjectID(String objectID) {
 		ObjectID = Integer.parseInt(objectID);
+	}
+
+	public String getClassName() {
+		return className;
+	}
+
+	public void setClassName(String className) {
+		this.className = className;
 	}
 
 	private List<String> arguments;

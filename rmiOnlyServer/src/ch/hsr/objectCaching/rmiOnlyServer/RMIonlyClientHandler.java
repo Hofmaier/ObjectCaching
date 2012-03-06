@@ -9,11 +9,11 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.xml.sax.SAXException;
 
-public class ClientHandler implements Runnable {
+public class RMIonlyClientHandler implements Runnable {
 
 	private Socket socket;
 	
-	public ClientHandler(Socket socket){
+	public RMIonlyClientHandler(Socket socket){
 		this.socket = socket;
 	}
 
@@ -21,17 +21,11 @@ public class ClientHandler implements Runnable {
 	public void run() {
 		try {
 			InputStream is = socket.getInputStream();
-			//SAXParserFactory factory = SAXParserFactory.newInstance();
-			//SAXParser parser = factory.newSAXParser();
-			//MethodCallHandler handler = new MethodCallHandler();
-			//parser.parse(is, handler);
 			ObjectInputStream ois = new ObjectInputStream(is);
-			
-			MethodCall methodCall = (MethodCall) ois.readObject();
-			processMethodCall(methodCall);
+			System.out.println("[Server] started clienthandler");
+			//MethodCall methodCall = (MethodCall) ois.readObject();
+			//processMethodCall(methodCall);
 		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
 

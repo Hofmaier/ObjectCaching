@@ -5,6 +5,7 @@ import static org.junit.Assert.*;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 import org.junit.Before;
@@ -50,4 +51,17 @@ public class TestRMIonlyClientHandler {
 		clientHandler.setSkeleton(methodCall);
 		assertTrue(clientHandler.getSkeleton() instanceof AccountSkeleton);
 	}
+	
+	@Test
+	public void testSendResponse() throws IOException, ClassNotFoundException{
+		ReturnValue returnValue = new ReturnValue();
+		returnValue.setValue(new Integer(200));
+		clientHandler.sendResponse(returnValue);
+		byteArrayInputStream = new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
+		ObjectInputStream ois = new ObjectInputStream(byteArrayInputStream);
+		ReturnValue retValFromStream = (ReturnValue) ois.readObject();
+		assertEquals(returnValue.getValue(), retValFromStream.getValue());
+		
+	}
+
 }

@@ -6,6 +6,9 @@ public class AccountImpl {
 		return 23;
 	}
 	
-	
+	public void setBalance(int balance)
+	{
+		
+	}
 
 }

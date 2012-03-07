@@ -45,6 +45,9 @@ public class TestRMIonlyClientHandler {
 	
 	@Test
 	public void testSetSkeleton(){
-		
+		MethodCall methodCall = new MethodCall();
+		methodCall.setClassName("Account");
+		clientHandler.setSkeleton(methodCall);
+		assertTrue(clientHandler.getSkeleton() instanceof AccountSkeleton);
 	}
 }

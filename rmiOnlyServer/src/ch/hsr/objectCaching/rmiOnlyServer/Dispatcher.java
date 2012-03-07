@@ -2,6 +2,7 @@ package ch.hsr.objectCaching.rmiOnlyServer;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.net.ServerSocket;
@@ -34,11 +35,13 @@ public class Dispatcher {
 			try{
 				socket = server.accept();
 				InputStream is = socket.getInputStream();
-				Class[] paramters = new Class[1];
+				Class[] paramters = new Class[2];
 				paramters[0] = InputStream.class;
+				paramters[1] = OutputStream.class;
 				Constructor ctor = clazz.getConstructor(paramters); 
-				Object[] ctorArgs = new Object[1];
-				ctorArgs[0] = socket;
+				Object[] ctorArgs = new Object[2];
+				ctorArgs[0] = socket.getInputStream();
+				ctorArgs[1] = socket.getOutputStream();
 				Runnable runnable = (Runnable) ctor.newInstance(ctorArgs);
 				new Thread(runnable).start();
 			}

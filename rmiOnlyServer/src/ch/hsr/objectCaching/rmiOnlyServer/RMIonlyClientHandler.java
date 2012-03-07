@@ -4,11 +4,14 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
-import java.net.Socket;
 
 public class RMIonlyClientHandler implements Runnable {
 
 	private RMIonlySkeleton skeleton;
+	public RMIonlySkeleton getSkeleton() {
+		return skeleton;
+	}
+
 	private InputStream inputStream;
 	private OutputStream outputStream;
 	
@@ -50,14 +53,13 @@ public class RMIonlyClientHandler implements Runnable {
 		}
 	}
 
-	private void processMethodCall(MethodCall methodCall) {
-		//hier soll der richtige Skeleton ausgewählt werden
+	void processMethodCall(MethodCall methodCall) {
 		setSkeleton(methodCall);
 		ReturnValue returnValue = skeleton.invokeMethod(methodCall);
 		sendResponse(returnValue);
 	}
 
-	private void sendResponse(ReturnValue returnValue) {
+	void sendResponse(ReturnValue returnValue) {
 		try {
 			ObjectOutputStream oos = new ObjectOutputStream(outputStream);
 			oos.writeObject(returnValue);

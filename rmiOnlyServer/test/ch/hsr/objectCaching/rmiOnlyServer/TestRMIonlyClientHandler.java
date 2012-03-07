@@ -7,26 +7,44 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 
+import org.junit.Before;
 import org.junit.Test;
 
 public class TestRMIonlyClientHandler {
+	
+	
+	
+	private RMIonlyClientHandler clientHandler;
+	private ByteArrayOutputStream byteArrayOutputStream;
+	private ByteArrayInputStream byteArrayInputStream;
+
+
+	@Before
+	public void setUp(){
+		
+		byteArrayOutputStream = new ByteArrayOutputStream();
+		byteArrayInputStream = new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
+		clientHandler = new RMIonlyClientHandler(byteArrayInputStream, byteArrayOutputStream);
+	}
 
 	@Test
 	public void testReadMethodCallFrom() throws IOException, ClassNotFoundException {
 		
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		ObjectOutputStream oos = new ObjectOutputStream(baos);
 		MethodCall methodCall = new MethodCall();
 		methodCall.setMethodName("getBalance");
 		methodCall.setClassName("Account");
 		
+		ObjectOutputStream oos = new ObjectOutputStream(byteArrayOutputStream);
 		oos.writeObject(methodCall);
-		
-		ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-		
-		RMIonlyClientHandler clientHandler = new RMIonlyClientHandler(bais);
-		MethodCall testCall = clientHandler.readMethodCallfrom(bais);
+		byteArrayInputStream = new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
+		MethodCall testCall = clientHandler.readMethodCallfrom(byteArrayInputStream);
 		
 		assertEquals(methodCall.getMethodName(), testCall.getMethodName());
+	}
+	
+	
+	@Test
+	public void testSetSkeleton(){
+		
 	}
 }

@@ -5,6 +5,7 @@ import static org.junit.Assert.*;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 import org.junit.Before;
@@ -45,6 +46,54 @@ public class TestRMIonlyClientHandler {
 	
 	@Test
 	public void testSetSkeleton(){
+		MethodCall methodCall = new MethodCall();
+		methodCall.setClassName("Account");
+		clientHandler.setSkeleton(methodCall);
+		assertTrue(clientHandler.getSkeleton() instanceof AccountSkeleton);
+	}
+	
+	@Test
+	public void testSendResponse() throws IOException, ClassNotFoundException{
+		ReturnValue returnValue = new ReturnValue();
+		returnValue.setValue(new Integer(200));
+		clientHandler.sendResponse(returnValue);
+		byteArrayInputStream = new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
+		ObjectInputStream ois = new ObjectInputStream(byteArrayInputStream);
+		ReturnValue retValFromStream = (ReturnValue) ois.readObject();
+		assertEquals(returnValue.getValue(), retValFromStream.getValue());
 		
 	}
+	
+	@Test
+	public void testProcessMethodCall() throws IOException, ClassNotFoundException{
+		AccountSkeletonFake fakeSkeleton = new AccountSkeletonFake();
+		Integer expectedValue = 200;
+		fakeSkeleton.setIntValue(expectedValue);
+		MethodCall dummyMethodCall = new MethodCall();
+		dummyMethodCall.setClassName("AccountFake");
+		clientHandler.setSkeleton(fakeSkeleton);
+		clientHandler.processMethodCall(dummyMethodCall);
+		
+		ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(byteArrayOutputStream.toByteArray()));
+		ReturnValue retVal =  (ReturnValue) ois.readObject();
+		assertEquals(expectedValue, retVal.getValue());
+	}
+	
+	public class AccountSkeletonFake extends AccountSkeleton{
+
+		private Integer intValue;
+
+		public void setIntValue(Integer intValue) {
+			this.intValue = intValue;
+		}
+
+		@Override
+		public ReturnValue invokeMethod(MethodCall methodCall) {
+			ReturnValue returnValue = new ReturnValue();
+			returnValue.setValue(intValue);
+			return returnValue;
+		}
+		
+	}
+
 }

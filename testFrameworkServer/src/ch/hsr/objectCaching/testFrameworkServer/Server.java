@@ -24,8 +24,8 @@ import ch.hsr.objectCaching.testFrameworkServer.Client.Status;
 public class Server implements ServerInterface
 {
 	private ArrayList<Client> clients;
-	private static int clientPort;
-	private static int serverPort;
+	private static int clientRmiPort;
+	private static int serverRmiPort;
 	private Properties initFile;
 	private TestFactory factory;
 	private Dispatcher dispatcher;
@@ -44,7 +44,7 @@ public class Server implements ServerInterface
 	private void initializeClient(Client client) 
 	{
 		try {
-			ClientInterface clientStub = (ClientInterface)Naming.lookup("rmi://" + client.getIp() + ":" + clientPort + "/Client");
+			ClientInterface clientStub = (ClientInterface)Naming.lookup("rmi://" + client.getIp() + ":" + clientRmiPort + "/Client");
 			clientStub.initialize("152.96.193.9");
 		} catch (MalformedURLException e) {
 			// TODO Auto-generated catch block
@@ -84,14 +84,14 @@ public class Server implements ServerInterface
 			Entry<Object, Object> temp = iter.next();
 			if(temp.getKey().equals("Clientport"))
 			{
-				clientPort = Integer.valueOf((String)temp.getValue());
+				clientRmiPort = Integer.valueOf((String)temp.getValue());
 			}
 			if(temp.getKey().equals("Serverport"))
 			{
-				serverPort = Integer.valueOf((String)temp.getValue());
+				serverRmiPort = Integer.valueOf((String)temp.getValue());
 			}
 		}
-		System.out.println(serverPort);
+		System.out.println(serverRmiPort);
 	}
 	
 	private void loadClientList()
@@ -166,9 +166,9 @@ public class Server implements ServerInterface
 	private void createRegistry()
 	{
 		try {
-			LocateRegistry.createRegistry(serverPort);
-			ServerInterface skeleton = (ServerInterface) UnicastRemoteObject.exportObject(this, serverPort);
-			Registry reg = LocateRegistry.getRegistry(serverPort);
+			LocateRegistry.createRegistry(serverRmiPort);
+			ServerInterface skeleton = (ServerInterface) UnicastRemoteObject.exportObject(this, serverRmiPort);
+			Registry reg = LocateRegistry.getRegistry(serverRmiPort);
 			reg.rebind("blupp", skeleton);
 		} catch (RemoteException e) {
 			e.printStackTrace();

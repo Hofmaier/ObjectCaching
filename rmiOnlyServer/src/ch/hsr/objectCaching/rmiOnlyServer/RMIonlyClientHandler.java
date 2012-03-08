@@ -8,6 +8,11 @@ import java.io.OutputStream;
 public class RMIonlyClientHandler implements Runnable {
 
 	private RMIonlySkeleton skeleton;
+	
+	public void setSkeleton(RMIonlySkeleton skeleton) {
+		this.skeleton = skeleton;
+	}
+
 	public RMIonlySkeleton getSkeleton() {
 		return skeleton;
 	}

@@ -4,12 +4,14 @@ import java.util.HashMap;
 
 public class AccountSkeleton implements RMIonlySkeleton {
 	
-	private HashMap<Integer, AccountImpl> objectMap;
-
+	private HashMap<Integer, Account> objectMap = new HashMap<Integer, Account>();
+	
+	
 	public ReturnValue invokeMethod(MethodCall methodCall) {
-		AccountImpl accountObject = objectMap.get(methodCall.getObjectID());
 		
-		// hier muss Logik für implementiert werden um die richtige Methode auszuwählen
+		
+		Account accountObject = objectMap.get(methodCall.getObjectID());
+		
 		if(methodCall.getMethodName().equalsIgnoreCase("getBalance")){
 			int b = accountObject.getBalance();
 			
@@ -18,7 +20,12 @@ public class AccountSkeleton implements RMIonlySkeleton {
 				
 	}
 	
+	Account getCalledObject(MethodCall methodCall){
+		return objectMap.get(methodCall.getObjectID());
+	}
 	
-	
+	void addObject(Integer objectID, Account account){
+		objectMap.put(objectID, account);
+	}
 
 }

@@ -24,6 +24,10 @@ public class MethodCall implements Serializable {
 	public void setObjectID(String objectID) {
 		ObjectID = Integer.parseInt(objectID);
 	}
+	
+	public void setObjectID(int objectID){
+		ObjectID = objectID;
+	}
 
 	public String getClassName() {
 		return className;

@@ -27,14 +27,15 @@ public class Server implements ServerInterface
 	private static int clientPort;
 	private static int serverPort;
 	private Properties initFile;
+	private TestFactory factory;
 	
 	public Server()
 	{
 		loadInitFile();
 		loadClientList();
 		loadSettings();
-		TestFactory factory = new TestFactory();
-		initializeClient(clients.get(0), factory.generateTestCase(1));
+		factory = new TestFactory();
+		//initializeClient(clients.get(0), factory.generateTestCase(1));
 	}
 	
 	private void initializeClient(Client client, TestCase generatedTestCase) 
@@ -122,6 +123,16 @@ public class Server implements ServerInterface
 		}
 	}
 	
+	private Client getClient()
+	{
+		return clients.get(0);
+	}
+	
+	private TestCase getTestCase()
+	{
+		return factory.generateTestCase(1);
+	}
+	
 	private void start()
 	{
 		
@@ -144,16 +155,22 @@ public class Server implements ServerInterface
 		TestFactory factory = new TestFactory();
 	}
 	
-	public static void main(String[] args) 
+	private void createRegistry()
 	{
-		Server myServer = new Server();
 		try {
 			LocateRegistry.createRegistry(serverPort);
-			ServerInterface skeleton = (ServerInterface) UnicastRemoteObject.exportObject(myServer, serverPort);
-			Registry reg = LocateRegistry.getRegistry();
+			ServerInterface skeleton = (ServerInterface) UnicastRemoteObject.exportObject(this, serverPort);
+			Registry reg = LocateRegistry.getRegistry(serverPort);
 			reg.rebind("blupp", skeleton);
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public static void main(String[] args) 
+	{
+		Server myServer = new Server();
+		myServer.createRegistry();
+		myServer.initializeClient(myServer.getClient(), myServer.getTestCase());
 	}
 }

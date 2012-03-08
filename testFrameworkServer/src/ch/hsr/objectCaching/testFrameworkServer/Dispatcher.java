@@ -5,7 +5,7 @@ import java.io.InputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-public class Dispatcher 
+public class Dispatcher implements Runnable
 {
 	private ServerSocket server;
 	public Dispatcher(int port)
@@ -24,6 +24,7 @@ public class Dispatcher
 		{
 			try {
 				Socket socket = server.accept();
+				System.out.println("Client connected");
 				InputStream inputStream = socket.getInputStream();
 				System.out.println(inputStream.read());
 			} catch (IOException e) {
@@ -31,6 +32,12 @@ public class Dispatcher
 				e.printStackTrace();
 			}
 		}
+	}
+
+	@Override
+	public void run() {
+		accept();
+		
 	}
 	
 }

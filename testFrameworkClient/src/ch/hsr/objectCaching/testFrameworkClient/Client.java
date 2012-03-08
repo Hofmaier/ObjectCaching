@@ -20,6 +20,7 @@ public class Client implements ClientInterface {
 		System.out.println("init done");
 		notifyServer("152.96.193.9", 24526);
 	}
+	
 
 	private void notifyServer(String ip, int port) {
 		try {

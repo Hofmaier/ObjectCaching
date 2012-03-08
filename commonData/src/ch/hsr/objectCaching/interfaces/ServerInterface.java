@@ -6,4 +6,5 @@ import java.rmi.RemoteException;
 public interface ServerInterface extends Remote
 {
 	public void setReady(String ip) throws RemoteException;
+	public void setResults();
 }

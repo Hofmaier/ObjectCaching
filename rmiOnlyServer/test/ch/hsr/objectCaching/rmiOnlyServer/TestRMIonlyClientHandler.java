@@ -63,5 +63,37 @@ public class TestRMIonlyClientHandler {
 		assertEquals(returnValue.getValue(), retValFromStream.getValue());
 		
 	}
+	
+	@Test
+	public void testProcessMethodCall() throws IOException, ClassNotFoundException{
+		AccountSkeletonFake fakeSkeleton = new AccountSkeletonFake();
+		Integer expectedValue = 200;
+		fakeSkeleton.setIntValue(expectedValue);
+		MethodCall dummyMethodCall = new MethodCall();
+		dummyMethodCall.setClassName("AccountFake");
+		clientHandler.setSkeleton(fakeSkeleton);
+		clientHandler.processMethodCall(dummyMethodCall);
+		
+		ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(byteArrayOutputStream.toByteArray()));
+		ReturnValue retVal =  (ReturnValue) ois.readObject();
+		assertEquals(expectedValue, retVal.getValue());
+	}
+	
+	public class AccountSkeletonFake extends AccountSkeleton{
+
+		private Integer intValue;
+
+		public void setIntValue(Integer intValue) {
+			this.intValue = intValue;
+		}
+
+		@Override
+		public ReturnValue invokeMethod(MethodCall methodCall) {
+			ReturnValue returnValue = new ReturnValue();
+			returnValue.setValue(intValue);
+			return returnValue;
+		}
+		
+	}
 
 }

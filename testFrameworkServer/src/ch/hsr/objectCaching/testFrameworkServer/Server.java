@@ -28,6 +28,8 @@ public class Server implements ServerInterface
 	private static int serverPort;
 	private Properties initFile;
 	private TestFactory factory;
+	private Dispatcher dispatcher;
+	private int serverSocketPort; 
 	
 	public Server()
 	{
@@ -35,14 +37,15 @@ public class Server implements ServerInterface
 		loadClientList();
 		loadSettings();
 		factory = new TestFactory();
-		//initializeClient(clients.get(0), factory.generateTestCase(1));
+		serverSocketPort = 12345;
+		dispatcher = new Dispatcher(serverSocketPort); 
 	}
 	
-	private void initializeClient(Client client, TestCase generatedTestCase) 
+	private void initializeClient(Client client) 
 	{
 		try {
 			ClientInterface clientStub = (ClientInterface)Naming.lookup("rmi://" + client.getIp() + ":" + clientPort + "/Client");
-			clientStub.initialize(generatedTestCase);
+			clientStub.initialize("152.96.193.9");
 		} catch (MalformedURLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -123,6 +126,11 @@ public class Server implements ServerInterface
 		}
 	}
 	
+	public int getSocketPort()
+	{
+		return serverSocketPort;
+	}
+	
 	private Client getClient()
 	{
 		return clients.get(0);
@@ -171,7 +179,7 @@ public class Server implements ServerInterface
 	{
 		Server myServer = new Server();
 		myServer.createRegistry();
-		myServer.initializeClient(myServer.getClient(), myServer.getTestCase());
+		myServer.initializeClient(myServer.getClient());
 	}
 
 	@Override

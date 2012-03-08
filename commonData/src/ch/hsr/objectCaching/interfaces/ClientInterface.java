@@ -5,6 +5,7 @@ import java.rmi.RemoteException;
 
 public interface ClientInterface extends Remote
 {
-	public void initialize(TestCase test) throws RemoteException;
+	public void initialize(String serverIp) throws RemoteException;
+	public int getSocketPort();
 	public void start();
 }

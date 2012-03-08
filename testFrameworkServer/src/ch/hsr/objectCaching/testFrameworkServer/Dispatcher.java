@@ -8,7 +8,7 @@ import java.net.Socket;
 public class Dispatcher 
 {
 	private ServerSocket server;
-	public void Dispacher(int port)
+	public Dispatcher(int port)
 	{
 		try {
 			server = new ServerSocket(port);
@@ -24,7 +24,7 @@ public class Dispatcher
 		{
 			try {
 				Socket socket = server.accept();
-				InputStream inputStream = socket.getInputStream();
+				
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

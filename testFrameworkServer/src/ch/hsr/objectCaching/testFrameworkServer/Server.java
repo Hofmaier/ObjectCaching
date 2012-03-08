@@ -25,6 +25,7 @@ public class Server implements ServerInterface
 {
 	private ArrayList<Client> clients;
 	private static int clientPort;
+	private static int serverPort;
 	private Properties initFile;
 	
 	public Server()
@@ -81,8 +82,12 @@ public class Server implements ServerInterface
 			{
 				clientPort = Integer.valueOf((String)temp.getValue());
 			}
+			if(temp.getKey().equals("Serverport"))
+			{
+				serverPort = Integer.valueOf((String)temp.getValue());
+			}
 		}
-		System.out.println(clientPort);
+		System.out.println(serverPort);
 	}
 	
 	private void loadClientList()
@@ -143,8 +148,8 @@ public class Server implements ServerInterface
 	{
 		Server myServer = new Server();
 		try {
-			LocateRegistry.createRegistry(24526);
-			ServerInterface skeleton = (ServerInterface) UnicastRemoteObject.exportObject(myServer, 24526);
+			LocateRegistry.createRegistry(serverPort);
+			ServerInterface skeleton = (ServerInterface) UnicastRemoteObject.exportObject(myServer, serverPort);
 			Registry reg = LocateRegistry.getRegistry();
 			reg.rebind("blupp", skeleton);
 		} catch (RemoteException e) {

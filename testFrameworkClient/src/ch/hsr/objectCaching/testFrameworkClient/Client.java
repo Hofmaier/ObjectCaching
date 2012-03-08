@@ -1,7 +1,12 @@
 package ch.hsr.objectCaching.testFrameworkClient;
 
+import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.net.InetAddress;
+import java.net.MalformedURLException;
+import java.net.Socket;
 import java.rmi.Naming;
+import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -14,16 +19,40 @@ import ch.hsr.objectCaching.interfaces.TestCase;
 public class Client implements ClientInterface {
 
 	private static final int CLIENT_PORT = 1099;
-
+	private Socket clientToServerSocket;
+	
 	@Override
-	public void initialize(TestCase test) {
+	public void initialize(String serverIP) {
 		System.out.println("init done");		
+		
+		openSocketToServer(serverIP);
+		
 		setValues();
 	}
 	
 
+	private void openSocketToServer(String serverIP) {		
+		
+		try {
+			int port =24526;
+			String url = "rmi://" + serverIP + ":" + port + "/blupp";
+			ServerInterface clientStub = (ServerInterface) Naming.lookup(url);
+			int serverPort = clientStub.getSocketPort();
+			System.out.println(serverIP + " / " + serverPort);
+			InetAddress addr = InetAddress.getByName(serverIP);
+			clientToServerSocket = new Socket(addr, serverPort);
+			PrintWriter out = new PrintWriter(clientToServerSocket.getOutputStream(), true);
+			out.write(111);
+			out.flush();
+			out.close();
+			System.out.println("socket closed");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+
 	private void setValues() {
-		//TODO
 		notifyServer("152.96.193.9", 24526);
 	}
 
@@ -51,18 +80,18 @@ public class Client implements ClientInterface {
 			Registry r = LocateRegistry.getRegistry(CLIENT_PORT);
 			r.rebind("Client", skeleton);
 			System.out.println("Client ready");
-
-//			try {
-//				Thread.sleep(2500);
-//			} catch (InterruptedException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
 			
 			
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
+	}
+
+
+	@Override
+	public void start() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

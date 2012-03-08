@@ -24,7 +24,8 @@ public class Dispatcher
 		{
 			try {
 				Socket socket = server.accept();
-				
+				InputStream inputStream = socket.getInputStream();
+				System.out.println(inputStream.read());
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

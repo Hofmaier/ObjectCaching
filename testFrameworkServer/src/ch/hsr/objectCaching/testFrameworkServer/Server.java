@@ -38,7 +38,8 @@ public class Server implements ServerInterface
 		loadSettings();
 		factory = new TestFactory();
 		serverSocketPort = 12345;
-		dispatcher = new Dispatcher(serverSocketPort); 
+		dispatcher = new Dispatcher(serverSocketPort);
+		new Thread(dispatcher).start();
 	}
 	
 	private void initializeClient(Client client) 

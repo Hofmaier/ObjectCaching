@@ -173,4 +173,10 @@ public class Server implements ServerInterface
 		myServer.createRegistry();
 		myServer.initializeClient(myServer.getClient(), myServer.getTestCase());
 	}
+
+	@Override
+	public void setResults() {
+		// TODO Auto-generated method stub
+		
+	}
 }

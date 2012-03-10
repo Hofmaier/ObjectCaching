@@ -27,7 +27,7 @@ public class Server implements ServerInterface
 	private static int clientRmiPort;
 	private static int serverRmiPort;
 	private Properties initFile;
-	private TestFactory factory;
+	private TestCaseFactory factory;
 	private Dispatcher dispatcher;
 	private int serverSocketPort; 
 	
@@ -36,7 +36,7 @@ public class Server implements ServerInterface
 		loadInitFile();
 		loadClientList();
 		loadSettings();
-		factory = new TestFactory();
+		factory = new TestCaseFactory();
 		serverSocketPort = 12345;
 		dispatcher = new Dispatcher(serverSocketPort);
 		new Thread(dispatcher).start();
@@ -139,7 +139,7 @@ public class Server implements ServerInterface
 	
 	private TestCase getTestCase()
 	{
-		return factory.generateTestCase(1);
+		return null;
 	}
 	
 	private void start()
@@ -161,7 +161,7 @@ public class Server implements ServerInterface
 	
 	private void createTestFactory()
 	{
-		TestFactory factory = new TestFactory();
+		TestCaseFactory factory = new TestCaseFactory();
 	}
 	
 	private void createRegistry()

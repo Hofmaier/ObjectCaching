@@ -12,30 +12,32 @@ import java.lang.reflect.*;
 
 public class TestAccountSkeleton {
 
+	private AccountSkeleton skeleton;
+	private Account testAccount;
+
 	@Before
 	public void setUp() throws Exception {
+		skeleton = new AccountSkeleton();
+		testAccount = new Account();
 	}
 
 	@Test
 	public void testGetCalledObject() {
-		AccountSkeleton skeleton = new AccountSkeleton();
-		Account testAccount = new Account();
-		skeleton.addObject(23, testAccount);
+		int objectID = 23;
+		skeleton.addObject(objectID, testAccount);
+		
 		MethodCall methodCall = new MethodCall();
-		methodCall.setObjectID(23);
+		methodCall.setObjectID(objectID);
 		Account account = skeleton.getCalledObject(methodCall);
 		assertTrue(account == testAccount);
 	}
 	
 	@Test
 	public void testInvokeMethodOnObject() throws ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException{
-		AccountSkeleton skeleton = new AccountSkeleton();
-		Account testAccount = new Account();
 		int balance = 200;
 		testAccount.setBalance(balance);
 		
-		MethodCall methodCall = new MethodCall();
-		Class accountClass = Account.class;
+		Class<Account> accountClass = Account.class;
 		
 		Method getBalanceMethod = null;
 		Method[] allMethods = accountClass.getMethods();
@@ -46,12 +48,14 @@ public class TestAccountSkeleton {
 			}
 		}
 		
-		Class[] parameterTypes = getBalanceMethod.getParameterTypes();
+		Class<?>[] parameterTypes = getBalanceMethod.getParameterTypes();
+		
+		MethodCall methodCall = new MethodCall();
 		methodCall.setClassName(accountClass.getName());
 		methodCall.setMethodName(getBalanceMethod.getName());
 		methodCall.setParameterTypes(parameterTypes);
-		Object returnValue = skeleton.invokeMethodOnObject(methodCall ,testAccount);
-		Integer castedRetVal = (Integer) returnValue;
+		
+		int returnValue = (Integer) skeleton.invokeMethodOnObject(methodCall ,testAccount);
 		assertEquals(balance, returnValue);
 	}
 }

@@ -4,9 +4,11 @@ import java.io.Serializable;
 
 public class ReturnValue implements Serializable{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2163526171214692070L;
 	private Object value;
-	private int status;
-	private String message;
 	private String type;
 	
 	

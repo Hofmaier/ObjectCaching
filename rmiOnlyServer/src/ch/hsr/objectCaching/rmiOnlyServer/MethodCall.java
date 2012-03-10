@@ -8,7 +8,16 @@ public class MethodCall implements Serializable {
 	private String methodName;
 	private int ObjectID;
 	private String className;
+	private Class[] parameterTypes;
 	
+	public Class[] getParameterTypes() {
+		return parameterTypes;
+	}
+
+	public void setParameterTypes(Class[] parameterTypes) {
+		this.parameterTypes = parameterTypes;
+	}
+
 	public String getMethodName() {
 		return methodName;
 	}

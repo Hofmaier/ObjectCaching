@@ -14,8 +14,10 @@ public class AccountSkeleton implements RMIonlySkeleton {
 		Account accountObject = objectMap.get(methodCall.getObjectID());
 		
 		try {
-			Object retVal = invokeMethodOnObject(methodCall, accountObject);
-			ReturnValue returnValue = composeReturnValue(retVal);
+			Method method = getMethod(methodCall);
+			Class<?> returnType = method.getReturnType();
+			Object retVal = invokeMethodOnObject(method, accountObject);
+			ReturnValue returnValue = composeReturnValue(retVal, returnType);
 			return returnValue;
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
@@ -33,19 +35,23 @@ public class AccountSkeleton implements RMIonlySkeleton {
 		return null;
 	}
 
-	private ReturnValue composeReturnValue(Object retVal) {
+	Method getMethod(MethodCall methodCall) throws SecurityException, NoSuchMethodException {
+		Class<Account> clazz = Account.class;
+		return clazz.getDeclaredMethod(methodCall.getMethodName(), methodCall.getParameterTypes());
+	}
+
+	private ReturnValue composeReturnValue(Object retVal, Class<?> returnType) {
 		ReturnValue returnValue = new ReturnValue();
 		returnValue.setValue(retVal);
+		returnValue.setType(returnType);
 		return returnValue;
 	}
 
-	Object invokeMethodOnObject(MethodCall methodCall,
+	Object invokeMethodOnObject(Method method,
 			Account accountObject) throws ClassNotFoundException,
 			NoSuchMethodException, IllegalAccessException,
 			InvocationTargetException {
 		
-		Class<Account> clazz = Account.class;
-		Method method = clazz.getDeclaredMethod(methodCall.getMethodName(), methodCall.getParameterTypes());
 		return method.invoke(accountObject, (Object[])null);
 	}
 	

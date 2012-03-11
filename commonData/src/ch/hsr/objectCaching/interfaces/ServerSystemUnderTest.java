@@ -1,6 +1,6 @@
 package ch.hsr.objectCaching.interfaces;
 
-public interface SystemUnderTest {
+public interface ServerSystemUnderTest {
 
 	public ClientHandler getClientHandlerInstance();
 	

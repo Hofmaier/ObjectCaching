@@ -9,20 +9,20 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 import ch.hsr.objectCaching.interfaces.ClientHandler;
-import ch.hsr.objectCaching.interfaces.SystemUnderTest;
+import ch.hsr.objectCaching.interfaces.ServerSystemUnderTest;
 
 public class Dispatcher implements Runnable
 {
 	private ServerSocket server;
 	ClientHandler clientHandler;
-	private SystemUnderTest systemUnderTest;
+	private ServerSystemUnderTest systemUnderTest;
 	
 	public void setSystemUnderTest(String system)
 	{
 		try {
 			Class clazz = Class.forName(system);
 			Constructor ctor = clazz.getConstructor(new Class[0]);
-			systemUnderTest = (SystemUnderTest) ctor.newInstance(null);
+			systemUnderTest = (ServerSystemUnderTest) ctor.newInstance(null);
 			
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block

@@ -1,9 +1,13 @@
 package ch.hsr.objectCaching.rmiOnlyServer;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+
+
+import ch.hsr.objectCaching.interfaces.ClientHandler;
 
 public class TestRMIonlyServerSystem {
 
@@ -12,11 +16,15 @@ public class TestRMIonlyServerSystem {
 	}
 
 	@Test
-	public void test() {
+	public void testGetClientHandlerInstance() {
 		
 		RMIOnlyServerSystem system = new RMIOnlyServerSystem();
 		
-		fail("Not yet implemented");
+		ClientHandler clientHandler = system.getClientHandlerInstance();
+		
+		assertNotNull("null object", clientHandler);
+		
+		
 	}
 
 }

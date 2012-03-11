@@ -5,10 +5,15 @@ import ch.hsr.objectCaching.interfaces.ClientHandler;
 import ch.hsr.objectCaching.interfaces.ServerSystemUnderTest;
 
 public class RMIOnlyServerSystem implements ServerSystemUnderTest {
+	
+	private AccountSkeleton accountSkeleton = new AccountSkeleton();
 
 	@Override
 	public ClientHandler getClientHandlerInstance() {
-		return null;
+		RMIonlyClientHandler clientHandler = new RMIonlyClientHandler();
+		clientHandler.setSkeleton(accountSkeleton);
+		
+		return clientHandler;
 	}
 
 	@Override

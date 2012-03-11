@@ -15,12 +15,56 @@ import ch.hsr.objectCaching.interfaces.ServerInterface;
 public class Client implements ClientInterface {
 
 	private static final int CLIENT_PORT = 1099;
+	private static final int SERVER_PORT = 1999;
+	private static final String CONFIG = "Configuration";
+	private Configuration configuration;
+	private ClientUnderTest aktiveCUT;
+	private TestCase testCase;
+	
+	public Client(){
+	}
+	
 	
 	@Override
 	public void initialize(String serverIP) {
-		System.out.println("init done");		
-			
-		setValues();
+		loadConfig(serverIP);
+		loadCUT();
+		loadTestCase(serverIP);
+	}
+
+
+	private void loadTestCase(String serverIP) {
+		try {
+			String url = "rmi://" + serverIP + ":" + SERVER_PORT + "/" + CONFIG;
+			ConfigurationProvider config = (ConfigurationProvider) Naming.lookup(url);
+			testCase = config.getTestCase();
+		} catch (Exception e) {
+			System.out.println("loading test case failed: " + e.getMessage());
+		}		
+	}
+
+
+	private void loadCUT() {
+		try {
+			aktiveCUT = CUTFactory.generateCUT(configuration.getCUTName());
+		} catch (ClassNotFoundException e) {
+			System.out.println("loading CUT Failed because of: " + e.getMessage());
+		} catch (InstantiationException e) {
+			System.out.println("loading CUT Failed because of: " + e.getMessage());
+		} catch (IllegalAccessException e) {
+			System.out.println("loading CUT Failed because of: " + e.getMessage());
+		}
+	}
+
+
+	private void loadConfig(String serverIP) {
+		try {
+			String url = "rmi://" + serverIP + ":" + SERVER_PORT + "/" + CONFIG;
+			ConfigurationProvider config = (ConfigurationProvider) Naming.lookup(url);
+			configuration = config.getConfiguration();
+		} catch (Exception e) {
+			System.out.println("loading config failed: " + e.getMessage());
+		}		
 	}
 
 

@@ -7,11 +7,11 @@ import java.util.HashMap;
 
 public class AccountSkeleton implements RMIonlySkeleton {
 	
-	private HashMap<Integer, Account> objectMap = new HashMap<Integer, Account>();
+	private HashMap<Integer, AccountImpl> objectMap = new HashMap<Integer, AccountImpl>();
 	
 	public ReturnValue invokeMethod(MethodCall methodCall) {
 		
-		Account accountObject = objectMap.get(methodCall.getObjectID());
+		AccountImpl accountObject = objectMap.get(methodCall.getObjectID());
 		
 		try {
 			Method method = getMethod(methodCall);
@@ -36,7 +36,7 @@ public class AccountSkeleton implements RMIonlySkeleton {
 	}
 
 	Method getMethod(MethodCall methodCall) throws SecurityException, NoSuchMethodException {
-		Class<Account> clazz = Account.class;
+		Class<AccountImpl> clazz = AccountImpl.class;
 		return clazz.getDeclaredMethod(methodCall.getMethodName(), methodCall.getParameterTypes());
 	}
 
@@ -48,18 +48,18 @@ public class AccountSkeleton implements RMIonlySkeleton {
 	}
 
 	Object invokeMethodOnObject(Method method,
-			Account accountObject) throws ClassNotFoundException,
+			AccountImpl accountObject) throws ClassNotFoundException,
 			NoSuchMethodException, IllegalAccessException,
 			InvocationTargetException {
 		
 		return method.invoke(accountObject, (Object[])null);
 	}
 	
-	Account getCalledObject(MethodCall methodCall){
+	AccountImpl getCalledObject(MethodCall methodCall){
 		return objectMap.get(methodCall.getObjectID());
 	}
 	
-	void addObject(Integer objectID, Account account){
+	void addObject(Integer objectID, AccountImpl account){
 		objectMap.put(objectID, account);
 	}
 }

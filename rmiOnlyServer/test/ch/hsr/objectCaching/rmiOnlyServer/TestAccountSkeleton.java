@@ -12,14 +12,14 @@ import org.junit.Test;
 public class TestAccountSkeleton {
 
 	private AccountSkeleton skeleton;
-	private Account testAccount;
+	private AccountImpl testAccount;
 	private MethodCall methodCall;
-	private Class<Account> accountClass = Account.class;
+	private Class<AccountImpl> accountClass = AccountImpl.class;
 
 	@Before
 	public void setUp() throws Exception {
 		skeleton = new AccountSkeleton();
-		testAccount = new Account();
+		testAccount = new AccountImpl();
 		methodCall = new MethodCall();
 	}
 
@@ -29,7 +29,7 @@ public class TestAccountSkeleton {
 		skeleton.addObject(objectID, testAccount);
 		
 		methodCall.setObjectID(objectID);
-		Account account = skeleton.getCalledObject(methodCall);
+		AccountImpl account = skeleton.getCalledObject(methodCall);
 		assertTrue(account == testAccount);
 	}
 	
@@ -38,7 +38,7 @@ public class TestAccountSkeleton {
 		int balance = 200;
 		testAccount.setBalance(balance);
 		
-		accountClass = Account.class;
+		accountClass = AccountImpl.class;
 		
 		Method getBalanceMethod = getGetBalalanceMethod();
 		

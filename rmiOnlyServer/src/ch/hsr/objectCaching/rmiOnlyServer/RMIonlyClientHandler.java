@@ -5,7 +5,9 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 
-public class RMIonlyClientHandler implements Runnable {
+import ch.hsr.objectCaching.interfaces.ClientHandler;
+
+public class RMIonlyClientHandler extends ClientHandler {
 
 	private RMIonlySkeleton skeleton;
 	
@@ -17,9 +19,6 @@ public class RMIonlyClientHandler implements Runnable {
 		return skeleton;
 	}
 
-	private InputStream inputStream;
-	private OutputStream outputStream;
-	
 	public void setInputStream(InputStream inputStream) {
 		this.inputStream = inputStream;
 	}

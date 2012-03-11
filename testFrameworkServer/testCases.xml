@@ -1,19 +1,17 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<CUT>
-	<Client id="100">
-		<SystemUnderTest value="RMIOnly"></SystemUnderTest>
+<TestCase SystemUnderTest="RMIOnly">
+	<Scenario id="1">
 		<ActionSequence>
 			<Write count="10" value="2"></Write>
 			<Read count="2"></Read>
 			<Write count="5" value="5"></Write>
 		</ActionSequence>
-	</Client>
-	<Client id="2">
-		<SystemUnderTest value="RMIOnly"></SystemUnderTest>
+	</Scenario>
+	<Scenario id="2">
 		<ActionSequence>
 			<Write count="12" value="12"></Write>
 			<Read count="14"></Read>
 			<Write count="4" value="56"></Write>
 		</ActionSequence>
-	</Client>
-</CUT>
+	</Scenario>
+</TestCase>

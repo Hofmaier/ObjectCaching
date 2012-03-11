@@ -18,7 +18,6 @@ import java.util.Properties;
 
 import ch.hsr.objectCaching.interfaces.ClientInterface;
 import ch.hsr.objectCaching.interfaces.ServerInterface;
-import ch.hsr.objectCaching.interfaces.TestCase;
 import ch.hsr.objectCaching.testFrameworkServer.Client.Status;
 
 public class Server implements ServerInterface

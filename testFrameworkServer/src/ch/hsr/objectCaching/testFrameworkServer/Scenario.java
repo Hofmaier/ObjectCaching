@@ -1,33 +1,18 @@
-package ch.hsr.objectCaching.interfaces;
+package ch.hsr.objectCaching.testFrameworkServer;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 
-public class TestCase implements Serializable
+import ch.hsr.objectCaching.interfaces.Action;
+
+public class Scenario 
 {
-	
-	private static final long serialVersionUID = 1;
-	private String systemUnderTest;
 	private ArrayList<Action> actionList;
-	private int clientId;
+	private int scenarioId;
 	
-	public TestCase(int clientId)
+	public Scenario(int scenarioId)
 	{
-		this.clientId = clientId;
 		actionList = new ArrayList<Action>();
-	}
-	
-	public int getClientId()
-	{
-		return clientId;
-	}
-
-	public String getSystemUnderTest() {
-		return systemUnderTest;
-	}
-
-	public void setSystemUnderTest(String systemUnderTest) {
-		this.systemUnderTest = systemUnderTest;
+		this.scenarioId = scenarioId;
 	}
 	
 	public ArrayList<Action> getActionList()
@@ -57,4 +42,5 @@ public class TestCase implements Serializable
 			actionList.add(temp);
 		}
 	}
+
 }

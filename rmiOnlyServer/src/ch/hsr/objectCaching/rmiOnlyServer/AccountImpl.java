@@ -1,6 +1,8 @@
 package ch.hsr.objectCaching.rmiOnlyServer;
 
-public class Account {
+import ch.hsr.objectCaching.interfaces.Account;
+
+public class AccountImpl implements Account {
 	
 	private int balance;
 

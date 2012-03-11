@@ -23,10 +23,6 @@ public class RMIonlyClientHandler extends ClientHandler {
 		this.inputStream = inputStream;
 	}
 
-	public RMIonlyClientHandler(InputStream inputStream, OutputStream os){
-		this.inputStream = inputStream;
-		this.outputStream = os;
-	}
 
 	@Override
 	public void run() {

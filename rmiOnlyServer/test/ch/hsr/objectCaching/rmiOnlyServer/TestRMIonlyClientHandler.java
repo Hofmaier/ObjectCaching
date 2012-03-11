@@ -13,19 +13,18 @@ import org.junit.Test;
 
 public class TestRMIonlyClientHandler {
 	
-	
-	
 	private RMIonlyClientHandler clientHandler;
 	private ByteArrayOutputStream byteArrayOutputStream;
 	private ByteArrayInputStream byteArrayInputStream;
-
 
 	@Before
 	public void setUp(){
 		
 		byteArrayOutputStream = new ByteArrayOutputStream();
 		byteArrayInputStream = new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
-		clientHandler = new RMIonlyClientHandler(byteArrayInputStream, byteArrayOutputStream);
+		clientHandler = new RMIonlyClientHandler();
+		clientHandler.setInputStream(byteArrayInputStream);
+		clientHandler.setOutputStream(byteArrayOutputStream);
 	}
 
 	@Test

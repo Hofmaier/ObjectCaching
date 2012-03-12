@@ -9,6 +9,8 @@ import java.lang.reflect.Method;
 import org.junit.Before;
 import org.junit.Test;
 
+import ch.hsr.objectCaching.interfaces.Account;
+
 public class TestAccountSkeleton {
 
 	private AccountSkeleton skeleton;
@@ -29,7 +31,7 @@ public class TestAccountSkeleton {
 		skeleton.addObject(objectID, testAccount);
 		
 		methodCall.setObjectID(objectID);
-		AccountImpl account = skeleton.getCalledObject(methodCall);
+		Account account = skeleton.getCalledObject(methodCall);
 		assertTrue(account == testAccount);
 	}
 	

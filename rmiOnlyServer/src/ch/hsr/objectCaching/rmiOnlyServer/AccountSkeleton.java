@@ -4,14 +4,16 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 
+import ch.hsr.objectCaching.interfaces.Account;
+
 
 public class AccountSkeleton implements RMIonlySkeleton {
 	
-	private HashMap<Integer, AccountImpl> objectMap = new HashMap<Integer, AccountImpl>();
+	private HashMap<Integer, Account> objectMap = new HashMap<Integer, Account>();
 	
 	public ReturnValue invokeMethod(MethodCall methodCall) {
 		
-		AccountImpl accountObject = objectMap.get(methodCall.getObjectID());
+		Account accountObject = objectMap.get(methodCall.getObjectID());
 		
 		try {
 			Method method = getMethod(methodCall);
@@ -48,18 +50,18 @@ public class AccountSkeleton implements RMIonlySkeleton {
 	}
 
 	Object invokeMethodOnObject(Method method,
-			AccountImpl accountObject) throws ClassNotFoundException,
+			Account accountObject) throws ClassNotFoundException,
 			NoSuchMethodException, IllegalAccessException,
 			InvocationTargetException {
 		
 		return method.invoke(accountObject, (Object[])null);
 	}
 	
-	AccountImpl getCalledObject(MethodCall methodCall){
+	Account getCalledObject(MethodCall methodCall){
 		return objectMap.get(methodCall.getObjectID());
 	}
 	
-	void addObject(Integer objectID, AccountImpl account){
+	void addObject(Integer objectID, Account account){
 		objectMap.put(objectID, account);
 	}
 }

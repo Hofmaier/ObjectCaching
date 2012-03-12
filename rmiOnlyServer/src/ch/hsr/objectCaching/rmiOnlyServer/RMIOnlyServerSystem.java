@@ -18,8 +18,7 @@ public class RMIOnlyServerSystem implements ServerSystemUnderTest {
 
 	@Override
 	public void addAccountObject(Account testObject) {
-		// TODO Auto-generated method stub
-		
+		accountSkeleton.addObject(ObjectIDGenerator.next(), testObject);
 	}
 
 }

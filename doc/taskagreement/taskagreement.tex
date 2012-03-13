@@ -15,14 +15,18 @@
 J.M.Joller  Abteilung für Informatik HSR/FHO
 
 \section{Ausgangslage}
-Grosse Applikationen sind heute häufig über mehrerer Rechner verteilt, für die Kommunikation zwischen den beteiligten Rechnern wird heutzutage meist die Remote Procedure Call (RPC) Technik verwendet. Sie ermöglicht den Aufruf von Funktionen in anderen Adressräumen. Java bietet bereits eine eingebaute RPC- Mechanismus an, der unter dem Namen Remote Method Invocation (RMI) bekannt ist. 
-Das Hauptproblem dieser Technik liegt in der hohen Latenz zwischen dem absetzen des Befehls und dem Empfang des Resultats. Immer wenn eine Methoden auf einem Objekt aufgerufen wird, welches nicht im selben Adressraum gespeichert ist, tritt diese Verzögerung auf.
-Applikationen werden heute meist auf Basis des Client- Server Konzept aufgebaut. Wird die Kommunikation zwischen den Clients und dem Server mit einer RPC Technik implementiert,  wird der Server zwangsläufig zum  Flaschenhals für das gesamte System, da alle Objekte auf dem Server lagern und somit alle RPC auf dem Server ausgeführt werden müssen.\\
-In dieser Semesterarbeit soll nun eine Lösung erarbeitet werden, welche die gesamt Performance eines verteilten Software Systems steigert ohne dass die Konsistenz der Daten negative beeinträchtigt wird.
+Das Datenverarbeitungssystem Mercury ermöglicht es Methoden von Objekten über mehrere Clients aufzurufen. Dabei treten unter anderem folgende Probleme auf:
+
+\begin{itemize}
+\item Clients können Werte von Instanzvariablen von Objekten auf dem Server lesen. Nutzt der Client diese Werte als Argumente in kausal Abhängigen Methoden kann ein Lost Update auftreten.
+\item Alle Methodenaufrufe werden über das Netzwerk an den Server gesendet. Die Methodenaufrufe auf den Clients sollen schneller werden.
+\end{itemize}
+
+
 \section{Technologische Rahmenbedingungen}
 Die Lösung wird in Java entwickelt und als externe Datendarstellung wird XML verwendet, diese bietet den grossen Vorteil von einer plattformneutralen Datendarstellung. Jegliche Sicherheitsaspekte sind nicht Thema dieser Semesterarbeit und sollen fürs erste nicht berücksichtigt werden (Zugriffskontrolle).
-\section{Ziel der Arbeit}
-
+\section{Ziele}
+In dieser Semesterarbeit soll nun ein Konzept erarbeitet werden, welches Lost Updates verhindert.  die gesamt Performance eines verteilten Software Systems steigert ohne dass die Konsistenz der Daten negative beeinträchtigt wird.
 Als Ausgangslage für das gesamte Projekt wird folgendes Szenario eingesetzt. Es wird ein verteiltes System mit einem Server und zwei Clients verwendet.\\
 \begin{center}
 \includegraphics[scale=0.85]{Deployment.png}

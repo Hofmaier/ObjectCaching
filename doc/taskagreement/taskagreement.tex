@@ -14,7 +14,7 @@
 \section{Betreuer}
 J.M.Joller  Abteilung für Informatik HSR/FHO
 
-\section{Ausgangslage}
+\section{Motivation}
 Das Datenverarbeitungssystem Mercury ermöglicht es Methoden von Objekten über mehrere Clients aufzurufen. Dabei treten unter anderem folgende Probleme auf:
 
 \begin{itemize}
@@ -23,20 +23,60 @@ Das Datenverarbeitungssystem Mercury ermöglicht es Methoden von Objekten über 
 \end{itemize}
 
 
-\section{Technologische Rahmenbedingungen}
-Die Lösung wird in Java entwickelt und als externe Datendarstellung wird XML verwendet, diese bietet den grossen Vorteil von einer plattformneutralen Datendarstellung. Jegliche Sicherheitsaspekte sind nicht Thema dieser Semesterarbeit und sollen fürs erste nicht berücksichtigt werden (Zugriffskontrolle).
-\section{Ziele}
-In dieser Semesterarbeit soll nun ein Konzept erarbeitet werden, welches Lost Updates verhindert.  die gesamt Performance eines verteilten Software Systems steigert ohne dass die Konsistenz der Daten negative beeinträchtigt wird.
+\section{Ziele der Arbeit}
+
+\subsection{Hauptziele}
+\label{sec:hauptziele}
+
+\subsubsection{RMI mit Concurrency Control}
+\label{sec:rmi-mit-concurrency}
+
+In dieser Semesterarbeit soll nun ein Konzept erarbeitet werden, welches Lost Updates bei kausal abhängigen Methoden verhindert.  Es soll ein vereinfachtes RMI System implementiert werden. Dieses System soll zeigen, ob sich das Konzept einfach realisieren lässt.
+
+\subsubsection{Testframework}
+\label{sec:testframework}
+
+Um das System zu testen, wird parallel dazu ein Testframework entwickelt. Das dieses Framework soll in der Lage sein unterschiedliche RMI System als Server und Client zu starten. Das Testframework ist in der Lage eine Szenariobeschreibung einzulesen und dieses Szenario mit dem zu testenden System durchzuspielen. Es sammelt dabei Messdaten über die Zeitdauer der einzelnen Methodenaufrufe. Die Messdaten sollen es ermöglichen, abzuwägen welche Systeme mit welchen Parameter sich für welchen Anwendungszweck eignen.
+Das Testframework registriert das Auftreten von Schreib-Konfikten bei Aufruf von Schreibmethoden.
+
+\subsection{Erweiterte Ziele}
+\label{sec:erweiterte-ziele}
+
+\subsubsection{Object Caching}
+\label{sec:object-caching}
+
+Um die Dauer von Methodenaufrufen zu verkürzen, soll das RMI System um einen Object Cache erweitert werden. Methoden ohne Seiteneffekte werden auf den Objekten im Cache ausgeführt. Für das System wird ein passendes Konsistenzmodell ausgewählt. Dieses Modell wird durch ein geeignetes Konsistenzprotokoll durchgesetzt. Die Unterscheidung von Lese und Schreib- Methoden muss durch den User gemacht werden.
+
+\subsubsection{Feingranulares Locking}
+\label{sec:feingr-lock}
+
+Das System RMI mit Concurrency Control setzt Thread-Synchronisierung ein. Das System soll so konzipiert und implementiert werden, dass möglichst viele Methoden innerhalb einer definierten Zeit ausgeführt werden können.
+
+\subsection{Szenarien}
+\label{sec:szenario}
+
 Als Ausgangslage für das gesamte Projekt wird folgendes Szenario eingesetzt. Es wird ein verteiltes System mit einem Server und zwei Clients verwendet.\\
 \begin{center}
 \includegraphics[scale=0.85]{Deployment.png}
 \end{center}
-Alle Objekte werden auf dem Server instanziiert. Um die Komplexität gering zuhalten wird es nur einen Objekttyp geben. Dadurch wird der Entwicklungsaufwand verringert, welcher für das Management bei zulassen jeglicher Objekttypen bestünde. Der Typ des Objekts wird Account heissen und verfügt über zwei Methoden zur Datenmanipulation. Die eine Methode setzt den neuen Konto-stand und über die zweite Methode kann der aktuelle Kontostand abgefragt werden. In einem ersten Schritt wird es nur ein Objekt auf dem Server instanziiert. Im zweiten Teil der Semesterarbeit werden dann mehrere Account Objekte angelegt.\\
+
+Auf einem Server wird ein Account-Objekt instanziert.
+Das Interface von Account sieht wie folgt aus:
+
+public interface Account {
+    public int getBalance();
+    public void setBalance(int balance);    
+}
+Im zweiten Teil der Semesterarbeit werden dann mehrere Account Objekte angelegt.\\
 In der ersten Phase wird eine eigene RMI With Coherence Control Lösung implementiert. Die Priorität liegt auf der Erkennung von Konflikten, die Performance kann zu einem späteren Zeitpunkt verbessert werden. Diese Lösung verfügt über keinen Lookup Dienst. Um den Account Typ clientseitig trotzdem zu kennen werden diese fest in die Clients hinein programmiert. Bei dieser Lösung handelt es sich um eine einfache RMI Lösung, welche in der zweiten Phase des Projekts weiter entwickelt wird.
 Gleichzeitig wird ein Test Framework entwickelt, dass die verschiedene Lösungsvorschläge, welche im Projektverlauf entwickelt werden, testen kann. Dieses Test System soll Objektkonflikte erfolgreich detektieren, sowie Performancemessungen machen können. Das Test Framework wird so aufgebaut das, es sich von aussen leicht konfigurieren lässt und über Parametervariation verschiedene System-zustände simulieren lassen.\\
 \\
-In einer zweiten Phase wird die RMI Lösung clientseitig um einen Cache-Mechanismus erweitert. Objekte werden bei dieser Weiterentwicklung clientseitig zwischen gespeichert. Methodenaufrufe die nur lesen werden nun direkt auf dem Client ausgeführt, schreib Operation werden in diese Lösung wiederum auf dem Server abgearbeitet. Die Unterscheidung von Lese und Schreib- Methoden muss durch den User gemacht werden. Des weiteren muss ein Protokoll entwickelt werden, welches effizient die Objekte die sich im Cache befinden invalidiert kann, wenn sich das entsprechende Objekte auf dem Server verändert hat. Diese Lösung wird dann wiederum mit dem Test Framework getestet und mit den Resultaten der ersten Lösung verglichen.\\
+In einer zweiten Phase wird die RMI Lösung clientseitig um einen Cache-Mechanismus erweitert. Objekte werden bei dieser Weiterentwicklung clientseitig zwischen gespeichert. Methodenaufrufe die nur lesen werden nun direkt auf dem Client ausgeführt, schreib Operation werden in diese Lösung wiederum auf dem Server abgearbeitet. Des weiteren muss ein Protokoll entwickelt werden, welches effizient die Objekte die sich im Cache befinden invalidiert kann, wenn sich das entsprechende Objekte auf dem Server verändert hat. Diese Lösung wird dann wiederum mit dem Test Framework getestet und mit den Resultaten der ersten Lösung verglichen.\\
 Ein weiteres, längerfristiges Ziel ist die Optimierung des Coherence Control Mechanismus sowie eine weiterführende Optimierung des Caches und der damit verbunden Komponenten.
+
+
+\section{Technologische Rahmenbedingungen}
+Die Lösung wird in Java entwickelt und als externe Datendarstellung wird XML verwendet, diese bietet den grossen Vorteil von einer plattformneutralen Datendarstellung. Jegliche Sicherheitsaspekte sind nicht Thema dieser Semesterarbeit und sollen fürs erste nicht berücksichtigt werden (Zugriffskontrolle).
 
 \section{Zur Ausführung}
 Die erfolgreiche Bearbeitung dieser Aufgabe setzt Grundkenntnisse in der Programmierung verteilter Systeme voraus (praktische Beispiele, nicht bloss Literaturkenntnisse) sowie die Bereitschaft sich in neue und neuste Ergebnisse einzuarbeiten.

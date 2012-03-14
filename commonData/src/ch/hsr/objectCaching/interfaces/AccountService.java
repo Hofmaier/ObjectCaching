@@ -4,6 +4,6 @@ import java.util.Collection;
 
 public interface AccountService {
 	
-	public Collection<Account> getAllAccountObjects();
+	public Collection<Account> getAllAccounts();
 
 }

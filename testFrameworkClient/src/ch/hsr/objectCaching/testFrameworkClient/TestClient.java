@@ -6,7 +6,10 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.Iterator;
 
+import ch.hsr.objectCaching.interfaces.Account;
+import ch.hsr.objectCaching.interfaces.Action;
 import ch.hsr.objectCaching.interfaces.ClientInterface;
 import ch.hsr.objectCaching.interfaces.Scenario;
 import ch.hsr.objectCaching.interfaces.ServerInterface;
@@ -15,66 +18,20 @@ public class TestClient implements ClientInterface{
 	
 	private static final int CLIENT_PORT = 1099;
 	private static final int SERVER_PORT = 1999;
-	private static final String CONFIG = "Configuration";
-	private static final String SCENARIO = "Scenario";
-	private Configuration configuration;
 	private Client client;
-	private TestCase testCase;
+	private Scenario scenario;
 	
 	public TestClient(){
 	}
 	
 	
 	@Override
-	public void initialize(String serverIP) {
-		Scenario s = loadScenario(serverIP);
-		client = new Client(s);
+	public void initialize(String serverIP, Scenario scenario) {		
+		//TODO load right Client
+		client = new Client();
+		this.scenario = scenario;
 		notifyServer(serverIP, SERVER_PORT);
-		
-//		loadConfig(serverIP);
-//		loadCUT();
-//		loadTestCase(serverIP);
 	}
-
-
-	private Scenario loadScenario(String serverIP) {
-		Scenario scenario = null;
-		try {
-			String url = "rmi://" + serverIP + ":" + SERVER_PORT + "/" + SCENARIO;
-			scenario = (Scenario) Naming.lookup(url);
-		} catch (Exception e) {
-			System.out.println("loading test case failed: " + e.getMessage());
-		}
-		return scenario;
-	}
-
-
-	private void loadTestCase(String serverIP) {
-		try {
-			String url = "rmi://" + serverIP + ":" + SERVER_PORT + "/" + CONFIG;
-			ConfigurationProvider config = (ConfigurationProvider) Naming.lookup(url);
-			testCase = config.getTestCase();
-		} catch (Exception e) {
-			System.out.println("loading test case failed: " + e.getMessage());
-		}		
-	}
-
-
-	private void loadConfig(String serverIP) {
-		try {
-			String url = "rmi://" + serverIP + ":" + SERVER_PORT + "/" + CONFIG;
-			ConfigurationProvider config = (ConfigurationProvider) Naming.lookup(url);
-			configuration = config.getConfiguration();
-		} catch (Exception e) {
-			System.out.println("loading config failed: " + e.getMessage());
-		}		
-	}
-
-
-	private void setValues() {
-		notifyServer("152.96.193.9", 24526);
-	}
-
 
 	private static void notifyServer(String serverIP, int port) {
 		try {
@@ -107,6 +64,14 @@ public class TestClient implements ClientInterface{
 
 	@Override
 	public void start() {
-		client.startTest();
+		Iterator<Action> actionIter = scenario.getActionList().iterator();
+		while (actionIter.hasNext()) {
+			Action action = actionIter.next();		
+			if (action.getAction().equals("setBalance")) {
+				client.write(action.getValue());
+			} else if (action.getAction().equals("getBalance")) {
+				client.read();
+			}
+		}
 	}
 }

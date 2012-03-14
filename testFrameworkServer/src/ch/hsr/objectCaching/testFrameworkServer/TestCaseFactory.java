@@ -8,6 +8,8 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.transform.stream.StreamSource;
 
+import ch.hsr.objectCaching.interfaces.Scenario;
+
 public class TestCaseFactory 
 {
 	private ArrayList<TestCase> testCases;

@@ -7,6 +7,7 @@
 \usepackage[pdftex]{graphicx}
 \usepackage{listings}
  
+\setcounter{secnumdepth}{6}
 \title{Object Caching\\Project Proposal}
 \author{Lukas Hofmaier, Raphael Kohler, Timon Brüllmann}
 \date{\today}
@@ -123,19 +124,20 @@ Bei jedem Szenario werden folgende Messdaten festgehalten.
 \subsubsection{Test-Szenarien}
 \label{sec:test-szenarien}
 
-\subsubsection{Konfliktloser Zugriff}
+\paragraph{Konfliktloser Zugriff}
 \label{sec:konfl-zugr}
-
+$~~$ \\
 Das Szenario soll zeigen, wie lange Methodenaufrufe dauern, wenn keine Konflikte auftreten. Ein Client führt den Prozess Kontostand-Erhöhen 10000-mal aus.
 
-\subsubsection{Race Condition}
+\paragraph{Race Condition}
 \label{sec:race-condition}
+$~~$ \\
 Das Szenario soll zeigen wie viele Konflikte auftreten, wenn beide Clients permanent Kontoerhöhungen ausführen wollen.
 Beide Clients führen den Prozess Kontostand-Erhöhen 10000 mal aus. Server startet die Clients hintereinander, mit einer möglichst kleinen Verzögerung.
 
-\subsubsection{Erzwungene Konflikte}
+\paragraph{Erzwungene Konflikte}
 \label{sec:erzwungene-konflikte}
-
+$~~$ \\
 In diesem Szenario soll jeder setBalance-Aufruf von Client 2 zu einer Konfliktsituation führen. Damit sind Konfliktsituation nicht dem Zufall überlassen, sondern treten zuverlässig auf und können besser analysiert werden.
 
 Dies wird folgendermassen erreicht:

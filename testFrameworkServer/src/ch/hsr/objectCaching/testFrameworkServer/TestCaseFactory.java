@@ -15,12 +15,18 @@ public class TestCaseFactory
 	public TestCaseFactory()
 	{
 		testCases = new ArrayList<TestCase>();
+		convertXML();
 	}
 	private TestCase generateTestCase(String systemUnderTest)
 	{
 		TestCase temp = new TestCase(systemUnderTest);
 		testCases.add(temp);
 		return temp;
+	}
+	
+	public ArrayList<TestCase> getTestCases()
+	{
+		return testCases;
 	}
 	
 	private void convertXML()

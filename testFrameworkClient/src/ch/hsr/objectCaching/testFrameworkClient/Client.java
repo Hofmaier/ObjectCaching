@@ -8,7 +8,7 @@ import ch.hsr.objectCaching.interfaces.AccountService;
 
 public class Client implements ClientUnderTest{
 
-	private static final int SERVER_PORT = 1999;
+	private static final int SERVER_PORT = 24526;
 	private static final String ACCOUNT_SEVICE = "AccountService";
 
 	private AccountService accountService;
@@ -16,12 +16,12 @@ public class Client implements ClientUnderTest{
 	private Account account;
 
 	public Client() {
-		init();
+		//init();
 	}
 
 	private void init() {
-		accountList = accountService.getAllAccountObjects();
 		loadAccountService("152.96.193.9");
+		accountList = accountService.getAllAccounts();
 	}
 
 	// TODO Accounts loopen einbauen
@@ -42,13 +42,16 @@ public class Client implements ClientUnderTest{
 	}
 
 	public void write(int value) {
-		Account acc = getNextAccount();
-		acc.setBalance(value);
+		System.out.println("write done: " + value);
+//		Account acc = getNextAccount();
+//		acc.setBalance(value);
 	}
 
 	public int read() {
-		Account account = getNextAccount();
-		return account.getBalance();
+		System.out.println("Read done");
+		return 1;
+//		Account account = getNextAccount();
+//		return account.getBalance();
 		
 	}
 

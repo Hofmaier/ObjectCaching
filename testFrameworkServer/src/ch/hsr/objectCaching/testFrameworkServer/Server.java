@@ -24,6 +24,7 @@ import ch.hsr.objectCaching.testFrameworkServer.Client.Status;
 public class Server implements ServerInterface
 {
 	private ArrayList<Client> clients;
+	private ArrayList<TestCase> testCases;
 	private static int clientRmiPort;
 	private static int serverRmiPort;
 	private Properties initFile;
@@ -37,9 +38,15 @@ public class Server implements ServerInterface
 		loadClientList();
 		loadSettings();
 		factory = new TestCaseFactory();
+		getTestCases();
 		serverSocketPort = 12345;
 		dispatcher = new Dispatcher(serverSocketPort);
 		new Thread(dispatcher).start();
+	}
+	
+	private void getTestCases()
+	{
+		this.testCases = factory.getTestCases();
 	}
 	
 	private void initializeClient(Client client) 

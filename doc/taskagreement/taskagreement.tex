@@ -29,7 +29,7 @@ Das Datenverarbeitungssystem Mercury ermöglicht es Clients Methoden von Objekte
 \label{sec:prioritaeten}
 
 \begin{enumerate}
-\item Das "Lost Update"-Problem soll vermieden werden.
+\item Das ‘‘Lost Update’’-Problem soll vermieden werden.
 \item Die Abhandlung der Schreib -und Lesezugriffe auf das Objekt, welches auf dem Server liegt, soll für den Client möglichst schnell passieren.
 \end{enumerate}
 
@@ -39,13 +39,13 @@ Das Datenverarbeitungssystem Mercury ermöglicht es Clients Methoden von Objekte
 \subsubsection{RMI mit Concurrency Control}
 \label{sec:rmi-mit-concurrency}
 
-In dieser Semesterarbeit soll nun ein Konzept erarbeitet werden, welches Lost Updates bei kausal abhängigen Methoden verhindert.  Es soll ein vereinfachtes RMI System implementiert werden. Dieses System soll zeigen, ob sich das Konzept einfach realisieren lässt.
+In dieser Semesterarbeit soll nun ein Konzept erarbeitet werden, welches Lost Updates bei kausal abhängigen Methoden verhindert.  Zudem soll ein vereinfachtes RMI System implementiert werden, welches zeigen soll, ob sich dieses Konzept einfach realisieren lässt.
 
 \subsubsection{Testframework}
 \label{sec:testframework}
 
 Um das System zu testen, wird parallel dazu ein Testframework entwickelt. Dieses Framework soll in der Lage sein, unterschiedliche RMI System als Server und Client zu starten. Das Testframework ist in der Lage, eine Szenariobeschreibung einzulesen und dieses Szenario mit dem zu testenden System durchzuspielen. Ein Szenario besteht aus einer Abfolge von Methoden-Aufrufen, welche der jeweilige Client tätigen muss. Das Framework sammelt dabei Messdaten über die Zeitdauer der einzelnen Methodenaufrufe. Die Messdaten sollen es ermöglichen abzuwägen, welche Systeme mit welchen Parameter sich für welchen Anwendungszweck eignen.
-Weiter registriert das Testframework das Auftreten von Schreib-Konfikten bei Aufruf von Schreibmethoden.
+Weiter registriert das Testframework das Auftreten von Schreib-Konfikten beim Aufruf von Schreibmethoden.
 
 \subsection{Erweiterte Ziele}
 \label{sec:erweiterte-ziele}
@@ -65,7 +65,7 @@ Um die Lösungen mit und ohne Cache miteinander vergleichen zu können, müssen 
 
 Der Concurrency-Mechanismus soll es ermöglichen, dass Anfragen parallel ausgeführt werden können.
 
-\subsection{Szenarien}
+\subsection{Szenario}
 \label{sec:szenario}
 
 Als Ausgangslage für das gesamte Projekt wird folgendes Szenario eingesetzt:
@@ -81,7 +81,7 @@ Es wird ein verteiltes System mit einem Server und zwei Clients verwendet.
 \subsubsection{Kausaler Zusammenhang}
 \label{sec:kaus-zusamm}
 
-Die Clients möchten den Kontostand um 10 \% erhöhen. Sie führen dazu folgende Schritte aus
+Die Clients möchten den Kontostand um 10 \% erhöhen. Dazu führen die folgende Schritte aus:
 \begin{lstlisting}
 b = getBalance();
 setBalance( b * 1.1 );
@@ -99,10 +99,10 @@ public interface Account {
     public void setBalance(int balance);    
 }
 \end{lstlisting}
-Zwischen getBalance und setBalance besteht ein kausaler Zusammenhang. setBalance darf nur ausgeführt werden, wenn das Argument balance aktuell ist. Ist der Wert nicht mehr aktuell, wird der "Kontostand-Erhöhen"-Prozess abgebrochen. Der Client wiederholt in diesem Fall den gesamten Prozess (aktuelle Daten holen, Daten schreiben) noch automatisch.
+Zwischen getBalance und setBalance besteht ein kausaler Zusammenhang: setBalance darf nur ausgeführt werden, wenn das Argument balance aktuell ist. Ist der Wert nicht mehr aktuell, wird der ‘‘Kontostand-Erhöhen’’-Prozess abgebrochen. Der Client wiederholt in diesem Fall den gesamten Prozess (aktuelle Daten holen, Daten schreiben) automatisch.
 
 Dem Client ist das Interface Account bekannt. Das Interface wird vor Prozessstart deployed.
-Zwei Client beschaffen sich eine Referenz in Form eines Proxy-Objektes auf das Account-Objekt. 
+Zwei Clients beschaffen sich eine Referenz, in Form eines Proxy-Objektes, auf das Account-Objekt. 
 
 \subsubsection{TestFramework}
 \label{sec:testframework-1}
@@ -113,32 +113,42 @@ Bei jedem Szenario werden folgende Messdaten festgehalten.
 \item durchschnittliche Dauer des Methodenaufrufs getBalance()
 \item durchschnittliche Dauer des Methodenaufrufs setBalance()
 \item Anzahl aufgetretene Konflikte
-\item Dauer eines setBalance(); Methodenaufrufs bei Konfliktsituation
+\item Dauer eines setBalance(); Methodenaufrufs im Falle einer Konfliktsituation
   \begin{itemize}
   \item Zeitdifferenz zwischen erstem setBalance bis erfolgreichem setBalance
   \item Zeitdifferenz zwischen setBalance und Empfang der zugehörigen Exception
   \end{itemize}
 \end{itemize}
 
+\subsubsection{Test-Szenarien}
+\label{sec:test-szenarien}
+
 \subsubsection{Konfliktloser Zugriff}
 \label{sec:konfl-zugr}
 
-Das Szenario soll zeigen wie lange Methodenaufrufe dauern, wenn keine Konflikte auftreten. Ein Client führt den Prozess Kontostand-Erhöhen 10000-mal aus.
+Das Szenario soll zeigen, wie lange Methodenaufrufe dauern, wenn keine Konflikte auftreten. Ein Client führt den Prozess Kontostand-Erhöhen 10000-mal aus.
 
 \subsubsection{Race Condition}
 \label{sec:race-condition}
 Das Szenario soll zeigen wie viele Konflikte auftreten, wenn beide Clients permanent Kontoerhöhungen ausführen wollen.
-Beide Clients führen den Prozess Kontostand-Erhöhen 10000 mal aus. Server startet die Clients hintereinander mit einer möglichst kleinen Zeitdifferenz.
+Beide Clients führen den Prozess Kontostand-Erhöhen 10000 mal aus. Server startet die Clients hintereinander, mit einer möglichst kleinen Verzögerung.
 
 \subsubsection{Erzwungene Konflikte}
 \label{sec:erzwungene-konflikte}
 
 In diesem Szenario soll jeder setBalance-Aufruf von Client 2 zu einer Konfliktsituation führen. Damit sind Konfliktsituation nicht dem Zufall überlassen, sondern treten zuverlässig auf und können besser analysiert werden.
 
-Client 1 führt ununterbrochen Kontoerhöhungen aus. Client 2 führt 100 Kontoerhöhungen aus. Client 2 wartet nach dem getBalance()-Aufruf 10ms. In dieser Zeit sollte Client1 eine Schreiboperation ausführen und die Daten im Speicher von Client 2 werden veraltet.
+Dies wird folgendermassen erreicht:
+\begin{itemize}
+\item Client1 führt ununterbrochen Kontoerhöhungen aus
+\item Client2 führt 100 Kontoerhöhungen aus. Nach dem getBalance()-Aufruf wartet Client2 10ms
+\item Währenddessen führt Client1 eine Schreiboperation aus
+\item Dadurch werden die Daten im Speicher von Client2 veraltet
+\item Client2 führt nun eine Schreiboperation aus und erhält eine Konfliktmeldung
+\end{itemize}
 
 \section{Durchführung}
-Mit dem Betreuer dieser Arbeit findet eine wöchentliche Sitzung statt. Dabei werden die Fortschritte besprochen und falls vorhanden offene Fragen diskutiert. Die Länge der Sitzung ist daher variabel, je nachdem ob und wieviele offene Fragen und Probleme bestehen.
+Mit dem Betreuer dieser Arbeit findet eine wöchentliche Sitzung statt. Dabei werden die Fortschritte besprochen und falls vorhanden, offene Fragen diskutiert. Die Länge der Sitzung ist daher variabel, je nachdem ob und wieviele offene Fragen und Probleme bestehen.
 
 
 \vspace{1cm}

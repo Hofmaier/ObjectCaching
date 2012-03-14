@@ -8,6 +8,10 @@ public class RMIOnlyServerSystem implements ServerSystemUnderTest {
 	
 	private AccountSkeleton accountSkeleton = new AccountSkeleton();
 	private AccountServiceImpl accountService = new AccountServiceImpl();
+	
+	public RMIOnlyServerSystem(){
+		accountService.setAccountSkeleton(accountSkeleton);
+	}
 
 	@Override
 	public ClientHandler getClientHandlerInstance() {

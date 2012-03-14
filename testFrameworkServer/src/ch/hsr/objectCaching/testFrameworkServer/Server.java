@@ -4,7 +4,9 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.InetAddress;
 import java.net.MalformedURLException;
+import java.net.UnknownHostException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
@@ -30,12 +32,13 @@ public class Server implements ServerInterface
 	private Properties initFile;
 	private TestCaseFactory factory;
 	private Dispatcher dispatcher;
-	private int serverSocketPort; 
+	private int serverSocketPort;
+	private String serverIp;
 	
 	public Server()
 	{
 		loadInitFile();
-		loadClientList();
+		prepareClientList();
 		loadSettings();
 		factory = new TestCaseFactory();
 		getTestCases();
@@ -49,13 +52,43 @@ public class Server implements ServerInterface
 		this.testCases = factory.getTestCases();
 	}
 	
-	private void initializeClient(Client client) 
+	private void initializeClients()
 	{
+		System.out.println("initializeClients");
+		Scenario temp;
+		for(int i = 0; i < clients.size(); i++)
+		{
+			if((temp = testCases.get(0).getScenarios().get(i)) != null)
+			{
+				try {
+					clients.get(i).getClientStub().initialize(serverIp, temp);
+				} catch (RemoteException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			else
+			{
+				try {
+					clients.get(i).getClientStub().initialize(serverIp, testCases.get(0).getScenario(0));
+				} catch (RemoteException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+	
+	private void initializeClientConnection() 
+	{
+		System.out.println("initializeClientConnection");
 		try {
-			ClientInterface clientStub = (ClientInterface)Naming.lookup("rmi://" + client.getIp() + ":" + clientRmiPort + "/Client");
-			client.setClientStub(clientStub);
-			//TODO scenario erzeugen
-			clientStub.initialize("152.96.193.9", testCases.get(0).getScenario(1));
+			for(int i = 0; i < clients.size(); i++)
+			{
+				ClientInterface clientStub = (ClientInterface)Naming.lookup("rmi://" + clients.get(i).getIp() + ":" + clientRmiPort + "/Client");
+				clients.get(i).setClientStub(clientStub);
+			}
+			
 		} catch (MalformedURLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -101,10 +134,15 @@ public class Server implements ServerInterface
 				serverRmiPort = Integer.valueOf((String)temp.getValue());
 			}
 		}
-		System.out.println(serverRmiPort);
+		try {
+			serverIp = InetAddress.getLocalHost().getHostAddress();
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
-	private void loadClientList()
+	private void prepareClientList()
 	{
 		clients = new ArrayList<Client>();
 		Iterator<Entry<Object, Object>> iter = initFile.entrySet().iterator();
@@ -123,6 +161,7 @@ public class Server implements ServerInterface
 	public void setReady(String ip) 
 	{
 		System.out.println("Setted ready with: " + ip);
+		System.out.println(clients.size());
 		for(int i = 0; i < clients.size(); i++)
 		{
 			if(clients.get(i).getIp().equals(ip))
@@ -139,16 +178,6 @@ public class Server implements ServerInterface
 	public int getSocketPort()
 	{
 		return serverSocketPort;
-	}
-	
-	private Client getClient()
-	{
-		return clients.get(0);
-	}
-	
-	private TestCase getTestCase()
-	{
-		return null;
 	}
 	
 	private void start()
@@ -176,12 +205,7 @@ public class Server implements ServerInterface
 		}
 		return true;
 	}
-	
-	private void createTestFactory()
-	{
-		TestCaseFactory factory = new TestCaseFactory();
-	}
-	
+		
 	private void createRegistry()
 	{
 		try {
@@ -198,7 +222,8 @@ public class Server implements ServerInterface
 	{
 		Server myServer = new Server();
 		myServer.createRegistry();
-		myServer.initializeClient(myServer.getClient());
+		myServer.initializeClientConnection();
+		myServer.initializeClients();
 	}
 
 	@Override

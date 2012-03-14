@@ -25,6 +25,11 @@ public class TestCase implements Serializable
 		return temp;
 	}
 	
+	public ArrayList<Scenario> getScenarios()
+	{
+		return scenarios;
+	}
+	
 	public Scenario getScenario(int id)
 	{
 		for(int i = 0; i < scenarios.size(); i++)

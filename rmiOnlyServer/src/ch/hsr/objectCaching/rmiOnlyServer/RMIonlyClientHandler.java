@@ -3,6 +3,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.OutputStream;
 
 import ch.hsr.objectCaching.interfaces.ClientHandler;
 
@@ -11,9 +12,11 @@ public class RMIonlyClientHandler extends ClientHandler {
 	private RMIonlySkeleton skeletonInUse;
 	private AccountSkeleton accountSkeleton;
 	private AccountServiceSkeleton accountServiceSkeleton;
+	private ObjectOutputStream objectOutputStream;
+	private ObjectInputStream objectInputStream;
 	
-	public void setAccountSkeleton(RMIonlySkeleton skeleton) {
-		this.skeletonInUse = skeleton;
+	public void setAccountSkeleton(AccountSkeleton skeleton) {
+		this.accountSkeleton = skeleton;
 	}
 
 	public RMIonlySkeleton getSkeleton() {
@@ -22,8 +25,23 @@ public class RMIonlyClientHandler extends ClientHandler {
 
 	public void setInputStream(InputStream inputStream) {
 		this.inputStream = inputStream;
+		try {
+			objectInputStream = new ObjectInputStream(inputStream);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
+	
+	@Override
+	public void setOutputStream(OutputStream outputStream) {
+		this.outputStream = outputStream;
+		try {
+			objectOutputStream = new ObjectOutputStream(outputStream);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 
 	@Override
 	public void run() {
@@ -43,14 +61,16 @@ public class RMIonlyClientHandler extends ClientHandler {
 
 	MethodCall readMethodCallfrom(InputStream inputStream) throws IOException,
 			ClassNotFoundException {
-		ObjectInputStream ois = new ObjectInputStream(inputStream);
-		MethodCall methodCall = (MethodCall) ois.readObject();
+		MethodCall methodCall = (MethodCall) objectInputStream.readObject();
 		return methodCall;
 	}
 
 	 void setSkeleton(MethodCall methodCall) {
 		if(methodCall.getClassName().equals("Account")){
-			skeletonInUse = new AccountSkeleton();
+			skeletonInUse = accountSkeleton;
+		}
+		if(methodCall.getClassName().equals("AccountService")){
+			skeletonInUse = accountServiceSkeleton;
 		}
 	}
 
@@ -62,10 +82,14 @@ public class RMIonlyClientHandler extends ClientHandler {
 
 	void sendResponse(ReturnValue returnValue) {
 		try {
-			ObjectOutputStream oos = new ObjectOutputStream(outputStream);
-			oos.writeObject(returnValue);
+			objectOutputStream.writeObject(returnValue);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public void setAccountServiceSkeleton(
+			AccountServiceSkeleton accountServiceSkeleton) {
+		this.accountServiceSkeleton = accountServiceSkeleton;
 	}
 }

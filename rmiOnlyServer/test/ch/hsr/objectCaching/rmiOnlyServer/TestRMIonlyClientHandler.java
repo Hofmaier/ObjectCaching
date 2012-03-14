@@ -16,6 +16,8 @@ public class TestRMIonlyClientHandler {
 	private RMIonlyClientHandler clientHandler;
 	private ByteArrayOutputStream byteArrayOutputStream;
 	private ByteArrayInputStream byteArrayInputStream;
+	private AccountSkeletonFake fakeAccountSkeleton;
+	private MethodCall methodCall;
 
 	@Before
 	public void setUp(){
@@ -25,19 +27,21 @@ public class TestRMIonlyClientHandler {
 		clientHandler = new RMIonlyClientHandler();
 		clientHandler.setInputStream(byteArrayInputStream);
 		clientHandler.setOutputStream(byteArrayOutputStream);
+		methodCall = new MethodCall();
 	}
 
 	@Test
 	public void testReadMethodCallFrom() throws IOException, ClassNotFoundException {
 		
-		MethodCall methodCall = new MethodCall();
 		methodCall.setMethodName("getBalance");
 		methodCall.setClassName("Account");
-		
+		byteArrayOutputStream = new ByteArrayOutputStream();
 		ObjectOutputStream oos = new ObjectOutputStream(byteArrayOutputStream);
 		oos.writeObject(methodCall);
+		oos.close();
 		byteArrayInputStream = new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
-		MethodCall testCall = clientHandler.readMethodCallfrom(byteArrayInputStream);
+		clientHandler.setInputStream(byteArrayInputStream);
+		MethodCall testCall = clientHandler.readMethodCallfrom(null);
 		
 		assertEquals(methodCall.getMethodName(), testCall.getMethodName());
 	}
@@ -47,6 +51,7 @@ public class TestRMIonlyClientHandler {
 	public void testSetSkeleton(){
 		MethodCall methodCall = new MethodCall();
 		methodCall.setClassName("Account");
+		clientHandler.setAccountSkeleton(new AccountSkeleton());
 		clientHandler.setSkeleton(methodCall);
 		assertTrue(clientHandler.getSkeleton() instanceof AccountSkeleton);
 	}
@@ -65,17 +70,25 @@ public class TestRMIonlyClientHandler {
 	
 	@Test
 	public void testProcessMethodCall() throws IOException, ClassNotFoundException{
-		AccountSkeletonFake fakeSkeleton = new AccountSkeletonFake();
-		Integer expectedValue = 200;
-		fakeSkeleton.setIntValue(expectedValue);
-		MethodCall dummyMethodCall = new MethodCall();
-		dummyMethodCall.setClassName("Account");
-		clientHandler.setAccountSkeleton(fakeSkeleton);
-		clientHandler.processMethodCall(dummyMethodCall);
+		fakeAccountSkeleton = new AccountSkeletonFake();
+		Integer valueForAccount = 200;
+		fakeAccountSkeleton.setIntValue(valueForAccount);
+		clientHandler.setAccountSkeleton(fakeAccountSkeleton);
+		methodCall.setClassName("Account");
+		clientHandler.processMethodCall(methodCall);
 		
+		
+		AccountServiceSkeletonFake fakeService = new AccountServiceSkeletonFake();
+		int valueForService = 230;
+		fakeService.setIntValue(valueForService);
+		clientHandler.setAccountServiceSkeleton(fakeService);
+		methodCall.setClassName("AccountService");
+		clientHandler.processMethodCall(methodCall);
 		ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(byteArrayOutputStream.toByteArray()));
-		ReturnValue retVal =  (ReturnValue) ois.readObject();
-		assertEquals(expectedValue, retVal.getValue());
+		ReturnValue retValForAccount =  (ReturnValue) ois.readObject();
+		ReturnValue retValForService = (ReturnValue) ois.readObject();
+		assertEquals(valueForAccount, retValForAccount.getValue());
+		assertEquals(valueForService, retValForService.getValue());
 	}
 	
 	public class AccountSkeletonFake extends AccountSkeleton{
@@ -94,5 +107,18 @@ public class TestRMIonlyClientHandler {
 		}
 		
 	}
+	
+	public class AccountServiceSkeletonFake extends AccountServiceSkeleton{
+		private Integer intValue;
+		public void setIntValue(Integer intValue) {
+			this.intValue = intValue;
+		}
 
+		@Override
+		public ReturnValue invokeMethod(MethodCall methodCall) {
+			ReturnValue returnValue = new ReturnValue();
+			returnValue.setValue(intValue);
+			return returnValue;
+		}
+	}
 }

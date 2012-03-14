@@ -25,7 +25,7 @@ public class TestClient implements ClientInterface{
 	
 	
 	@Override
-	public void initialize(String serverIP, Scenario scenario) {		
+	public void initialize(String serverIP, Scenario scenario, String systemUnderTest) {		
 		//TODO load right Client
 		System.out.println("init...from Server");
 		client = new Client();

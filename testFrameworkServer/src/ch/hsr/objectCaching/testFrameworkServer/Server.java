@@ -30,26 +30,21 @@ public class Server implements ServerInterface
 	private static int clientRmiPort;
 	private static int serverRmiPort;
 	private Properties initFile;
-	private TestCaseFactory factory;
 	private Dispatcher dispatcher;
 	private int serverSocketPort;
 	private String serverIp;
+	private TestCase activeTestCase;
 	
 	public Server()
 	{
 		loadInitFile();
 		prepareClientList();
 		loadSettings();
-		factory = new TestCaseFactory();
-		getTestCases();
-		serverSocketPort = 12345;
+		testCases = new TestCaseFactory().getTestCases();
+		establishClientConnection();
+		createRmiRegistry();
 		dispatcher = new Dispatcher(serverSocketPort);
 		new Thread(dispatcher).start();
-	}
-	
-	private void getTestCases()
-	{
-		this.testCases = factory.getTestCases();
 	}
 	
 	private void initializeClients()
@@ -58,10 +53,10 @@ public class Server implements ServerInterface
 		Scenario temp;
 		for(int i = 0; i < clients.size(); i++)
 		{
-			if((temp = testCases.get(0).getScenarios().get(i)) != null)
+			if((temp = activeTestCase.getScenarios().get(i)) != null)
 			{
 				try {
-					clients.get(i).getClientStub().initialize(serverIp, temp);
+					clients.get(i).getClientStub().initialize(serverIp, temp, activeTestCase.getSystemUnderTest());
 				} catch (RemoteException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -70,7 +65,7 @@ public class Server implements ServerInterface
 			else
 			{
 				try {
-					clients.get(i).getClientStub().initialize(serverIp, testCases.get(0).getScenario(0));
+					clients.get(i).getClientStub().initialize(serverIp, activeTestCase.getScenario(0), activeTestCase.getSystemUnderTest());
 				} catch (RemoteException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -79,9 +74,9 @@ public class Server implements ServerInterface
 		}
 	}
 	
-	private void initializeClientConnection() 
+	private void establishClientConnection() 
 	{
-		System.out.println("initializeClientConnection");
+		System.out.println("establishClientConnection");
 		try {
 			for(int i = 0; i < clients.size(); i++)
 			{
@@ -129,9 +124,13 @@ public class Server implements ServerInterface
 			{
 				clientRmiPort = Integer.valueOf((String)temp.getValue());
 			}
-			if(temp.getKey().equals("Serverport"))
+			if(temp.getKey().equals("ServerRmiPort"))
 			{
 				serverRmiPort = Integer.valueOf((String)temp.getValue());
+			}
+			if(temp.getKey().equals("ServerSocketPort"))
+			{
+				serverSocketPort = Integer.valueOf((String)temp.getValue()); 
 			}
 		}
 		try {
@@ -206,7 +205,7 @@ public class Server implements ServerInterface
 		return true;
 	}
 		
-	private void createRegistry()
+	private void createRmiRegistry()
 	{
 		try {
 			LocateRegistry.createRegistry(serverRmiPort);
@@ -218,17 +217,28 @@ public class Server implements ServerInterface
 		}
 	}
 	
+	private void startTestCase()
+	{
+		for(int i = 0; i < testCases.size(); i++)
+		{
+			System.out.println("Starting TestCase");
+			activeTestCase = testCases.get(i);
+			dispatcher.setSystemUnderTest(testCases.get(i).getSystemUnderTest());
+			initializeClients();
+		}
+	}
+	
+	@Override
+	public void setResults() 
+	{
+		
+	}
+	
 	public static void main(String[] args) 
 	{
 		Server myServer = new Server();
-		myServer.createRegistry();
-		myServer.initializeClientConnection();
-		myServer.initializeClients();
+		myServer.startTestCase();
 	}
 
-	@Override
-	public void setResults() {
-		// TODO Auto-generated method stub
-		
-	}
+
 }

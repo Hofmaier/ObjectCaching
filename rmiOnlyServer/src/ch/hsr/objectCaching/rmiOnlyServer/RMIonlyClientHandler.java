@@ -8,14 +8,16 @@ import ch.hsr.objectCaching.interfaces.ClientHandler;
 
 public class RMIonlyClientHandler extends ClientHandler {
 
-	private RMIonlySkeleton skeleton;
+	private RMIonlySkeleton skeletonInUse;
+	private AccountSkeleton accountSkeleton;
+	private AccountServiceSkeleton accountServiceSkeleton;
 	
-	public void setSkeleton(RMIonlySkeleton skeleton) {
-		this.skeleton = skeleton;
+	public void setAccountSkeleton(RMIonlySkeleton skeleton) {
+		this.skeletonInUse = skeleton;
 	}
 
 	public RMIonlySkeleton getSkeleton() {
-		return skeleton;
+		return skeletonInUse;
 	}
 
 	public void setInputStream(InputStream inputStream) {
@@ -48,13 +50,13 @@ public class RMIonlyClientHandler extends ClientHandler {
 
 	 void setSkeleton(MethodCall methodCall) {
 		if(methodCall.getClassName().equals("Account")){
-			skeleton = new AccountSkeleton();
+			skeletonInUse = new AccountSkeleton();
 		}
 	}
 
 	void processMethodCall(MethodCall methodCall) {
 		setSkeleton(methodCall);
-		ReturnValue returnValue = skeleton.invokeMethod(methodCall);
+		ReturnValue returnValue = skeletonInUse.invokeMethod(methodCall);
 		sendResponse(returnValue);
 	}
 

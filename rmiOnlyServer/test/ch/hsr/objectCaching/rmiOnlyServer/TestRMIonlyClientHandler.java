@@ -70,7 +70,7 @@ public class TestRMIonlyClientHandler {
 		fakeSkeleton.setIntValue(expectedValue);
 		MethodCall dummyMethodCall = new MethodCall();
 		dummyMethodCall.setClassName("Account");
-		clientHandler.setSkeleton(fakeSkeleton);
+		clientHandler.setAccountSkeleton(fakeSkeleton);
 		clientHandler.processMethodCall(dummyMethodCall);
 		
 		ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(byteArrayOutputStream.toByteArray()));

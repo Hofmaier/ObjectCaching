@@ -15,7 +15,7 @@ public class TestObjectIDGenerator {
 	public void testNext() {
 		int first = ObjectIDGenerator.next();
 		int second = ObjectIDGenerator.next();
-		
+		assertEquals(first, 3);
 		assertEquals(second, first + 1);
 	}
 

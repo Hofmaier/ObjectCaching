@@ -1,6 +1,6 @@
 package ch.hsr.objectCaching.rmiOnlyServer;
 
-public class AccountServiceSkeleton {
+public class AccountServiceSkeleton implements RMIonlySkeleton {
 	
 	private AccountSkeleton accountSkeleton;
 

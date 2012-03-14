@@ -4,6 +4,7 @@ public class Action
 {
 	private String action;
 	private int value;
+	
 	public String getAction() {
 		return action;
 	}

@@ -7,6 +7,7 @@ import ch.hsr.objectCaching.interfaces.ServerSystemUnderTest;
 public class RMIOnlyServerSystem implements ServerSystemUnderTest {
 	
 	private AccountSkeleton accountSkeleton = new AccountSkeleton();
+	private AccountServiceImpl accountService = new AccountServiceImpl();
 
 	@Override
 	public ClientHandler getClientHandlerInstance() {
@@ -19,6 +20,6 @@ public class RMIOnlyServerSystem implements ServerSystemUnderTest {
 	@Override
 	public void addAccountObject(Account testObject) {
 		accountSkeleton.addObject(ObjectIDGenerator.next(), testObject);
+		accountService.addAccount(testObject);
 	}
-
 }

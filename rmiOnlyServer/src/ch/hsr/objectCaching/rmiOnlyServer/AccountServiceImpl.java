@@ -12,7 +12,7 @@ public class AccountServiceImpl implements AccountService{
 	
 	public Collection<Account> getAllAccountObjects(){
 		return accounts;
-	}
+	} 
 	
 	public void addAccount(Account account){
 		accounts.add(account);

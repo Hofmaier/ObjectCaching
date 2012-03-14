@@ -18,7 +18,7 @@ public class RMIOnlyServerSystem implements ServerSystemUnderTest {
 	public ClientHandler getClientHandlerInstance() {
 		RMIonlyClientHandler clientHandler = new RMIonlyClientHandler();
 		clientHandler.setAccountSkeleton(accountSkeleton);
-		
+		clientHandler.setAccountServiceSkeleton(accountServiceSkeleton);
 		return clientHandler;
 	}
 

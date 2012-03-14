@@ -24,6 +24,10 @@ public class Scenario implements Serializable
 		return actionList;
 	}
 	
+	public int getId()
+	{
+		return scenarioId;
+	}
 	public void setWriteAction(int count, int value)
 	{
 		Action temp;

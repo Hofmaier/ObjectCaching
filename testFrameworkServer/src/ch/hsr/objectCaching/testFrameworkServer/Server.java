@@ -41,10 +41,18 @@ public class Server implements ServerInterface
 		prepareClientList();
 		loadSettings();
 		testCases = new TestCaseFactory().getTestCases();
+		activeTestCase = testCases.get(0);
 		establishClientConnection();
 		createRmiRegistry();
 		dispatcher = new Dispatcher(serverSocketPort);
 		new Thread(dispatcher).start();
+	}
+	
+	private void startTestCase()
+	{
+		System.out.println("Starting TestCase");
+		dispatcher.setSystemUnderTest(activeTestCase.getSystemUnderTest());
+		initializeClients();
 	}
 	
 	private void initializeClients()
@@ -160,7 +168,6 @@ public class Server implements ServerInterface
 	public void setReady(String ip) 
 	{
 		System.out.println("Setted ready with: " + ip);
-		System.out.println(clients.size());
 		for(int i = 0; i < clients.size(); i++)
 		{
 			if(clients.get(i).getIp().equals(ip))
@@ -217,21 +224,20 @@ public class Server implements ServerInterface
 		}
 	}
 	
-	private void startTestCase()
-	{
-		for(int i = 0; i < testCases.size(); i++)
-		{
-			System.out.println("Starting TestCase");
-			activeTestCase = testCases.get(i);
-			dispatcher.setSystemUnderTest(testCases.get(i).getSystemUnderTest());
-			initializeClients();
-		}
-	}
+
 	
 	@Override
 	public void setResults() 
 	{
-		
+		//TODO: Auswertung der ankommenden Resultate
+		for(int i = 0; i < testCases.size(); i++)
+		{
+			if(testCases.get(i).equals(activeTestCase) && testCases.get(i + 1) != null)
+			{
+				activeTestCase = testCases.get(i + 1);
+				startTestCase();
+			}
+		}
 	}
 	
 	public static void main(String[] args) 
@@ -239,6 +245,4 @@ public class Server implements ServerInterface
 		Server myServer = new Server();
 		myServer.startTestCase();
 	}
-
-
 }

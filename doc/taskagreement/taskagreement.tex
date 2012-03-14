@@ -16,10 +16,10 @@
 J.M.Joller  Abteilung für Informatik HSR/FHO
 
 \section{Motivation}
-Das Datenverarbeitungssystem Mercury ermöglicht es Methoden von Objekten über mehrere Clients aufzurufen. Dabei entstehen unter anderem folgende zwei Problembereiche, auf welche das Augenmerk dieser Studienarbeit gelegt wird:
+Das Datenverarbeitungssystem Mercury ermöglicht es Clients Methoden von Objekten über das Netzwerk aufzurufen. Dabei entstehen unter anderem folgende zwei Problembereiche, auf welche das Augenmerk dieser Studienarbeit gelegt wird:
 
 \begin{itemize}
-\item Clients können Werte von Instanzvariablen von Objekten auf dem Server lesen. Nutzt der Client diese Werte als Argumente in kausal abhängigen Methoden, kann ein "Lost Update" auftreten.
+\item Clients können Werte von Instanzvariablen von Objekten auf dem Server lesen. Die Clients können diese Werte im Hauptspeicher abspeichern und zu einem späteren Zeitpunkt in einer kausal abhängigen Methode als Argument einsetzen. Dabei kann ein "Lost Update" auftreten.
 \item Alle Methodenaufrufe werden über das Netzwerk an den Server gesendet. Die Methodenaufrufe auf den Clients sollen schneller werden.
 \end{itemize}
 
@@ -29,8 +29,8 @@ Das Datenverarbeitungssystem Mercury ermöglicht es Methoden von Objekten über 
 \label{sec:prioritaeten}
 
 \begin{enumerate}
-\item Wird durch einen Methodenaufruf ein Schreibkonflikt ausgelöst, soll dieser detektiert und behandelt werden. Die entsprechende Behandlung des Konflikts soll sicherstellen, dass der Schreibzugriff durchgeführt werden kann, ohne die Konsistenz der Daten zu gefährden.
-\item Die Abhandlung der Schreib -und Lesezugriffe auf das Objekt, welches auf dem Server liegt, soll für den Client möglichst schnell und Ressourcenarm passieren.
+\item Das "Lost Update"-Problem soll vermieden werden.
+\item Die Abhandlung der Schreib -und Lesezugriffe auf das Objekt, welches auf dem Server liegt, soll für den Client möglichst schnell passieren.
 \end{enumerate}
 
 \subsection{Hauptziele}
@@ -63,7 +63,7 @@ Um die Lösungen mit und ohne Cache miteinander vergleichen zu können, müssen 
 \subsubsection{Feingranulares Locking}
 \label{sec:feingr-lock}
 
-Bei der unter Hauptziele definierten RMI-Lösung, wird die Erkennung der Konflikte mit nur einer Hash-Map realisiert. Die Benützung von nur einer Hash-Map führt dazu, dass alle Operationen, egal auf welches Objekt diese ausgeführt werden, sequentiell ausgeführt werden. Durch die Implementierung von mehreren Hash-Maps, das heisst also einer Hash-Map pro Obbjekt oder sogar pro Datenfeld, könnte dieser Umsand umgangen werden.
+Der Concurrency-Mechanismus soll es ermöglichen, dass Anfragen parallel ausgeführt werden können.
 
 \subsection{Szenarien}
 \label{sec:szenario}
@@ -137,7 +137,7 @@ In diesem Szenario soll jeder setBalance-Aufruf von Client 2 zu einer Konfliktsi
 
 Client 1 führt ununterbrochen Kontoerhöhungen aus. Client 2 führt 100 Kontoerhöhungen aus. Client 2 wartet nach dem getBalance()-Aufruf 10ms. In dieser Zeit sollte Client1 eine Schreiboperation ausführen und die Daten im Speicher von Client 2 werden veraltet.
 
-\section{Zur Ausführung}
+\section{Durchführung}
 Mit dem Betreuer dieser Arbeit findet eine wöchentliche Sitzung statt. Dabei werden die Fortschritte besprochen und falls vorhanden offene Fragen diskutiert. Die Länge der Sitzung ist daher variabel, je nachdem ob und wieviele offene Fragen und Probleme bestehen.
 
 

@@ -17,6 +17,7 @@ import java.util.Map.Entry;
 import java.util.Properties;
 
 import ch.hsr.objectCaching.interfaces.ClientInterface;
+import ch.hsr.objectCaching.interfaces.Scenario;
 import ch.hsr.objectCaching.interfaces.ServerInterface;
 import ch.hsr.objectCaching.testFrameworkServer.Client.Status;
 
@@ -45,7 +46,8 @@ public class Server implements ServerInterface
 	{
 		try {
 			ClientInterface clientStub = (ClientInterface)Naming.lookup("rmi://" + client.getIp() + ":" + clientRmiPort + "/Client");
-			clientStub.initialize("152.96.193.9");
+			//TODO scenario erzeugen
+			clientStub.initialize("152.96.193.9", new Scenario(1));
 		} catch (MalformedURLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

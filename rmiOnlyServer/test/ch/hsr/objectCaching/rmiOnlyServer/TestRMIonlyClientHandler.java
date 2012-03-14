@@ -69,7 +69,7 @@ public class TestRMIonlyClientHandler {
 		Integer expectedValue = 200;
 		fakeSkeleton.setIntValue(expectedValue);
 		MethodCall dummyMethodCall = new MethodCall();
-		dummyMethodCall.setClassName("AccountFake");
+		dummyMethodCall.setClassName("Account");
 		clientHandler.setSkeleton(fakeSkeleton);
 		clientHandler.processMethodCall(dummyMethodCall);
 		

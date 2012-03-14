@@ -8,6 +8,8 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.transform.stream.StreamSource;
 
+import ch.hsr.objectCaching.interfaces.Scenario;
+
 public class TestCaseFactory 
 {
 	private ArrayList<TestCase> testCases;
@@ -15,12 +17,18 @@ public class TestCaseFactory
 	public TestCaseFactory()
 	{
 		testCases = new ArrayList<TestCase>();
+		convertXML();
 	}
 	private TestCase generateTestCase(String systemUnderTest)
 	{
 		TestCase temp = new TestCase(systemUnderTest);
 		testCases.add(temp);
 		return temp;
+	}
+	
+	public ArrayList<TestCase> getTestCases()
+	{
+		return testCases;
 	}
 	
 	private void convertXML()

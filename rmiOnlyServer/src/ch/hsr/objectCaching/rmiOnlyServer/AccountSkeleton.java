@@ -3,6 +3,7 @@ package ch.hsr.objectCaching.rmiOnlyServer;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
+import java.util.Set;
 
 import ch.hsr.objectCaching.interfaces.Account;
 
@@ -63,5 +64,9 @@ public class AccountSkeleton implements RMIonlySkeleton {
 	
 	void addObject(Integer objectID, Account account){
 		objectMap.put(objectID, account);
+	}
+	
+	public Set<Integer> getAllObjectIDs(){
+		return objectMap.keySet();
 	}
 }

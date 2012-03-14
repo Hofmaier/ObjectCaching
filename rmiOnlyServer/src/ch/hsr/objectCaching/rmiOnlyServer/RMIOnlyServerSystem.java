@@ -7,10 +7,11 @@ import ch.hsr.objectCaching.interfaces.ServerSystemUnderTest;
 public class RMIOnlyServerSystem implements ServerSystemUnderTest {
 	
 	private AccountSkeleton accountSkeleton = new AccountSkeleton();
+	private AccountServiceSkeleton accountServiceSkeleton = new AccountServiceSkeleton();
 	private AccountServiceImpl accountService = new AccountServiceImpl();
 	
 	public RMIOnlyServerSystem(){
-		accountService.setAccountSkeleton(accountSkeleton);
+		accountServiceSkeleton.setAccountSkeleton(accountSkeleton);
 	}
 
 	@Override

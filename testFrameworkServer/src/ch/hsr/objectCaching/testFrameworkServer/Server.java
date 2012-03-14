@@ -17,12 +17,14 @@ import java.util.Map.Entry;
 import java.util.Properties;
 
 import ch.hsr.objectCaching.interfaces.ClientInterface;
+import ch.hsr.objectCaching.interfaces.Scenario;
 import ch.hsr.objectCaching.interfaces.ServerInterface;
 import ch.hsr.objectCaching.testFrameworkServer.Client.Status;
 
 public class Server implements ServerInterface
 {
 	private ArrayList<Client> clients;
+	private ArrayList<TestCase> testCases;
 	private static int clientRmiPort;
 	private static int serverRmiPort;
 	private Properties initFile;
@@ -36,16 +38,23 @@ public class Server implements ServerInterface
 		loadClientList();
 		loadSettings();
 		factory = new TestCaseFactory();
+		getTestCases();
 		serverSocketPort = 12345;
 		dispatcher = new Dispatcher(serverSocketPort);
 		new Thread(dispatcher).start();
+	}
+	
+	private void getTestCases()
+	{
+		this.testCases = factory.getTestCases();
 	}
 	
 	private void initializeClient(Client client) 
 	{
 		try {
 			ClientInterface clientStub = (ClientInterface)Naming.lookup("rmi://" + client.getIp() + ":" + clientRmiPort + "/Client");
-			clientStub.initialize("152.96.193.9");
+			//TODO scenario erzeugen
+			clientStub.initialize("152.96.193.9", new Scenario(1));
 		} catch (MalformedURLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

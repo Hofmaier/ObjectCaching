@@ -16,14 +16,22 @@
 J.M.Joller  Abteilung für Informatik HSR/FHO
 
 \section{Motivation}
-Das Datenverarbeitungssystem Mercury ermöglicht es Methoden von Objekten über mehrere Clients aufzurufen. Dabei treten unter anderem folgende Probleme auf:
+Das Datenverarbeitungssystem Mercury ermöglicht es Methoden von Objekten über mehrere Clients aufzurufen. Dabei entstehen unter anderem folgende zwei Problembereiche, auf welche das Augenmerk dieser Studienarbeit gelegt wird:
 
 \begin{itemize}
-\item Clients können Werte von Instanzvariablen von Objekten auf dem Server lesen. Nutzt der Client diese Werte als Argumente in kausal Abhängigen Methoden kann ein Lost Update auftreten.
+\item Clients können Werte von Instanzvariablen von Objekten auf dem Server lesen. Nutzt der Client diese Werte als Argumente in kausal abhängigen Methoden, kann ein "Lost Update" auftreten.
 \item Alle Methodenaufrufe werden über das Netzwerk an den Server gesendet. Die Methodenaufrufe auf den Clients sollen schneller werden.
 \end{itemize}
 
 \section{Ziele der Arbeit}
+
+\subsection{Prioritaeten}
+\label{sec:prioritaeten}
+
+\begin{enumerate}
+\item Wird durch einen Methodenaufruf ein Schreibkonflikt ausgelöst, soll dieser detektiert und behandelt werden. Die entsprechende Behandlung des Konflikts soll sicherstellen, dass der Schreibzugriff durchgeführt werden kann, ohne die Konsistenz der Daten zu gefährden.
+\item Die Abhandlung der Schreib -und Lesezugriffe auf das Objekt, welches auf dem Server liegt, soll für den Client möglichst schnell und Ressourcenarm passieren.
+\end{enumerate}
 
 \subsection{Hauptziele}
 \label{sec:hauptziele}
@@ -36,8 +44,8 @@ In dieser Semesterarbeit soll nun ein Konzept erarbeitet werden, welches Lost Up
 \subsubsection{Testframework}
 \label{sec:testframework}
 
-Um das System zu testen, wird parallel dazu ein Testframework entwickelt. Das dieses Framework soll in der Lage sein unterschiedliche RMI System als Server und Client zu starten. Das Testframework ist in der Lage eine Szenariobeschreibung einzulesen und dieses Szenario mit dem zu testenden System durchzuspielen. Es sammelt dabei Messdaten über die Zeitdauer der einzelnen Methodenaufrufe. Die Messdaten sollen es ermöglichen, abzuwägen welche Systeme mit welchen Parameter sich für welchen Anwendungszweck eignen.
-Das Testframework registriert das Auftreten von Schreib-Konfikten bei Aufruf von Schreibmethoden.
+Um das System zu testen, wird parallel dazu ein Testframework entwickelt. Dieses Framework soll in der Lage sein, unterschiedliche RMI System als Server und Client zu starten. Das Testframework ist in der Lage, eine Szenariobeschreibung einzulesen und dieses Szenario mit dem zu testenden System durchzuspielen. Ein Szenario besteht aus einer Abfolge von Methoden-Aufrufen, welche der jeweilige Client tätigen muss. Das Framework sammelt dabei Messdaten über die Zeitdauer der einzelnen Methodenaufrufe. Die Messdaten sollen es ermöglichen abzuwägen, welche Systeme mit welchen Parameter sich für welchen Anwendungszweck eignen.
+Weiter registriert das Testframework das Auftreten von Schreib-Konfikten bei Aufruf von Schreibmethoden.
 
 \subsection{Erweiterte Ziele}
 \label{sec:erweiterte-ziele}
@@ -47,10 +55,15 @@ Das Testframework registriert das Auftreten von Schreib-Konfikten bei Aufruf von
 
 Um die Dauer von Methodenaufrufen zu verkürzen, soll das RMI System um einen Object Cache erweitert werden. Methoden ohne Seiteneffekte werden auf den Objekten im Cache ausgeführt. Für das System wird ein passendes Konsistenzmodell ausgewählt. Dieses Modell wird durch ein geeignetes Konsistenzprotokoll durchgesetzt. Die Unterscheidung von Lese und Schreib- Methoden muss durch den User gemacht werden.
 
+\subsubsection{Entwicklung neuer Szenarien}
+\label{sec:entwicklung-neuer-szenarien}
+
+Um die Lösungen mit und ohne Cache miteinander vergleichen zu können, müssen neue Testszenarien geschrieben werden.
+
 \subsubsection{Feingranulares Locking}
 \label{sec:feingr-lock}
 
-pDas System RMI mit Concurrency Control setzt Thread-Synchronisierung ein. Das System soll so konzipiert und implementiert werden, dass möglichst viele Methoden innerhalb einer definierten Zeit ausgeführt werden können.
+Bei der unter Hauptziele definierten RMI-Lösung, wird die Erkennung der Konflikte mit nur einer Hash-Map realisiert. Die Benützung von nur einer Hash-Map führt dazu, dass alle Operationen, egal auf welches Objekt diese ausgeführt werden, sequentiell ausgeführt werden. Durch die Implementierung von mehreren Hash-Maps, das heisst also einer Hash-Map pro Obbjekt oder sogar pro Datenfeld, könnte dieser Umsand umgangen werden.
 
 \subsection{Szenarien}
 \label{sec:szenario}
@@ -124,50 +137,12 @@ In diesem Szenario soll jeder setBalance-Aufruf von Client 2 zu einer Konfliktsi
 
 Client 1 führt ununterbrochen Kontoerhöhungen aus. Client 2 führt 100 Kontoerhöhungen aus. Client 2 wartet nach dem getBalance()-Aufruf 10ms. In dieser Zeit sollte Client1 eine Schreiboperation ausführen und die Daten im Speicher von Client 2 werden veraltet.
 
-
-\section{Technologische Rahmenbedingungen}
-Die Lösung wird in Java entwickelt und als externe Datendarstellung wird XML verwendet, diese bietet den grossen Vorteil von einer plattformneutralen Datendarstellung. Jegliche Sicherheitsaspekte sind nicht Thema dieser Semesterarbeit und sollen fürs erste nicht berücksichtigt werden (Zugriffskontrolle).
-
 \section{Zur Ausführung}
-Die erfolgreiche Bearbeitung dieser Aufgabe setzt Grundkenntnisse in der Programmierung verteilter Systeme voraus (praktische Beispiele, nicht bloss Literaturkenntnisse) sowie die Bereitschaft sich in neue und neuste Ergebnisse einzuarbeiten.
-Mit dem Betreuer finden in der Regel wöchentliche Besprechungen statt. Zusätzliche Besprechungen sind nach Bedarf durch die Studierenden zu veranlassen. Das Sitzungsintervall ist flexibel: falls wenig oder keine Probleme auftreten können die Sitzungsintervalle vergrössert werden; falls Probleme auftauchen, werden die Intervalle verkleinert.\\
-Alle Besprechungen sind von den Studenten mit einer Traktandenliste vorzubereiten und die Ergebnisse sind in einem Protokoll zu dokumentieren, das dem Betreuer per E-Mail zugestellt wird.\\
-Für die Durchführung der Arbeit ist ein Projektplan zu erstellen. Dabei ist auf einen kontinuierlichen und sichtbaren Arbeitsfortschritt zu achten. An Meilensteinen gemäss Projektplan sind einzelne Arbeitsresultate in vorläufigen Versionen abzugeben. 
-\section{Dokumentation und Abgabe}
-Wegen der beabsichtigten Verwendung der Ergebnisse in weiteren Projekten wird auf Vollständigkeit sowie (sprachliche und grafische) Qualität der Dokumentation erhöhter Wert gelegt.\\
-Die Dokumentation zur Projekt- Planung und –Verfolgung ist gemäss den Richtlinien der Abteilung Informatik anzufertigen. Die Detailanforderungen an die Dokumentation der Recherche- und Ent-wicklungsergebnisse werden entsprechend dem konkreten Arbeitsplan festgelegt.\\
-Die Dokumentation ist vollständig auf CD abzugeben oder Zugriff auf eine Ablage (SVN, GIT).
-Neben der Dokumentation sind abzugeben:
-\begin{itemize}
-\item alle zum Nachvollziehen der Arbeit notwendigen Ergebnisse und Daten (Quellcode, Buildskripte, Testcode, Testdaten usw.)
-\item Material für eine Abschlusspräsentation (ca. 20’)
-\end{itemize}
+Mit dem Betreuer dieser Arbeit findet eine wöchentliche Sitzung statt. Dabei werden die Fortschritte besprochen und falls vorhanden offene Fragen diskutiert. Die Länge der Sitzung ist daher variabel, je nachdem ob und wieviele offene Fragen und Probleme bestehen.
 
-\section{Termine}
 
-\begin{tabular}{l|ll}
-Woche & Tasks \\ \hline
-1 & Beginn der Studienarbeit; Kick-off Meeting bei Staila im Technopark \\
-4 & Abgabe Project Proposal\\
-5 & Phase 1 beendet; Test Framework sowie die „RMI with Coherence Control“ Lösung fertig.\\
-12 &  Phase 2 beendet. „RMI with Cache“ fertig und getestet. \\
-13 & Auswertung der Test Resultate
-\end{tabular}
+\vspace{1cm}
 
-\section{Literaturhinweise}
-Generelle Referenzen:\\
-Siehe Vorlesung über Verteilte Software Systeme.\\
-Weitere Literatur wird bei Bedarf zur Verfügung gestellt!
-\section{Beurteilung}
-Eine erfolgreiche Studienarbeit erhält 8 ECTS-Punkten (1 ECTS Punkt entspricht einer Arbeitsleistung von ca. 25 bis 30 Stunden). Für die Modulbeschreibung der Studienarbeit siehe 
-\url{https://unterricht.hsr.ch/staticWeb/allModules/10938_M_SAI.html}.\\ \\
-\begin{tabular}{l p{3cm} l l l}
-Gesichtspunkt & Gewicht \\ \hline
-1. Organisation, Durchführung & 1/5 \\
-2. Berichte (Abstract, Management Summary, techn. u. persönliche Berichte) sowie Gliederung, Darstellung, Sprache der gesamten Dokumentation & 1/5 \\
-3. Inhalt*) & 3/5
-\end{tabular}
-*) Die Unterteilung und Gewichtung von 3. Inhalt wird im Laufe dieser Arbeit mit dem Studenten vereinbart. Im Übrigen gelten die Bestimmungen der Abt. Informatik zur Durchführung von Studienarbeiten.\\ \\
-Rapperswil, den\\
+\noindent Rapperswil, den\\
 Der verantwortliche Dozent\\
 \end{document}

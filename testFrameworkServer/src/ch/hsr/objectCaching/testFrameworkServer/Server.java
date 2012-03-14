@@ -53,8 +53,9 @@ public class Server implements ServerInterface
 	{
 		try {
 			ClientInterface clientStub = (ClientInterface)Naming.lookup("rmi://" + client.getIp() + ":" + clientRmiPort + "/Client");
+			client.setClientStub(clientStub);
 			//TODO scenario erzeugen
-			clientStub.initialize("152.96.193.9", new Scenario(1));
+			clientStub.initialize("152.96.193.9", testCases.get(0).getScenario(1));
 		} catch (MalformedURLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -121,7 +122,7 @@ public class Server implements ServerInterface
 	@Override
 	public void setReady(String ip) 
 	{
-		System.out.println(ip);
+		System.out.println("Setted ready with: " + ip);
 		for(int i = 0; i < clients.size(); i++)
 		{
 			if(clients.get(i).getIp().equals(ip))
@@ -152,7 +153,16 @@ public class Server implements ServerInterface
 	
 	private void start()
 	{
-		
+		System.out.println("start");
+		for(int i = 0; i < clients.size(); i++)
+		{
+			try {
+				clients.get(i).getClientStub().start();
+			} catch (RemoteException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 	}
 	
 	private boolean checkAllReady()
@@ -178,7 +188,7 @@ public class Server implements ServerInterface
 			LocateRegistry.createRegistry(serverRmiPort);
 			ServerInterface skeleton = (ServerInterface) UnicastRemoteObject.exportObject(this, serverRmiPort);
 			Registry reg = LocateRegistry.getRegistry(serverRmiPort);
-			reg.rebind("blupp", skeleton);
+			reg.rebind("Server", skeleton);
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}

@@ -1,8 +1,11 @@
 package ch.hsr.objectCaching.testFrameworkServer;
 
+import ch.hsr.objectCaching.interfaces.ClientInterface;
+
 public class Client 
 {
 	private String ip;
+	private ClientInterface clientStub;
 	enum Status{
 		READY,
 		NOTREADY;
@@ -27,5 +30,13 @@ public class Client
 	public String getIp()
 	{
 		return this.ip;
+	}
+
+	public ClientInterface getClientStub() {
+		return clientStub;
+	}
+
+	public void setClientStub(ClientInterface clientStub) {
+		this.clientStub = clientStub;
 	}
 }

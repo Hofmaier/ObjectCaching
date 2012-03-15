@@ -8,6 +8,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 import java.util.Collection;
 
 import org.junit.Before;
@@ -16,12 +17,14 @@ import org.junit.Test;
 import ch.hsr.objectCaching.interfaces.Account;
 import ch.hsr.objectCaching.interfaces.AccountService;
 import ch.hsr.objectCaching.interfaces.MethodCall;
+import ch.hsr.objectCaching.interfaces.ReturnValue;
 
 public class TestAccountServiceStub {
 	
 	private AccountServiceStub accountService;
 	private ByteArrayOutputStream byteArrayOutputStream;
 	private ObjectOutputStream objectOutputStream;
+	private ObjectInputStream objectInputStream;
 
 	@Before
 	public void setUp() throws Exception {
@@ -36,7 +39,17 @@ public class TestAccountServiceStub {
 		IStreamProvider streamProviderfake = new StreamProviderFake();
 		accountService.setStreamProvider(streamProviderfake);
 		
+		ReturnValue returnValue = new ReturnValue();
+		Collection<Integer> val = new ArrayList<Integer>();
+		int objectID = 23;
+		val.add(objectID);
+		returnValue.setValue(val);
 		
+		ByteArrayOutputStream output = new ByteArrayOutputStream();
+		ObjectOutputStream oos = new ObjectOutputStream(output);
+		oos.writeObject(returnValue);
+		
+		objectInputStream = new ObjectInputStream(new ByteArrayInputStream(output.toByteArray()));
 		
 		Collection<Account> accounts = accountService.getAllAccounts();
 		
@@ -44,14 +57,14 @@ public class TestAccountServiceStub {
 		ObjectInputStream objectInputStream = new ObjectInputStream(byteArrayInputStream);
 		MethodCall actualMethodCall = (MethodCall) objectInputStream.readObject();
 		
-		Account accountFromServer;
+		Account accountFromServer = null;
 		for(Account account:accounts){
 			accountFromServer = account;
 		}
 		
-		
 		assertNotNull("collection is null", accounts);
 		assertEquals(AccountService.class.getName(), actualMethodCall.getClassName());
+		assertNotNull("account was null", accountFromServer);
 	}
 	
 	class StreamProviderFake implements IStreamProvider{
@@ -59,6 +72,11 @@ public class TestAccountServiceStub {
 		@Override
 		public ObjectOutputStream getObjectOutputStream() {
 			return objectOutputStream;
+		}
+
+		@Override
+		public ObjectInputStream getObjectInputStream() {
+			return objectInputStream;
 		}
 		
 	}

@@ -49,8 +49,19 @@ public class ClientController implements ClientInterface {
 	@Override
 	public void start() throws RemoteException {
 		testClient.start();
+		sendResults();
 	}
 	
+	private void sendResults() {
+		try {
+			String url = "rmi://" + "152.69.193.3" + ":" + SERVER_PORT + "/" + SERVER;
+			ServerInterface serverStub = (ServerInterface) Naming.lookup(url);
+			serverStub.setResults(testClient.getScenario());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
 	/**
 	 * @param args
 	 */

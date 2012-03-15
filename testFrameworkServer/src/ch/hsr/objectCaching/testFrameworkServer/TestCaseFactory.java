@@ -17,7 +17,6 @@ public class TestCaseFactory
 	public TestCaseFactory()
 	{
 		testCases = new ArrayList<TestCase>();
-		convertXML();
 	}
 	private TestCase generateTestCase(String systemUnderTest)
 	{
@@ -31,7 +30,7 @@ public class TestCaseFactory
 		return testCases;
 	}
 	
-	private void convertXML()
+	public void convertXML()
 	{
 		XMLInputFactory inputFactory = XMLInputFactory.newInstance();
 	    XMLStreamReader stax;

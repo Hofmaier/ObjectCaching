@@ -13,9 +13,9 @@ public class ReadAction extends Action {
 	
 	@Override
 	public void execute(Account account) {
-		result.setStartTime(System.currentTimeMillis());		
+		result.setStartNanoTime(System.nanoTime());		
 		account.getBalance();
-		result.setEndTime(System.currentTimeMillis());
+		result.setEndNanoTime(System.nanoTime());
 		result.setNumberOfTry(1);
 	}
 

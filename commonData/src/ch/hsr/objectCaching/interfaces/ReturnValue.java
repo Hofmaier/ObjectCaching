@@ -1,4 +1,4 @@
-package ch.hsr.objectCaching.rmiOnlyServer;
+package ch.hsr.objectCaching.interfaces;
 
 import java.io.Serializable;
 

@@ -235,7 +235,7 @@ public class Server implements ServerInterface
 
 	
 	@Override
-	public void setResults() 
+	public void setResults(Scenario scenario) 
 	{
 		//TODO: Auswertung der ankommenden Resultate
 		for(int i = 0; i < testCases.size(); i++)

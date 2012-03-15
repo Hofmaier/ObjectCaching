@@ -13,6 +13,7 @@
 \date{\today}
 \begin{document}
 \maketitle
+\vspace{1cm}
 \section{Betreuer}
 J.M.Joller  Abteilung für Informatik HSR/FHO
 
@@ -133,14 +134,14 @@ Das Szenario soll zeigen, wie lange Methodenaufrufe dauern, wenn keine Konflikte
 \label{sec:race-condition}
 $~~$ \\
 Das Szenario soll zeigen wie viele Konflikte auftreten, wenn beide Clients permanent Kontoerhöhungen ausführen wollen.
-Beide Clients führen den Prozess Kontostand-Erhöhen 10000 mal aus. Server startet die Clients hintereinander, mit einer möglichst kleinen Verzögerung.
+Beide Clients führen den Prozess Kontostand-Erhöhen 10000 mal aus. Der Server startet die Clients, mit einer möglichst kleinen Verzögerung, hintereinander. 
 
 \paragraph{Erzwungene Konflikte}
 \label{sec:erzwungene-konflikte}
 $~~$ \\
-In diesem Szenario soll jeder setBalance-Aufruf von Client 2 zu einer Konfliktsituation führen. Damit sind Konfliktsituation nicht dem Zufall überlassen, sondern treten zuverlässig auf und können besser analysiert werden.
+In diesem Szenario soll jeder setBalance-Aufruf von Client2 zu einer Konfliktsituation führen. Damit sind Konfliktsituation nicht dem Zufall überlassen, sondern treten zuverlässig auf und können besser analysiert werden.
 
-Dies wird folgendermassen erreicht:
+\noindent Dies wird folgendermassen erreicht:
 \begin{itemize}
 \item Client1 führt ununterbrochen Kontoerhöhungen aus
 \item Client2 führt 100 Kontoerhöhungen aus. Nach dem getBalance()-Aufruf wartet Client2 10ms
@@ -149,11 +150,11 @@ Dies wird folgendermassen erreicht:
 \item Client2 führt nun eine Schreiboperation aus und erhält eine Konfliktmeldung
 \end{itemize}
 
-\section{Durchführung}
+\section{Sitzungen}
 Mit dem Betreuer dieser Arbeit findet eine wöchentliche Sitzung statt. Dabei werden die Fortschritte besprochen und falls vorhanden, offene Fragen diskutiert. Die Länge der Sitzung ist daher variabel, je nachdem ob und wieviele offene Fragen und Probleme bestehen.
 
 
-\vspace{1cm}
+\vspace{2cm}
 
 \noindent Rapperswil, den\\
 Der verantwortliche Dozent\\

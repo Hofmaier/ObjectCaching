@@ -5,11 +5,12 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
+import ch.hsr.objectCaching.interfaces.Account;
 import ch.hsr.objectCaching.interfaces.MethodCall;
 
 
 
-public class AccountStub {
+public class AccountStub implements Account{
 
 	private int balance;
 	
@@ -45,6 +46,12 @@ public class AccountStub {
 	public static void main(String[] args){
 		AccountStub account = new AccountStub();
 		System.out.println(account.getBalance()); 
+	}
+
+	@Override
+	public void setBalance(int balance) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 }

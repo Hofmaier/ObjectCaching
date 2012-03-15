@@ -7,6 +7,6 @@ public class RMIonlyClientSystem implements ClientSystemUnderTest {
 
 	@Override
 	public AccountService getAccountService() {
-		return null;
+		return new AccountServiceStub();
 	}
 }

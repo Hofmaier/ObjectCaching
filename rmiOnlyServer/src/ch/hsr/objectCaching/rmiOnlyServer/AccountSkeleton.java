@@ -7,6 +7,7 @@ import java.util.Set;
 
 import ch.hsr.objectCaching.interfaces.Account;
 import ch.hsr.objectCaching.interfaces.MethodCall;
+import ch.hsr.objectCaching.interfaces.ReturnValue;
 
 
 public class AccountSkeleton implements RMIonlySkeleton {

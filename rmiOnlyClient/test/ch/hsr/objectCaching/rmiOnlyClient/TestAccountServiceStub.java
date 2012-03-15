@@ -36,6 +36,8 @@ public class TestAccountServiceStub {
 		IStreamProvider streamProviderfake = new StreamProviderFake();
 		accountService.setStreamProvider(streamProviderfake);
 		
+		
+		
 		Collection<Account> accounts = accountService.getAllAccounts();
 		
 		ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(byteArrayOutputStream.toByteArray());

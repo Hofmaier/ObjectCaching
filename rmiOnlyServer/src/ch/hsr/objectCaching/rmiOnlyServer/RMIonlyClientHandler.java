@@ -7,6 +7,7 @@ import java.io.OutputStream;
 
 import ch.hsr.objectCaching.interfaces.ClientHandler;
 import ch.hsr.objectCaching.interfaces.MethodCall;
+import ch.hsr.objectCaching.interfaces.ReturnValue;
 
 public class RMIonlyClientHandler extends ClientHandler {
 

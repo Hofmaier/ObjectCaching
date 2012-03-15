@@ -11,6 +11,7 @@ import org.junit.Test;
 
 import ch.hsr.objectCaching.interfaces.Account;
 import ch.hsr.objectCaching.interfaces.MethodCall;
+import ch.hsr.objectCaching.interfaces.ReturnValue;
 
 public class TestAccountSkeleton {
 

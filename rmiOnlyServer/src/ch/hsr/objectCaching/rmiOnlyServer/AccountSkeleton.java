@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Set;
 
 import ch.hsr.objectCaching.interfaces.Account;
+import ch.hsr.objectCaching.interfaces.MethodCall;
 
 
 public class AccountSkeleton implements RMIonlySkeleton {

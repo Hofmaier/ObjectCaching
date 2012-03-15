@@ -1,5 +1,7 @@
 package ch.hsr.objectCaching.rmiOnlyServer;
 
+import ch.hsr.objectCaching.interfaces.MethodCall;
+
 public class AccountServiceSkeleton implements RMIonlySkeleton {
 	
 	private AccountSkeleton accountSkeleton;

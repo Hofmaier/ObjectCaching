@@ -9,6 +9,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import ch.hsr.objectCaching.interfaces.AccountService;
+import ch.hsr.objectCaching.interfaces.MethodCall;
 
 public class TestAccountServiceSkeleton {
 	

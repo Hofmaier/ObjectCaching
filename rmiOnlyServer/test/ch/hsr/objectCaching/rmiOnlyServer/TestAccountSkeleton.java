@@ -10,6 +10,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import ch.hsr.objectCaching.interfaces.Account;
+import ch.hsr.objectCaching.interfaces.MethodCall;
 
 public class TestAccountSkeleton {
 

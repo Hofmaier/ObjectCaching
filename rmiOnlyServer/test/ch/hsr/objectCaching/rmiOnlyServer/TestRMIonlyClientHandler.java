@@ -11,6 +11,8 @@ import java.io.ObjectOutputStream;
 import org.junit.Before;
 import org.junit.Test;
 
+import ch.hsr.objectCaching.interfaces.MethodCall;
+
 public class TestRMIonlyClientHandler {
 	
 	private RMIonlyClientHandler clientHandler;

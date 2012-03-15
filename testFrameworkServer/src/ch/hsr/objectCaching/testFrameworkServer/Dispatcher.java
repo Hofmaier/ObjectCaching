@@ -13,7 +13,7 @@ import ch.hsr.objectCaching.interfaces.ServerSystemUnderTest;
 
 public class Dispatcher implements Runnable
 {
-	private ServerSocket server;
+	private ServerSocket serverSocket;
 	ClientHandler clientHandler;
 	private ServerSystemUnderTest systemUnderTest;
 	
@@ -50,7 +50,7 @@ public class Dispatcher implements Runnable
 	public Dispatcher(int port)
 	{
 		try {
-			server = new ServerSocket(port);
+			serverSocket = new ServerSocket(port);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -62,7 +62,7 @@ public class Dispatcher implements Runnable
 		while(true)
 		{
 			try {
-				Socket socket = server.accept();
+				Socket socket = serverSocket.accept();
 				clientHandler = systemUnderTest.getClientHandlerInstance();
 				System.out.println("Client connected");
 				InputStream inputStream = socket.getInputStream();

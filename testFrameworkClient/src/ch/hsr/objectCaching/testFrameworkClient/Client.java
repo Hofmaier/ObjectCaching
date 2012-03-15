@@ -5,8 +5,9 @@ import java.util.Collection;
 
 import ch.hsr.objectCaching.interfaces.Account;
 import ch.hsr.objectCaching.interfaces.AccountService;
+import ch.hsr.objectCaching.interfaces.ClientSystemUnderTest;
 
-public class Client implements ClientUnderTest{
+public class Client implements ClientSystemUnderTest{
 
 	private static final int SERVER_PORT = 24526;
 	private static final String ACCOUNT_SEVICE = "AccountService";
@@ -16,7 +17,6 @@ public class Client implements ClientUnderTest{
 	private Account account;
 
 	public Client() {
-		//init();
 	}
 
 	private void init() {
@@ -42,7 +42,19 @@ public class Client implements ClientUnderTest{
 	}
 
 	public void write(int value) {
-		System.out.println("write done: " + value);
+//		long startNano = System.nanoTime();
+//		long startMili	= System.currentTimeMillis();
+//		try {
+//			Thread.sleep(10);
+//		} catch (InterruptedException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		long endNano = System.nanoTime();
+//		long endMili	= System.currentTimeMillis();
+//		System.out.println("Task done in nano: " + (endNano-startNano));
+//		System.out.println("Task done in nano: " + (endMili-startMili));
+		System.out.println("write " + value);
 //		Account acc = getNextAccount();
 //		acc.setBalance(value);
 	}
@@ -55,4 +67,9 @@ public class Client implements ClientUnderTest{
 		
 	}
 
+	@Override
+	public AccountService getAccountService() {
+		//init();
+		return null;
+	}
 }

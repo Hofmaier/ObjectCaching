@@ -2,32 +2,16 @@ package ch.hsr.objectCaching.interfaces;
 
 import java.io.Serializable;
 
-public class Action implements Serializable
+public abstract class Action implements Serializable
 {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private String action;
-	private int value;
-	
-	public String getAction() {
-		return action;
-	}
-
-	public void setAction(String action) {
-		this.action = action;
-	}
-
-	public int getValue() {
-		return value;
-	}
-
-	public void setValue(int value) {
-		this.value = value;
-	}
+	//TODO replace with object
+	private String result;
 	
 	
-	
+	public abstract void execute(ClientSystemUnderTest client);	
 	
 }

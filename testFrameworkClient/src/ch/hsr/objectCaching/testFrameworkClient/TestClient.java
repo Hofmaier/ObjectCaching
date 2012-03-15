@@ -10,6 +10,7 @@ import java.util.Iterator;
 
 import ch.hsr.objectCaching.interfaces.Action;
 import ch.hsr.objectCaching.interfaces.ClientInterface;
+import ch.hsr.objectCaching.interfaces.ClientSystemUnderTest;
 import ch.hsr.objectCaching.interfaces.Scenario;
 import ch.hsr.objectCaching.interfaces.ServerInterface;
 
@@ -18,7 +19,7 @@ public class TestClient implements ClientInterface{
 	private static final int CLIENT_PORT = 1099;
 	private static final int SERVER_PORT = 24526;
 	private static final String SERVER = "Server";
-	private Client client;
+	private ClientSystemUnderTest client;
 	private Scenario scenario;
 	
 	public TestClient(){}
@@ -68,11 +69,7 @@ public class TestClient implements ClientInterface{
 		Iterator<Action> actionIter = scenario.getActionList().iterator();
 		while (actionIter.hasNext()) {
 			Action action = actionIter.next();		
-			if (action.getAction().equals("setBalance")) {
-				client.write(action.getValue());
-			} else if (action.getAction().equals("getBalance")) {
-				client.read();
-			}
+			action.execute(client);
 		}
 	}
 }

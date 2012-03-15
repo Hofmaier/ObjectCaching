@@ -30,23 +30,20 @@ public class Scenario implements Serializable
 	}
 	public void setWriteAction(int count, int value)
 	{
-		Action temp;
+		WriteAction temp;
 		for(int i = 0; i < count; i++)
 		{
-			temp = new Action();
-			temp.setAction("setBalance");
-			temp.setValue(value);
+			temp = new WriteAction(value);
 			actionList.add(temp);
 		}
 	}
 	
 	public void setReadAction(int count)
 	{
-		Action temp;
+		ReadAction temp;
 		for(int i = 0; i < count; i++)
 		{
-			temp = new Action();
-			temp.setAction("getBalance");
+			temp = new ReadAction();
 			actionList.add(temp);
 		}
 	}

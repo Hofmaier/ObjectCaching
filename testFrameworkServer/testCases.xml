@@ -1,17 +1,32 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<TestCase SystemUnderTest="RMIOnly">
-	<Scenario id="1">
-		<ActionSequence>
-			<Write count="10" value="2"></Write>
-			<Read count="2"></Read>
-			<Write count="5" value="5"></Write>
-		</ActionSequence>
-	</Scenario>
-	<Scenario id="2">
-		<ActionSequence>
-			<Write count="12" value="12"></Write>
-			<Read count="14"></Read>
-			<Write count="4" value="56"></Write>
-		</ActionSequence>
-	</Scenario>
-</TestCase>
+<TestRun>
+	<TestCase SystemUnderTest="RMIOnly">
+		<Scenario id="1">
+			<ActionSequence>
+				<Write count="10" value="2"></Write>
+				<Read count="2"></Read>
+				<Write count="5" value="5"></Write>
+			</ActionSequence>
+		</Scenario>
+		<Scenario id="2">
+			<ActionSequence>
+				<Write count="12" value="12"></Write>
+				<Read count="14"></Read>
+				<Write count="4" value="56"></Write>
+			</ActionSequence>
+		</Scenario>
+	</TestCase>
+	<TestCase SystemUnderTest="CachingBaby">
+		<Scenario id="1">
+			<ActionSequence>
+				<Write count="10" value="2"></Write>
+			</ActionSequence>
+		</Scenario>
+		<Scenario id="2">
+			<ActionSequence>
+				<Read count="14"></Read>
+				<Write count="4" value="56"></Write>
+			</ActionSequence>
+		</Scenario>
+	</TestCase>
+</TestRun>

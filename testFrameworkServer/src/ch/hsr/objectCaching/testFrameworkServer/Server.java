@@ -34,18 +34,26 @@ public class Server implements ServerInterface
 	private int serverSocketPort;
 	private String serverIp;
 	private TestCase activeTestCase;
+	private TestCaseFactory factory;
 	
 	public Server()
 	{
 		loadInitFile();
 		prepareClientList();
 		loadSettings();
-		testCases = new TestCaseFactory().getTestCases();
-		activeTestCase = testCases.get(0);
+		generateTestCases();
 		establishClientConnection();
 		createRmiRegistry();
 		dispatcher = new Dispatcher(serverSocketPort);
 		new Thread(dispatcher).start();
+	}
+	
+	private void generateTestCases()
+	{
+		factory = new TestCaseFactory();
+		factory.convertXML();
+		testCases = factory.getTestCases();
+		activeTestCase = testCases.get(0);
 	}
 	
 	private void startTestCase()

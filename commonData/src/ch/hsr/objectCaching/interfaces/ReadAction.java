@@ -13,8 +13,8 @@ public class ReadAction extends Action {
 	
 	
 	@Override
-	public void execute(ClientSystemUnderTest client) {
-		result = client.read();
+	public void execute(Account account) {
+		result = account.getBalance();
 	}
 
 }

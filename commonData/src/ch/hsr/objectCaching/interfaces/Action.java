@@ -12,6 +12,6 @@ public abstract class Action implements Serializable
 	private String result;
 	
 	
-	public abstract void execute(ClientSystemUnderTest client);	
+	public abstract void execute(Account account);	
 	
 }

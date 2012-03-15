@@ -8,15 +8,14 @@ public class WriteAction extends Action{
 	 */
 	private static final long serialVersionUID = 1L;
 	private int value;
-	
-	public WriteAction(int balance){
-		value = balance;
+
+	public WriteAction(int value){
+		this.value = value;
 	}
 	
-	
 	@Override
-	public void execute(ClientSystemUnderTest client) {
-		client.write(value);
+	public void execute(Account account) {
+		account.setBalance(value);
 	}
 
 }

@@ -15,7 +15,11 @@ public class WriteAction extends Action{
 	
 	@Override
 	public void execute(Account account) {
+		result.setStartTime(System.currentTimeMillis());		
+		//TODO loop until successful
 		account.setBalance(value);
+		result.setEndTime(System.currentTimeMillis());
+		result.setNumberOfTry(1);
 	}
 
 }

@@ -1,5 +1,6 @@
 package ch.hsr.objectCaching.rmiOnlyClient;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import java.io.ByteArrayInputStream;
@@ -13,6 +14,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import ch.hsr.objectCaching.interfaces.Account;
+import ch.hsr.objectCaching.interfaces.AccountService;
+import ch.hsr.objectCaching.interfaces.MethodCall;
 
 public class TestAccountServiceStub {
 	
@@ -32,15 +35,21 @@ public class TestAccountServiceStub {
 	public void testGetAllAccounts() throws IOException, ClassNotFoundException {
 		IStreamProvider streamProviderfake = new StreamProviderFake();
 		accountService.setStreamProvider(streamProviderfake);
+		
 		Collection<Account> accounts = accountService.getAllAccounts();
 		
 		ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
 		ObjectInputStream objectInputStream = new ObjectInputStream(byteArrayInputStream);
+		MethodCall actualMethodCall = (MethodCall) objectInputStream.readObject();
 		
-		//MethodCall actualMethodCall = (MethodCall) objectInputStream.readObject();
-		//MethodCall expected = new MethodCall();
-		//expected.
+		Account accountFromServer;
+		for(Account account:accounts){
+			accountFromServer = account;
+		}
+		
+		
 		assertNotNull("collection is null", accounts);
+		assertEquals(AccountService.class.getName(), actualMethodCall.getClassName());
 	}
 	
 	class StreamProviderFake implements IStreamProvider{

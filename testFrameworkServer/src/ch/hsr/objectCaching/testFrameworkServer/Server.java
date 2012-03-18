@@ -72,8 +72,7 @@ public class Server implements ServerInterface
 			if((temp = activeTestCase.getScenarios().get(i)) != null)
 			{
 				try {
-					//clients.get(i).getClientStub().initialize(serverIp, temp, activeTestCase.getSystemUnderTest());
-					clients.get(i).getClientStub().initialize(serverIp, new Scenario(1), "lala");
+					clients.get(i).getClientStub().initialize(serverIp, serverSocketPort, temp, activeTestCase.getSystemUnderTest());
 				} catch (RemoteException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -82,7 +81,7 @@ public class Server implements ServerInterface
 			else
 			{
 				try {
-					clients.get(i).getClientStub().initialize(serverIp, activeTestCase.getScenario(0), activeTestCase.getSystemUnderTest());
+					clients.get(i).getClientStub().initialize(serverIp, serverSocketPort, activeTestCase.getScenario(0), activeTestCase.getSystemUnderTest());
 				} catch (RemoteException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

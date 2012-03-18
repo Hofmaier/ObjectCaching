@@ -1,6 +1,7 @@
 package ch.hsr.objectCaching.testFrameworkClient;
 
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.MalformedURLException;
 import java.net.UnknownHostException;
 import java.rmi.Naming;
@@ -27,8 +28,11 @@ public class ClientController implements ClientInterface {
 	}
 
 	@Override
-	public void initialize(String serverIP, Scenario scenario, String systemUnderTest) throws RemoteException {
+	public void initialize(String serverIP, int serverSocketPort, Scenario scenario, String systemUnderTest) throws RemoteException {
 		ClientSystemUnderTest clientSystemUnderTest = createClientSystemUnderTest(systemUnderTest);
+		
+		InetSocketAddress socket = new InetSocketAddress(serverIP, serverSocketPort);
+		clientSystemUnderTest.setServerSocketAdress(socket);
 		
 		testClient = new TestClient(scenario);	
 		testClient.setAccountService(clientSystemUnderTest.getAccountService());

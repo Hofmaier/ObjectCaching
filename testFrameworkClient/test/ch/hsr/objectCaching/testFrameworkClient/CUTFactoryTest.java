@@ -9,7 +9,7 @@ import ch.hsr.objectCaching.interfaces.ClientSystemUnderTest;
 public class CUTFactoryTest {
 
 	@Test
-	public void getInstanceOf() {
+	public void testClientCreation() {
 		try {
 			ClientSystemUnderTest client = CUTFactory.generateCUT("ch.hsr.objectCaching.testFrameworkClient.ClientUnderTestFake");
 			assertTrue(client instanceof ClientUnderTestFake);

@@ -27,7 +27,7 @@ public class ClientController implements ClientInterface {
 	}
 
 	@Override
-	public void initialize(String serverIP, Scenario scenario, String systemUnderTest) throws RemoteException {
+	public void initialize(String serverIP, int serverSocketPort, Scenario scenario, String systemUnderTest) throws RemoteException {
 		ClientSystemUnderTest clientSystemUnderTest = createClientSystemUnderTest(systemUnderTest);
 		
 		testClient = new TestClient(scenario);	

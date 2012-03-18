@@ -11,11 +11,11 @@ import ch.hsr.objectCaching.interfaces.ClientSystemUnderTest;
 public class ClientUnderTestFake implements ClientSystemUnderTest{
 
 	private ArrayList<Account> accounts;
+	private InetSocketAddress socketAddress;
 	
 	public ClientUnderTestFake(){
 		initAccounts();
 	}
-	
 	
 	private void initAccounts() {
 		accounts = new ArrayList<Account>();
@@ -23,11 +23,9 @@ public class ClientUnderTestFake implements ClientSystemUnderTest{
 		accounts.add(new FakeAccount());	
 	}
 
-
 	@Override
 	public AccountService getAccountService() {
-		return new AccountService() {
-			
+		return new AccountService() {			
 			@Override
 			public Collection<Account> getAllAccounts() {
 				return accounts;
@@ -37,15 +35,11 @@ public class ClientUnderTestFake implements ClientSystemUnderTest{
 
 	@Override
 	public void setServerSocketAdress(InetSocketAddress socketAdress) {
-		// TODO Auto-generated method stub
-		
+		this.socketAddress = socketAdress;	
 	}
-	
-	
-	public class FakeAccount implements Account{
-
-		private int balance = 0;
 		
+	public class FakeAccount implements Account{
+		private int balance = 0;	
 		public FakeAccount(){}
 		
 		@Override
@@ -56,8 +50,7 @@ public class ClientUnderTestFake implements ClientSystemUnderTest{
 		@Override
 		public void setBalance(int balance) {
 			this.balance = balance;
-		}
-		
+		}		
 	}
 
 }

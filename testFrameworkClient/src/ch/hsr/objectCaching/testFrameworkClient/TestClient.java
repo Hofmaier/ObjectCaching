@@ -26,6 +26,10 @@ public class TestClient {
 		accounts = (ArrayList<Account>) accountService.getAllAccounts();
 	}
 	
+	public ArrayList<Account> getAccounts(){
+		return accounts;
+	}
+	
 
 	public void start() {
 		System.out.println("starting...");

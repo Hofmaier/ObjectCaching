@@ -26,13 +26,14 @@ public class AccountServiceStub implements AccountService {
 		Collection<Integer> objectIDcollection = (Collection<Integer>) returnValue.getValue(); 
 		
 		for(Integer i:objectIDcollection){
-			retValCollection.add(new AccountStub());
+			AccountStub accountStub = new AccountStub();
+			accountStub.setObjectID(i);
+			retValCollection.add(accountStub);
 		}
 			
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return retValCollection;

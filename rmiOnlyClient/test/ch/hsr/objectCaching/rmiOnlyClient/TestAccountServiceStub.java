@@ -65,6 +65,9 @@ public class TestAccountServiceStub {
 		assertNotNull("collection is null", accounts);
 		assertEquals(AccountService.class.getName(), actualMethodCall.getClassName());
 		assertNotNull("account was null", accountFromServer);
+		
+		AccountStub accountStub = (AccountStub) accountFromServer;
+		assertEquals(objectID, accountStub.getID());
 	}
 	
 	class StreamProviderFake implements IStreamProvider{

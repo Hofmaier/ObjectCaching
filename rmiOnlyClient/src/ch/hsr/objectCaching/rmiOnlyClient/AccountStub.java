@@ -13,6 +13,7 @@ import ch.hsr.objectCaching.interfaces.MethodCall;
 public class AccountStub implements Account{
 
 	private int balance;
+	private int objectID;
 	
 	String invokeMethodMessage = "<invokeMethod><objectid>23</objectid><methodname>getBalance()</methodname></invokeMethod>";
 	
@@ -52,6 +53,14 @@ public class AccountStub implements Account{
 	public void setBalance(int balance) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	public int getID() {
+		return objectID;
+	}
+
+	public void setObjectID(int objectID) {
+		this.objectID = objectID;
 	}
 	
 }

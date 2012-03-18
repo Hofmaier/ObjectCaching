@@ -175,6 +175,7 @@ public class Server implements ServerInterface
 	@Override
 	public void setReady(String ip) 
 	{
+		
 		System.out.println("Setted ready with: " + ip);
 		for(int i = 0; i < clients.size(); i++)
 		{

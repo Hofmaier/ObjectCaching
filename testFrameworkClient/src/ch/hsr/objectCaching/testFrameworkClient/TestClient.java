@@ -17,9 +17,17 @@ public class TestClient {
 	public TestClient(Scenario scenario){
 		this.scenario = scenario;
 	}
+	
+	public Scenario getScenario(){
+		return scenario;
+	}
 
 	public void init(){
 		accounts = (ArrayList<Account>) accountService.getAllAccounts();
+	}
+	
+	public ArrayList<Account> getAccounts(){
+		return accounts;
 	}
 	
 

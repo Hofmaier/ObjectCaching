@@ -5,11 +5,15 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
+import ch.hsr.objectCaching.interfaces.Account;
+import ch.hsr.objectCaching.interfaces.MethodCall;
 
 
-public class AccountStub {
+
+public class AccountStub implements Account{
 
 	private int balance;
+	private int objectID;
 	
 	String invokeMethodMessage = "<invokeMethod><objectid>23</objectid><methodname>getBalance()</methodname></invokeMethod>";
 	
@@ -43,6 +47,20 @@ public class AccountStub {
 	public static void main(String[] args){
 		AccountStub account = new AccountStub();
 		System.out.println(account.getBalance()); 
+	}
+
+	@Override
+	public void setBalance(int balance) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public int getID() {
+		return objectID;
+	}
+
+	public void setObjectID(int objectID) {
+		this.objectID = objectID;
 	}
 	
 }

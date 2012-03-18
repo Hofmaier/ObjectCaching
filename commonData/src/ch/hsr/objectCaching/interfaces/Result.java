@@ -4,37 +4,41 @@ import java.io.Serializable;
 
 public class Result implements Serializable{
 	
-	private long startTime;
-	private long endTime;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private long startTimeNano;
+	private long endTimeNano;
 	private int numberOfTry = 0;
 	
 	public Result(){
-		startTime = 0;
-		endTime = 0;
+		startTimeNano = 0;
+		endTimeNano = 0;
 	}
 	
-	public long getStartTime() {
-		return startTime;
+	public long getStartNanoTime() {
+		return startTimeNano;
 	}
 
 
-	public void setStartTime(long startTime) {
-		this.startTime = startTime;
+	public void setStartNanoTime(long startTime) {
+		this.startTimeNano = startTime;
 	}
 
 
-	public long getEndTime() {
-		return endTime;
+	public long getEndNanoTime() {
+		return endTimeNano;
 	}
 
 
-	public void setEndTime(long endTime) {
-		this.endTime = endTime;
+	public void setEndNanoTime(long endTime) {
+		this.endTimeNano = endTime;
 	}
 	
 	
 	public long getDuration(){
-		return endTime - startTime;
+		return endTimeNano - startTimeNano;
 	}
 
 	public int getNumberOfTry() {

@@ -19,22 +19,30 @@ public class ClientController implements ClientInterface {
 	private static final String SERVER = "Server";
 	private ClientSystemUnderTest clientSystemUnderTest;
 	private TestClient testClient;
-	
+
+	public ClientController(){}
 	
 	@Override
-	public void initialize(String serverIP, Scenario scenario,
-			String systemUnderTest) throws RemoteException {
+	public void initialize(String serverIP, Scenario scenario, String systemUnderTest) throws RemoteException {
 		testClient = new TestClient(scenario);
-		try {
-			clientSystemUnderTest = CUTFactory.generateCUT(systemUnderTest);
-		} catch (Exception e) {
-			System.out.println("Generating Client System Under Test failed: " + e.getMessage());
-		}
+		clientSystemUnderTest = createClientSystemUnderTest(systemUnderTest);
 		testClient.setAccountService(clientSystemUnderTest.getAccountService());
 		testClient.init();
 		notifyServer(serverIP, SERVER_PORT);
 	}
-	
+
+	private ClientSystemUnderTest createClientSystemUnderTest(String systemUnderTestName) {
+
+		ClientSystemUnderTest client = null;
+		try {
+			client = CUTFactory.generateCUT(systemUnderTestName);
+		} catch (Exception e) {
+			System.out.println("Generating Client System Under Test failed: " + e.getMessage());
+		}
+		return client;
+
+	}
+
 	private static void notifyServer(String serverIP, int port) {
 		try {
 			String url = "rmi://" + serverIP + ":" + port + "/" + SERVER;
@@ -51,7 +59,7 @@ public class ClientController implements ClientInterface {
 		testClient.start();
 		sendResults();
 	}
-	
+
 	private void sendResults() {
 		try {
 			String url = "rmi://" + "152.69.193.3" + ":" + SERVER_PORT + "/" + SERVER;
@@ -72,11 +80,10 @@ public class ClientController implements ClientInterface {
 			ClientInterface skeleton = (ClientInterface) UnicastRemoteObject.exportObject(c, CLIENT_PORT);
 			Registry r = LocateRegistry.getRegistry(CLIENT_PORT);
 			r.rebind("Client", skeleton);
-			System.out.println("Client ready");		
+			System.out.println("Client ready");
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
 	}
-
 
 }

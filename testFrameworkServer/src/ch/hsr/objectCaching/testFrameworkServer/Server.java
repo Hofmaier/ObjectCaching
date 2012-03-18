@@ -72,7 +72,8 @@ public class Server implements ServerInterface
 			if((temp = activeTestCase.getScenarios().get(i)) != null)
 			{
 				try {
-					clients.get(i).getClientStub().initialize(serverIp, temp, activeTestCase.getSystemUnderTest());
+					//clients.get(i).getClientStub().initialize(serverIp, temp, activeTestCase.getSystemUnderTest());
+					clients.get(i).getClientStub().initialize(serverIp, new Scenario(1), "lala");
 				} catch (RemoteException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

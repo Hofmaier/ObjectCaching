@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <TestRun>
-	<TestCase SystemUnderTest="RMIOnly">
+	<TestCase SystemUnderTest="RMIOnlyServerSystem">
 		<Scenario id="1">
 			<ActionSequence>
 				<Write count="10" value="2"></Write>

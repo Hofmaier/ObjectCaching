@@ -6,10 +6,14 @@ import ch.hsr.objectCaching.interfaces.AccountService;
 import ch.hsr.objectCaching.interfaces.ClientSystemUnderTest;
 
 public class RMIonlyClientSystem implements ClientSystemUnderTest {
+	
+	private IStreamProvider streamProvider = new StreamProvider();
 
 	@Override
 	public AccountService getAccountService() {
-		return new AccountServiceStub();
+		AccountServiceStub accountServiceStub = new AccountServiceStub();
+		accountServiceStub.setStreamProvider(streamProvider);
+		return accountServiceStub;
 	}
 
 	@Override

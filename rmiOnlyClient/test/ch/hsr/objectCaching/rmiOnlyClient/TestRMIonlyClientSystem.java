@@ -18,8 +18,9 @@ public class TestRMIonlyClientSystem {
 
 	@Test
 	public void testGetAccountService() {
-		AccountService accountService = system.getAccountService();
+		AccountServiceStub accountService = (AccountServiceStub) system.getAccountService();
 		assertNotNull("accountService is null", accountService);
+		assertNotNull("streamprovider is null", accountService.getStreamProvider());
 	}
 
 }

@@ -43,12 +43,16 @@ public class AccountServiceStub implements AccountService {
 		MethodCall methodCall = new MethodCall();
 		methodCall.setClassName(AccountService.class.getName());
 		ObjectOutputStream oos = streamProvider.getObjectOutputStream();
-			oos.writeObject(methodCall);
-			oos.close();
+		oos.writeObject(methodCall);
+		oos.close();
 	}
 
 	public void setStreamProvider(IStreamProvider streamProvider) {
 		this.streamProvider = streamProvider;
+	}
+
+	public IStreamProvider getStreamProvider() {
+		return streamProvider;
 	}
 
 }

@@ -14,6 +14,7 @@ public class AccountStub implements Account{
 
 	private int balance;
 	private int objectID;
+	private IStreamProvider streamProvider;
 	
 	String invokeMethodMessage = "<invokeMethod><objectid>23</objectid><methodname>getBalance()</methodname></invokeMethod>";
 	
@@ -51,7 +52,6 @@ public class AccountStub implements Account{
 
 	@Override
 	public void setBalance(int balance) {
-		// TODO Auto-generated method stub
 		
 	}
 

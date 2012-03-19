@@ -26,14 +26,15 @@ Mercury ist ein Datenverarbeitungssystem welches es Clients ermöglicht Methoden
 \end{itemize}
 
 \section{Ziele der Arbeit}
-Die Arbeit wurde durch Mercury motiviert, jedoch sind die Aufgaben allgemeiner formuliert und somit von Mercury losgelöst.
+Die Problemebereiche von Mercury sind Ausganglage für diese Arbeit. Die Ziele dieser Arbeit sind jedoch losgelöst von Mercury und werden in einem generelleren Kontext betrachtet.
+
 \subsection{Prioritaeten}
 \label{sec:prioritaeten}
 
 \begin{enumerate}
 \item Das ‘‘Lost Update’’-Problem soll vermieden werden.
 \begin{itemize}
-\item Kann ein Objekt von mehreren Clients modifiziert werden, so muss bei einer Schreiboperation garantiert werden, dass der Client immer mit dem aktuellesten Wert arbeitet. Wird dies nicht geprüft kann es dazu führen das Änderungen verloren gehen.
+\item Kann ein Objekt von mehreren Clients modifiziert werden, so muss bei einer Schreiboperation garantiert werden, dass ein Client vor der Schreiboperation den aktuellen Wert aus dem Objekt gelesen hat. Wird dies nicht geprüft kann es dazu führen das Änderungen, welche ein anderer Client zwischenzeitlich gemacht hat, verloren gehen.
 \end{itemize}
 \item Die Abhandlung der Schreib -und Lesezugriffe auf das Objekt, welches auf dem Server liegt, soll für den Client möglichst schnell passieren.
 \end{enumerate}
@@ -49,7 +50,7 @@ In dieser Semesterarbeit soll ein Konzept erarbeitet werden, welches Lost Update
 \subsubsection{Testframework}
 \label{sec:testframework}
 
-Um das System zu testen, wird parallel dazu ein Testframework entwickelt. Dieses Framework soll in der Lage sein, unterschiedliche RMI Systeme als Server und Clients zu starten. Das Testframework ist in der Lage, eine Szenariobeschreibung, welche sich über eine XML Datei spezifizieren lässt, einzulesen und dieses Szenario mit dem zu testenden System durchzuspielen. Ein Szenario besteht aus einer Abfolge von Methoden-Aufrufen, welche der jeweilige Client tätigen muss. Das Framework sammelt dabei Messdaten über die Zeitdauer der einzelnen Methodenaufrufe. Die Messdaten sollen es ermöglichen abzuwägen, welche Systeme mit welchen Parameter sich für welchen Anwendungszweck eignen. Die Auswertung eines Testlaufs wird in eine Datei abgespeichert. Das Testframework registriert das Auftreten von Schreib-Konfikten beim Aufruf von Schreibmethoden. 
+Um das System zu testen, wird parallel dazu ein Testframework entwickelt. Dieses Framework soll in der Lage sein, unterschiedliche RMI Systeme als Server und Clients zu starten. Das Testframework ist in der Lage, eine Szenariobeschreibung einzulesen und dieses Szenario mit dem zu testenden System durchzuspielen. Ein Szenario lässt sich leicht spezifizieren und besteht aus einer Abfolge von Methoden-Aufrufen, welche der jeweilige Client tätigen muss. Das Framework sammelt dabei Messdaten über die Zeitdauer der einzelnen Methodenaufrufe. Die Messdaten sollen es ermöglichen abzuwägen, welche Systeme mit welchen Parameter sich für welchen Anwendungszweck eignen. Das Testframework registriert das Auftreten von Schreib-Konfikten beim Aufruf von Schreibmethoden. Alle Messdaten werden in Dateien gespeichert um eine spätere Interpretation der Resultate zu ermöglichen.
 
 \subsection{Erweiterte Ziele}
 \label{sec:erweiterte-ziele}

@@ -2,10 +2,13 @@ package ch.hsr.objectCaching.rmiOnlyServer;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Set;
+import java.util.List;
 
 import ch.hsr.objectCaching.interfaces.Account;
+import ch.hsr.objectCaching.interfaces.MethodCall;
+import ch.hsr.objectCaching.interfaces.ReturnValue;
 
 
 public class AccountSkeleton implements RMIonlySkeleton {
@@ -66,7 +69,11 @@ public class AccountSkeleton implements RMIonlySkeleton {
 		objectMap.put(objectID, account);
 	}
 	
-	public Set<Integer> getAllObjectIDs(){
-		return objectMap.keySet();
+	public List<Integer> getAllObjectIDs(){
+		List<Integer> retVal = new ArrayList<Integer>();
+		for(Integer i:objectMap.keySet()){
+			retVal.add(i);
+		}
+		return retVal;
 	}
 }

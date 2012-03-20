@@ -34,17 +34,33 @@ public class Server implements ServerInterface
 	private int serverSocketPort;
 	private String serverIp;
 	private TestCase activeTestCase;
+	private TestCaseFactory factory;
 	
 	public Server()
 	{
 		loadInitFile();
 		prepareClientList();
 		loadSettings();
-		testCases = new TestCaseFactory().getTestCases();
+		generateTestCases();
 		establishClientConnection();
 		createRmiRegistry();
 		dispatcher = new Dispatcher(serverSocketPort);
 		new Thread(dispatcher).start();
+	}
+	
+	private void generateTestCases()
+	{
+		factory = new TestCaseFactory();
+		factory.convertXML();
+		testCases = factory.getTestCases();
+		activeTestCase = testCases.get(0);
+	}
+	
+	private void startTestCase()
+	{
+		System.out.println("Starting TestCase");
+		dispatcher.setSystemUnderTest(activeTestCase.getSystemUnderTest());
+		initializeClients();
 	}
 	
 	private void initializeClients()
@@ -56,7 +72,7 @@ public class Server implements ServerInterface
 			if((temp = activeTestCase.getScenarios().get(i)) != null)
 			{
 				try {
-					clients.get(i).getClientStub().initialize(serverIp, temp, activeTestCase.getSystemUnderTest());
+					clients.get(i).getClientStub().initialize(serverIp, serverSocketPort, temp, activeTestCase.getSystemUnderTest());
 				} catch (RemoteException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -65,7 +81,7 @@ public class Server implements ServerInterface
 			else
 			{
 				try {
-					clients.get(i).getClientStub().initialize(serverIp, activeTestCase.getScenario(0), activeTestCase.getSystemUnderTest());
+					clients.get(i).getClientStub().initialize(serverIp, serverSocketPort, activeTestCase.getScenario(0), activeTestCase.getSystemUnderTest());
 				} catch (RemoteException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -158,8 +174,8 @@ public class Server implements ServerInterface
 	@Override
 	public void setReady(String ip) 
 	{
+		
 		System.out.println("Setted ready with: " + ip);
-		System.out.println(clients.size());
 		for(int i = 0; i < clients.size(); i++)
 		{
 			if(clients.get(i).getIp().equals(ip))
@@ -216,21 +232,20 @@ public class Server implements ServerInterface
 		}
 	}
 	
-	private void startTestCase()
-	{
-		for(int i = 0; i < testCases.size(); i++)
-		{
-			System.out.println("Starting TestCase");
-			activeTestCase = testCases.get(i);
-			dispatcher.setSystemUnderTest(testCases.get(i).getSystemUnderTest());
-			initializeClients();
-		}
-	}
+
 	
 	@Override
-	public void setResults() 
+	public void setResults(Scenario scenario) 
 	{
-		
+		//TODO: Auswertung der ankommenden Resultate
+		for(int i = 0; i < testCases.size(); i++)
+		{
+			if(testCases.get(i).equals(activeTestCase) && testCases.get(i + 1) != null)
+			{
+				activeTestCase = testCases.get(i + 1);
+				startTestCase();
+			}
+		}
 	}
 	
 	public static void main(String[] args) 
@@ -238,6 +253,4 @@ public class Server implements ServerInterface
 		Server myServer = new Server();
 		myServer.startTestCase();
 	}
-
-
 }

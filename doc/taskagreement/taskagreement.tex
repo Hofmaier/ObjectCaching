@@ -18,7 +18,7 @@
 J.M.Joller  Abteilung für Informatik HSR/FHO
 
 \section{Motivation}
-Das Datenverarbeitungssystem Mercury ermöglicht es Clients Methoden von Objekten über das Netzwerk aufzurufen. Dabei entstehen unter anderem folgende zwei Problembereiche, auf welche das Augenmerk dieser Studienarbeit gelegt wird:
+Mercury ist ein Datenverarbeitungssystem welches es Clients ermöglicht Methoden von Objekten über das Netzwerk aufzurufen. Dabei entstehen unter anderem folgende zwei Problembereiche, auf welche das Augenmerk dieser Studienarbeit gelegt wird:
 
 \begin{itemize}
 \item Clients können Werte von Instanzvariablen von Objekten auf dem Server lesen. Die Clients können diese Werte im Hauptspeicher abspeichern und zu einem späteren Zeitpunkt in einer kausal abhängigen Methode als Argument einsetzen. Dabei kann ein Lost Update auftreten.
@@ -26,12 +26,16 @@ Das Datenverarbeitungssystem Mercury ermöglicht es Clients Methoden von Objekte
 \end{itemize}
 
 \section{Ziele der Arbeit}
+Die Arbeit wurde durch Mercury motiviert, unserer Ziele sind jedoch losgelöst von diesem System, da genannten Probleme bei allen verteilten Software Systemen auftreten.
 
 \subsection{Prioritaeten}
 \label{sec:prioritaeten}
 
 \begin{enumerate}
 \item Das ‘‘Lost Update’’-Problem soll vermieden werden.
+\begin{itemize}
+\item Können Instanzvariablen eines Objekts durch mehreren Clients modifiziert werden, so muss bei einer Schreiboperation garantiert werden, dass ein Client vor der Schreiboperation den aktuellen Wert aus dem Objekt gelesen hat. Wird dies nicht geprüft kann es dazu führen das Änderungen, welche ein anderer Client zwischenzeitlich gemacht hat, verloren gehen.
+\end{itemize}
 \item Die Abhandlung der Schreib -und Lesezugriffe auf das Objekt, welches auf dem Server liegt, soll für den Client möglichst schnell passieren.
 \end{enumerate}
 
@@ -41,13 +45,12 @@ Das Datenverarbeitungssystem Mercury ermöglicht es Clients Methoden von Objekte
 \subsubsection{RMI mit Concurrency Control}
 \label{sec:rmi-mit-concurrency}
 
-In dieser Semesterarbeit soll nun ein Konzept erarbeitet werden, welches Lost Updates bei kausal abhängigen Methoden verhindert.  Zudem soll ein vereinfachtes RMI System implementiert werden, welches zeigen soll, ob sich dieses Konzept einfach realisieren lässt.
+In dieser Semesterarbeit soll ein Konzept erarbeitet werden, welches Lost Updates bei kausal abhängigen Methoden verhindert.  Zudem soll ein vereinfachtes RMI System implementiert werden, welches zeigen soll, ob sich dieses Konzept einfach realisieren lässt.
 
 \subsubsection{Testframework}
 \label{sec:testframework}
 
-Um das System zu testen, wird parallel dazu ein Testframework entwickelt. Dieses Framework soll in der Lage sein, unterschiedliche RMI System als Server und Client zu starten. Das Testframework ist in der Lage, eine Szenariobeschreibung einzulesen und dieses Szenario mit dem zu testenden System durchzuspielen. Ein Szenario besteht aus einer Abfolge von Methoden-Aufrufen, welche der jeweilige Client tätigen muss. Das Framework sammelt dabei Messdaten über die Zeitdauer der einzelnen Methodenaufrufe. Die Messdaten sollen es ermöglichen abzuwägen, welche Systeme mit welchen Parameter sich für welchen Anwendungszweck eignen.
-Weiter registriert das Testframework das Auftreten von Schreib-Konfikten beim Aufruf von Schreibmethoden.
+Um das System zu testen, wird parallel dazu ein Testframework entwickelt. Dieses Framework soll in der Lage sein, unterschiedliche RMI Systeme als Server und Clients zu starten. Das Testframework ist in der Lage, eine Szenariobeschreibung einzulesen und dieses Szenario mit dem zu testenden System durchzuspielen. Ein Szenario lässt sich leicht spezifizieren und besteht aus einer Abfolge von Methoden-Aufrufen, welche der jeweilige Client tätigen muss. Das Framework sammelt dabei Messdaten über die Zeitdauer der einzelnen Methodenaufrufe. Die Messdaten sollen es ermöglichen abzuwägen, welche Systeme mit welchen Parameter sich für welchen Anwendungszweck eignen. Das Testframework registriert das Auftreten von Schreib-Konfikten beim Aufruf von Schreibmethoden. Alle Messdaten werden in Dateien gespeichert, dies ermöglicht eine spätere Interpretation der Resultate.
 
 \subsection{Erweiterte Ziele}
 \label{sec:erweiterte-ziele}
@@ -55,12 +58,12 @@ Weiter registriert das Testframework das Auftreten von Schreib-Konfikten beim Au
 \subsubsection{Object Caching}
 \label{sec:object-caching}
 
-Um die Dauer von Methodenaufrufen zu verkürzen, soll das RMI System um einen Object Cache erweitert werden. Methoden ohne Seiteneffekte werden auf den Objekten im Cache ausgeführt. Für das System wird ein passendes Konsistenzmodell ausgewählt. Dieses Modell wird durch ein geeignetes Konsistenzprotokoll durchgesetzt. Die Unterscheidung von Lese und Schreib- Methoden muss durch den User gemacht werden.
+Um die Dauer von Methodenaufrufen zu verkürzen, soll das RMI System um einen Object Cache erweitert werden. Methoden ohne Seiteneffekte werden auf den Objekten im Cache ausgeführt. Für das System wird ein passendes Konsistenzmodell ausgewählt. Dieses Modell wird durch ein geeignetes Konsistenzprotokoll durchgesetzt. Der User muss die Methoden eines Objekt markieren damit das System zwischen Methoden mit Seiteneffekt und solchen ohne Seiteneffekt unterscheiden kann. Methoden die Seiteneffekte aufweisen, werden auf dem Server ausgeführt, die anderen können lokal auf dem zwischengespeicherten Objekt ausgeführt werden.
 
 \subsubsection{Entwicklung neuer Szenarien}
 \label{sec:entwicklung-neuer-szenarien}
 
-Um die Lösungen mit und ohne Cache miteinander vergleichen zu können, müssen neue Testszenarien geschrieben werden.
+Um die Lösungen mit und ohne Cache miteinander vergleichen zu können, müssen neue Testszenarien geschrieben werden können.
 
 \subsubsection{Feingranulares Locking}
 \label{sec:feingr-lock}
@@ -83,12 +86,13 @@ Es wird ein verteiltes System mit einem Server und zwei Clients verwendet.
 \subsubsection{Kausaler Zusammenhang}
 \label{sec:kaus-zusamm}
 
-Die Clients möchten den Kontostand um 10 \% erhöhen. Dazu führen die folgende Schritte aus:
+Die Clients möchten den Kontostand um 10 \% erhöhen. Dazu führen die Clients folgende Schritte aus:
 \begin{lstlisting}
-b = getBalance();
-setBalance( b * 1.1 );
+1. b = getBalance();
+2. setBalance( b * 1.1 );
 \end{lstlisting}
-Diese Schritte werden zum Prozess ‘‘Kontostand Erhöhen’’ zusammengefasst.
+
+\noindent Diese Schritte werden zum Prozess ‘‘Kontostand Erhöhen’’ zusammengefasst.
 
 \subsubsection{Account Typ}
 \label{sec:account-typ}
@@ -151,11 +155,10 @@ In diesem Szenario soll jeder setBalance-Aufruf von Client2 zu einer Konfliktsit
 \end{itemize}
 
 \section{Sitzungen}
-Mit dem Betreuer dieser Arbeit findet eine wöchentliche Sitzung statt. Dabei werden die Fortschritte besprochen und falls vorhanden, offene Fragen diskutiert. Die Länge der Sitzung ist daher variabel, je nachdem ob und wieviele offene Fragen und Probleme bestehen.
+Mit dem Betreuer dieser Arbeit findet eine wöchentliche Sitzung statt. Dabei werden die Fortschritte besprochen und falls vorhanden, offene Fragen diskutiert. Die Länge der Sitzung ist daher variabel, je nachdem ob und wieviele offene Fragen und Probleme bestehen. Die Entscheidungen sowie die diskutieren Punkte werden in einem Sitzungsprotokoll schriftlich festgehalten.
 
 
 \vspace{2cm}
 
 \noindent Rapperswil, den \date{\today} \\
-Der verantwortliche Dozent\\
 \end{document}

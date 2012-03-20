@@ -11,6 +11,7 @@ import java.io.ObjectOutputStream;
 import org.junit.Before;
 import org.junit.Test;
 
+import ch.hsr.objectCaching.interfaces.AccountService;
 import ch.hsr.objectCaching.interfaces.MethodCall;
 import ch.hsr.objectCaching.interfaces.ReturnValue;
 
@@ -85,7 +86,7 @@ public class TestRMIonlyClientHandler {
 		int valueForService = 230;
 		fakeService.setIntValue(valueForService);
 		clientHandler.setAccountServiceSkeleton(fakeService);
-		methodCall.setClassName("AccountService");
+		methodCall.setClassName(AccountService.class.getName());
 		clientHandler.processMethodCall(methodCall);
 		ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(byteArrayOutputStream.toByteArray()));
 		ReturnValue retValForAccount =  (ReturnValue) ois.readObject();

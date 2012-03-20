@@ -3,8 +3,6 @@ package ch.hsr.objectCaching.testFrameworkServer;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -56,6 +54,7 @@ public class Dispatcher implements Runnable
 				OutputStream outputStream = socket.getOutputStream();
 				clientHandler.setInputStream(inputStream);
 				clientHandler.setOutputStream(outputStream);
+				new Thread(clientHandler).start();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

@@ -16,6 +16,14 @@ public class AccountStub implements Account{
 	private int objectID;
 	private IStreamProvider streamProvider;
 	
+	public IStreamProvider getStreamProvider() {
+		return streamProvider;
+	}
+
+	public void setStreamProvider(IStreamProvider streamProvider) {
+		this.streamProvider = streamProvider;
+	}
+
 	String invokeMethodMessage = "<invokeMethod><objectid>23</objectid><methodname>getBalance()</methodname></invokeMethod>";
 	
 	public int getBalance(){

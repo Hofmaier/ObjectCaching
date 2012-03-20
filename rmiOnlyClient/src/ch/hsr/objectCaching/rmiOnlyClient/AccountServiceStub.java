@@ -3,6 +3,7 @@ package ch.hsr.objectCaching.rmiOnlyClient;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -17,12 +18,21 @@ public class AccountServiceStub implements AccountService {
 
 	@Override
 	public Collection<Account> getAllAccounts() {
-		ArrayList<Account> retValCollection = new ArrayList<Account>();
 		try {
 		sendMethodCall();
+		ReturnValue returnValue = receiveMethodCall();
+		return composeCollection(returnValue);
 			
-		ObjectInputStream ois = streamProvider.getObjectInputStream();
-		ReturnValue returnValue = (ReturnValue) ois.readObject();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	private Collection<Account> composeCollection(ReturnValue returnValue) {
+		ArrayList<Account> retValCollection = new ArrayList<Account>();
 		Collection<Integer> objectIDcollection = (Collection<Integer>) returnValue.getValue(); 
 		
 		for(Integer i:objectIDcollection){
@@ -30,13 +40,14 @@ public class AccountServiceStub implements AccountService {
 			accountStub.setObjectID(i);
 			retValCollection.add(accountStub);
 		}
-			
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		}
 		return retValCollection;
+	}
+
+	private ReturnValue receiveMethodCall() throws IOException,
+			ClassNotFoundException {
+		ObjectInputStream ois = streamProvider.getObjectInputStream();
+		ReturnValue returnValue = (ReturnValue) ois.readObject();
+		return returnValue;
 	}
 
 	private void sendMethodCall() throws IOException {
@@ -44,7 +55,7 @@ public class AccountServiceStub implements AccountService {
 		methodCall.setClassName(AccountService.class.getName());
 		ObjectOutputStream oos = streamProvider.getObjectOutputStream();
 		oos.writeObject(methodCall);
-		oos.close();
+		oos.flush();
 	}
 
 	public void setStreamProvider(IStreamProvider streamProvider) {
@@ -54,5 +65,4 @@ public class AccountServiceStub implements AccountService {
 	public IStreamProvider getStreamProvider() {
 		return streamProvider;
 	}
-
 }

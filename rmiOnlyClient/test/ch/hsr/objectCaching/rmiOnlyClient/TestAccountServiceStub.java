@@ -2,6 +2,7 @@ package ch.hsr.objectCaching.rmiOnlyClient;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -68,6 +69,7 @@ public class TestAccountServiceStub {
 		
 		AccountStub accountStub = (AccountStub) accountFromServer;
 		assertEquals(objectID, accountStub.getID());
+		assertTrue(streamProviderfake == accountStub.getStreamProvider());
 	}
 	
 	class StreamProviderFake implements IStreamProvider{

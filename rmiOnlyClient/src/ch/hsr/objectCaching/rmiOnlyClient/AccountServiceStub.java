@@ -37,7 +37,9 @@ public class AccountServiceStub implements AccountService {
 		for(Integer i:objectIDcollection){
 			AccountStub accountStub = new AccountStub();
 			accountStub.setObjectID(i);
+			accountStub.setStreamProvider(streamProvider);
 			retValCollection.add(accountStub);
+			
 		}
 		return retValCollection;
 	}

@@ -5,6 +5,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 
+import ch.hsr.objectCaching.interfaces.AccountService;
 import ch.hsr.objectCaching.interfaces.ClientHandler;
 import ch.hsr.objectCaching.interfaces.MethodCall;
 import ch.hsr.objectCaching.interfaces.ReturnValue;
@@ -24,9 +25,9 @@ public class RMIonlyClientHandler extends ClientHandler {
 	public RMIonlySkeleton getSkeleton() {
 		return skeletonInUse;
 	}
-
+	
+	@Override
 	public void setInputStream(InputStream inputStream) {
-		this.inputStream = inputStream;
 		try {
 			objectInputStream = new ObjectInputStream(inputStream);
 		} catch (IOException e) {
@@ -71,7 +72,7 @@ public class RMIonlyClientHandler extends ClientHandler {
 		if(methodCall.getClassName().equals("Account")){
 			skeletonInUse = accountSkeleton;
 		}
-		if(methodCall.getClassName().equals("AccountService")){
+		if(methodCall.getClassName().equals(AccountService.class.getName())){
 			skeletonInUse = accountServiceSkeleton;
 		}
 	}
@@ -85,6 +86,7 @@ public class RMIonlyClientHandler extends ClientHandler {
 	void sendResponse(ReturnValue returnValue) {
 		try {
 			objectOutputStream.writeObject(returnValue);
+			objectOutputStream.flush();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

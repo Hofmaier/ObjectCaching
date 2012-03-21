@@ -13,6 +13,7 @@ import java.rmi.server.UnicastRemoteObject;
 
 import ch.hsr.objectCaching.interfaces.ClientInterface;
 import ch.hsr.objectCaching.interfaces.ClientSystemUnderTest;
+import ch.hsr.objectCaching.interfaces.Configuration;
 import ch.hsr.objectCaching.interfaces.Scenario;
 import ch.hsr.objectCaching.interfaces.ServerInterface;
 
@@ -28,17 +29,17 @@ public class ClientController implements ClientInterface {
 	}
 
 	@Override
-	public void initialize(String serverIP, int serverSocketPort, Scenario scenario, String systemUnderTest) throws RemoteException {
-		ClientSystemUnderTest clientSystemUnderTest = createClientSystemUnderTest(systemUnderTest);
+	public void initialize(Scenario scenario, Configuration configuration) throws RemoteException {
+		ClientSystemUnderTest clientSystemUnderTest = createClientSystemUnderTest(configuration.getNameOfSystemUnderTest());
 		
-		InetSocketAddress socket = new InetSocketAddress(serverIP, serverSocketPort);
+		InetSocketAddress socket = new InetSocketAddress(configuration.getServerIP(), configuration.getServerSocketPort());
 		clientSystemUnderTest.setServerSocketAdress(socket);
 		
 		testClient = new TestClient(scenario);	
 		testClient.setAccountService(clientSystemUnderTest.getAccountService());
 		testClient.init();
 
-		loadServerInterface(serverIP, SERVER_PORT);
+		loadServerInterface(configuration.getServerIP(), SERVER_PORT);
 		notifyServerInitDone();
 	}
 

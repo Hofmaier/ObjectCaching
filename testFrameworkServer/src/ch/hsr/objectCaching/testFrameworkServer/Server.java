@@ -19,6 +19,7 @@ import java.util.Map.Entry;
 import java.util.Properties;
 
 import ch.hsr.objectCaching.interfaces.ClientInterface;
+import ch.hsr.objectCaching.interfaces.Configuration;
 import ch.hsr.objectCaching.interfaces.Scenario;
 import ch.hsr.objectCaching.interfaces.ServerInterface;
 import ch.hsr.objectCaching.testFrameworkServer.Client.Status;
@@ -28,13 +29,11 @@ public class Server implements ServerInterface
 	private ArrayList<Client> clients;
 	private ArrayList<TestCase> testCases;
 	private static int clientRmiPort;
-	private static int serverRmiPort;
 	private Properties initFile;
 	private Dispatcher dispatcher;
-	private int serverSocketPort;
-	private String serverIp;
 	private TestCase activeTestCase;
 	private TestCaseFactory factory;
+	private Configuration configuration;
 	
 	public Server()
 	{
@@ -44,7 +43,7 @@ public class Server implements ServerInterface
 		generateTestCases();
 		establishClientConnection();
 		createRmiRegistry();
-		dispatcher = new Dispatcher(serverSocketPort);
+		dispatcher = new Dispatcher(configuration.getServerSocketPort());
 		new Thread(dispatcher).start();
 	}
 	
@@ -54,6 +53,7 @@ public class Server implements ServerInterface
 		factory.convertXML();
 		testCases = factory.getTestCases();
 		activeTestCase = testCases.get(0);
+		configuration.setNameOfSystemUnderTest(activeTestCase.getSystemUnderTest());
 	}
 	
 	private void startTestCase()
@@ -72,7 +72,7 @@ public class Server implements ServerInterface
 			if((temp = activeTestCase.getScenarios().get(i)) != null)
 			{
 				try {
-					clients.get(i).getClientStub().initialize(serverIp, serverSocketPort, temp, activeTestCase.getSystemUnderTest());
+					clients.get(i).getClientStub().initialize(temp, configuration);
 					System.out.println("sended scenario");
 				} catch (RemoteException e) {
 					// TODO Auto-generated catch block
@@ -82,7 +82,7 @@ public class Server implements ServerInterface
 			else
 			{
 				try {
-					clients.get(i).getClientStub().initialize(serverIp, serverSocketPort, activeTestCase.getScenario(0), activeTestCase.getSystemUnderTest());
+					clients.get(i).getClientStub().initialize(activeTestCase.getScenario(0), configuration);
 				} catch (RemoteException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -134,6 +134,8 @@ public class Server implements ServerInterface
 	private void loadSettings()
 	{
 		Iterator<Entry<Object, Object>> iter = initFile.entrySet().iterator();
+		configuration = new Configuration();
+		
 		while(iter.hasNext())
 		{
 			Entry<Object, Object> temp = iter.next();
@@ -143,15 +145,19 @@ public class Server implements ServerInterface
 			}
 			if(temp.getKey().equals("ServerRmiPort"))
 			{
-				serverRmiPort = Integer.valueOf((String)temp.getValue());
+				configuration.setServerRMIPort(Integer.valueOf((String)temp.getValue()));
+			}
+			if(temp.getKey().equals("ServerRegistryName"))
+			{
+				configuration.setServerRegistryName((String)temp.getValue());
 			}
 			if(temp.getKey().equals("ServerSocketPort"))
 			{
-				serverSocketPort = Integer.valueOf((String)temp.getValue()); 
+				configuration.setServerSocketPort(Integer.valueOf((String)temp.getValue()));
 			}
 		}
 		try {
-			serverIp = InetAddress.getLocalHost().getHostAddress();
+			configuration.setServerIP(InetAddress.getLocalHost().getHostAddress());
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -193,7 +199,7 @@ public class Server implements ServerInterface
 	
 	public int getSocketPort()
 	{
-		return serverSocketPort;
+		return configuration.getServerSocketPort();
 	}
 	
 	private void start()
@@ -225,10 +231,10 @@ public class Server implements ServerInterface
 	private void createRmiRegistry()
 	{
 		try {
-			LocateRegistry.createRegistry(serverRmiPort);
-			ServerInterface skeleton = (ServerInterface) UnicastRemoteObject.exportObject(this, serverRmiPort);
-			Registry reg = LocateRegistry.getRegistry(serverRmiPort);
-			reg.rebind("Server", skeleton);
+			LocateRegistry.createRegistry(configuration.getServerRMIPort());
+			ServerInterface skeleton = (ServerInterface) UnicastRemoteObject.exportObject(this, configuration.getServerRMIPort());
+			Registry reg = LocateRegistry.getRegistry(configuration.getServerRMIPort());
+			reg.rebind(configuration.getServerRegistryName(), skeleton);
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}

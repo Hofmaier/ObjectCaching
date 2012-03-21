@@ -20,18 +20,18 @@ import ch.hsr.objectCaching.interfaces.ServerInterface;
 public class ClientController implements ClientInterface {
 
 	private static final int CLIENT_PORT = 1099;
-	private static final int SERVER_PORT = 24526;
-	private static final String SERVER = "Server";
 	private ServerInterface server;
 	private TestClient testClient;
-
+	private Configuration config;
+	
 	public ClientController() {
 	}
 
 	@Override
 	public void initialize(Scenario scenario, Configuration configuration) throws RemoteException {
-		ClientSystemUnderTest clientSystemUnderTest = createClientSystemUnderTest(configuration.getNameOfSystemUnderTest());
 		
+		config = configuration;		
+		ClientSystemUnderTest clientSystemUnderTest = createClientSystemUnderTest(configuration.getNameOfSystemUnderTest());		
 		InetSocketAddress socket = new InetSocketAddress(configuration.getServerIP(), configuration.getServerSocketPort());
 		clientSystemUnderTest.setServerSocketAdress(socket);
 		
@@ -39,13 +39,13 @@ public class ClientController implements ClientInterface {
 		testClient.setAccountService(clientSystemUnderTest.getAccountService());
 		testClient.init();
 
-		loadServerInterface(configuration.getServerIP(), SERVER_PORT);
+		loadServerInterface(config.getServerIP(), config.getServerRMIPort(), config.getServerRegistryName());
 		notifyServerInitDone();
 	}
 
-	private void loadServerInterface(String serverIP, int port) {
+	private void loadServerInterface(String serverIP, int port, String registryName) {
 		try {
-			String url = "rmi://" + serverIP + ":" + port + "/" + SERVER;
+			String url = "rmi://" + serverIP + ":" + port + "/" + registryName;
 			server = (ServerInterface) Naming.lookup(url);
 		} catch (MalformedURLException e) {
 			// TODO Auto-generated catch block

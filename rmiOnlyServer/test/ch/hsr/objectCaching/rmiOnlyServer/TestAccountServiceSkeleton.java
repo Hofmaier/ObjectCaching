@@ -23,8 +23,8 @@ public class TestAccountServiceSkeleton {
 
 	@Test
 	public void testInvokeMethod() { 
-		MethodCall methodCall = new MethodCall();
 		
+		MethodCall methodCall = new MethodCall();
 		methodCall.setMethodName(getGetAllAccounts().getName());
 		AccountSkeleton accountSkeleton = new AccountSkeleton();
 		accountServiceSkeleton.setAccountSkeleton(accountSkeleton);

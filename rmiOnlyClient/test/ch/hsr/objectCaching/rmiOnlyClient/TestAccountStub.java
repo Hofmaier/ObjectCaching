@@ -1,7 +1,7 @@
 package ch.hsr.objectCaching.rmiOnlyClient;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -22,22 +22,24 @@ public class TestAccountStub {
 	private ObjectOutputStream objectOutputStream;
 	private ObjectInputStream objectInputStream;
 	private ByteArrayOutputStream byteArrayOutputStream;
+	private int objectID = 23;
 
 	@Before
 	public void setUp() throws Exception {
 		accountStub = new AccountStub();
 		byteArrayOutputStream = new ByteArrayOutputStream();
 		objectOutputStream = new ObjectOutputStream(byteArrayOutputStream);
+		IStreamProvider streamProvider = new StreamProviderFake();
+		accountStub.setStreamProvider(streamProvider);
 	}
 
 	@Test
 	public void testGetBalance() throws IOException, ClassNotFoundException {
-		IStreamProvider streamProvider = new StreamProviderFake();
-		accountStub.setStreamProvider(streamProvider);
+		
 		MethodCall methodCall = new MethodCall();
 		methodCall.setClassName(Account.class.getName());
-		methodCall.setMethodName("getBalance");
-		int objectID = 23;
+		String methodName = "getBalance";
+		methodCall.setMethodName(methodName);
 		methodCall.setObjectID(objectID );
 		
 		ByteArrayOutputStream byteArrayStreamWithReturnValue = new ByteArrayOutputStream();
@@ -55,11 +57,35 @@ public class TestAccountStub {
 		MethodCall methodCallFromCUT = (MethodCall) objectInputStream.readObject();
 		
 		assertNotNull("methodCall was null", methodCallFromCUT);
+		assertEquals(Account.class.getName(), methodCallFromCUT.getClassName());
+		assertEquals(methodName, methodCallFromCUT.getMethodName());
+		
+		
 	}
 
 	@Test
-	public void testSetBalance() {
-		fail("Not yet implemented");
+	public void testSetBalance() throws IOException, ClassNotFoundException {
+		MethodCall methodCall = new MethodCall();
+		methodCall.setClassName(Account.class.getName());
+		String methodName = "setBalance";
+		methodCall.setMethodName(methodName);
+		methodCall.setObjectID(objectID );
+		
+		ByteArrayOutputStream byteArrayStreamWithReturnValue = new ByteArrayOutputStream();
+		ObjectOutputStream streamToReadbyCUT = new ObjectOutputStream(byteArrayStreamWithReturnValue);
+		
+		ReturnValue returnValue = new ReturnValue();
+		streamToReadbyCUT.writeObject(returnValue);
+		
+		objectInputStream = new ObjectInputStream(new ByteArrayInputStream(byteArrayStreamWithReturnValue.toByteArray()));
+		
+		accountStub.setBalance(220);
+		
+		ObjectInputStream objectInputStream = new ObjectInputStream(new ByteArrayInputStream(byteArrayOutputStream.toByteArray()));
+		MethodCall methodCallFromCUT = (MethodCall) objectInputStream.readObject();
+		
+		assertNotNull("methocall setBalance was null", methodCallFromCUT);
+		
 	}
 	
 	class StreamProviderFake implements IStreamProvider{

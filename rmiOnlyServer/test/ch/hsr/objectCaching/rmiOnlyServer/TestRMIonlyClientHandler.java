@@ -11,6 +11,7 @@ import java.io.ObjectOutputStream;
 import org.junit.Before;
 import org.junit.Test;
 
+import ch.hsr.objectCaching.interfaces.Account;
 import ch.hsr.objectCaching.interfaces.AccountService;
 import ch.hsr.objectCaching.interfaces.MethodCall;
 import ch.hsr.objectCaching.interfaces.ReturnValue;
@@ -54,7 +55,7 @@ public class TestRMIonlyClientHandler {
 	@Test
 	public void testSetSkeleton(){
 		MethodCall methodCall = new MethodCall();
-		methodCall.setClassName("Account");
+		methodCall.setClassName(Account.class.getName());
 		clientHandler.setAccountSkeleton(new AccountSkeleton());
 		clientHandler.setSkeleton(methodCall);
 		assertTrue(clientHandler.getSkeleton() instanceof AccountSkeleton);
@@ -78,9 +79,8 @@ public class TestRMIonlyClientHandler {
 		Integer valueForAccount = 200;
 		fakeAccountSkeleton.setIntValue(valueForAccount);
 		clientHandler.setAccountSkeleton(fakeAccountSkeleton);
-		methodCall.setClassName("Account");
+		methodCall.setClassName(Account.class.getName());
 		clientHandler.processMethodCall(methodCall);
-		
 		
 		AccountServiceSkeletonFake fakeService = new AccountServiceSkeletonFake();
 		int valueForService = 230;

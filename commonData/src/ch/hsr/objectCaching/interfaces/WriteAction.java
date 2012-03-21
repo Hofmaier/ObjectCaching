@@ -13,6 +13,10 @@ public class WriteAction extends Action{
 		this.value = value;
 	}
 	
+	public int getValue(){
+		return value;
+	}
+	
 	@Override
 	public void execute(Account account) {
 		result.setStartNanoTime(System.nanoTime());		

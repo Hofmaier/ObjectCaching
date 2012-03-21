@@ -3,9 +3,10 @@
 	<TestCase SystemUnderTest="RMIOnlyServerSystem">
 		<Scenario id="1">
 			<ActionSequence>
-				<Write count="10" value="2"></Write>
-				<Read count="2"></Read>
-				<Write count="5" value="5"></Write>
+				<Write count="1" value="2"></Write>
+				<Read count="1"></Read>
+				<Write count="1" value="5"></Write>
+				<Read count="1"></Read>
 			</ActionSequence>
 		</Scenario>
 		<Scenario id="2">

@@ -32,7 +32,6 @@ public class TestClient {
 	
 
 	public void start() {
-		System.out.println("starting...");
 		Iterator<Action> actionIter = scenario.getActionList().iterator();
 		while (actionIter.hasNext()) {
 			Account acc = getNextAccount();

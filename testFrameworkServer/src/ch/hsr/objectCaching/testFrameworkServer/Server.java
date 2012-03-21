@@ -73,6 +73,7 @@ public class Server implements ServerInterface
 			{
 				try {
 					clients.get(i).getClientStub().initialize(serverIp, serverSocketPort, temp, activeTestCase.getSystemUnderTest());
+					System.out.println("sended scenario");
 				} catch (RemoteException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -163,7 +164,7 @@ public class Server implements ServerInterface
 		for(int i = 0; i < initFile.size();i++)
 		{
 			String clientName = "Client" + i;
-			if(initFile.contains(clientName))
+			if(initFile.containsKey(clientName))
 			{
 				Client client = new Client((String)initFile.get(clientName));
 				clients.add(client);

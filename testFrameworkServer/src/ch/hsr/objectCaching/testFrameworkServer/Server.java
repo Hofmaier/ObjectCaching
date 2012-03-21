@@ -190,6 +190,7 @@ public class Server implements ServerInterface
 		}
 	}
 	
+	
 	public int getSocketPort()
 	{
 		return serverSocketPort;

@@ -1,0 +1,65 @@
+<?xml version="1.0"?>
+<project name="objectCaching" default="jar" basedir=".">
+
+<property name="build.dir" location="build"/>
+<property name="build.prod.dir" location="${build.dir}/prod" />
+<property name="rmiServer.src.dir" location="rmiOnlyServer/src" />
+<property name="commonData.src.dir" location="commonData/src" />
+<property name="dist.dir" location="dist" />
+<property name="name" value="server" />
+<property name="jar.name" value="${name}.jar" />
+<property name="jar.path" location="${dist.dir}/${jar.name}" /> 
+<property name="fmServer.src.dir" location="testFrameworkServer/src" />
+<property name="rmiClient.src.dir" location="rmiOnlyClient/src" />
+<property name="fmClient.src.dir" location="testFrameworkClient/src" />
+
+<path id="project.classpath">
+  <pathelement location="${build.prod.dir}" />
+</path>
+
+<target name="prepare" depends="clean" >
+  <mkdir dir="${build.prod.dir}" />
+</target>
+
+<target name="compileCommonData" depends="prepare">
+  <javac srcdir="${commonData.src.dir}" destdir="${build.prod.dir}" includeantruntime="false">
+    <classpath refid="project.classpath" />
+  </javac>
+</target>
+
+<target name="compileRMIServer" depends="compileCommonData" >
+  <javac srcdir="${rmiServer.src.dir}" destdir="${build.prod.dir}" includeantruntime="false">
+    <classpath refid="project.classpath" />
+  </javac>
+</target>
+
+<target name="compileFmServer" depends="compileRMIServer" >
+  <javac srcdir="${fmServer.src.dir}" destdir="${build.prod.dir}" includeantruntime="false">
+    <classpath refid="project.classpath" />
+  </javac>
+</target>
+
+<target name="clean">
+  <delete dir="${build.dir}" />
+  <delete dir="${dist.dir}" />
+</target>
+
+<target name="jar" depends="compileRMIServer" >
+  <mkdir dir="${dist.dir}" />
+  <jar destfile="${jar.path}" basedir="${build.prod.dir}" />
+</target>
+
+<target name="compileRMIClient" depends="compileCommonData" >
+  <javac srcdir="${rmiClient.src.dir}" destdir="${build.prod.dir}" includeantruntime="false">
+    <classpath refid="project.classpath" />
+  </javac>
+</target>
+
+<target name="compileFmClient" depends="compileRMIClient" >
+  <javac srcdir="${fmClient.src.dir}" destdir="${build.prod.dir}" includeantruntime="false">
+    <classpath refid="project.classpath" />
+  </javac>
+</target>
+
+</project>
+

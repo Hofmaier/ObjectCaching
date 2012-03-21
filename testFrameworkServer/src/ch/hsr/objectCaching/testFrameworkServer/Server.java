@@ -73,6 +73,7 @@ public class Server implements ServerInterface
 			{
 				try {
 					clients.get(i).getClientStub().initialize(serverIp, serverSocketPort, temp, activeTestCase.getSystemUnderTest());
+					System.out.println("sended scenario");
 				} catch (RemoteException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -160,13 +161,12 @@ public class Server implements ServerInterface
 	private void prepareClientList()
 	{
 		clients = new ArrayList<Client>();
-		Iterator<Entry<Object, Object>> iter = initFile.entrySet().iterator();
-		while(iter.hasNext())
+		for(int i = 0; i < initFile.size();i++)
 		{
-			Entry<Object, Object> temp = iter.next();
-			if(temp.getKey().equals("Client"))
+			String clientName = "Client" + i;
+			if(initFile.containsKey(clientName))
 			{
-				Client client = new Client((String)temp.getValue());
+				Client client = new Client((String)initFile.get(clientName));
 				clients.add(client);
 			}
 		}
@@ -189,6 +189,7 @@ public class Server implements ServerInterface
 			start();
 		}
 	}
+	
 	
 	public int getSocketPort()
 	{

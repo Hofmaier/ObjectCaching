@@ -73,7 +73,6 @@ public class Server implements ServerInterface
 			{
 				try {
 					clients.get(i).getClientStub().initialize(temp, configuration);
-					System.out.println("sended scenario");
 				} catch (RemoteException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -246,14 +245,16 @@ public class Server implements ServerInterface
 	public void setResults(Scenario scenario) 
 	{
 		//TODO: Auswertung der ankommenden Resultate
-		for(int i = 0; i < testCases.size(); i++)
-		{
-			if(testCases.get(i).equals(activeTestCase) && testCases.get(i + 1) != null)
-			{
-				activeTestCase = testCases.get(i + 1);
-				startTestCase();
-			}
-		}
+		System.out.println("results setted");
+		System.out.println(scenario.getId());
+//		for(int i = 0; i < testCases.size(); i++)
+//		{
+//			if(testCases.get(i).equals(activeTestCase) && testCases.get(i + 1) != null)
+//			{
+//				activeTestCase = testCases.get(i + 1);
+//				startTestCase();
+//			}
+//		}
 	}
 	
 	public static void main(String[] args) 

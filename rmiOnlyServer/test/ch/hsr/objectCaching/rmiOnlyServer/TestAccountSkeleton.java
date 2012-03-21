@@ -19,12 +19,15 @@ public class TestAccountSkeleton {
 	private AccountImpl testAccount;
 	private MethodCall methodCall;
 	private Class<AccountImpl> accountClass = AccountImpl.class;
+	private Method getBalanceMethod;
+	private Method setBalanceMethod;
 
 	@Before
 	public void setUp() throws Exception {
 		skeleton = new AccountSkeleton();
 		testAccount = new AccountImpl();
 		methodCall = new MethodCall();
+		initMethods();
 	}
 
 	@Test
@@ -44,33 +47,39 @@ public class TestAccountSkeleton {
 		
 		accountClass = AccountImpl.class;
 		
-		Method getBalanceMethod = getGetBalalanceMethod();
-		
 		Class<?>[] parameterTypes = getBalanceMethod.getParameterTypes();
 		
 		methodCall.setClassName(accountClass.getName());
 		methodCall.setMethodName(getBalanceMethod.getName());
 		methodCall.setParameterTypes(parameterTypes);
 		
-		int returnValue = (Integer) skeleton.invokeMethodOnObject(skeleton.getMethod(methodCall) ,testAccount);
+		int returnValue = (Integer) skeleton.invokeMethodOnObject(skeleton.getMethod(methodCall) ,testAccount, null);
 		assertEquals(balance, returnValue);
+		
+		methodCall.setMethodName(setBalanceMethod.getName());
+		methodCall.setParameterTypes(setBalanceMethod.getParameterTypes());
+		int newBalanceValue = 220;
+		Object[] args = {newBalanceValue};
+		skeleton.invokeMethodOnObject(skeleton.getMethod(methodCall), testAccount, args);
+		
+		assertEquals(newBalanceValue, testAccount.getBalance());
 	}
 
-	private Method getGetBalalanceMethod() {
-		Method getBalanceMethod = null;
+	private void initMethods() {
 		Method[] allMethods = accountClass.getMethods();
 		for(Method method:allMethods){
 			if(method.getName().equals("getBalance")){
 				getBalanceMethod = method;
-				break;
+			}
+			if(method.getName().equals("setBalance")){
+				setBalanceMethod = method;
 			}
 		}
-		return getBalanceMethod;
 	}
 	
 	@Test
 	public void testInvokeMethod(){
-		methodCall.setMethodName(getGetBalalanceMethod().getName());
+		methodCall.setMethodName(getBalanceMethod.getName());
 		int objectID = 23;
 		methodCall.setObjectID(objectID);
 		skeleton.addObject(objectID, testAccount);
@@ -80,5 +89,14 @@ public class TestAccountSkeleton {
 		assertEquals(testAccount.getBalance(), returnValue.getValue());
 		assertEquals(int.class, returnValue.getType());
 		
+		methodCall.setMethodName(setBalanceMethod.getName());
+		methodCall.setParameterTypes(setBalanceMethod.getParameterTypes());
+		int excpectedValue = 240;
+		Object[] args = {excpectedValue};
+		methodCall.setArguments(args);
+		
+		ReturnValue setReturnValue = skeleton.invokeMethod(methodCall);
+		
+		assertEquals(excpectedValue, testAccount.getBalance());
 	}
 }

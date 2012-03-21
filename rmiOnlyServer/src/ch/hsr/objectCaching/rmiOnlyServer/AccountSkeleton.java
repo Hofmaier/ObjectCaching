@@ -22,7 +22,7 @@ public class AccountSkeleton implements RMIonlySkeleton {
 		try {
 			Method method = getMethod(methodCall);
 			Class<?> returnType = method.getReturnType();
-			Object retVal = invokeMethodOnObject(method, accountObject);
+			Object retVal = invokeMethodOnObject(method, accountObject, methodCall.getArguments());
 			ReturnValue returnValue = composeReturnValue(retVal, returnType);
 			return returnValue;
 		} catch (ClassNotFoundException e) {
@@ -54,11 +54,11 @@ public class AccountSkeleton implements RMIonlySkeleton {
 	}
 
 	Object invokeMethodOnObject(Method method,
-			Account accountObject) throws ClassNotFoundException,
+			Account accountObject, Object[] args) throws ClassNotFoundException,
 			NoSuchMethodException, IllegalAccessException,
 			InvocationTargetException {
 		
-		return method.invoke(accountObject, (Object[])null);
+		return method.invoke(accountObject, args);
 	}
 	
 	Account getCalledObject(MethodCall methodCall){

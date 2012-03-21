@@ -12,6 +12,7 @@ public class MethodCall implements Serializable {
 	private int ObjectID;
 	private String className;
 	private Class<?>[] parameterTypes;
+	private Object[] arguments;
 	
 	public Class<?>[] getParameterTypes() {
 		return parameterTypes;
@@ -47,5 +48,13 @@ public class MethodCall implements Serializable {
 
 	public void setClassName(String className) {
 		this.className = className;
+	}
+
+	public void setArguments(Object[] args) {
+		arguments = args;
+	}
+	
+	public Object[] getArguments(){
+		return arguments;
 	}
 }

@@ -254,12 +254,12 @@ public class Server implements ServerInterface
 			Action action = scenario.getActionList().get(i);
 			if(action instanceof WriteAction)
 			{
-				System.out.println("Action was a Write-Action with: ");
+				System.out.println("Action was a Write-Action with: " + ((WriteAction)action).getValue());
 			}
 			
 			if(action instanceof ReadAction)
 			{
-				System.out.println("Action was a Read-Action with: ");
+				System.out.println("Action was a Read-Action with: " + ((ReadAction)action).getBalance());
 			}
 		}
 //		for(int i = 0; i < testCases.size(); i++)

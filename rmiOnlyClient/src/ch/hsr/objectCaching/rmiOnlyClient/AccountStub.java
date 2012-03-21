@@ -67,7 +67,7 @@ public class AccountStub implements Account{
 	@Override
 	public void setBalance(int balance) {
 		try {
-			sendMethodCall("getBalance");
+			sendMethodCall("setBalance");
 			try {
 				receiveResponse();
 			} catch (ClassNotFoundException e) {

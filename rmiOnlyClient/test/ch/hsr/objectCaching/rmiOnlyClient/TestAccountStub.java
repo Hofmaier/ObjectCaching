@@ -86,6 +86,7 @@ public class TestAccountStub {
 		MethodCall methodCallFromCUT = (MethodCall) objectInputStream.readObject();
 		
 		assertNotNull("methocall setBalance was null", methodCallFromCUT);
+		assertEquals(methodName, methodCallFromCUT.getMethodName());
 		
 	}
 	

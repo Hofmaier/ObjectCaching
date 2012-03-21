@@ -50,15 +50,14 @@ public class RMIonlyClientHandler extends ClientHandler {
 	@Override
 	public void run() {
 		try {
-			while(true){
-			MethodCall methodCall = readMethodCallfrom(inputStream);
+			MethodCall methodCall;
+			while(( methodCall = readMethodCallfrom(inputStream) )!= null){
 			
 			processMethodCall(methodCall);
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (ClassNotFoundException e) {
-			//toDo: send Errormessage to Client if class is unknown
 			e.printStackTrace();
 		}
 	}

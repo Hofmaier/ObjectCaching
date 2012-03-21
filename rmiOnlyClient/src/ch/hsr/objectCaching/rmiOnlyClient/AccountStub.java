@@ -31,7 +31,7 @@ public class AccountStub implements Account{
 		try {
 			MethodCall methodCall = new MethodCall();
 			methodCall.setClassName(Account.class.getName());
-			methodCall.setMethodName("getbalance");
+			methodCall.setMethodName("getBalance");
 			methodCall.setObjectID(objectID);
 			ObjectOutputStream oos = streamProvider.getObjectOutputStream();
 			oos.writeObject(methodCall);

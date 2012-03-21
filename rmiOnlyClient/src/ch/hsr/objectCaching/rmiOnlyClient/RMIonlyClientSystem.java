@@ -18,7 +18,6 @@ public class RMIonlyClientSystem implements ClientSystemUnderTest {
 
 	@Override
 	public void setServerSocketAdress(InetSocketAddress socketAdress) {
-		// TODO Auto-generated method stub
-		
+		streamProvider.setSocketAdress(socketAdress);
 	}
 }

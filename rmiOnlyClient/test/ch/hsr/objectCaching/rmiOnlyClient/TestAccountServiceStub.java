@@ -9,6 +9,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -82,6 +83,12 @@ public class TestAccountServiceStub {
 		@Override
 		public ObjectInputStream getObjectInputStream() {
 			return objectInputStream;
+		}
+
+		@Override
+		public void setSocketAdress(InetSocketAddress socketAdress) {
+			// TODO Auto-generated method stub
+			
 		}
 		
 	}

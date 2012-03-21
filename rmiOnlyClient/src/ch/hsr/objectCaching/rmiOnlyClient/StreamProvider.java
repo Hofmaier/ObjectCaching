@@ -3,12 +3,14 @@ package ch.hsr.objectCaching.rmiOnlyClient;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
 public class StreamProvider implements IStreamProvider {
 	
 	private Socket socket;
+	private InetSocketAddress socketAddress;
 	private ObjectOutputStream objectOutputStream;
 	private ObjectInputStream objectInputStream; 
 
@@ -25,7 +27,8 @@ public class StreamProvider implements IStreamProvider {
 	}
 
 	private void initStreams() throws UnknownHostException, IOException {
-		socket = new Socket("localhost", 12345);
+		socket = new Socket();
+		socket.connect(socketAddress);
 		objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
 		objectInputStream = new ObjectInputStream(socket.getInputStream());
 	}
@@ -33,5 +36,10 @@ public class StreamProvider implements IStreamProvider {
 	@Override
 	public ObjectInputStream getObjectInputStream() {
 		return objectInputStream;
+	}
+
+	@Override
+	public void setSocketAdress(InetSocketAddress socketAddress) {
+		this.socketAddress = socketAddress;
 	}
 }

@@ -1,0 +1,22 @@
+<?xml version="1.0">
+<project name="ObjectCaching" default="compile" basedir=".">
+
+<property name="testFrameworkServer" location="testFrameworkServer"/>
+<property name="source-path" location="testFrameworkServer/src"/>
+
+<path id="project.classpath">
+	<pathelement location="testFrameworkServer" />
+	<fileset dir=".">
+		<include name="*.jar"/>
+	</fileset>
+</path>
+
+<target name="prepare" >
+	<mkdir dir="${source-path}/server" />
+</target>
+
+<target name="compile" depends="prepare>
+	<javac srcdir="${source-path}" destdir="${source-path}/server">
+		<classpath refid="project.classpath" />
+	</javac>
+</target>

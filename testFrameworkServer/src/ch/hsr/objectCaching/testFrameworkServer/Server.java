@@ -18,10 +18,13 @@ import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.Properties;
 
+import ch.hsr.objectCaching.interfaces.Action;
 import ch.hsr.objectCaching.interfaces.ClientInterface;
 import ch.hsr.objectCaching.interfaces.Configuration;
+import ch.hsr.objectCaching.interfaces.ReadAction;
 import ch.hsr.objectCaching.interfaces.Scenario;
 import ch.hsr.objectCaching.interfaces.ServerInterface;
+import ch.hsr.objectCaching.interfaces.WriteAction;
 import ch.hsr.objectCaching.testFrameworkServer.Client.Status;
 
 public class Server implements ServerInterface
@@ -247,6 +250,19 @@ public class Server implements ServerInterface
 		//TODO: Auswertung der ankommenden Resultate
 		System.out.println("results setted");
 		System.out.println(scenario.getId());
+		for(int i = 0; i < scenario.getActionList().size(); i++)
+		{
+			Action action = scenario.getActionList().get(i);
+			if(action instanceof WriteAction)
+			{
+				System.out.println("Action was a Write-Action with: ");
+			}
+			
+			if(action instanceof ReadAction)
+			{
+				System.out.println("Action was a Read-Action with: ");
+			}
+		}
 //		for(int i = 0; i < testCases.size(); i++)
 //		{
 //			if(testCases.get(i).equals(activeTestCase) && testCases.get(i + 1) != null)

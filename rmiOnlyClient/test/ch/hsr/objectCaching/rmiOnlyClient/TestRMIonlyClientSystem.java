@@ -1,11 +1,9 @@
 package ch.hsr.objectCaching.rmiOnlyClient;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
 
 import org.junit.Before;
 import org.junit.Test;
-
-import ch.hsr.objectCaching.interfaces.AccountService;
 
 public class TestRMIonlyClientSystem {
 

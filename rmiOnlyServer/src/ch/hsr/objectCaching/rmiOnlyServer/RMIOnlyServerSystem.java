@@ -12,6 +12,7 @@ public class RMIOnlyServerSystem implements ServerSystemUnderTest {
 	
 	public RMIOnlyServerSystem(){
 		accountServiceSkeleton.setAccountSkeleton(accountSkeleton);
+		accountSkeleton.addObject(23, new AccountImpl());
 	}
 
 	@Override

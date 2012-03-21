@@ -7,6 +7,7 @@ import java.net.UnknownHostException;
 
 import ch.hsr.objectCaching.interfaces.Account;
 import ch.hsr.objectCaching.interfaces.MethodCall;
+import ch.hsr.objectCaching.interfaces.ReturnValue;
 
 
 
@@ -27,21 +28,18 @@ public class AccountStub implements Account{
 	String invokeMethodMessage = "<invokeMethod><objectid>23</objectid><methodname>getBalance()</methodname></invokeMethod>";
 	
 	public int getBalance(){
-		Socket socket;
-		String retValue = "";
 		try {
-			socket = new Socket("localhost", 12345);
-			//PrintWriter out = new PrintWriter(socket.getOutputStream());
-			//out.println(invokeMethodMessage);
 			MethodCall methodCall = new MethodCall();
+			methodCall.setClassName(Account.class.getName());
 			methodCall.setMethodName("getbalance");
-			methodCall.setObjectID("23");
-			ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
+			methodCall.setObjectID(objectID);
+			ObjectOutputStream oos = streamProvider.getObjectOutputStream();
 			oos.writeObject(methodCall);
-			ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
-			retValue = (String) ois.readObject();
-			oos.close();
-			ois.close();
+			oos.flush();
+			ObjectInputStream ois = streamProvider.getObjectInputStream();
+			ReturnValue retValue = (ReturnValue) ois.readObject();
+			Integer i = (Integer) retValue.getValue();
+			return i;
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -49,8 +47,7 @@ public class AccountStub implements Account{
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
-		
-		return Integer.parseInt(retValue);
+		return -1;
 	}
 	
 	public static void main(String[] args){

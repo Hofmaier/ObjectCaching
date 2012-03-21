@@ -5,6 +5,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 
+import ch.hsr.objectCaching.interfaces.Account;
 import ch.hsr.objectCaching.interfaces.AccountService;
 import ch.hsr.objectCaching.interfaces.ClientHandler;
 import ch.hsr.objectCaching.interfaces.MethodCall;
@@ -49,11 +50,11 @@ public class RMIonlyClientHandler extends ClientHandler {
 	@Override
 	public void run() {
 		try {
-			
+			while(true){
 			MethodCall methodCall = readMethodCallfrom(inputStream);
 			
 			processMethodCall(methodCall);
-			
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (ClassNotFoundException e) {
@@ -69,7 +70,7 @@ public class RMIonlyClientHandler extends ClientHandler {
 	}
 
 	 void setSkeleton(MethodCall methodCall) {
-		if(methodCall.getClassName().equals("Account")){
+		if(methodCall.getClassName().equals(Account.class.getName())){
 			skeletonInUse = accountSkeleton;
 		}
 		if(methodCall.getClassName().equals(AccountService.class.getName())){

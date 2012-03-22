@@ -9,47 +9,45 @@ import ch.hsr.objectCaching.interfaces.Action;
 import ch.hsr.objectCaching.interfaces.Scenario;
 
 public class TestClient {
-	
+
 	private Scenario scenario;
 	private AccountService accountService;
 	private ArrayList<Account> accounts;
-	
-	public TestClient(Scenario scenario){
+	private int AccountIndex = 0;
+
+	public TestClient(Scenario scenario) {
 		this.scenario = scenario;
 	}
-	
-	public Scenario getScenario(){
+
+	public Scenario getScenario() {
 		return scenario;
 	}
 
-	public void init(){
+	public void init() {
 		accounts = (ArrayList<Account>) accountService.getAllAccounts();
 	}
-	
-	public ArrayList<Account> getAccounts(){
+
+	public ArrayList<Account> getAccounts() {
 		return accounts;
 	}
-	
 
 	public void start() {
-		Iterator<Action> actionIter = scenario.getActionList().iterator();
-		while (actionIter.hasNext()) {
+		for (Action action : scenario.getActionList()) {
 			Account acc = getNextAccount();
-			Action action = actionIter.next();		
 			action.execute(acc);
 		}
 	}
 
-
 	public void setAccountService(AccountService accountService) {
-		this.accountService = accountService;		
+		this.accountService = accountService;
 	}
-	
-	private Account getNextAccount() {
-		if(accounts.size() == 1){
-			return accounts.get(0);
+
+	public Account getNextAccount() {
+		if (AccountIndex == accounts.size()){
+			AccountIndex = 0;
 		}
-		return null;
+		return accounts.get(AccountIndex++);
+
 	}
 
 }

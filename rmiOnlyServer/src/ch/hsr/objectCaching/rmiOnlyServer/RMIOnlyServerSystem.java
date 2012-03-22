@@ -24,7 +24,7 @@ public class RMIOnlyServerSystem implements ServerSystemUnderTest {
 	}
 
 	@Override
-	public void addAccountObject(Account testObject) {
+	public void addAccount(Account testObject) {
 		accountSkeleton.addObject(ObjectIDGenerator.next(), testObject);
 		accountService.addAccount(testObject);
 	}

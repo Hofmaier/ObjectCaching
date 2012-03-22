@@ -42,6 +42,35 @@ public class ClientController implements ClientInterface {
 		notifyServerInitDone();
 	}
 
+	@Override
+	public void start() throws RemoteException {
+		testClient.start();
+		sendResults(testClient.getScenario());
+	}
+	
+	@Override
+	public void exitClient(){
+//        shutdownController();
+	}
+
+	private void shutdownController() {
+		try {
+			Naming.unbind("Client");
+	        UnicastRemoteObject.unexportObject(this, true);
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NotBoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        System.out.println("ClientController exiting. Bye.");
+		System.exit(0);
+	}
+	
 	private void loadServerInterface(String serverIP, int port, String registryName) {
 		try {
 			String url = "rmi://" + serverIP + ":" + port + "/" + registryName;
@@ -69,12 +98,6 @@ public class ClientController implements ClientInterface {
 	}
 
 
-	@Override
-	public void start() throws RemoteException {
-		testClient.start();
-		sendResults(testClient.getScenario());
-	}
-
 	private void sendResults(Scenario scenario) {
 		try {
 			server.setResults(scenario, InetAddress.getLocalHost().getHostAddress());
@@ -96,11 +119,6 @@ public class ClientController implements ClientInterface {
 		} catch (RemoteException e) {
 			System.out.println("setReady failed on Server");
 		}
-	}
-	
-	@Override
-	public void exitClient(){
-		System.exit(0);
 	}
 	
 

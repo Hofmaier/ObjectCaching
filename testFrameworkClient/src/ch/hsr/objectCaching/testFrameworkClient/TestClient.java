@@ -1,7 +1,6 @@
 package ch.hsr.objectCaching.testFrameworkClient;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import ch.hsr.objectCaching.interfaces.Account;
 import ch.hsr.objectCaching.interfaces.AccountService;
@@ -13,7 +12,7 @@ public class TestClient {
 	private Scenario scenario;
 	private AccountService accountService;
 	private ArrayList<Account> accounts;
-	private int AccountIndex = 0;
+	private int accountIndex = 0;
 
 	public TestClient(Scenario scenario) {
 		this.scenario = scenario;
@@ -43,10 +42,10 @@ public class TestClient {
 	}
 
 	public Account getNextAccount() {
-		if (AccountIndex == accounts.size()){
-			AccountIndex = 0;
+		if (accountIndex == accounts.size()){
+			accountIndex = 0;
 		}
-		return accounts.get(AccountIndex++);
+		return accounts.get(accountIndex++);
 
 	}
 

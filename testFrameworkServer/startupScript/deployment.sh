@@ -12,8 +12,8 @@
 
 clients="/home/student/bin/deployment/clients"
 swpw="/home/student/bin/deployment/myKey"
-clientJarName="bla.jar"
-serverJarName=""
+clientJarName="client.jar"
+serverJarName="server.jar"
 remotePath="/home/student/Downloads"
 
   
@@ -27,24 +27,25 @@ function func_copy
   do
     scp ${clientJarName} student@${i}:"${remotePath}/${clientJarName}"
   done
+  echo "clients deployed"
 }
 
 function func_startServer
 {
   java -jar ${serverJarName}
+  echo "Server started"
 }
 
 function func_startClient
 {
   for i in `cat ${clients}`
   do
-    ( 
-    echo "cd ${remotePath}"
-    java -jar ${clientJarName} > lala
-    ) | /usr/bin/sshpass -f ${swpw} ssh -T -o StrictHostKeyChecking=no "student@${i}"
+    ssh -q student@${i} "java -jar ${remotePath}/${clientJarName} &"
+  echo "client with ${i} started"
   done
+  echo "All clients started"
 }
 
 func_copy
-#func_startServer
+func_startServer
 func_startClient

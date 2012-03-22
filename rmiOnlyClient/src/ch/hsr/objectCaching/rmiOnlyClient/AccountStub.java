@@ -2,6 +2,7 @@ package ch.hsr.objectCaching.rmiOnlyClient;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.lang.reflect.Method;
 import java.net.UnknownHostException;
 
 import ch.hsr.objectCaching.interfaces.Account;
@@ -24,9 +25,11 @@ public class AccountStub implements Account{
 	}
 
 	String invokeMethodMessage = "<invokeMethod><objectid>23</objectid><methodname>getBalance()</methodname></invokeMethod>";
+	private Object[] arguments;
 	
 	public int getBalance(){
 		try {
+			arguments = null;
 			String methodName = "getBalance";
 			sendMethodCall(methodName);
 			ReturnValue retValue = receiveResponse();
@@ -51,8 +54,11 @@ public class AccountStub implements Account{
 
 	private void sendMethodCall(String methodName) throws IOException {
 		MethodCall methodCall = new MethodCall();
+		Method method = getMethod(methodName);
 		methodCall.setClassName(Account.class.getName());
 		methodCall.setMethodName(methodName);
+		methodCall.setParameterTypes(method.getParameterTypes());
+		methodCall.setArguments(arguments);
 		methodCall.setObjectID(objectID);
 		ObjectOutputStream oos = streamProvider.getObjectOutputStream();
 		oos.writeObject(methodCall);
@@ -66,6 +72,7 @@ public class AccountStub implements Account{
 
 	@Override
 	public void setBalance(int balance) {
+		arguments = new Object[] {balance};
 		try {
 			sendMethodCall("setBalance");
 			try {
@@ -86,4 +93,14 @@ public class AccountStub implements Account{
 		this.objectID = objectID;
 	}
 	
+	private Method getMethod(String methodName) {
+		Method retVal = null;
+		Method[] allMethods = Account.class.getMethods();
+		for(Method method:allMethods){
+			if(method.getName().equals(methodName)){
+				retVal = method;
+			}
+		}
+		return retVal;
+	}
 }

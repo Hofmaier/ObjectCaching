@@ -95,7 +95,6 @@ public class TestAccountSkeleton {
 		Object[] args = {excpectedValue};
 		methodCall.setArguments(args);
 		
-		ReturnValue setReturnValue = skeleton.invokeMethod(methodCall);
 		
 		assertEquals(excpectedValue, testAccount.getBalance());
 	}

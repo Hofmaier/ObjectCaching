@@ -8,6 +8,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.lang.reflect.Method;
 import java.net.InetSocketAddress;
 
 import org.junit.Before;
@@ -24,6 +25,7 @@ public class TestAccountStub {
 	private ObjectInputStream objectInputStream;
 	private ByteArrayOutputStream byteArrayOutputStream;
 	private int objectID = 23;
+	private Method setBalanceMethod;
 
 	@Before
 	public void setUp() throws Exception {
@@ -32,6 +34,7 @@ public class TestAccountStub {
 		objectOutputStream = new ObjectOutputStream(byteArrayOutputStream);
 		IStreamProvider streamProvider = new StreamProviderFake();
 		accountStub.setStreamProvider(streamProvider);
+		initMethods();
 	}
 
 	@Test
@@ -61,7 +64,6 @@ public class TestAccountStub {
 		assertEquals(Account.class.getName(), methodCallFromCUT.getClassName());
 		assertEquals(methodName, methodCallFromCUT.getMethodName());
 		
-		
 	}
 
 	@Test
@@ -79,7 +81,7 @@ public class TestAccountStub {
 		streamToReadbyCUT.writeObject(returnValue);
 		
 		objectInputStream = new ObjectInputStream(new ByteArrayInputStream(byteArrayStreamWithReturnValue.toByteArray()));
-		
+		Class<?>[] parameterTypes = setBalanceMethod.getParameterTypes();
 		accountStub.setBalance(220);
 		
 		ObjectInputStream objectInputStream = new ObjectInputStream(new ByteArrayInputStream(byteArrayOutputStream.toByteArray()));
@@ -87,7 +89,25 @@ public class TestAccountStub {
 		
 		assertNotNull("methocall setBalance was null", methodCallFromCUT);
 		assertEquals(methodName, methodCallFromCUT.getMethodName());
+		Class<?>[] paramterTypesFromCUT = methodCallFromCUT.getParameterTypes();
+		assertNotNull(paramterTypesFromCUT);
+		int i = 0;
+		for(Class<?> paramter:parameterTypes){
+			assertEquals(paramter, paramterTypesFromCUT[i++]);
+		}
 		
+		assertNotNull(methodCallFromCUT.getArguments());
+	}
+	
+	private void initMethods() {
+		Method[] allMethods = Account.class.getMethods();
+		for(Method method:allMethods){
+			if(method.getName().equals("getBalance")){
+			}
+			if(method.getName().equals("setBalance")){
+				setBalanceMethod = method;
+			}
+		}
 	}
 	
 	class StreamProviderFake implements IStreamProvider{

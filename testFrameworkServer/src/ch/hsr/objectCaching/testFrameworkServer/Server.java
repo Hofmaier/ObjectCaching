@@ -18,6 +18,8 @@ import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.Properties;
 
+import ch.hsr.objectCaching.interfaces.Account;
+import ch.hsr.objectCaching.interfaces.AccountImpl;
 import ch.hsr.objectCaching.interfaces.Action;
 import ch.hsr.objectCaching.interfaces.ClientInterface;
 import ch.hsr.objectCaching.interfaces.Configuration;
@@ -37,6 +39,7 @@ public class Server implements ServerInterface
 	private TestCase activeTestCase;
 	private TestCaseFactory factory;
 	private Configuration configuration;
+	private Account account;
 	
 	public Server()
 	{
@@ -47,7 +50,9 @@ public class Server implements ServerInterface
 		establishClientConnection();
 		createRmiRegistry();
 		dispatcher = new Dispatcher(configuration.getServerSocketPort());
+		account = new AccountImpl();
 		new Thread(dispatcher).start();
+		
 	}
 	
 	private void generateTestCases()
@@ -62,7 +67,7 @@ public class Server implements ServerInterface
 	private void startTestCase()
 	{
 		System.out.println("Starting TestCase");
-		dispatcher.setSystemUnderTest(activeTestCase.getSystemUnderTest());
+		dispatcher.setSystemUnderTest(activeTestCase.getSystemUnderTest(), account);
 		initializeClients();
 	}
 	
@@ -262,7 +267,6 @@ public class Server implements ServerInterface
 				System.out.println("Action was a Read-Action with: " + ((ReadAction)action).getBalance());
 			}
 		}
-		stopClient(clientIp);
 //		for(int i = 0; i < testCases.size(); i++)
 //		{
 //			if(testCases.get(i).equals(activeTestCase) && testCases.get(i + 1) != null)

@@ -6,6 +6,7 @@ import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+import ch.hsr.objectCaching.interfaces.Account;
 import ch.hsr.objectCaching.interfaces.ClientHandler;
 import ch.hsr.objectCaching.interfaces.ServerSystemUnderTest;
 import ch.hsr.objectCaching.rmiOnlyServer.RMIOnlyServerSystem;
@@ -16,13 +17,14 @@ public class Dispatcher implements Runnable
 	ClientHandler clientHandler;
 	private ServerSystemUnderTest systemUnderTest;
 	
-	public void setSystemUnderTest(String system) 
+	public void setSystemUnderTest(String system, Account account) 
 	{
 		try {
 			//Class clazz = Class.forName(system);
 			//Constructor ctor = clazz.getConstructor(new Class[0]);
 			//systemUnderTest = (ServerSystemUnderTest) ctor.newInstance(null);
 			systemUnderTest = new RMIOnlyServerSystem();
+			systemUnderTest.addAccount(account);
 			
 		} catch (SecurityException e) {
 			// TODO Auto-generated catch block
@@ -32,6 +34,12 @@ public class Dispatcher implements Runnable
 			e.printStackTrace();
 		}
 	}
+	
+	public void addAccount(Account account)
+	{
+		systemUnderTest.addAccount(account);
+	}
+	
 	public Dispatcher(int port)
 	{
 		try {

@@ -55,7 +55,7 @@ function func_startClient
 {
   for i in `cat ${clients}`
   do
-    ssh -q student@${i} "java -jar ${remotePath}/${clientJar} &"
+    ssh student@${i} "java -jar ${remotePath}/${clientJar}" &
   echo "STARTUPSCRIPT: Client with ${i} started"
   done
   echo "STARTUPSCRIPT: All clients started"

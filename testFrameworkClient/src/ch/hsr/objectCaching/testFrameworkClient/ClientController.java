@@ -94,6 +94,12 @@ public class ClientController implements ClientInterface {
 			System.out.println("setReady failed on Server");
 		}
 	}
+	
+	@Override
+	public void exitClient(){
+		System.exit(0);
+	}
+	
 
 	/**
 	 * @param args

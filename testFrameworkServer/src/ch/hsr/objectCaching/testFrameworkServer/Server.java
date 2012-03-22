@@ -244,7 +244,7 @@ public class Server implements ServerInterface
 
 	
 	@Override
-	public void setResults(Scenario scenario) 
+	public void setResults(Scenario scenario, String clientIp) 
 	{
 		//TODO: Auswertung der ankommenden Resultate
 		System.out.println("results setted");
@@ -262,6 +262,7 @@ public class Server implements ServerInterface
 				System.out.println("Action was a Read-Action with: " + ((ReadAction)action).getBalance());
 			}
 		}
+		stopClient(clientIp);
 //		for(int i = 0; i < testCases.size(); i++)
 //		{
 //			if(testCases.get(i).equals(activeTestCase) && testCases.get(i + 1) != null)
@@ -270,6 +271,23 @@ public class Server implements ServerInterface
 //				startTestCase();
 //			}
 //		}
+	}
+	
+	private void stopClient(String clientIp)
+	{
+		for(int i = 0; i < clients.size(); i++)
+		{
+			if(clients.get(i).getIp().equals(clientIp))
+			{
+				try {
+					System.out.println("Stop Client with " + clientIp);
+					clients.get(i).getClientStub().exitClient();
+				} catch (RemoteException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
 	}
 	
 	public static void main(String[] args) 

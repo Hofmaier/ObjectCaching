@@ -28,11 +28,10 @@ public class ClientController implements ClientInterface {
 	}
 
 	@Override
-	public void initialize(Scenario scenario, Configuration configuration) throws RemoteException {
-		
+	public void initialize(Scenario scenario, Configuration configuration) throws RemoteException {		
 		config = configuration;		
 		ClientSystemUnderTest clientSystemUnderTest = createClientSystemUnderTest(configuration.getNameOfSystemUnderTest());		
-		InetSocketAddress socket = new InetSocketAddress(configuration.getServerIP(), configuration.getServerSocketPort());
+		InetSocketAddress socket = new InetSocketAddress(config.getServerIP(), config.getServerSocketPort());
 		clientSystemUnderTest.setServerSocketAdress(socket);
 		
 		testClient = new TestClient(scenario);	
@@ -64,7 +63,7 @@ public class ClientController implements ClientInterface {
 		try {
 			client = CUTFactory.generateCUT(systemUnderTestName);
 		} catch (Exception e) {
-			System.out.println("Generating Client System Under Test failed: " + e.getMessage());
+			System.out.println("Generating ClientSystemUnderTest failed: " + e.getMessage());
 		}
 		return client;
 	}
@@ -78,9 +77,12 @@ public class ClientController implements ClientInterface {
 
 	private void sendResults(Scenario scenario) {
 		try {
-			server.setResults(scenario);
+			server.setResults(scenario, InetAddress.getLocalHost().getHostAddress());
 		} catch (RemoteException e) {
 			System.out.println("Failed to send Results back to server: " + e.getMessage());
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 	
@@ -95,6 +97,12 @@ public class ClientController implements ClientInterface {
 			System.out.println("setReady failed on Server");
 		}
 	}
+	
+	@Override
+	public void exitClient(){
+		System.exit(0);
+	}
+	
 
 	/**
 	 * @param args

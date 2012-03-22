@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import ch.hsr.objectCaching.interfaces.Account;
+import ch.hsr.objectCaching.interfaces.AccountImpl;
 import ch.hsr.objectCaching.interfaces.MethodCall;
 import ch.hsr.objectCaching.interfaces.ReturnValue;
 

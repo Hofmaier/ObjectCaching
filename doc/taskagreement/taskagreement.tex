@@ -28,13 +28,18 @@ Mercury ist ein Datenverarbeitungssystem, welches es Clients ermöglicht, Method
 \section{Ziele der Arbeit}
 Die Arbeit wurde durch Mercury motiviert, unserer Ziele sind jedoch losgelöst von diesem System, da die genannten Probleme bei allen verteilten Software-Systemen auftreten.
 
-\subsection{Prioritaeten}
+\subsection{Prioritäten}
 \label{sec:prioritaeten}
 
 \begin{enumerate}
 \item Das ‘‘Lost Update’’-Problem soll vermieden werden:
 \begin{itemize}
-\item Können Instanzvariablen eines Objekts durch mehrere Clients modifiziert werden, so muss bei einer Schreiboperation garantiert werden, dass der Client, welcher die Schreiboperation ausführen will, dies basierend auf dem aktuell im Objekt gespeicherten Wert tut. Wird dies nicht geprüft, kann es dazu führen, dass Änderungen, welche ein anderer Client zwischenzeitlich gemacht hat, verloren gehen.
+\item Instanzvariablen eines Objekts können durch mehrere Clients
+  modifiziert werden. Liest ein Client den Wert eines Datenfeldes und
+  verwendet er diesen Wert später als Argument in einer kausal
+  abhängigen Schreibmethode, so muss sichergestellt werden, dass der Wert
+  zwischen der Lese- und der Schreiboperation nicht von einem anderen
+  Client verändert wurde. Wird dies nicht sichergestellt, kann es dazu führen, dass Änderungen, welche ein anderer Client zwischenzeitlich gemacht hat, verloren gehen.
 \end{itemize}
 \item Die Abhandlung der Schreib -und Lesezugriffe auf das Objekt, welches auf dem Server liegt, soll für den Client möglichst schnell passieren.
 \end{enumerate}

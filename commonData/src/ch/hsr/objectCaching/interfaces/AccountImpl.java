@@ -1,6 +1,5 @@
-package ch.hsr.objectCaching.rmiOnlyServer;
+package ch.hsr.objectCaching.interfaces;
 
-import ch.hsr.objectCaching.interfaces.Account;
 
 public class AccountImpl implements Account {
 	

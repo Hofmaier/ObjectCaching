@@ -8,6 +8,7 @@ import java.util.Collection;
 import org.junit.Before;
 import org.junit.Test;
 
+import ch.hsr.objectCaching.interfaces.AccountImpl;
 import ch.hsr.objectCaching.interfaces.AccountService;
 import ch.hsr.objectCaching.interfaces.MethodCall;
 import ch.hsr.objectCaching.interfaces.ReturnValue;

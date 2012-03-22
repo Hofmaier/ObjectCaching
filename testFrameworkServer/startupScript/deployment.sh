@@ -10,42 +10,60 @@
 # Variables
 # 
 
-clients="/home/student/bin/deployment/clients"
-swpw="/home/student/bin/deployment/myKey"
-clientJarName="client.jar"
-serverJarName="server.jar"
+startFolder="`pwd`"
+clients="${startFolder}/clients"
+swpw="${startFolder}/myKey"
+clientJar="client.jar"
+serverJar="server.jar"
 remotePath="/home/student/Downloads"
+clientJarPath="../../dist/client"
+serverJarPath="../../dist/server"
 
   
 # 
 # Code
 # 
 
-function func_copy
+function func_rm
 {
   for i in `cat ${clients}`
   do
-    scp ${clientJarName} student@${i}:"${remotePath}/${clientJarName}"
+    ssh -q student@${i} "rm ${remotePath}/${clientJar}"
   done
-  echo "clients deployed"
+}
+
+function func_copy
+{
+  cd ${clientJarPath}
+  for i in `cat ${clients}`
+  do
+    scp ${clientJar} student@${i}:"${remotePath}/${clientJar}"
+  done
+  echo "STARTUPSCRIPT: Clients deployed"
+  cd ${startFolder}
 }
 
 function func_startServer
 {
-  java -jar ${serverJarName}
-  echo "Server started"
+  cd ${serverJarPath}
+  echo "STARTUPSCRIPT: Server started"
+  java -jar ${serverJar}
+  cd ${startFolder}
 }
 
 function func_startClient
 {
   for i in `cat ${clients}`
   do
-    ssh -q student@${i} "java -jar ${remotePath}/${clientJarName} &"
-  echo "client with ${i} started"
+    ssh -q student@${i} "java -jar ${remotePath}/${clientJar} &"
+  echo "STARTUPSCRIPT: Client with ${i} started"
   done
-  echo "All clients started"
+  echo "STARTUPSCRIPT: All clients started"
 }
 
+func_rm
+sleep 2
 func_copy
-func_startServer
 func_startClient
+sleep 2
+func_startServer

@@ -77,9 +77,12 @@ public class ClientController implements ClientInterface {
 
 	private void sendResults(Scenario scenario) {
 		try {
-			server.setResults(scenario);
+			server.setResults(scenario, InetAddress.getLocalHost().getHostAddress());
 		} catch (RemoteException e) {
 			System.out.println("Failed to send Results back to server: " + e.getMessage());
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 	

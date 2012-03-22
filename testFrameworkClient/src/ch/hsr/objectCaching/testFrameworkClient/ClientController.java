@@ -28,11 +28,10 @@ public class ClientController implements ClientInterface {
 	}
 
 	@Override
-	public void initialize(Scenario scenario, Configuration configuration) throws RemoteException {
-		
+	public void initialize(Scenario scenario, Configuration configuration) throws RemoteException {		
 		config = configuration;		
 		ClientSystemUnderTest clientSystemUnderTest = createClientSystemUnderTest(configuration.getNameOfSystemUnderTest());		
-		InetSocketAddress socket = new InetSocketAddress(configuration.getServerIP(), configuration.getServerSocketPort());
+		InetSocketAddress socket = new InetSocketAddress(config.getServerIP(), config.getServerSocketPort());
 		clientSystemUnderTest.setServerSocketAdress(socket);
 		
 		testClient = new TestClient(scenario);	
@@ -64,7 +63,7 @@ public class ClientController implements ClientInterface {
 		try {
 			client = CUTFactory.generateCUT(systemUnderTestName);
 		} catch (Exception e) {
-			System.out.println("Generating Client System Under Test failed: " + e.getMessage());
+			System.out.println("Generating ClientSystemUnderTest failed: " + e.getMessage());
 		}
 		return client;
 	}

@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<project name="objectCaching" default="jar" basedir=".">
+<project name="objectCaching" default="copyConfig" basedir=".">
 
 <property name="build.dir" location="build"/>
 <property name="build.prod.dir" location="${build.dir}/prod" />
@@ -63,6 +63,9 @@
   <mkdir dir="${dist.server.dir}" />
   <mkdir dir="${dist.client.dir}" />
   <jar destfile="${jar.server.path}" basedir="${build.prod.server.dir}" >
+    <manifest>
+      <attribute name="Main-Class" value="ch.hsr.objectCaching.testFrameworkServer.Server" />
+    </manifest>
   </jar>
   <jar destfile="${jar.client.path}" basedir="${build.prod.client.dir}" >
     <manifest>
@@ -81,6 +84,11 @@
   <javac srcdir="${fmClient.src.dir}" destdir="${build.prod.client.dir}" includeantruntime="false">
     <classpath refid="project.classpath" />
   </javac>
+</target>
+
+<target name="copyConfig" depends="jar" >
+  <copy file="testFrameworkServer/initFile.conf" tofile="${dist.server.dir}/initFile.conf" />
+  <copy file="testFrameworkServer/testCases.xml" tofile="${dist.server.dir}/testCases.xml" />
 </target>
 
 </project>

@@ -30,7 +30,7 @@ public class TestClient {
 		return accounts;
 	}
 
-	public void start() {
+	public void runScenario() {
 		for (Action action : scenario.getActionList()) {
 			Account acc = getNextAccount();
 			action.execute(acc);

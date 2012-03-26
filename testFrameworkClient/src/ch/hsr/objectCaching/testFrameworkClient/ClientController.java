@@ -69,8 +69,8 @@ public class ClientController implements ClientInterface {
 
 
 	@Override
-	public void start() throws RemoteException {
-		testClient.start();
+	public void startTest() throws RemoteException {
+		testClient.runScenario();
 		sendResults(testClient.getScenario());
 	}
 
@@ -97,7 +97,7 @@ public class ClientController implements ClientInterface {
 	}
 	
 	@Override
-	public void exitClient(){
+	public void shutdown(){
 		System.exit(0);
 	}
 	

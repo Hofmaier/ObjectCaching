@@ -215,7 +215,7 @@ public class Server implements ServerInterface
 		for(int i = 0; i < clients.size(); i++)
 		{
 			try {
-				clients.get(i).getClientStub().start();
+				clients.get(i).getClientStub().startTest();
 			} catch (RemoteException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -290,7 +290,7 @@ public class Server implements ServerInterface
 			{
 				try {
 					System.out.println("Stop Client with " + clientIp);
-					clients.get(i).getClientStub().exitClient();
+					clients.get(i).getClientStub().shutdown();
 				} catch (RemoteException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

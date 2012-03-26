@@ -36,9 +36,9 @@ public class ReportGenerator {
 		int actionNumber = 0;
 		try {
 			BufferedWriter out = new BufferedWriter(new FileWriter("Scenario_" + s.getId() + ".txt"));
-			out.write("******************************"+ "\n");
-			out.write("Result for ScenarioID: " + s.getId()+"\n");
-			out.write("******************************"+"\n");
+			out.write("******************************" + "\n");
+			out.write("Result for ScenarioID: " + s.getId() + "\n");
+			out.write("******************************" + "\n");
 			out.write("ActionNr;Time[ms]\n");
 			for (Action action : s.getActionList()) {
 				if (action instanceof WriteAction) {
@@ -50,7 +50,7 @@ public class ReportGenerator {
 					int konflict = 0;
 					for (Measure m : action.getResult().getAttempt()) {
 						double time = getDeltaInMilisec(m);
-						out.write(actionNumber + "_" + konflict + ";" + time + "\n");
+						out.write(actionNumber + "_" + konflict + ";" + time + ";" + "WRITE" + "\n");
 						konflict++;
 						totalTime += time;
 					}
@@ -62,7 +62,7 @@ public class ReportGenerator {
 					int konflict = 0;
 					for (Measure m : action.getResult().getAttempt()) {
 						double time = getDeltaInMilisec(m);
-						out.write(actionNumber + "_" + konflict + ";" + time + "\n");
+						out.write(actionNumber + "_" + konflict + ";" + time + ";" + "READ" + "\n");
 						konflict++;
 						totalTime += time;
 					}

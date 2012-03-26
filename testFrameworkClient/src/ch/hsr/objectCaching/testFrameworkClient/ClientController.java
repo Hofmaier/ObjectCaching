@@ -58,13 +58,12 @@ public class ClientController implements ClientInterface {
 	}
 
 	private ClientSystemUnderTest createClientSystemUnderTest(String systemUnderTestName) {
-		ClientSystemUnderTest client = null;
 		try {
-			client = CUTFactory.generateCUT(systemUnderTestName);
+			return CUTFactory.generateCUT(systemUnderTestName);
 		} catch (Exception e) {
 			System.out.println("Generating ClientSystemUnderTest failed: " + e.getMessage());
 		}
-		return client;
+		return null;
 	}
 
 
@@ -85,9 +84,8 @@ public class ClientController implements ClientInterface {
 	}
 	
 	private void notifyServerInitDone() {
-		InetAddress addr;
 		try {
-			addr = InetAddress.getLocalHost();
+			InetAddress addr = InetAddress.getLocalHost();
 			server.setReady(addr.getHostAddress());
 		} catch (UnknownHostException e) {
 			System.out.println("Host not known: " + e.getMessage());

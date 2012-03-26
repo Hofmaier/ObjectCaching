@@ -10,15 +10,15 @@ public class Result implements Serializable{
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private List<Measure> listOfAttempt;
-	private Measure currentTry;
+	private List<TimeMeasure> listOfAttempt;
+	private TimeMeasure currentTry;
 	
 	public Result(){
-	listOfAttempt = new ArrayList<Measure>();
+	listOfAttempt = new ArrayList<TimeMeasure>();
 	}
 
 	public void startMeasuring() {
-		currentTry = new Measure();
+		currentTry = new TimeMeasure();
 		currentTry.setStartTime(System.nanoTime());	
 	}
 
@@ -27,7 +27,7 @@ public class Result implements Serializable{
 		listOfAttempt.add(currentTry);
 	}
 	
-	public List<Measure> getAttempt(){
+	public List<TimeMeasure> getAttempt(){
 		return listOfAttempt;
 	}
 	

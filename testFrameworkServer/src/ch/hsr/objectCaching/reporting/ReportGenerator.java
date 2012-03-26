@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ch.hsr.objectCaching.interfaces.Action;
-import ch.hsr.objectCaching.interfaces.Measure;
+import ch.hsr.objectCaching.interfaces.TimeMeasure;
 import ch.hsr.objectCaching.interfaces.ReadAction;
 import ch.hsr.objectCaching.interfaces.Scenario;
 import ch.hsr.objectCaching.interfaces.WriteAction;
@@ -48,7 +48,7 @@ public class ReportGenerator {
 					}
 
 					int konflict = 0;
-					for (Measure m : action.getResult().getAttempt()) {
+					for (TimeMeasure m : action.getResult().getAttempt()) {
 						double time = getDeltaInMilisec(m);
 						out.write(actionNumber + "_" + konflict + ";" + time + ";" + "WRITE" + "\n");
 						konflict++;
@@ -60,7 +60,7 @@ public class ReportGenerator {
 						totalConflicts += action.getResult().getNumberOfTry() - 1;
 					}
 					int konflict = 0;
-					for (Measure m : action.getResult().getAttempt()) {
+					for (TimeMeasure m : action.getResult().getAttempt()) {
 						double time = getDeltaInMilisec(m);
 						out.write(actionNumber + "_" + konflict + ";" + time + ";" + "READ" + "\n");
 						konflict++;
@@ -78,7 +78,7 @@ public class ReportGenerator {
 		}
 	}
 
-	private double getDeltaInMilisec(Measure m) {
+	private double getDeltaInMilisec(TimeMeasure m) {
 		long nanoSek = m.getStopTime() - m.getStartTime();
 		return (double) nanoSek / 1000000;
 	}

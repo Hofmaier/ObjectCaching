@@ -2,12 +2,16 @@ package ch.hsr.objectCaching.interfaces;
 
 import java.io.Serializable;
 
-public class Measure implements Serializable{
+public class TimeMeasure implements Serializable{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private long startTime = 0;
 	private long stopTime = 0;
 	
-	public Measure(){}
+	public TimeMeasure(){}
 	
 	public long getStartTime() {
 		return startTime;

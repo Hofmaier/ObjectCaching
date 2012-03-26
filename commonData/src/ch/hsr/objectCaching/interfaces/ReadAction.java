@@ -17,12 +17,11 @@ public class ReadAction extends Action {
 	
 	@Override
 	public void execute(Account account) {
-		boolean successfull = false;
+		boolean successfull = true;
 		do {
 			result.startMeasuring();
 			balanceResult = account.getBalance();
 			result.stopMeasuring();
-			successfull = true;
 		} while (!successfull);
 	}
 

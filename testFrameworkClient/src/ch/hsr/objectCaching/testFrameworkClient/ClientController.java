@@ -38,11 +38,11 @@ public class ClientController implements ClientInterface {
 		testClient.setAccountService(clientSystemUnderTest.getAccountService());
 		testClient.init();
 
-		loadServerInterface(config.getServerIP(), config.getServerRMIPort(), config.getServerRegistryName());
+		loadServer(config.getServerIP(), config.getServerRMIPort(), config.getServerRegistryName());
 		notifyServerInitDone();
 	}
 
-	private void loadServerInterface(String serverIP, int port, String registryName) {
+	private void loadServer(String serverIP, int port, String registryName) {
 		try {
 			String url = "rmi://" + serverIP + ":" + port + "/" + registryName;
 			server = (ServerInterface) Naming.lookup(url);

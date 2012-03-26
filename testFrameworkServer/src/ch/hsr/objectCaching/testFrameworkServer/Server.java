@@ -268,9 +268,9 @@ public class Server implements ServerInterface
 				System.out.println("Action was a Read-Action with: " + ((ReadAction)action).getBalance());
 			}
 		}
-		ReportGenerator report = new ReportGenerator();
-		report.addScenario(scenario);
-		report.makeSummary();
+//		ReportGenerator report = new ReportGenerator();
+//		report.addScenario(scenario);
+//		report.makeSummary();
 		
 //		for(int i = 0; i < testCases.size(); i++)
 //		{

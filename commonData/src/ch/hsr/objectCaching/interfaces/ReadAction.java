@@ -17,10 +17,13 @@ public class ReadAction extends Action {
 	
 	@Override
 	public void execute(Account account) {
-		result.setStartNanoTime(System.nanoTime());		
-		balanceResult = account.getBalance();
-		result.setEndNanoTime(System.nanoTime());
-		result.setNumberOfTry(1);
+		boolean successfull = false;
+		do {
+			result.startMeasuring();
+			balanceResult = account.getBalance();
+			result.stopMeasuring();
+			successfull = true;
+		} while (!successfull);
 	}
 
 }

@@ -27,6 +27,7 @@ import ch.hsr.objectCaching.interfaces.ReadAction;
 import ch.hsr.objectCaching.interfaces.Scenario;
 import ch.hsr.objectCaching.interfaces.ServerInterface;
 import ch.hsr.objectCaching.interfaces.WriteAction;
+import ch.hsr.objectCaching.reporting.ReportGenerator;
 import ch.hsr.objectCaching.testFrameworkServer.Client.Status;
 
 public class Server implements ServerInterface
@@ -267,6 +268,10 @@ public class Server implements ServerInterface
 				System.out.println("Action was a Read-Action with: " + ((ReadAction)action).getBalance());
 			}
 		}
+		ReportGenerator report = new ReportGenerator();
+		report.addScenario(scenario);
+		report.makeSummary();
+		
 //		for(int i = 0; i < testCases.size(); i++)
 //		{
 //			if(testCases.get(i).equals(activeTestCase) && testCases.get(i + 1) != null)

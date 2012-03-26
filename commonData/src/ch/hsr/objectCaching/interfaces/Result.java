@@ -1,6 +1,8 @@
 package ch.hsr.objectCaching.interfaces;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Result implements Serializable{
 	
@@ -8,45 +10,29 @@ public class Result implements Serializable{
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private long startTimeNano;
-	private long endTimeNano;
-	private int numberOfTry = 0;
+	private List<Measure> listOfAttempt;
+	private Measure currentTry;
 	
 	public Result(){
-		startTimeNano = 0;
-		endTimeNano = 0;
+	listOfAttempt = new ArrayList<Measure>();
+	}
+
+	public void startMeasuring() {
+		currentTry = new Measure();
+		currentTry.setStartTime(System.nanoTime());	
+	}
+
+	public void stopMeasuring() {
+		currentTry.setStopTime(System.nanoTime());
+		listOfAttempt.add(currentTry);
 	}
 	
-	public long getStartNanoTime() {
-		return startTimeNano;
-	}
-
-
-	public void setStartNanoTime(long startTime) {
-		this.startTimeNano = startTime;
-	}
-
-
-	public long getEndNanoTime() {
-		return endTimeNano;
-	}
-
-
-	public void setEndNanoTime(long endTime) {
-		this.endTimeNano = endTime;
+	public List<Measure> getAttempt(){
+		return listOfAttempt;
 	}
 	
-	
-	public long getDuration(){
-		return endTimeNano - startTimeNano;
-	}
-
-	public int getNumberOfTry() {
-		return numberOfTry;
-	}
-
-	public void setNumberOfTry(int numberOfTry) {
-		this.numberOfTry = numberOfTry;
+	public int getNumberOfTry(){
+		return listOfAttempt.size();
 	}
 
 }

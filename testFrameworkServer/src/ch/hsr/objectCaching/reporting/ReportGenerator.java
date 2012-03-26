@@ -39,7 +39,7 @@ public class ReportGenerator {
 			out.write("******************************" + "\n");
 			out.write("Result for ScenarioID: " + s.getId() + "\n");
 			out.write("******************************" + "\n");
-			out.write("ActionNr;Time[ms]\n");
+			out.write("ActionNr;Time[ms];ACTION\n");
 			for (Action action : s.getActionList()) {
 				if (action instanceof WriteAction) {
 

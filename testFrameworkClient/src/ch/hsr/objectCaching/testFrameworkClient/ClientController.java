@@ -31,8 +31,7 @@ public class ClientController implements ClientInterface {
 	public void initialize(Scenario scenario, Configuration configuration) throws RemoteException {		
 		config = configuration;		
 		ClientSystemUnderTest clientSystemUnderTest = createClientSystemUnderTest(configuration.getNameOfSystemUnderTest());		
-		InetSocketAddress socket = new InetSocketAddress(config.getServerIP(), config.getServerSocketPort());
-		clientSystemUnderTest.setServerSocketAdress(socket);
+		clientSystemUnderTest.setServerSocketAdress(new InetSocketAddress(config.getServerIP(), config.getServerSocketPort()));
 		
 		testClient = new TestClient(scenario);	
 		testClient.setAccountService(clientSystemUnderTest.getAccountService());
@@ -81,8 +80,7 @@ public class ClientController implements ClientInterface {
 		} catch (RemoteException e) {
 			System.out.println("Failed to send Results back to server: " + e.getMessage());
 		} catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println("Host not known: " + e.getMessage());
 		}
 	}
 	

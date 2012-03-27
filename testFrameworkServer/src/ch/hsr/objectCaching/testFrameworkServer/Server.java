@@ -32,7 +32,7 @@ import ch.hsr.objectCaching.testFrameworkServer.Client.Status;
 
 public class Server implements ServerInterface
 {
-	private ArrayList<Client> clients;
+	private ClientList clientList;
 	private ArrayList<TestCase> testCases;
 	private static int clientRmiPort;
 	private Properties initFile;
@@ -77,12 +77,12 @@ public class Server implements ServerInterface
 	{
 		System.out.println("initializeClients");
 		Scenario temp;
-		for(int i = 0; i < clients.size(); i++)
+		for(int i = 0; i < clientList.size(); i++)
 		{
 			if((temp = activeTestCase.getScenarios().get(i)) != null)
 			{
 				try {
-					clients.get(i).getClientStub().initialize(temp, configuration);
+					clientList.getClient(i).getClientStub().initialize(temp, configuration);
 				} catch (RemoteException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -91,7 +91,7 @@ public class Server implements ServerInterface
 			else
 			{
 				try {
-					clients.get(i).getClientStub().initialize(activeTestCase.getScenario(0), configuration);
+					clientList.getClient(i).getClientStub().initialize(activeTestCase.getScenario(0), configuration);
 				} catch (RemoteException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -104,10 +104,10 @@ public class Server implements ServerInterface
 	{
 		System.out.println("establishClientConnection");
 		try {
-			for(int i = 0; i < clients.size(); i++)
+			for(int i = 0; i < clientList.size(); i++)
 			{
-				ClientInterface clientStub = (ClientInterface)Naming.lookup("rmi://" + clients.get(i).getIp() + ":" + clientRmiPort + "/Client");
-				clients.get(i).setClientStub(clientStub);
+				ClientInterface clientStub = (ClientInterface)Naming.lookup("rmi://" + clientList.getClient(i).getIp() + ":" + clientRmiPort + "/Client");
+				clientList.getClient(i).setClientStub(clientStub);
 			}
 			
 		} catch (MalformedURLException e) {
@@ -175,14 +175,14 @@ public class Server implements ServerInterface
 	
 	private void prepareClientList()
 	{
-		clients = new ArrayList<Client>();
+		clientList = new ClientList();
 		for(int i = 0; i < initFile.size();i++)
 		{
 			String clientName = "Client" + i;
 			if(initFile.containsKey(clientName))
 			{
 				Client client = new Client((String)initFile.get(clientName));
-				clients.add(client);
+				clientList.addClient(client);
 			}
 		}
 	}
@@ -191,19 +191,16 @@ public class Server implements ServerInterface
 	public void setReady(String ip) 
 	{
 		System.out.println("Setted ready with: " + ip);
-		for(int i = 0; i < clients.size(); i++)
+		Client temp;
+		if((temp = clientList.getClientByIp(ip)) != null)
 		{
-			if(clients.get(i).getIp().equals(ip))
-			{
-				clients.get(i).setStatus(Status.READY);
-			}
+			temp.setStatus(Status.READY);
 		}
 		if(checkAllReady())
 		{
 			start();
 		}
 	}
-	
 	
 	public int getSocketPort()
 	{
@@ -213,10 +210,10 @@ public class Server implements ServerInterface
 	private void start()
 	{
 		System.out.println("start");
-		for(int i = 0; i < clients.size(); i++)
+		for(int i = 0; i < clientList.size(); i++)
 		{
 			try {
-				clients.get(i).getClientStub().startTest();
+				clientList.getClient(i).getClientStub().startTest();
 			} catch (RemoteException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -226,9 +223,9 @@ public class Server implements ServerInterface
 	
 	private boolean checkAllReady()
 	{
-		for(int i = 0; i < clients.size(); i++)
+		for(int i = 0; i < clientList.size(); i++)
 		{
-			if(clients.get(i).getStatus() == Status.NOTREADY)
+			if(clientList.getClient(i).getStatus() == Status.NOTREADY)
 			{
 				return false;
 			}
@@ -285,19 +282,14 @@ public class Server implements ServerInterface
 	
 	private void stopClient(String clientIp)
 	{
-		for(int i = 0; i < clients.size(); i++)
-		{
-			if(clients.get(i).getIp().equals(clientIp))
-			{
-				try {
-					System.out.println("Stop Client with " + clientIp);
-					clients.get(i).getClientStub().shutdown();
-				} catch (RemoteException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
+		try {
+			System.out.println("Stop Client with " + clientIp);
+			clientList.getClientByIp(clientIp).getClientStub().shutdown();
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
+		
 	}
 	
 	public static void main(String[] args) 

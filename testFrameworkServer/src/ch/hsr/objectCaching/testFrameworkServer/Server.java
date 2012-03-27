@@ -1,12 +1,6 @@
 package ch.hsr.objectCaching.testFrameworkServer;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.InetAddress;
 import java.net.MalformedURLException;
-import java.net.UnknownHostException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
@@ -14,9 +8,6 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Map.Entry;
-import java.util.Properties;
 
 import ch.hsr.objectCaching.interfaces.Account;
 import ch.hsr.objectCaching.interfaces.AccountImpl;
@@ -27,34 +18,30 @@ import ch.hsr.objectCaching.interfaces.ReadAction;
 import ch.hsr.objectCaching.interfaces.Scenario;
 import ch.hsr.objectCaching.interfaces.ServerInterface;
 import ch.hsr.objectCaching.interfaces.WriteAction;
-import ch.hsr.objectCaching.reporting.ReportGenerator;
 import ch.hsr.objectCaching.testFrameworkServer.Client.Status;
 
 public class Server implements ServerInterface
 {
 	private ClientList clientList;
 	private ArrayList<TestCase> testCases;
-	private static int clientRmiPort;
-	private Properties initFile;
 	private Dispatcher dispatcher;
 	private TestCase activeTestCase;
 	private TestCaseFactory factory;
 	private Configuration configuration;
 	private Account account;
+	private ConfigurationFactory configFactory;
 	
 	public Server()
 	{
-		
-		loadInitFile();
-		prepareClientList();
-		loadSettings();
+		configFactory = new ConfigurationFactory();
+		clientList = configFactory.getClientList();
+		configuration = configFactory.getConfiguration();
 		generateTestCases();
 		establishClientConnection();
 		createRmiRegistry();
 		dispatcher = new Dispatcher(configuration.getServerSocketPort());
 		account = new AccountImpl();
 		new Thread(dispatcher).start();
-		
 	}
 	
 	private void generateTestCases()
@@ -106,7 +93,7 @@ public class Server implements ServerInterface
 		try {
 			for(int i = 0; i < clientList.size(); i++)
 			{
-				ClientInterface clientStub = (ClientInterface)Naming.lookup("rmi://" + clientList.getClient(i).getIp() + ":" + clientRmiPort + "/Client");
+				ClientInterface clientStub = (ClientInterface)Naming.lookup("rmi://" + clientList.getClient(i).getIp() + ":" + configuration.getClientRmiPort() + "/Client");
 				clientList.getClient(i).setClientStub(clientStub);
 			}
 			
@@ -119,71 +106,6 @@ public class Server implements ServerInterface
 		} catch (NotBoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
-	}
-	
-	private void loadInitFile()
-	{
-		initFile = new Properties();
-		InputStream initFileStream;
-		
-		try {
-			initFileStream = new FileInputStream("initFile.conf");
-			initFile.load(initFileStream);
-			initFileStream.close();
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}	
-	}
-	
-	private void loadSettings()
-	{
-		Iterator<Entry<Object, Object>> iter = initFile.entrySet().iterator();
-		configuration = new Configuration();
-		
-		while(iter.hasNext())
-		{
-			Entry<Object, Object> temp = iter.next();
-			if(temp.getKey().equals("Clientport"))
-			{
-				clientRmiPort = Integer.valueOf((String)temp.getValue());
-			}
-			if(temp.getKey().equals("ServerRmiPort"))
-			{
-				configuration.setServerRMIPort(Integer.valueOf((String)temp.getValue()));
-			}
-			if(temp.getKey().equals("ServerRegistryName"))
-			{
-				configuration.setServerRegistryName((String)temp.getValue());
-			}
-			if(temp.getKey().equals("ServerSocketPort"))
-			{
-				configuration.setServerSocketPort(Integer.valueOf((String)temp.getValue()));
-			}
-		}
-		try {
-			configuration.setServerIP(InetAddress.getLocalHost().getHostAddress());
-		} catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	
-	private void prepareClientList()
-	{
-		clientList = new ClientList();
-		for(int i = 0; i < initFile.size();i++)
-		{
-			String clientName = "Client" + i;
-			if(initFile.containsKey(clientName))
-			{
-				Client client = new Client((String)initFile.get(clientName));
-				clientList.addClient(client);
-			}
 		}
 	}
 	
@@ -282,9 +204,14 @@ public class Server implements ServerInterface
 	
 	private void stopClient(String clientIp)
 	{
+		Client temp;
 		try {
-			System.out.println("Stop Client with " + clientIp);
-			clientList.getClientByIp(clientIp).getClientStub().shutdown();
+			
+			if((temp = clientList.getClientByIp(clientIp)) != null)
+			{
+				System.out.println("Stop Client with " + clientIp);
+				temp.getClientStub().shutdown();
+			}
 		} catch (RemoteException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

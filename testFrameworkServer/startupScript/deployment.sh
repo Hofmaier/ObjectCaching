@@ -11,13 +11,13 @@
 # 
 
 startFolder="`pwd`"
-clients="${startFolder}/clients"
 swpw="${startFolder}/myKey"
 clientJar="client.jar"
 serverJar="server.jar"
 remotePath="/home/student/Downloads"
 clientJarPath="../../dist/client"
 serverJarPath="../../dist/server"
+initFile="../initFile.conf"
 
   
 # 
@@ -26,7 +26,7 @@ serverJarPath="../../dist/server"
 
 function func_rm
 {
-  for i in `cat ${clients}`
+  for i in `cat ${initFile} | grep "Client*[0-9] | awk -F"=" '{ print $2 }'`
   do
     ssh -q student@${i} "rm ${remotePath}/${clientJar}"
   done
@@ -35,7 +35,7 @@ function func_rm
 function func_copy
 {
   cd ${clientJarPath}
-  for i in `cat ${clients}`
+  for i in `cat ${initFile} | grep "Client*[0-9] | awk -F"=" '{ print $2 }'`
   do
     scp ${clientJar} student@${i}:"${remotePath}/${clientJar}"
   done
@@ -53,7 +53,7 @@ function func_startServer
 
 function func_startClient
 {
-  for i in `cat ${clients}`
+  for i in `cat ${initFile} | grep "Client*[0-9] | awk -F"=" '{ print $2 }'`
   do
     ssh student@${i} "java -jar ${remotePath}/${clientJar}" &
   echo "STARTUPSCRIPT: Client with ${i} started"

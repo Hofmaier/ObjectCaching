@@ -44,6 +44,7 @@ public class Server implements ServerInterface
 	
 	public Server()
 	{
+		
 		loadInitFile();
 		prepareClientList();
 		loadSettings();

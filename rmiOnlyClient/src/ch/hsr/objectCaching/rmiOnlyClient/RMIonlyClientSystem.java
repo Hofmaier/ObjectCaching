@@ -20,4 +20,9 @@ public class RMIonlyClientSystem implements ClientSystemUnderTest {
 	public void setServerSocketAdress(InetSocketAddress socketAdress) {
 		streamProvider.setSocketAdress(socketAdress);
 	}
+
+	@Override
+	public void shutdown() {
+		
+	}
 }

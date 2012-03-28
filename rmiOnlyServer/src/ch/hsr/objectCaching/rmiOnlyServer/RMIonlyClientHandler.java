@@ -55,6 +55,8 @@ public class RMIonlyClientHandler extends ClientHandler {
 			
 			processMethodCall(methodCall);
 			}
+			outputStream.close();
+			inputStream.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (ClassNotFoundException e) {

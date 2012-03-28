@@ -98,4 +98,8 @@ public class AccountSkeleton implements RMIonlySkeleton {
 		}
 		return retVal;
 	}
+
+	public void updateReadSet(MethodCall methodCall) {
+		
+	}
 }

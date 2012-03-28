@@ -118,4 +118,9 @@ public class TestAccountSkeleton {
 		skeleton.updateWriteSet(methodCall);
 		assertEquals(2, (int)writeMap.get(testAccount));
 	}
+	
+	@Test
+	public void testUpdateReadSet(){
+		skeleton.updateReadSet(methodCall);
+	}
 }

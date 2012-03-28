@@ -51,12 +51,12 @@ public class RMIonlyClientHandler extends ClientHandler {
 	public void run() {
 		try {
 			MethodCall methodCall;
-			while(( methodCall = readMethodCallfrom(inputStream) )!= null){
+			while(( methodCall = readMethodCallfrom(objectInputStream) )!= null){
 			
 			processMethodCall(methodCall);
 			}
-			outputStream.close();
-			inputStream.close();
+			objectInputStream.close();
+			objectOutputStream.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (ClassNotFoundException e) {
@@ -64,10 +64,14 @@ public class RMIonlyClientHandler extends ClientHandler {
 		}
 	}
 
-	MethodCall readMethodCallfrom(InputStream inputStream) throws IOException,
+	MethodCall readMethodCallfrom(ObjectInputStream inputStream) throws IOException,
 			ClassNotFoundException {
-		MethodCall methodCall = (MethodCall) objectInputStream.readObject();
-		return methodCall;
+		Object objectFromStream = null;
+		if((objectFromStream = inputStream.readObject()) != null){
+		 MethodCall methodCall = (MethodCall) objectFromStream;
+		 return methodCall;
+		}
+		return null;
 	}
 
 	 void setSkeleton(MethodCall methodCall) {

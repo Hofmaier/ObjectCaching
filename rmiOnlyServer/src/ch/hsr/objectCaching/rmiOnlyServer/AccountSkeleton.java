@@ -14,7 +14,12 @@ import ch.hsr.objectCaching.interfaces.ReturnValue;
 public class AccountSkeleton implements RMIonlySkeleton {
 	
 	private HashMap<Integer, Account> objectMap = new HashMap<Integer, Account>();
+	private HashMap<Account, Integer> writeMap = new HashMap<Account, Integer>();
 	
+	HashMap<Account, Integer> getWriteMap() {
+		return writeMap;
+	}
+
 	public ReturnValue invokeMethod(MethodCall methodCall) {
 		
 		Account accountObject = objectMap.get(methodCall.getObjectID());
@@ -23,27 +28,36 @@ public class AccountSkeleton implements RMIonlySkeleton {
 			Method method = getMethod(methodCall);
 			Class<?> returnType = method.getReturnType();
 			Object retVal = invokeMethodOnObject(method, accountObject, methodCall.getArguments());
+			updateWriteSet(methodCall);
 			ReturnValue returnValue = composeReturnValue(retVal, returnType);
 			return returnValue;
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
 		} catch (SecurityException e) {
 			e.printStackTrace();
-		} catch (NoSuchMethodException e) {
-			e.printStackTrace();
 		} catch (IllegalArgumentException e) {
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
 			e.printStackTrace();
 		}
 		return null;
 	}
 
-	Method getMethod(MethodCall methodCall) throws SecurityException, NoSuchMethodException {
+	void updateWriteSet(MethodCall method) {
+		if(method.getMethodName().equals("setBalance")){
+			Account account = objectMap.get(method.getObjectID());
+			Integer version = writeMap.get(account);
+			version++;
+			writeMap.put(account, version);
+		}
+	}
+
+	Method getMethod(MethodCall methodCall) {
 		Class<AccountImpl> clazz = AccountImpl.class;
-		return clazz.getDeclaredMethod(methodCall.getMethodName(), methodCall.getParameterTypes());
+		try {
+			return clazz.getDeclaredMethod(methodCall.getMethodName(), methodCall.getParameterTypes());
+		} catch (SecurityException e) {
+			e.printStackTrace();
+		} catch (NoSuchMethodException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	private ReturnValue composeReturnValue(Object retVal, Class<?> returnType) {
@@ -54,11 +68,17 @@ public class AccountSkeleton implements RMIonlySkeleton {
 	}
 
 	Object invokeMethodOnObject(Method method,
-			Account accountObject, Object[] args) throws ClassNotFoundException,
-			NoSuchMethodException, IllegalAccessException,
-			InvocationTargetException {
-		
-		return method.invoke(accountObject, args);
+			Account accountObject, Object[] args) {
+		try {
+			return method.invoke(accountObject, args);
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 	
 	Account getCalledObject(MethodCall methodCall){
@@ -67,6 +87,7 @@ public class AccountSkeleton implements RMIonlySkeleton {
 	
 	void addObject(Integer objectID, Account account){
 		objectMap.put(objectID, account);
+		writeMap.put(account, 0);
 	}
 	
 	public List<Integer> getAllObjectIDs(){

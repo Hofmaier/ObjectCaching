@@ -5,6 +5,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.HashMap;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -95,8 +96,26 @@ public class TestAccountSkeleton {
 		int excpectedValue = 240;
 		Object[] args = {excpectedValue};
 		methodCall.setArguments(args);
-		
+		skeleton.invokeMethod(methodCall);
 		
 		assertEquals(excpectedValue, testAccount.getBalance());
+	}
+	
+	@Test
+	public void testUpdateWriteSet(){
+		methodCall.setMethodName(setBalanceMethod.getName());
+		int objectID = 23;
+		methodCall.setObjectID(objectID);;
+		skeleton.addObject(objectID, testAccount);
+		skeleton.updateWriteSet(methodCall);
+		HashMap<Account, Integer> writeMap = skeleton.getWriteMap();
+		int version = writeMap.get(testAccount);
+		assertEquals(1, version);
+		skeleton.updateWriteSet(methodCall);
+		int version2 = writeMap.get(testAccount);
+		assertEquals(2, version2);
+		methodCall.setMethodName(getBalanceMethod.getName());
+		skeleton.updateWriteSet(methodCall);
+		assertEquals(2, (int)writeMap.get(testAccount));
 	}
 }

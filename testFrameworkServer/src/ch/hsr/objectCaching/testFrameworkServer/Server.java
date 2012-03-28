@@ -193,14 +193,19 @@ public class Server implements ServerInterface
 //		report.addScenario(scenario);
 //		report.makeSummary();
 		
-//		for(int i = 0; i < testCases.size(); i++)
-//		{
-//			if(testCases.get(i).equals(activeTestCase) && testCases.get(i + 1) != null)
-//			{
-//				activeTestCase = testCases.get(i + 1);
-//				startTestCase();
-//			}
-//		}
+		for(int i = 0; i < testCases.size(); i++)
+		{
+			if(testCases.get(i).equals(activeTestCase) && testCases.get(i + 1) != null)
+			{
+				activeTestCase = testCases.get(i + 1);
+				startTestCase();
+			}
+			else
+			{
+				stopClient(clientIp);
+			}
+		
+		}
 	}
 	
 	private void stopClient(String clientIp)

@@ -50,8 +50,7 @@ public class ClientController implements ClientInterface {
 	@Override
 	public void shutdown(){
 		testClient.shutdown();
-		shutdownController();
-		//System.exit(0);
+		shutdownClientController();
 	}
 	
 	private void loadServerStub(String serverIP, int port, String registryName) {
@@ -102,7 +101,7 @@ public class ClientController implements ClientInterface {
 	
 
 	
-	private void shutdownController() {
+	private void shutdownClientController() {
 		try {
 			Naming.unbind("Client");
 	        UnicastRemoteObject.unexportObject(this, true);

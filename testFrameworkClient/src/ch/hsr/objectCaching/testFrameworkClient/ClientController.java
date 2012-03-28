@@ -37,11 +37,23 @@ public class ClientController implements ClientInterface {
 		testClient.setAccountService(clientSystemUnderTest.getAccountService());
 		testClient.init();
 
-		loadServer(config.getServerIP(), config.getServerRMIPort(), config.getServerRegistryName());
+		loadServerStub(config.getServerIP(), config.getServerRMIPort(), config.getServerRegistryName());
 		notifyServerInitDone();
 	}
-
-	private void loadServer(String serverIP, int port, String registryName) {
+	
+	@Override
+	public void startTest() throws RemoteException {
+		testClient.runScenario();
+		sendResultToServer(testClient.getScenario());
+	}
+	
+	@Override
+	public void shutdown(){
+		System.exit(0);
+//		shutdown();
+	}
+	
+	private void loadServerStub(String serverIP, int port, String registryName) {
 		try {
 			String url = "rmi://" + serverIP + ":" + port + "/" + registryName;
 			server = (ServerInterface) Naming.lookup(url);
@@ -66,14 +78,7 @@ public class ClientController implements ClientInterface {
 		return null;
 	}
 
-
-	@Override
-	public void startTest() throws RemoteException {
-		testClient.runScenario();
-		sendResults(testClient.getScenario());
-	}
-
-	private void sendResults(Scenario scenario) {
+	private void sendResultToServer(Scenario scenario) {
 		try {
 			server.setResults(scenario, InetAddress.getLocalHost().getHostAddress());
 		} catch (RemoteException e) {
@@ -94,11 +99,25 @@ public class ClientController implements ClientInterface {
 		}
 	}
 	
-	@Override
-	public void shutdown(){
+
+	
+	private void shutdownController() {
+		try {
+			Naming.unbind("Client");
+	        UnicastRemoteObject.unexportObject(this, true);
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NotBoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        System.out.println("ClientController exiting. Bye.");
 		System.exit(0);
 	}
-	
 
 	/**
 	 * @param args

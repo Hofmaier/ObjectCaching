@@ -18,6 +18,7 @@ public class RMIonlyClientHandler extends ClientHandler {
 	private AccountServiceSkeleton accountServiceSkeleton;
 	private ObjectOutputStream objectOutputStream;
 	private ObjectInputStream objectInputStream;
+	private String clientIpAdress;
 	
 	public void setAccountSkeleton(AccountSkeleton skeleton) {
 		this.accountSkeleton = skeleton;
@@ -52,7 +53,7 @@ public class RMIonlyClientHandler extends ClientHandler {
 		try {
 			MethodCall methodCall;
 			while(( methodCall = readMethodCallfrom(objectInputStream) )!= null){
-			
+			methodCall.setClientIp(clientIpAdress);
 			processMethodCall(methodCall);
 			}
 			objectInputStream.close();
@@ -101,5 +102,10 @@ public class RMIonlyClientHandler extends ClientHandler {
 	public void setAccountServiceSkeleton(
 			AccountServiceSkeleton accountServiceSkeleton) {
 		this.accountServiceSkeleton = accountServiceSkeleton;
+	}
+
+	@Override
+	public void setClientIpAddress(String clientIpAddress) {
+		this.clientIpAdress = clientIpAddress;
 	}
 }

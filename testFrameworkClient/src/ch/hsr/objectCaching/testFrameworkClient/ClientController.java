@@ -51,6 +51,7 @@ public class ClientController implements ClientInterface {
 	public void shutdown(){
 		testClient.shutdown();
 		System.out.println("ClientController exiting. Bye.");
+	
 		System.exit(0);
 	}
 	

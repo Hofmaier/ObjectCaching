@@ -17,6 +17,10 @@ public class AccountSkeleton implements RMIonlySkeleton {
 	private HashMap<Integer, Account> objectMap = new HashMap<Integer, Account>();
 	private HashMap<Account, Integer> writeMap = new HashMap<Account, Integer>();
 	
+	HashMap<Account, Integer> getWriteMap() {
+		return writeMap;
+	}
+
 	public ReturnValue invokeMethod(MethodCall methodCall) {
 		
 		Account accountObject = objectMap.get(methodCall.getObjectID());
@@ -24,29 +28,20 @@ public class AccountSkeleton implements RMIonlySkeleton {
 		try {
 			Method method = getMethod(methodCall);
 			Class<?> returnType = method.getReturnType();
-			updateWriteSet(methodCall);
 			Object retVal = invokeMethodOnObject(method, accountObject, methodCall.getArguments());
-			
+			updateWriteSet(methodCall);
 			ReturnValue returnValue = composeReturnValue(retVal, returnType);
 			return returnValue;
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
 		} catch (SecurityException e) {
 			e.printStackTrace();
-		} catch (NoSuchMethodException e) {
-			e.printStackTrace();
 		} catch (IllegalArgumentException e) {
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
 			e.printStackTrace();
 		}
 		return null;
 	}
 
-	private void updateWriteSet(MethodCall method) {
-		if(getMethod(method).getName().equals("setAccount")){
+	void updateWriteSet(MethodCall method) {
+		if(method.getMethodName().equals("setBalance")){
 			Account account = objectMap.get(method.getObjectID());
 			Integer version = writeMap.get(account);
 			version++;
@@ -74,11 +69,17 @@ public class AccountSkeleton implements RMIonlySkeleton {
 	}
 
 	Object invokeMethodOnObject(Method method,
-			Account accountObject, Object[] args) throws ClassNotFoundException,
-			NoSuchMethodException, IllegalAccessException,
-			InvocationTargetException {
-		
-		return method.invoke(accountObject, args);
+			Account accountObject, Object[] args) {
+		try {
+			return method.invoke(accountObject, args);
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 	
 	Account getCalledObject(MethodCall methodCall){

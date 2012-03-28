@@ -6,7 +6,7 @@ public class IncrementAction extends Action
 	private int balanceResult;
 	private float factor;
 	private long delay;
-	public IncrementAction(float factor, long delay)
+	public IncrementAction(long delay, float factor)
 	{
 		this.factor = factor;
 		this.delay = delay;

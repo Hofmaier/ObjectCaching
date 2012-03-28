@@ -1,55 +1,66 @@
 package ch.hsr.objectCaching.testFrameworkClient;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import ch.hsr.objectCaching.interfaces.Account;
 import ch.hsr.objectCaching.interfaces.AccountService;
 import ch.hsr.objectCaching.interfaces.Action;
+import ch.hsr.objectCaching.interfaces.ClientSystemUnderTest;
 import ch.hsr.objectCaching.interfaces.Scenario;
 
 public class TestClient {
-	
+
 	private Scenario scenario;
 	private AccountService accountService;
+	private ClientSystemUnderTest clientUnderTest;
 	private ArrayList<Account> accounts;
+	private int accountIndex = 0;
+
 	
-	public TestClient(Scenario scenario){
-		this.scenario = scenario;
+	public TestClient(ClientSystemUnderTest clientUnderTest){
+		this.clientUnderTest = clientUnderTest;
+		setAccountService(clientUnderTest.getAccountService());
 	}
 	
-	public Scenario getScenario(){
+
+	public Scenario getScenario() {
 		return scenario;
 	}
 
-	public void init(){
+	public void init() {
 		accounts = (ArrayList<Account>) accountService.getAllAccounts();
 	}
-	
-	public ArrayList<Account> getAccounts(){
+
+	public ArrayList<Account> getAccounts() {
 		return accounts;
 	}
-	
 
-	public void start() {
-		Iterator<Action> actionIter = scenario.getActionList().iterator();
-		while (actionIter.hasNext()) {
+	public void runScenario() {
+		System.out.println("Started Scenario with id= " + scenario.getId());
+		for (Action action : scenario.getActionList()) {
 			Account acc = getNextAccount();
-			Action action = actionIter.next();		
 			action.execute(acc);
 		}
 	}
 
-
-	public void setAccountService(AccountService accountService) {
-		this.accountService = accountService;		
+	private void setAccountService(AccountService accountService) {
+		this.accountService = accountService;
 	}
-	
-	private Account getNextAccount() {
-		if(accounts.size() == 1){
-			return accounts.get(0);
+
+	public Account getNextAccount() {
+		if (accountIndex == accounts.size()){
+			accountIndex = 0;
 		}
-		return null;
+		return accounts.get(accountIndex++);
+
+	}
+
+	public void shutdown() {
+		clientUnderTest.shutdown();
+	}
+
+	public void setScenario(Scenario scenario) {
+		this.scenario = scenario;
 	}
 
 }

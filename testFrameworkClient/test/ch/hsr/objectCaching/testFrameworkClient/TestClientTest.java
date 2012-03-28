@@ -5,6 +5,7 @@ import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 
+import ch.hsr.objectCaching.interfaces.Account;
 import ch.hsr.objectCaching.interfaces.Scenario;
 
 public class TestClientTest {
@@ -15,8 +16,8 @@ public class TestClientTest {
 	public void setUp(){
 		ClientUnderTestFake fakeClient = new ClientUnderTestFake();
 		Scenario s = new Scenario(1);
-		client = new TestClient(s);
-		client.setAccountService(fakeClient.getAccountService());
+		client.setScenario(s);
+		client.init();
 	}
 	
 	@Test
@@ -28,6 +29,15 @@ public class TestClientTest {
 	public void testNumberOfAccounts(){
 		client.init();
 		assertEquals("More accounts than expected", 2, client.getAccounts().size());
+	}
+	
+	@Test
+	public void testGetNextAccount(){
+		client.init();
+		Account a1 = client.getNextAccount();
+		Account a2 = client.getNextAccount();
+		Account a3 = client.getNextAccount();
+		assertTrue(a1 == a3);
 	}
 
 }

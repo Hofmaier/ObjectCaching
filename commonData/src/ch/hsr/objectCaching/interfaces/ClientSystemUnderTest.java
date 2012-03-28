@@ -6,5 +6,6 @@ public interface ClientSystemUnderTest {
 	
 	public AccountService getAccountService();
 	public void setServerSocketAdress(InetSocketAddress socketAdress);
+	public void shutdown();
 
 }

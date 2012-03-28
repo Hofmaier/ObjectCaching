@@ -31,18 +31,30 @@ public class ClientController implements ClientInterface {
 	public void initialize(Scenario scenario, Configuration configuration) throws RemoteException {		
 		config = configuration;		
 		ClientSystemUnderTest clientSystemUnderTest = createClientSystemUnderTest(configuration.getNameOfSystemUnderTest());		
-		InetSocketAddress socket = new InetSocketAddress(config.getServerIP(), config.getServerSocketPort());
-		clientSystemUnderTest.setServerSocketAdress(socket);
+		clientSystemUnderTest.setServerSocketAdress(new InetSocketAddress(config.getServerIP(), config.getServerSocketPort()));
 		
-		testClient = new TestClient(scenario);	
-		testClient.setAccountService(clientSystemUnderTest.getAccountService());
+		testClient = new TestClient(clientSystemUnderTest);
+		testClient.setScenario(scenario);
 		testClient.init();
 
-		loadServerInterface(config.getServerIP(), config.getServerRMIPort(), config.getServerRegistryName());
+		loadServerStub(config.getServerIP(), config.getServerRMIPort(), config.getServerRegistryName());
 		notifyServerInitDone();
 	}
-
-	private void loadServerInterface(String serverIP, int port, String registryName) {
+	
+	@Override
+	public void startTest() throws RemoteException {
+		testClient.runScenario();
+		sendResultToServer(testClient.getScenario());
+	}
+	
+	@Override
+	public void shutdown(){
+		testClient.shutdown();
+		System.out.println("ClientController exiting. Bye.");
+		System.exit(0);
+	}
+	
+	private void loadServerStub(String serverIP, int port, String registryName) {
 		try {
 			String url = "rmi://" + serverIP + ":" + port + "/" + registryName;
 			server = (ServerInterface) Naming.lookup(url);
@@ -59,37 +71,27 @@ public class ClientController implements ClientInterface {
 	}
 
 	private ClientSystemUnderTest createClientSystemUnderTest(String systemUnderTestName) {
-		ClientSystemUnderTest client = null;
 		try {
-			client = CUTFactory.generateCUT(systemUnderTestName);
+			return CUTFactory.generateCUT(systemUnderTestName);
 		} catch (Exception e) {
 			System.out.println("Generating ClientSystemUnderTest failed: " + e.getMessage());
 		}
-		return client;
+		return null;
 	}
 
-
-	@Override
-	public void start() throws RemoteException {
-		testClient.start();
-		sendResults(testClient.getScenario());
-	}
-
-	private void sendResults(Scenario scenario) {
+	private void sendResultToServer(Scenario scenario) {
 		try {
 			server.setResults(scenario, InetAddress.getLocalHost().getHostAddress());
 		} catch (RemoteException e) {
 			System.out.println("Failed to send Results back to server: " + e.getMessage());
 		} catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println("Host not known: " + e.getMessage());
 		}
 	}
 	
 	private void notifyServerInitDone() {
-		InetAddress addr;
 		try {
-			addr = InetAddress.getLocalHost();
+			InetAddress addr = InetAddress.getLocalHost();
 			server.setReady(addr.getHostAddress());
 		} catch (UnknownHostException e) {
 			System.out.println("Host not known: " + e.getMessage());
@@ -98,11 +100,25 @@ public class ClientController implements ClientInterface {
 		}
 	}
 	
-	@Override
-	public void exitClient(){
+
+	
+	private void shutdownController() {
+		try {
+			Naming.unbind("Client");
+	        UnicastRemoteObject.unexportObject(this, true);
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NotBoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        System.out.println("ClientController exiting. Bye.");
 		System.exit(0);
 	}
-	
 
 	/**
 	 * @param args

@@ -1,12 +1,6 @@
 package ch.hsr.objectCaching.testFrameworkServer;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.InetAddress;
 import java.net.MalformedURLException;
-import java.net.UnknownHostException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
@@ -14,45 +8,38 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Map.Entry;
-import java.util.Properties;
 
 import ch.hsr.objectCaching.interfaces.Account;
 import ch.hsr.objectCaching.interfaces.AccountImpl;
-import ch.hsr.objectCaching.interfaces.Action;
 import ch.hsr.objectCaching.interfaces.ClientInterface;
 import ch.hsr.objectCaching.interfaces.Configuration;
-import ch.hsr.objectCaching.interfaces.ReadAction;
 import ch.hsr.objectCaching.interfaces.Scenario;
 import ch.hsr.objectCaching.interfaces.ServerInterface;
-import ch.hsr.objectCaching.interfaces.WriteAction;
+import ch.hsr.objectCaching.reporting.ReportGenerator;
 import ch.hsr.objectCaching.testFrameworkServer.Client.Status;
 
 public class Server implements ServerInterface
 {
-	private ArrayList<Client> clients;
+	private ClientList clientList;
 	private ArrayList<TestCase> testCases;
-	private static int clientRmiPort;
-	private Properties initFile;
 	private Dispatcher dispatcher;
 	private TestCase activeTestCase;
 	private TestCaseFactory factory;
 	private Configuration configuration;
 	private Account account;
+	private ConfigurationFactory configFactory;
 	
 	public Server()
 	{
-		loadInitFile();
-		prepareClientList();
-		loadSettings();
+		configFactory = new ConfigurationFactory();
+		clientList = configFactory.getClientList();
+		configuration = configFactory.getConfiguration();
 		generateTestCases();
 		establishClientConnection();
 		createRmiRegistry();
 		dispatcher = new Dispatcher(configuration.getServerSocketPort());
 		account = new AccountImpl();
 		new Thread(dispatcher).start();
-		
 	}
 	
 	private void generateTestCases()
@@ -71,30 +58,30 @@ public class Server implements ServerInterface
 		initializeClients();
 	}
 	
+	private Scenario getScenarioForClient(int index)
+	{
+		if(activeTestCase.getScenarios().size() > index)
+		{
+			return activeTestCase.getScenarios().get(index);
+		}
+		else
+		{
+			return activeTestCase.getScenarios().get(0);
+		}
+	}
+	
 	private void initializeClients()
 	{
 		System.out.println("initializeClients");
-		Scenario temp;
-		for(int i = 0; i < clients.size(); i++)
+		for(int i = 0; i < clientList.size(); i++)
 		{
-			if((temp = activeTestCase.getScenarios().get(i)) != null)
-			{
-				try {
-					clients.get(i).getClientStub().initialize(temp, configuration);
-				} catch (RemoteException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+			try {
+				clientList.getClient(i).getClientStub().initialize(getScenarioForClient(i), configuration);
+			} catch (RemoteException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
-			else
-			{
-				try {
-					clients.get(i).getClientStub().initialize(activeTestCase.getScenario(0), configuration);
-				} catch (RemoteException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
+			
 		}
 	}
 	
@@ -102,10 +89,11 @@ public class Server implements ServerInterface
 	{
 		System.out.println("establishClientConnection");
 		try {
-			for(int i = 0; i < clients.size(); i++)
+			for(int i = 0; i < clientList.size(); i++)
 			{
-				ClientInterface clientStub = (ClientInterface)Naming.lookup("rmi://" + clients.get(i).getIp() + ":" + clientRmiPort + "/Client");
-				clients.get(i).setClientStub(clientStub);
+				System.out.println(clientList.getClient(i).getIp());
+				ClientInterface clientStub = (ClientInterface)Naming.lookup("rmi://" + clientList.getClient(i).getIp() + ":" + configuration.getClientRmiPort() + "/Client");
+				clientList.getClient(i).setClientStub(clientStub);
 			}
 			
 		} catch (MalformedURLException e) {
@@ -120,88 +108,20 @@ public class Server implements ServerInterface
 		}
 	}
 	
-	private void loadInitFile()
-	{
-		initFile = new Properties();
-		InputStream initFileStream;
-		
-		try {
-			initFileStream = new FileInputStream("initFile.conf");
-			initFile.load(initFileStream);
-			initFileStream.close();
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}	
-	}
-	
-	private void loadSettings()
-	{
-		Iterator<Entry<Object, Object>> iter = initFile.entrySet().iterator();
-		configuration = new Configuration();
-		
-		while(iter.hasNext())
-		{
-			Entry<Object, Object> temp = iter.next();
-			if(temp.getKey().equals("Clientport"))
-			{
-				clientRmiPort = Integer.valueOf((String)temp.getValue());
-			}
-			if(temp.getKey().equals("ServerRmiPort"))
-			{
-				configuration.setServerRMIPort(Integer.valueOf((String)temp.getValue()));
-			}
-			if(temp.getKey().equals("ServerRegistryName"))
-			{
-				configuration.setServerRegistryName((String)temp.getValue());
-			}
-			if(temp.getKey().equals("ServerSocketPort"))
-			{
-				configuration.setServerSocketPort(Integer.valueOf((String)temp.getValue()));
-			}
-		}
-		try {
-			configuration.setServerIP(InetAddress.getLocalHost().getHostAddress());
-		} catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	
-	private void prepareClientList()
-	{
-		clients = new ArrayList<Client>();
-		for(int i = 0; i < initFile.size();i++)
-		{
-			String clientName = "Client" + i;
-			if(initFile.containsKey(clientName))
-			{
-				Client client = new Client((String)initFile.get(clientName));
-				clients.add(client);
-			}
-		}
-	}
-	
 	@Override
 	public void setReady(String ip) 
 	{
 		System.out.println("Setted ready with: " + ip);
-		for(int i = 0; i < clients.size(); i++)
+		Client temp;
+		if((temp = clientList.getClientByIp(ip)) != null)
 		{
-			if(clients.get(i).getIp().equals(ip))
-			{
-				clients.get(i).setStatus(Status.READY);
-			}
+			temp.setStatus(Status.READY);
 		}
 		if(checkAllReady())
 		{
 			start();
 		}
 	}
-	
 	
 	public int getSocketPort()
 	{
@@ -211,22 +131,18 @@ public class Server implements ServerInterface
 	private void start()
 	{
 		System.out.println("start");
-		for(int i = 0; i < clients.size(); i++)
+		for(int i = 0; i < clientList.size(); i++)
 		{
-			try {
-				clients.get(i).getClientStub().start();
-			} catch (RemoteException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			ClientStart clientStart = new ClientStart(clientList.getClient(i));
+			new Thread(clientStart).start();
 		}
 	}
 	
 	private boolean checkAllReady()
 	{
-		for(int i = 0; i < clients.size(); i++)
+		for(int i = 0; i < clientList.size(); i++)
 		{
-			if(clients.get(i).getStatus() == Status.NOTREADY)
+			if(clientList.getClient(i).getStatus() == Status.NOTREADY)
 			{
 				return false;
 			}
@@ -254,44 +170,57 @@ public class Server implements ServerInterface
 		//TODO: Auswertung der ankommenden Resultate
 		System.out.println("results setted");
 		System.out.println(scenario.getId());
-		for(int i = 0; i < scenario.getActionList().size(); i++)
-		{
-			Action action = scenario.getActionList().get(i);
-			if(action instanceof WriteAction)
-			{
-				System.out.println("Action was a Write-Action with: " + ((WriteAction)action).getValue());
-			}
-			
-			if(action instanceof ReadAction)
-			{
-				System.out.println("Action was a Read-Action with: " + ((ReadAction)action).getBalance());
-			}
-		}
-//		for(int i = 0; i < testCases.size(); i++)
+//		for(int i = 0; i < scenario.getActionList().size(); i++)
 //		{
-//			if(testCases.get(i).equals(activeTestCase) && testCases.get(i + 1) != null)
+//			Action action = scenario.getActionList().get(i);
+//			if(action instanceof WriteAction)
 //			{
-//				activeTestCase = testCases.get(i + 1);
-//				startTestCase();
+//				System.out.println("Action was a Write-Action with: " + ((WriteAction)action).getValue());
 //			}
+//			
+//			if(action instanceof ReadAction)
+//			{
+//				System.out.println("Action was a Read-Action with: " + ((ReadAction)action).getBalance());
+//			}
+//			
 //		}
+		ReportGenerator report = new ReportGenerator();
+		report.addScenario(scenario);
+		report.makeSummary();
+		
+		System.out.println("Account should be: 100000000000");
+		System.out.println("Account is actually: " + account.getBalance());
+		
+		for(int i = 0; i < testCases.size(); i++)
+		{
+			if(testCases.get(i).equals(activeTestCase) && testCases.size() > i+1)
+			{
+				activeTestCase = testCases.get(i + 1);
+				startTestCase();
+			}
+			else
+			{
+				stopClient(clientIp);
+			}
+		
+		}
 	}
 	
 	private void stopClient(String clientIp)
 	{
-		for(int i = 0; i < clients.size(); i++)
-		{
-			if(clients.get(i).getIp().equals(clientIp))
-			{
-				try {
-					System.out.println("Stop Client with " + clientIp);
-					clients.get(i).getClientStub().exitClient();
-				} catch (RemoteException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		}
+//		Client temp;
+//		try {
+//			
+//			if((temp = clientList.getClientByIp(clientIp)) != null)
+//			{
+//				System.out.println("Stop Client with " + clientIp);
+//				temp.getClientStub().shutdown();
+//			}
+//		} catch (RemoteException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+		
 	}
 	
 	public static void main(String[] args) 

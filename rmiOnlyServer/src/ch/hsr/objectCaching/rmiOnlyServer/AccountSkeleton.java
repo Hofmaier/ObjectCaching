@@ -11,7 +11,6 @@ import ch.hsr.objectCaching.interfaces.AccountImpl;
 import ch.hsr.objectCaching.interfaces.MethodCall;
 import ch.hsr.objectCaching.interfaces.ReturnValue;
 
-
 public class AccountSkeleton implements RMIonlySkeleton {
 	
 	private HashMap<Integer, Account> objectMap = new HashMap<Integer, Account>();

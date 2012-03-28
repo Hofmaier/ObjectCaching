@@ -11,22 +11,28 @@
 # 
 
 startFolder="`pwd`"
-clients="${startFolder}/clients"
 swpw="${startFolder}/myKey"
 clientJar="client.jar"
 serverJar="server.jar"
 remotePath="/home/student/Downloads"
 clientJarPath="../../dist/client"
 serverJarPath="../../dist/server"
+initFile="../initFile.conf"
+clientTemp="clients"
 
   
 # 
 # Code
 # 
 
+function func_create_CLient_List
+{
+  cat ${initFile} | grep "Client*[0-9]" | awk -F"=" '{ print $2 }'> ${clientTemp} 
+}
+
 function func_rm
 {
-  for i in `cat ${clients}`
+  for i in `cat ${clientTemp}`
   do
     ssh -q student@${i} "rm ${remotePath}/${clientJar}"
   done
@@ -35,7 +41,7 @@ function func_rm
 function func_copy
 {
   cd ${clientJarPath}
-  for i in `cat ${clients}`
+  for i in `cat "${startFolder}/${clientTemp}"`
   do
     scp ${clientJar} student@${i}:"${remotePath}/${clientJar}"
   done
@@ -49,11 +55,12 @@ function func_startServer
   echo "STARTUPSCRIPT: Server started"
   java -jar ${serverJar}
   cd ${startFolder}
+  rm ${clientTemp}
 }
 
 function func_startClient
 {
-  for i in `cat ${clients}`
+  for i in `cat "${startFolder}/${clientTemp}"`
   do
     ssh student@${i} "java -jar ${remotePath}/${clientJar}" &
   echo "STARTUPSCRIPT: Client with ${i} started"
@@ -61,9 +68,11 @@ function func_startClient
   echo "STARTUPSCRIPT: All clients started"
 }
 
+func_create_CLient_List
+sleep 1
 func_rm
 sleep 2
 func_copy
 func_startClient
-sleep 2
+sleep 4
 func_startServer

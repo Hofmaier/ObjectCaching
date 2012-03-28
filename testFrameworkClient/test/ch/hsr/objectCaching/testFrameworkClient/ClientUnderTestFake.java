@@ -53,4 +53,10 @@ public class ClientUnderTestFake implements ClientSystemUnderTest{
 		}		
 	}
 
+	@Override
+	public void shutdown() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

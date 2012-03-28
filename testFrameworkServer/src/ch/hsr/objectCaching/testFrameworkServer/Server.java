@@ -10,6 +10,7 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 
 import ch.hsr.objectCaching.interfaces.Account;
+import ch.hsr.objectCaching.interfaces.AccountImpl;
 import ch.hsr.objectCaching.interfaces.ClientInterface;
 import ch.hsr.objectCaching.interfaces.Configuration;
 import ch.hsr.objectCaching.interfaces.Scenario;
@@ -24,10 +25,10 @@ public class Server implements ServerInterface
 	private ArrayList<TestCase> testCases;
 	private Dispatcher dispatcher;
 	private TestCase activeTestCase;
-	private TestCaseFactory testCaseFactory;
+	private TestCaseFactory factory;
 	private Configuration configuration;
+	private Account account;
 	private ConfigurationFactory configFactory;
-	private ArrayList<Account> accounts;
 	
 	public Server()
 	{
@@ -38,15 +39,15 @@ public class Server implements ServerInterface
 		establishClientConnection();
 		createRmiRegistry();
 		dispatcher = new Dispatcher(configuration.getServerSocketPort());
-		accounts = testCaseFactory.getAccounts();
+		account = new AccountImpl();
 		new Thread(dispatcher).start();
 	}
 	
 	private void generateTestCases()
 	{
-		testCaseFactory = new TestCaseFactory();
-		testCaseFactory.convertXML();
-		testCases = testCaseFactory.getTestCases();
+		factory = new TestCaseFactory();
+		factory.convertXML();
+		testCases = factory.getTestCases();
 		activeTestCase = testCases.get(0);
 		configuration.setNameOfSystemUnderTest(activeTestCase.getSystemUnderTest());
 	}
@@ -54,7 +55,7 @@ public class Server implements ServerInterface
 	private void startTestCase()
 	{
 		System.out.println("Starting TestCase");
-		dispatcher.setSystemUnderTest(activeTestCase.getSystemUnderTest(), accounts.get(0));
+		dispatcher.setSystemUnderTest(activeTestCase.getSystemUnderTest(), account);
 		initializeClients();
 	}
 	
@@ -161,7 +162,9 @@ public class Server implements ServerInterface
 			e.printStackTrace();
 		}
 	}
+	
 
+	
 	@Override
 	public void setResults(Scenario scenario, String clientIp) 
 	{
@@ -187,26 +190,26 @@ public class Server implements ServerInterface
 //		report.makeSummary();
 		
 		System.out.println("Account should be: 100000000000");
-		System.out.println("Account is actually: " + accounts.get(0).getBalance());
+		System.out.println("Account is actually: " + account.getBalance());
 		
-		stopClient(clientIp);
-//		for(int i = 0; i < testCases.size(); i++)
-//		{
-//			if(testCases.get(i).equals(activeTestCase) && testCases.size() > i+1)
-//			{
-//				activeTestCase = testCases.get(i + 1);
-//				startTestCase();
-//			}
-//			else
-//			{
-//				stopClient(clientIp);
-//			}
-//		
-//		}
+		for(int i = 0; i < testCases.size(); i++)
+		{
+			if(testCases.get(i).equals(activeTestCase) && testCases.size() > i+1)
+			{
+				activeTestCase = testCases.get(i + 1);
+				startTestCase();
+			}
+			else
+			{
+				stopClient(clientIp);
+			}
+		
+		}
 	}
 	
 	private void stopClient(String clientIp)
 	{
+
 		Client temp;
 		try {
 			
@@ -236,6 +239,7 @@ public class Server implements ServerInterface
 			}
 		}
 		return true;
+
 	}
 	
 	public static void main(String[] args) 

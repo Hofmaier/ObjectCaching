@@ -11,13 +11,11 @@ import java.util.ArrayList;
 
 import ch.hsr.objectCaching.interfaces.Account;
 import ch.hsr.objectCaching.interfaces.AccountImpl;
-import ch.hsr.objectCaching.interfaces.Action;
 import ch.hsr.objectCaching.interfaces.ClientInterface;
 import ch.hsr.objectCaching.interfaces.Configuration;
-import ch.hsr.objectCaching.interfaces.ReadAction;
 import ch.hsr.objectCaching.interfaces.Scenario;
 import ch.hsr.objectCaching.interfaces.ServerInterface;
-import ch.hsr.objectCaching.interfaces.WriteAction;
+import ch.hsr.objectCaching.reporting.ReportGenerator;
 import ch.hsr.objectCaching.testFrameworkServer.Client.Status;
 
 public class Server implements ServerInterface
@@ -60,30 +58,30 @@ public class Server implements ServerInterface
 		initializeClients();
 	}
 	
+	private Scenario getScenarioForClient(int index)
+	{
+		if(activeTestCase.getScenarios().size() > index)
+		{
+			return activeTestCase.getScenarios().get(index);
+		}
+		else
+		{
+			return activeTestCase.getScenarios().get(0);
+		}
+	}
+	
 	private void initializeClients()
 	{
 		System.out.println("initializeClients");
-		Scenario temp;
 		for(int i = 0; i < clientList.size(); i++)
 		{
-			if((temp = activeTestCase.getScenarios().get(i)) != null)
-			{
-				try {
-					clientList.getClient(i).getClientStub().initialize(temp, configuration);
-				} catch (RemoteException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+			try {
+				clientList.getClient(i).getClientStub().initialize(getScenarioForClient(i), configuration);
+			} catch (RemoteException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
-			else
-			{
-				try {
-					clientList.getClient(i).getClientStub().initialize(activeTestCase.getScenario(0), configuration);
-				} catch (RemoteException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
+			
 		}
 	}
 	
@@ -93,6 +91,7 @@ public class Server implements ServerInterface
 		try {
 			for(int i = 0; i < clientList.size(); i++)
 			{
+				System.out.println(clientList.getClient(i).getIp());
 				ClientInterface clientStub = (ClientInterface)Naming.lookup("rmi://" + clientList.getClient(i).getIp() + ":" + configuration.getClientRmiPort() + "/Client");
 				clientList.getClient(i).setClientStub(clientStub);
 			}
@@ -134,12 +133,8 @@ public class Server implements ServerInterface
 		System.out.println("start");
 		for(int i = 0; i < clientList.size(); i++)
 		{
-			try {
-				clientList.getClient(i).getClientStub().startTest();
-			} catch (RemoteException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			ClientStart clientStart = new ClientStart(clientList.getClient(i));
+			new Thread(clientStart).start();
 		}
 	}
 	
@@ -175,47 +170,56 @@ public class Server implements ServerInterface
 		//TODO: Auswertung der ankommenden Resultate
 		System.out.println("results setted");
 		System.out.println(scenario.getId());
-		for(int i = 0; i < scenario.getActionList().size(); i++)
-		{
-			Action action = scenario.getActionList().get(i);
-			if(action instanceof WriteAction)
-			{
-				System.out.println("Action was a Write-Action with: " + ((WriteAction)action).getValue());
-			}
-			
-			if(action instanceof ReadAction)
-			{
-				System.out.println("Action was a Read-Action with: " + ((ReadAction)action).getBalance());
-			}
-		}
-//		ReportGenerator report = new ReportGenerator();
-//		report.addScenario(scenario);
-//		report.makeSummary();
-		
-//		for(int i = 0; i < testCases.size(); i++)
+//		for(int i = 0; i < scenario.getActionList().size(); i++)
 //		{
-//			if(testCases.get(i).equals(activeTestCase) && testCases.get(i + 1) != null)
+//			Action action = scenario.getActionList().get(i);
+//			if(action instanceof WriteAction)
 //			{
-//				activeTestCase = testCases.get(i + 1);
-//				startTestCase();
+//				System.out.println("Action was a Write-Action with: " + ((WriteAction)action).getValue());
 //			}
+//			
+//			if(action instanceof ReadAction)
+//			{
+//				System.out.println("Action was a Read-Action with: " + ((ReadAction)action).getBalance());
+//			}
+//			
 //		}
+		ReportGenerator report = new ReportGenerator();
+		report.addScenario(scenario);
+		report.makeSummary();
+		
+		System.out.println("Account should be: 100000000000");
+		System.out.println("Account is actually: " + account.getBalance());
+		
+		for(int i = 0; i < testCases.size(); i++)
+		{
+			if(testCases.get(i).equals(activeTestCase) && testCases.size() > i+1)
+			{
+				activeTestCase = testCases.get(i + 1);
+				startTestCase();
+			}
+			else
+			{
+				stopClient(clientIp);
+			}
+		
+		}
 	}
 	
 	private void stopClient(String clientIp)
 	{
-		Client temp;
-		try {
-			
-			if((temp = clientList.getClientByIp(clientIp)) != null)
-			{
-				System.out.println("Stop Client with " + clientIp);
-				temp.getClientStub().shutdown();
-			}
-		} catch (RemoteException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+//		Client temp;
+//		try {
+//			
+//			if((temp = clientList.getClientByIp(clientIp)) != null)
+//			{
+//				System.out.println("Stop Client with " + clientIp);
+//				temp.getClientStub().shutdown();
+//			}
+//		} catch (RemoteException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 		
 	}
 	

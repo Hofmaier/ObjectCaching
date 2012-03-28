@@ -33,8 +33,8 @@ public class ClientController implements ClientInterface {
 		ClientSystemUnderTest clientSystemUnderTest = createClientSystemUnderTest(configuration.getNameOfSystemUnderTest());		
 		clientSystemUnderTest.setServerSocketAdress(new InetSocketAddress(config.getServerIP(), config.getServerSocketPort()));
 		
-		testClient = new TestClient(scenario);	
-		testClient.setAccountService(clientSystemUnderTest.getAccountService());
+		testClient = new TestClient(clientSystemUnderTest);
+		testClient.setScenario(scenario);
 		testClient.init();
 
 		loadServerStub(config.getServerIP(), config.getServerRMIPort(), config.getServerRegistryName());
@@ -49,8 +49,9 @@ public class ClientController implements ClientInterface {
 	
 	@Override
 	public void shutdown(){
+		testClient.shutdown();
+		System.out.println("ClientController exiting. Bye.");
 		System.exit(0);
-//		shutdown();
 	}
 	
 	private void loadServerStub(String serverIP, int port, String registryName) {

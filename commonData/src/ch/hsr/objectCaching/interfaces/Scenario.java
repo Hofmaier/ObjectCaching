@@ -47,5 +47,14 @@ public class Scenario implements Serializable
 			actionList.add(temp);
 		}
 	}
+	public void setIncrementAction(int count, long delay, float factor)
+	{
+		IncrementAction temp;
+		for(int i = 0; i < count; i++)
+		{
+			temp = new IncrementAction(delay, factor);
+			actionList.add(temp);
+		}
+	}
 
 }

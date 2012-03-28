@@ -16,8 +16,8 @@ public class TestClientTest {
 	public void setUp(){
 		ClientUnderTestFake fakeClient = new ClientUnderTestFake();
 		Scenario s = new Scenario(1);
-		client = new TestClient(s);
-		client.setAccountService(fakeClient.getAccountService());
+		client.setScenario(s);
+		client.init();
 	}
 	
 	@Test

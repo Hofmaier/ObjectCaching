@@ -195,7 +195,7 @@ public class Server implements ServerInterface
 		
 		for(int i = 0; i < testCases.size(); i++)
 		{
-			if(testCases.get(i).equals(activeTestCase) && testCases.get(i + 1) != null)
+			if(testCases.get(i).equals(activeTestCase) && testCases.size() > i+1)
 			{
 				activeTestCase = testCases.get(i + 1);
 				startTestCase();

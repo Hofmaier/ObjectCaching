@@ -93,6 +93,7 @@ public class Server implements ServerInterface
 		try {
 			for(int i = 0; i < clientList.size(); i++)
 			{
+				System.out.println(clientList.getClient(i).getIp());
 				ClientInterface clientStub = (ClientInterface)Naming.lookup("rmi://" + clientList.getClient(i).getIp() + ":" + configuration.getClientRmiPort() + "/Client");
 				clientList.getClient(i).setClientStub(clientStub);
 			}

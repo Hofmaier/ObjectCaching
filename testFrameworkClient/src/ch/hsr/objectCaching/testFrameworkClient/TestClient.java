@@ -36,6 +36,7 @@ public class TestClient {
 	}
 
 	public void runScenario() {
+		System.out.println("Started Scenario with id= " + scenario.getId());
 		for (Action action : scenario.getActionList()) {
 			Account acc = getNextAccount();
 			action.execute(acc);

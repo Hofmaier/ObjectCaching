@@ -59,6 +59,10 @@ public class TestCaseFactory
 		    	  {
 		    		  newScenario.setReadAction(Integer.valueOf(stax.getAttributeValue(0)));
 		    	  }
+		    	  if(stax.hasName() && stax.getName().toString().equals("Increment") && stax.isStartElement())
+		    	  {
+		    		  newScenario.setIncrementAction(Integer.valueOf(stax.getAttributeValue(0)), Long.valueOf(stax.getAttributeValue(1)), Float.valueOf(stax.getAttributeValue(2)));
+		    	  }
 		      }
 		} catch (XMLStreamException e) {
 			// TODO Auto-generated catch block

@@ -15,6 +15,7 @@ import ch.hsr.objectCaching.interfaces.ReturnValue;
 public class AccountSkeleton implements RMIonlySkeleton {
 	
 	private HashMap<Integer, Account> objectMap = new HashMap<Integer, Account>();
+	private HashMap<Account, Integer> writeMap = new HashMap<Account, Integer>();
 	
 	public ReturnValue invokeMethod(MethodCall methodCall) {
 		
@@ -23,7 +24,9 @@ public class AccountSkeleton implements RMIonlySkeleton {
 		try {
 			Method method = getMethod(methodCall);
 			Class<?> returnType = method.getReturnType();
+			updateWriteSet(methodCall);
 			Object retVal = invokeMethodOnObject(method, accountObject, methodCall.getArguments());
+			
 			ReturnValue returnValue = composeReturnValue(retVal, returnType);
 			return returnValue;
 		} catch (ClassNotFoundException e) {
@@ -42,9 +45,25 @@ public class AccountSkeleton implements RMIonlySkeleton {
 		return null;
 	}
 
-	Method getMethod(MethodCall methodCall) throws SecurityException, NoSuchMethodException {
+	private void updateWriteSet(MethodCall method) {
+		if(getMethod(method).getName().equals("setAccount")){
+			Account account = objectMap.get(method.getObjectID());
+			Integer version = writeMap.get(account);
+			version++;
+			writeMap.put(account, version);
+		}
+	}
+
+	Method getMethod(MethodCall methodCall) {
 		Class<AccountImpl> clazz = AccountImpl.class;
-		return clazz.getDeclaredMethod(methodCall.getMethodName(), methodCall.getParameterTypes());
+		try {
+			return clazz.getDeclaredMethod(methodCall.getMethodName(), methodCall.getParameterTypes());
+		} catch (SecurityException e) {
+			e.printStackTrace();
+		} catch (NoSuchMethodException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	private ReturnValue composeReturnValue(Object retVal, Class<?> returnType) {
@@ -68,6 +87,7 @@ public class AccountSkeleton implements RMIonlySkeleton {
 	
 	void addObject(Integer objectID, Account account){
 		objectMap.put(objectID, account);
+		writeMap.put(account, 0);
 	}
 	
 	public List<Integer> getAllObjectIDs(){

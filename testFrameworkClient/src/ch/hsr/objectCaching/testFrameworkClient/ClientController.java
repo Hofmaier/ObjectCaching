@@ -50,7 +50,6 @@ public class ClientController implements ClientInterface {
 	@Override
 	public void shutdown(){
 		testClient.shutdown();
-		System.out.println("ClientController exiting. Bye.");
 		shutdownController();
 		//System.exit(0);
 	}

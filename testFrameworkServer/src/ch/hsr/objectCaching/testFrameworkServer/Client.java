@@ -6,25 +6,39 @@ public class Client
 {
 	private String ip;
 	private ClientInterface clientStub;
-	enum Status{
+	enum StartingState{
 		READY,
 		NOTREADY;
 	}
-	Status clientStatus;
+	enum ShutedDown{
+		RUNNING,
+		DOWN;
+	}
+	StartingState clientReady;
+	ShutedDown clientRunning;
+	public ShutedDown getClientRunning() {
+		return clientRunning;
+	}
+
+	public void setClientRunning(ShutedDown clientUp) {
+		this.clientRunning = clientUp;
+	}
+
 	public Client(String ip)
 	{
 		this.ip = ip;
-		clientStatus = Status.NOTREADY; 
+		clientReady = StartingState.NOTREADY; 
+		clientRunning = ShutedDown.RUNNING;
 	}
 	
-	public void setStatus(Status status)
+	public void setStartingState(StartingState status)
 	{
-		this.clientStatus = status;
+		this.clientReady = status;
 	}
 	
-	public Status getStatus()
+	public StartingState getStartingState()
 	{
-		return this.clientStatus;
+		return this.clientReady;
 	}
 	
 	public String getIp()

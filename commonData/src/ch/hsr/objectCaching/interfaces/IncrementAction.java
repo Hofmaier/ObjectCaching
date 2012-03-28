@@ -2,6 +2,7 @@ package ch.hsr.objectCaching.interfaces;
 
 public class IncrementAction extends Action 
 {
+	private static final long serialVersionUID = 1L;
 	private int balanceResult;
 	private float factor;
 	private long delay;

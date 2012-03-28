@@ -16,7 +16,8 @@ import ch.hsr.objectCaching.interfaces.Configuration;
 import ch.hsr.objectCaching.interfaces.Scenario;
 import ch.hsr.objectCaching.interfaces.ServerInterface;
 import ch.hsr.objectCaching.reporting.ReportGenerator;
-import ch.hsr.objectCaching.testFrameworkServer.Client.Status;
+import ch.hsr.objectCaching.testFrameworkServer.Client.ShutedDown;
+import ch.hsr.objectCaching.testFrameworkServer.Client.StartingState;
 
 public class Server implements ServerInterface
 {
@@ -115,7 +116,7 @@ public class Server implements ServerInterface
 		Client temp;
 		if((temp = clientList.getClientByIp(ip)) != null)
 		{
-			temp.setStatus(Status.READY);
+			temp.setStartingState(StartingState.READY);
 		}
 		if(checkAllReady())
 		{
@@ -142,7 +143,7 @@ public class Server implements ServerInterface
 	{
 		for(int i = 0; i < clientList.size(); i++)
 		{
-			if(clientList.getClient(i).getStatus() == Status.NOTREADY)
+			if(clientList.getClient(i).getStartingState() == StartingState.NOTREADY)
 			{
 				return false;
 			}
@@ -184,9 +185,9 @@ public class Server implements ServerInterface
 //			}
 //			
 //		}
-		ReportGenerator report = new ReportGenerator();
-		report.addScenario(scenario);
-		report.makeSummary();
+//		ReportGenerator report = new ReportGenerator();
+//		report.addScenario(scenario);
+//		report.makeSummary();
 		
 		System.out.println("Account should be: 100000000000");
 		System.out.println("Account is actually: " + account.getBalance());
@@ -208,19 +209,37 @@ public class Server implements ServerInterface
 	
 	private void stopClient(String clientIp)
 	{
-//		Client temp;
-//		try {
-//			
-//			if((temp = clientList.getClientByIp(clientIp)) != null)
-//			{
-//				System.out.println("Stop Client with " + clientIp);
-//				temp.getClientStub().shutdown();
-//			}
-//		} catch (RemoteException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-		
+
+		Client temp;
+		try {
+			
+			if((temp = clientList.getClientByIp(clientIp)) != null)
+			{
+				System.out.println("Stop Client with " + clientIp);
+				temp.getClientStub().shutdown();
+				temp.setClientRunning(ShutedDown.DOWN);
+			}
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		if(checkAllShutedDown())
+		{
+			System.out.println("Alle Clients sind down!");
+		}
+	}
+	
+	private boolean checkAllShutedDown()
+	{
+		for(int i = 0; i < clientList.size(); i++)
+		{
+			if(clientList.getClient(i).getClientRunning() == ShutedDown.RUNNING)
+			{
+				return false;
+			}
+		}
+		return true;
+
 	}
 	
 	public static void main(String[] args) 

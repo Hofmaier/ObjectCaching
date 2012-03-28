@@ -13,6 +13,7 @@ public class MethodCall implements Serializable {
 	private String className;
 	private Class<?>[] parameterTypes;
 	private Object[] arguments;
+	private String clientIpAddress;
 	
 	public Class<?>[] getParameterTypes() {
 		return parameterTypes;
@@ -56,5 +57,13 @@ public class MethodCall implements Serializable {
 	
 	public Object[] getArguments(){
 		return arguments;
+	}
+
+	public void setClientIp(String clientIpAdress) {
+		this.clientIpAddress = clientIpAdress;
+	}
+	
+	public String getClientIp(){
+		return clientIpAddress;
 	}
 }

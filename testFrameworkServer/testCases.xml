@@ -3,17 +3,16 @@
 	<TestCase SystemUnderTest="RMIOnlyServerSystem">
 		<Scenario id="1">
 			<ActionSequence>
-				<Write count="1" value="2"></Write>
-				<Read count="1"></Read>
-				<Write count="1" value="5"></Write>
-				<Read count="1"></Read>
+
+				<Increment count ="3" delay="0" factor="10"></Increment>
+
 			</ActionSequence>
 		</Scenario>
 		<Scenario id="2">
 			<ActionSequence>
-				<Write count="12" value="12"></Write>
-				<Read count="14"></Read>
-				<Write count="4" value="56"></Write>
+
+				<Increment count ="1" delay="50" factor="10"></Increment>
+
 			</ActionSequence>
 		</Scenario>
 	</TestCase>

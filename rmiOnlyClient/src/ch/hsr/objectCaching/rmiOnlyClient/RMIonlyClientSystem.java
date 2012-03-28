@@ -1,5 +1,6 @@
 package ch.hsr.objectCaching.rmiOnlyClient;
 
+import java.io.IOException;
 import java.net.InetSocketAddress;
 
 import ch.hsr.objectCaching.interfaces.AccountService;
@@ -19,5 +20,15 @@ public class RMIonlyClientSystem implements ClientSystemUnderTest {
 	@Override
 	public void setServerSocketAdress(InetSocketAddress socketAdress) {
 		streamProvider.setSocketAdress(socketAdress);
+	}
+
+	@Override
+	public void shutdown() {
+		try {
+			streamProvider.getObjectOutputStream().close();
+			streamProvider.getObjectInputStream().close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }

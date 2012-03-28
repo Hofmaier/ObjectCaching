@@ -17,17 +17,4 @@
 			</ActionSequence>
 		</Scenario>
 	</TestCase>
-	<TestCase SystemUnderTest="CachingBaby">
-		<Scenario id="1">
-			<ActionSequence>
-				<Write count="10" value="2"></Write>
-			</ActionSequence>
-		</Scenario>
-		<Scenario id="2">
-			<ActionSequence>
-				<Read count="14"></Read>
-				<Write count="4" value="56"></Write>
-			</ActionSequence>
-		</Scenario>
-	</TestCase>
 </TestRun>

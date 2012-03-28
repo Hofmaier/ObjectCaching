@@ -93,6 +93,7 @@ public class Server implements ServerInterface
 		try {
 			for(int i = 0; i < clientList.size(); i++)
 			{
+				System.out.println(clientList.getClient(i).getIp());
 				ClientInterface clientStub = (ClientInterface)Naming.lookup("rmi://" + clientList.getClient(i).getIp() + ":" + configuration.getClientRmiPort() + "/Client");
 				clientList.getClient(i).setClientStub(clientStub);
 			}
@@ -192,14 +193,19 @@ public class Server implements ServerInterface
 //		report.addScenario(scenario);
 //		report.makeSummary();
 		
-//		for(int i = 0; i < testCases.size(); i++)
-//		{
-//			if(testCases.get(i).equals(activeTestCase) && testCases.get(i + 1) != null)
-//			{
-//				activeTestCase = testCases.get(i + 1);
-//				startTestCase();
-//			}
-//		}
+		for(int i = 0; i < testCases.size(); i++)
+		{
+			if(testCases.get(i).equals(activeTestCase) && testCases.get(i + 1) != null)
+			{
+				activeTestCase = testCases.get(i + 1);
+				startTestCase();
+			}
+			else
+			{
+				stopClient(clientIp);
+			}
+		
+		}
 	}
 	
 	private void stopClient(String clientIp)

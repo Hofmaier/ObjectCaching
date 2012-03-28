@@ -1,6 +1,7 @@
 package ch.hsr.objectCaching.rmiOnlyServer;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -11,10 +12,10 @@ import java.io.ObjectOutputStream;
 import org.junit.Before;
 import org.junit.Test;
 
-import ch.hsr.objectCaching.interfaces.Account;
-import ch.hsr.objectCaching.interfaces.AccountService;
-import ch.hsr.objectCaching.interfaces.MethodCall;
-import ch.hsr.objectCaching.interfaces.ReturnValue;
+import ch.hsr.objectCaching.account.Account;
+import ch.hsr.objectCaching.account.AccountService;
+import ch.hsr.objectCaching.interfaces.serverSystemUnderTest.MethodCall;
+import ch.hsr.objectCaching.interfaces.serverSystemUnderTest.ReturnValue;
 
 public class TestRMIonlyClientHandler {
 	

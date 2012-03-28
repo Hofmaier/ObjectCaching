@@ -3,7 +3,7 @@ package ch.hsr.objectCaching.testFrameworkServer;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-import ch.hsr.objectCaching.interfaces.Scenario;
+import ch.hsr.objectCaching.scenario.Scenario;
 
 public class TestCase implements Serializable
 {

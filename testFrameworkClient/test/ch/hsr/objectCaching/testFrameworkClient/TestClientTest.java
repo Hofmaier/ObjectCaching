@@ -1,12 +1,13 @@
 package ch.hsr.objectCaching.testFrameworkClient;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Before;
 import org.junit.Test;
 
-import ch.hsr.objectCaching.interfaces.Account;
-import ch.hsr.objectCaching.interfaces.Scenario;
+import ch.hsr.objectCaching.account.Account;
+import ch.hsr.objectCaching.scenario.Scenario;
 
 public class TestClientTest {
 

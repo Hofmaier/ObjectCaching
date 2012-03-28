@@ -1,4 +1,5 @@
-package ch.hsr.objectCaching.interfaces;
+package ch.hsr.objectCaching.account;
+
 
 
 public class AccountImpl implements Account {

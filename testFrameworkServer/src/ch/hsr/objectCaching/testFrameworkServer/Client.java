@@ -1,6 +1,6 @@
 package ch.hsr.objectCaching.testFrameworkServer;
 
-import ch.hsr.objectCaching.interfaces.ClientInterface;
+import ch.hsr.objectCaching.interfaces.testFrameworkClient.ClientInterface;
 
 public class Client 
 {

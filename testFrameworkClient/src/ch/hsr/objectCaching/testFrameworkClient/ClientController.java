@@ -11,11 +11,11 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 
-import ch.hsr.objectCaching.interfaces.ClientInterface;
-import ch.hsr.objectCaching.interfaces.ClientSystemUnderTest;
-import ch.hsr.objectCaching.interfaces.Configuration;
-import ch.hsr.objectCaching.interfaces.Scenario;
-import ch.hsr.objectCaching.interfaces.ServerInterface;
+import ch.hsr.objectCaching.interfaces.clientSystemUnderTest.ClientSystemUnderTest;
+import ch.hsr.objectCaching.interfaces.testFrameworkClient.ClientInterface;
+import ch.hsr.objectCaching.interfaces.testFrameworkServer.ServerInterface;
+import ch.hsr.objectCaching.scenario.Scenario;
+import ch.hsr.objectCaching.util.Configuration;
 
 public class ClientController implements ClientInterface {
 

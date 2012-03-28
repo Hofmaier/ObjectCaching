@@ -1,8 +1,8 @@
 package ch.hsr.objectCaching.rmiOnlyServer;
 
-import ch.hsr.objectCaching.interfaces.Account;
-import ch.hsr.objectCaching.interfaces.ClientHandler;
-import ch.hsr.objectCaching.interfaces.ServerSystemUnderTest;
+import ch.hsr.objectCaching.account.Account;
+import ch.hsr.objectCaching.interfaces.serverSystemUnderTest.ClientHandler;
+import ch.hsr.objectCaching.interfaces.serverSystemUnderTest.ServerSystemUnderTest;
 
 public class RMIOnlyServerSystem implements ServerSystemUnderTest {
 	

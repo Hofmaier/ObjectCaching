@@ -1,10 +1,10 @@
 package ch.hsr.objectCaching.testFrameworkClient;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
-import ch.hsr.objectCaching.interfaces.ClientSystemUnderTest;
+import ch.hsr.objectCaching.interfaces.clientSystemUnderTest.ClientSystemUnderTest;
 
 public class CUTFactoryTest {
 

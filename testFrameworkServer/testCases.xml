@@ -4,14 +4,12 @@
 		<Account id="1" balance="1"></Account>
 		<Scenario id="1">
 			<ActionSequence>
-				<Write count="1" value="1"></Write>
 				<Increment count ="3" delay="0" factor="10"></Increment>
 			</ActionSequence>
 		</Scenario>
 		<Scenario id="2">
 			<ActionSequence>
-				<Read count="1"></Read>
-				<Increment count ="3" delay="100" factor="10"></Increment>
+				<Increment count ="1" delay="50" factor="10"></Increment>
 			</ActionSequence>
 		</Scenario>
 	</TestCase>

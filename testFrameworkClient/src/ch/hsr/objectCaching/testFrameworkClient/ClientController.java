@@ -51,7 +51,8 @@ public class ClientController implements ClientInterface {
 	public void shutdown(){
 		testClient.shutdown();
 		System.out.println("ClientController exiting. Bye.");
-		System.exit(0);
+		shutdownController();
+		//System.exit(0);
 	}
 	
 	private void loadServerStub(String serverIP, int port, String registryName) {
@@ -116,8 +117,20 @@ public class ClientController implements ClientInterface {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-        System.out.println("ClientController exiting. Bye.");
-		System.exit(0);
+        
+        new Thread() {
+            @Override
+            public void run() {
+            	System.out.println("ClientController exiting. Bye.");
+              try {
+                sleep(2000);
+              } catch (InterruptedException e) {
+              }
+              System.out.println("done");
+              System.exit(0);
+            }
+
+          }.start();
 	}
 
 	/**

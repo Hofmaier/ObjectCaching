@@ -1,7 +1,6 @@
 package ch.hsr.objectCaching.rmiOnlyServer;
 
 import ch.hsr.objectCaching.interfaces.Account;
-import ch.hsr.objectCaching.interfaces.AccountImpl;
 import ch.hsr.objectCaching.interfaces.ClientHandler;
 import ch.hsr.objectCaching.interfaces.ServerSystemUnderTest;
 
@@ -13,7 +12,6 @@ public class RMIOnlyServerSystem implements ServerSystemUnderTest {
 	
 	public RMIOnlyServerSystem(){
 		accountServiceSkeleton.setAccountSkeleton(accountSkeleton);
-		accountSkeleton.addObject(23, new AccountImpl());
 	}
 
 	@Override

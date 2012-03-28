@@ -13,14 +13,24 @@ public class Configuration implements Serializable
 	private int serverSocketPort;
 	private String nameOfSystemUnderTest;
 	private String serverRegistryName;
+	private int clientRmiPort;
 	
-	public Configuration(String serverIp, int serverRMIPort, int serverSocketPort, String nameOfSystemUnderTest, String serverRegistryName)
+	public int getClientRmiPort() {
+		return clientRmiPort;
+	}
+
+	public void setClientRmiPort(int clientRmiPort) {
+		this.clientRmiPort = clientRmiPort;
+	}
+
+	public Configuration(String serverIp, int serverRMIPort, int serverSocketPort, String nameOfSystemUnderTest, String serverRegistryName, int clientRmiPort)
 	{
 		this.serverIp = serverIp;
 		this.serverRMIPort = serverRMIPort;
 		this.serverSocketPort = serverSocketPort;
 		this.nameOfSystemUnderTest = nameOfSystemUnderTest;
 		this.serverRegistryName = serverRegistryName;
+		this.clientRmiPort = clientRmiPort;
 	}
 	
 	public Configuration() {

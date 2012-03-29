@@ -74,7 +74,9 @@ zurückgegeben werden. Dieses Modell wird durch ein geeignetes Konsistenzprotoko
 \subsubsection{Entwicklung neuer Szenarien}
 \label{sec:entwicklung-neuer-szenarien}
 
-Um die Lösungen mit und ohne Cache miteinander vergleichen zu können, müssen neue Testszenarien geschrieben werden können.
+Um die Lösungen mit und ohne Cache miteinander vergleichen zu können,
+müssen neue Testszenarien geschrieben werden können. Neue
+Testszenarien können über eine XML-Beschreibung spezifiziert werden.
 
 \subsubsection{Feingranulares Locking}
 \label{sec:feingr-lock}
@@ -108,7 +110,10 @@ Die Clients möchten den Kontostand um 10 \% erhöhen. Dazu führen die Clients 
 \subsubsection{Account Typ}
 \label{sec:account-typ}
 
-Auf einem Server wird ein Account-Objekt instanziert, die Zugriffssynchronisation wird nicht über den in Java eingebauten Mechanismus synchronized gemacht. Das Interface von Account sieht wie folgt aus:
+Auf einem Server wird ein Account-Objekt instanziert Die
+Zugriffssynchronisation wird nicht über den in Java eingebauten
+Mechanismus synchronized direkt auf den Methoden realisiert. Das RMI
+System ist für die Zugriffssynchronisation verantwortlich. Das Interface von Account sieht wie folgt aus:
 \begin{lstlisting}
 public interface Account {
     public int getBalance();

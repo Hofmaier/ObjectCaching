@@ -17,6 +17,7 @@ public class TestClientTest {
 	public void setUp(){
 		ClientUnderTestFake fakeClient = new ClientUnderTestFake();
 		Scenario s = new Scenario(1);
+		client = new TestClient(fakeClient);
 		client.setScenario(s);
 		client.init();
 	}
@@ -24,6 +25,7 @@ public class TestClientTest {
 	@Test
 	public void testScenarioId(){
 		assertEquals("Scenario id is wrong", 1, client.getScenario().getId());
+		
 	}
 	
 	@Test

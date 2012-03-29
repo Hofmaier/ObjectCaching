@@ -24,12 +24,21 @@ public class TestAccountSkeleton {
 	private Method getBalanceMethod;
 	private Method setBalanceMethod;
 	private int objectID = 23;
+	private String clientIpAdressClient1 = "152.96.56.38";
+	private String clientIpAddressClient2 = "152.96.56.39";
+	private MethodCall getBalanceCall = new MethodCall();
+	private MethodCall setBalanceCall = new MethodCall();
 
 	@Before
 	public void setUp() throws Exception {
 		skeleton = new AccountSkeleton();
 		testAccount = new AccountImpl();
 		methodCall = new MethodCall();
+		getBalanceCall.setMethodName(getBalanceMethod.getName());
+		getBalanceCall.setObjectID(objectID);
+		
+		setBalanceCall.setMethodName(setBalanceMethod.getName());
+		setBalanceCall.setObjectID(objectID);
 		initMethods();
 	}
 
@@ -109,11 +118,9 @@ public class TestAccountSkeleton {
 		skeleton.addObject(objectID, testAccount);
 		skeleton.updateWriteSet(methodCall);
 		HashMap<Account, Integer> writeMap = skeleton.getWriteMap();
-		int version = writeMap.get(testAccount);
-		assertEquals(1, version);
+		assertEquals(1, (int)writeMap.get(testAccount));
 		skeleton.updateWriteSet(methodCall);
-		int version2 = writeMap.get(testAccount);
-		assertEquals(2, version2);
+		assertEquals(2, (int)writeMap.get(testAccount));
 		methodCall.setMethodName(getBalanceMethod.getName());
 		skeleton.updateWriteSet(methodCall);
 		assertEquals(2, (int)writeMap.get(testAccount));
@@ -123,13 +130,28 @@ public class TestAccountSkeleton {
 	public void testUpdateReadSet(){ 
 		HashMap<Account, Integer> writeMap = skeleton.getWriteMap();
 		HashMap<String, Integer> readSetMap = skeleton.getReadSetMap();
-		String clientIpAdress = "152.96.56.38";
-		methodCall.setClientIp(clientIpAdress);
+		methodCall.setClientIp(clientIpAdressClient1);
 		methodCall.setMethodName(getBalanceMethod.getName());
 		methodCall.setObjectID(objectID);
 		skeleton.addObject(objectID, testAccount);
 		skeleton.updateReadSet(methodCall); 
-		String readMapKey = clientIpAdress.concat(String.valueOf(objectID));
+		String readMapKey = clientIpAdressClient1.concat(String.valueOf(objectID));
 		assertEquals(writeMap.get(testAccount), readSetMap.get(readMapKey));
+		
+		methodCall.setMethodName(setBalanceMethod.getName());
+		skeleton.updateWriteSet(methodCall);
+		methodCall.setMethodName(getBalanceMethod.getName());
+		skeleton.updateReadSet(methodCall);
+		assertEquals(writeMap.get(testAccount), readSetMap.get(readMapKey));
+	}
+	
+	@Test
+	public void testIsWriteConsistent(){
+		getBalanceCall.setClientIp(clientIpAdressClient1);
+		skeleton.invokeMethod(getBalanceCall);
+		setBalanceCall.setClientIp(clientIpAddressClient2);
+		skeleton.invokeMethod(setBalanceCall);
+		setBalanceCall.setClientIp(clientIpAdressClient1);
+		skeleton.invokeMethod(setBalanceCall);
 	}
 }

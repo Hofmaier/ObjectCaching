@@ -5,7 +5,6 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
 import ch.hsr.objectCaching.account.Account;
 import ch.hsr.objectCaching.account.AccountImpl;
 import ch.hsr.objectCaching.interfaces.serverSystemUnderTest.MethodCall;
@@ -28,6 +27,8 @@ public class AccountSkeleton implements RMIonlySkeleton {
 		try {
 			Method method = getMethod(methodCall);
 			Class<?> returnType = method.getReturnType();
+			updateReadSet(methodCall);
+			
 			Object retVal = invokeMethodOnObject(method, accountObject, methodCall.getArguments());
 			updateWriteSet(methodCall);
 			ReturnValue returnValue = composeReturnValue(retVal, returnType);

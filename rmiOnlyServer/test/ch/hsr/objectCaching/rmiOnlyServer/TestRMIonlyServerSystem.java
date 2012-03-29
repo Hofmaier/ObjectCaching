@@ -6,7 +6,7 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.Test;
 
-import ch.hsr.objectCaching.interfaces.ClientHandler;
+import ch.hsr.objectCaching.interfaces.serverSystemUnderTest.ClientHandler;
 
 public class TestRMIonlyServerSystem {
 

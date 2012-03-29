@@ -3,8 +3,8 @@ package ch.hsr.objectCaching.rmiOnlyServer;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import ch.hsr.objectCaching.interfaces.Account;
-import ch.hsr.objectCaching.interfaces.AccountService;
+import ch.hsr.objectCaching.account.Account;
+import ch.hsr.objectCaching.account.AccountService;
 
 public class AccountServiceImpl implements AccountService{
 	

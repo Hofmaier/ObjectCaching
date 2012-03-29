@@ -1,6 +1,6 @@
 package ch.hsr.objectCaching.rmiOnlyServer;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import java.lang.reflect.Method;
 import java.util.Collection;
@@ -8,10 +8,10 @@ import java.util.Collection;
 import org.junit.Before;
 import org.junit.Test;
 
-import ch.hsr.objectCaching.interfaces.AccountImpl;
-import ch.hsr.objectCaching.interfaces.AccountService;
-import ch.hsr.objectCaching.interfaces.MethodCall;
-import ch.hsr.objectCaching.interfaces.ReturnValue;
+import ch.hsr.objectCaching.account.AccountImpl;
+import ch.hsr.objectCaching.account.AccountService;
+import ch.hsr.objectCaching.interfaces.serverSystemUnderTest.MethodCall;
+import ch.hsr.objectCaching.interfaces.serverSystemUnderTest.ReturnValue;
 
 public class TestAccountServiceSkeleton {
 	

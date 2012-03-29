@@ -9,15 +9,16 @@ import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 
-import ch.hsr.objectCaching.interfaces.Account;
-import ch.hsr.objectCaching.interfaces.AccountImpl;
-import ch.hsr.objectCaching.interfaces.ClientInterface;
-import ch.hsr.objectCaching.interfaces.Configuration;
-import ch.hsr.objectCaching.interfaces.Scenario;
-import ch.hsr.objectCaching.interfaces.ServerInterface;
+
+import ch.hsr.objectCaching.account.Account;
+import ch.hsr.objectCaching.account.AccountImpl;
+import ch.hsr.objectCaching.interfaces.testFrameworkClient.ClientInterface;
+import ch.hsr.objectCaching.interfaces.testFrameworkServer.ServerInterface;
 import ch.hsr.objectCaching.reporting.ReportGenerator;
+import ch.hsr.objectCaching.scenario.Scenario;
 import ch.hsr.objectCaching.testFrameworkServer.Client.ShutedDown;
 import ch.hsr.objectCaching.testFrameworkServer.Client.StartingState;
+import ch.hsr.objectCaching.util.Configuration;
 
 public class Server implements ServerInterface
 {

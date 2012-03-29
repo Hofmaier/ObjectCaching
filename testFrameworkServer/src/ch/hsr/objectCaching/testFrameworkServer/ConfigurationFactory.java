@@ -10,7 +10,9 @@ import java.util.Iterator;
 import java.util.Properties;
 import java.util.Map.Entry;
 
-import ch.hsr.objectCaching.interfaces.Configuration;
+import ch.hsr.objectCaching.util.Configuration;
+
+
 
 public class ConfigurationFactory 
 {

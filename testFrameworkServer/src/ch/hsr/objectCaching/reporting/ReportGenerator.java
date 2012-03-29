@@ -6,11 +6,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import ch.hsr.objectCaching.interfaces.Action;
-import ch.hsr.objectCaching.interfaces.TimeMeasure;
-import ch.hsr.objectCaching.interfaces.ReadAction;
-import ch.hsr.objectCaching.interfaces.Scenario;
-import ch.hsr.objectCaching.interfaces.WriteAction;
+import ch.hsr.objectCaching.action.Action;
+import ch.hsr.objectCaching.action.ReadAction;
+import ch.hsr.objectCaching.action.WriteAction;
+import ch.hsr.objectCaching.action.result.TimeMeasure;
+import ch.hsr.objectCaching.scenario.Scenario;
 
 public class ReportGenerator {
 

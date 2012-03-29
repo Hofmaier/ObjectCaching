@@ -1,6 +1,9 @@
-package ch.hsr.objectCaching.interfaces;
+package ch.hsr.objectCaching.action;
 
 import java.io.Serializable;
+
+import ch.hsr.objectCaching.account.Account;
+import ch.hsr.objectCaching.action.result.Result;
 
 public abstract class Action implements Serializable
 {

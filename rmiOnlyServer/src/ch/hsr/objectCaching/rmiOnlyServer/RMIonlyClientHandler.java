@@ -5,11 +5,11 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 
-import ch.hsr.objectCaching.interfaces.Account;
-import ch.hsr.objectCaching.interfaces.AccountService;
-import ch.hsr.objectCaching.interfaces.ClientHandler;
-import ch.hsr.objectCaching.interfaces.MethodCall;
-import ch.hsr.objectCaching.interfaces.ReturnValue;
+import ch.hsr.objectCaching.account.Account;
+import ch.hsr.objectCaching.account.AccountService;
+import ch.hsr.objectCaching.interfaces.serverSystemUnderTest.ClientHandler;
+import ch.hsr.objectCaching.interfaces.serverSystemUnderTest.MethodCall;
+import ch.hsr.objectCaching.interfaces.serverSystemUnderTest.ReturnValue;
 
 public class RMIonlyClientHandler extends ClientHandler {
 

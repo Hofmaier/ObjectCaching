@@ -1,7 +1,12 @@
-package ch.hsr.objectCaching.interfaces;
+package ch.hsr.objectCaching.scenario;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+
+import ch.hsr.objectCaching.action.Action;
+import ch.hsr.objectCaching.action.IncrementAction;
+import ch.hsr.objectCaching.action.ReadAction;
+import ch.hsr.objectCaching.action.WriteAction;
 
 
 public class Scenario implements Serializable

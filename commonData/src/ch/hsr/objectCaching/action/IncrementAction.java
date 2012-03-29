@@ -1,4 +1,6 @@
-package ch.hsr.objectCaching.interfaces;
+package ch.hsr.objectCaching.action;
+
+import ch.hsr.objectCaching.account.Account;
 
 public class IncrementAction extends Action 
 {

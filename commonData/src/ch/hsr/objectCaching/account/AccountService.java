@@ -1,6 +1,7 @@
-package ch.hsr.objectCaching.interfaces;
+package ch.hsr.objectCaching.account;
 
 import java.util.Collection;
+
 
 public interface AccountService {
 	

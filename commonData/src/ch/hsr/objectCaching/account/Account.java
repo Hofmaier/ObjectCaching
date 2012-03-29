@@ -1,4 +1,4 @@
-package ch.hsr.objectCaching.interfaces;
+package ch.hsr.objectCaching.account;
 
 public interface Account {
 

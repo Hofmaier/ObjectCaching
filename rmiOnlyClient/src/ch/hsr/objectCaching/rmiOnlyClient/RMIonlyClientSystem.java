@@ -3,8 +3,8 @@ package ch.hsr.objectCaching.rmiOnlyClient;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 
-import ch.hsr.objectCaching.interfaces.AccountService;
-import ch.hsr.objectCaching.interfaces.ClientSystemUnderTest;
+import ch.hsr.objectCaching.account.AccountService;
+import ch.hsr.objectCaching.interfaces.clientSystemUnderTest.ClientSystemUnderTest;
 
 public class RMIonlyClientSystem implements ClientSystemUnderTest {
 	

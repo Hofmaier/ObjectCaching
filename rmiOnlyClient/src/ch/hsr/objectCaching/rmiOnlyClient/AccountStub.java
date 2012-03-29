@@ -5,9 +5,9 @@ import java.io.ObjectOutputStream;
 import java.lang.reflect.Method;
 import java.net.UnknownHostException;
 
-import ch.hsr.objectCaching.interfaces.Account;
-import ch.hsr.objectCaching.interfaces.MethodCall;
-import ch.hsr.objectCaching.interfaces.ReturnValue;
+import ch.hsr.objectCaching.account.Account;
+import ch.hsr.objectCaching.interfaces.serverSystemUnderTest.MethodCall;
+import ch.hsr.objectCaching.interfaces.serverSystemUnderTest.ReturnValue;
 
 
 

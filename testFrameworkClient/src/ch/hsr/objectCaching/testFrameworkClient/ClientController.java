@@ -11,11 +11,11 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 
-import ch.hsr.objectCaching.interfaces.ClientInterface;
-import ch.hsr.objectCaching.interfaces.ClientSystemUnderTest;
-import ch.hsr.objectCaching.interfaces.Configuration;
-import ch.hsr.objectCaching.interfaces.Scenario;
-import ch.hsr.objectCaching.interfaces.ServerInterface;
+import ch.hsr.objectCaching.interfaces.clientSystemUnderTest.ClientSystemUnderTest;
+import ch.hsr.objectCaching.interfaces.testFrameworkClient.ClientInterface;
+import ch.hsr.objectCaching.interfaces.testFrameworkServer.ServerInterface;
+import ch.hsr.objectCaching.scenario.Scenario;
+import ch.hsr.objectCaching.util.Configuration;
 
 public class ClientController implements ClientInterface {
 
@@ -50,8 +50,7 @@ public class ClientController implements ClientInterface {
 	@Override
 	public void shutdown(){
 		testClient.shutdown();
-		shutdownController();
-		//System.exit(0);
+		shutdownClientController();
 	}
 	
 	private void loadServerStub(String serverIP, int port, String registryName) {
@@ -102,7 +101,7 @@ public class ClientController implements ClientInterface {
 	
 
 	
-	private void shutdownController() {
+	private void shutdownClientController() {
 		try {
 			Naming.unbind("Client");
 	        UnicastRemoteObject.unexportObject(this, true);

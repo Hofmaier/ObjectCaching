@@ -6,9 +6,9 @@ import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-import ch.hsr.objectCaching.interfaces.Account;
-import ch.hsr.objectCaching.interfaces.ClientHandler;
-import ch.hsr.objectCaching.interfaces.ServerSystemUnderTest;
+import ch.hsr.objectCaching.account.Account;
+import ch.hsr.objectCaching.interfaces.serverSystemUnderTest.ClientHandler;
+import ch.hsr.objectCaching.interfaces.serverSystemUnderTest.ServerSystemUnderTest;
 import ch.hsr.objectCaching.rmiOnlyServer.RMIOnlyServerSystem;
 
 public class Dispatcher implements Runnable

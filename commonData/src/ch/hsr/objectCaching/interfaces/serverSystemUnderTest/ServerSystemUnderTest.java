@@ -1,4 +1,6 @@
-package ch.hsr.objectCaching.interfaces;
+package ch.hsr.objectCaching.interfaces.serverSystemUnderTest;
+
+import ch.hsr.objectCaching.account.Account;
 
 public interface ServerSystemUnderTest {
 

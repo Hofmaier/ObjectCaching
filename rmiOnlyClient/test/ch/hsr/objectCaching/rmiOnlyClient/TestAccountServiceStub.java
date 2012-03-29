@@ -16,10 +16,10 @@ import java.util.Collection;
 import org.junit.Before;
 import org.junit.Test;
 
-import ch.hsr.objectCaching.interfaces.Account;
-import ch.hsr.objectCaching.interfaces.AccountService;
-import ch.hsr.objectCaching.interfaces.MethodCall;
-import ch.hsr.objectCaching.interfaces.ReturnValue;
+import ch.hsr.objectCaching.account.Account;
+import ch.hsr.objectCaching.account.AccountService;
+import ch.hsr.objectCaching.interfaces.serverSystemUnderTest.MethodCall;
+import ch.hsr.objectCaching.interfaces.serverSystemUnderTest.ReturnValue;
 
 public class TestAccountServiceStub {
 	

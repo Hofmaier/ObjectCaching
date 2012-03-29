@@ -1,8 +1,9 @@
-package ch.hsr.objectCaching.interfaces;
+package ch.hsr.objectCaching.action.result;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+
 
 public class Result implements Serializable {
 

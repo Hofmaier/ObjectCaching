@@ -23,6 +23,7 @@ public class TestAccountSkeleton {
 	private Class<AccountImpl> accountClass = AccountImpl.class;
 	private Method getBalanceMethod;
 	private Method setBalanceMethod;
+	private int objectID = 23;
 
 	@Before
 	public void setUp() throws Exception {
@@ -104,7 +105,6 @@ public class TestAccountSkeleton {
 	@Test
 	public void testUpdateWriteSet(){
 		methodCall.setMethodName(setBalanceMethod.getName());
-		int objectID = 23;
 		methodCall.setObjectID(objectID);;
 		skeleton.addObject(objectID, testAccount);
 		skeleton.updateWriteSet(methodCall);
@@ -120,7 +120,16 @@ public class TestAccountSkeleton {
 	}
 	
 	@Test
-	public void testUpdateReadSet(){
-		skeleton.updateReadSet(methodCall);
+	public void testUpdateReadSet(){ 
+		HashMap<Account, Integer> writeMap = skeleton.getWriteMap();
+		HashMap<String, Integer> readSetMap = skeleton.getReadSetMap();
+		String clientIpAdress = "152.96.56.38";
+		methodCall.setClientIp(clientIpAdress);
+		methodCall.setMethodName(getBalanceMethod.getName());
+		methodCall.setObjectID(objectID);
+		skeleton.addObject(objectID, testAccount);
+		skeleton.updateReadSet(methodCall); 
+		String readMapKey = clientIpAdress.concat(String.valueOf(objectID));
+		assertEquals(writeMap.get(testAccount), readSetMap.get(readMapKey));
 	}
 }

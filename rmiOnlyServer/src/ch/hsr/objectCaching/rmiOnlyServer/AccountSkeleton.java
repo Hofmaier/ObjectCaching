@@ -15,6 +15,7 @@ public class AccountSkeleton implements RMIonlySkeleton {
 	
 	private HashMap<Integer, Account> objectMap = new HashMap<Integer, Account>();
 	private HashMap<Account, Integer> writeMap = new HashMap<Account, Integer>();
+	private HashMap<String, Integer> readSetMap = new HashMap<String, Integer>();
 	
 	HashMap<Account, Integer> getWriteMap() {
 		return writeMap;
@@ -98,7 +99,15 @@ public class AccountSkeleton implements RMIonlySkeleton {
 		return retVal;
 	}
 
-	public void updateReadSet(MethodCall methodCall) {
-		
+	void updateReadSet(MethodCall methodCall) {
+		if(methodCall.getMethodName().equals("getBalance")){
+			String readSetKey = methodCall.getClientIp().concat(String.valueOf(methodCall.getObjectID()));
+			Integer version = writeMap.get(objectMap.get(methodCall.getObjectID()));
+			readSetMap.put(readSetKey, version);
+		}
+	}
+
+	public HashMap<String, Integer> getReadSetMap() {
+		return readSetMap;
 	}
 }

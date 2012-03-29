@@ -26,9 +26,9 @@ public class Server implements ServerInterface
 	private ArrayList<TestCase> testCases;
 	private Dispatcher dispatcher;
 	private TestCase activeTestCase;
-	private TestCaseFactory factory;
+	private TestCaseFactory testCaseFactory;
 	private Configuration configuration;
-	private Account account;
+	private ArrayList<Account> accounts;
 	private ConfigurationFactory configFactory;
 	
 	public Server()
@@ -40,15 +40,15 @@ public class Server implements ServerInterface
 		establishClientConnection();
 		createRmiRegistry();
 		dispatcher = new Dispatcher(configuration.getServerSocketPort());
-		account = new AccountImpl();
+		accounts = testCaseFactory.getAccounts();
 		new Thread(dispatcher).start();
 	}
 	
 	private void generateTestCases()
 	{
-		factory = new TestCaseFactory();
-		factory.convertXML();
-		testCases = factory.getTestCases();
+		testCaseFactory = new TestCaseFactory();
+		testCaseFactory.convertXML();
+		testCases = testCaseFactory.getTestCases();
 		activeTestCase = testCases.get(0);
 		configuration.setNameOfSystemUnderTest(activeTestCase.getSystemUnderTest());
 	}
@@ -56,7 +56,7 @@ public class Server implements ServerInterface
 	private void startTestCase()
 	{
 		System.out.println("Starting TestCase");
-		dispatcher.setSystemUnderTest(activeTestCase.getSystemUnderTest(), account);
+		dispatcher.setSystemUnderTest(activeTestCase.getSystemUnderTest(), accounts.get(0));
 		initializeClients();
 	}
 	
@@ -191,7 +191,7 @@ public class Server implements ServerInterface
 //		report.makeSummary();
 		
 		System.out.println("Account should be: 100000000000");
-		System.out.println("Account is actually: " + account.getBalance());
+		System.out.println("Account is actually: " + accounts.get(0).getBalance());
 		
 		for(int i = 0; i < testCases.size(); i++)
 		{

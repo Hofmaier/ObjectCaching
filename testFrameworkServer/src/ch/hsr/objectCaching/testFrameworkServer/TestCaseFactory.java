@@ -8,21 +8,30 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.transform.stream.StreamSource;
 
+import ch.hsr.objectCaching.account.Account;
+import ch.hsr.objectCaching.account.AccountImpl;
 import ch.hsr.objectCaching.scenario.Scenario;
 
 public class TestCaseFactory 
 {
 	private ArrayList<TestCase> testCases;
+	private ArrayList<Account> accounts;
 	
 	public TestCaseFactory()
 	{
 		testCases = new ArrayList<TestCase>();
+		accounts = new ArrayList<Account>();
 	}
 	private TestCase generateTestCase(String systemUnderTest)
 	{
 		TestCase temp = new TestCase(systemUnderTest);
 		testCases.add(temp);
 		return temp;
+	}
+	
+	public ArrayList<Account> getAccounts()
+	{
+		return accounts;
 	}
 	
 	public ArrayList<TestCase> getTestCases()
@@ -34,6 +43,7 @@ public class TestCaseFactory
 	{
 		XMLInputFactory inputFactory = XMLInputFactory.newInstance();
 	    XMLStreamReader stax;
+	    Account newAccount = null;
 	    TestCase newTestCase = null;
 	    Scenario newScenario = null;
 		try {
@@ -44,6 +54,12 @@ public class TestCaseFactory
 		    	  if(stax.hasName() && stax.getName().toString().equals("TestCase") && stax.isStartElement())
 		    	  {
 		    		  newTestCase = this.generateTestCase(stax.getAttributeValue(0));
+		    	  }
+		    	  if(stax.hasName() && stax.getName().toString().equals("Account") && stax.isStartElement())
+		    	  {
+		    		  newAccount = new AccountImpl();
+		    		  newAccount.setBalance(Integer.valueOf(stax.getAttributeValue(0)));
+		    		  accounts.add(newAccount);
 		    	  }
 		    	  
 		    	  if(stax.hasName() && stax.getName().toString().equals("Scenario") && stax.isStartElement())

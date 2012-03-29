@@ -1,6 +1,7 @@
 package ch.hsr.objectCaching.rmiOnlyClient;
 
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.net.InetSocketAddress;
 
 import ch.hsr.objectCaching.account.AccountService;
@@ -25,7 +26,9 @@ public class RMIonlyClientSystem implements ClientSystemUnderTest {
 	@Override
 	public void shutdown() {
 		try {
-			streamProvider.getObjectOutputStream().close();
+			 ObjectOutputStream oos = streamProvider.getObjectOutputStream();
+			 oos.writeObject(null);
+			 oos.close();
 			streamProvider.getObjectInputStream().close();
 		} catch (IOException e) {
 			e.printStackTrace();

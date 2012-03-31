@@ -1,6 +1,6 @@
 package ch.hsr.objectCaching.interfaces.serverSystemUnderTest;
 
-public class RMIException {
+public class RMIException extends RuntimeException{
 	private String message = "The Account-Object has changed since the last getBalance-Call";
 
 	public String getMessage() {

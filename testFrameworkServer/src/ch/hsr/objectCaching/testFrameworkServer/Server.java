@@ -9,9 +9,7 @@ import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 
-
 import ch.hsr.objectCaching.account.Account;
-import ch.hsr.objectCaching.account.AccountImpl;
 import ch.hsr.objectCaching.interfaces.testFrameworkClient.ClientInterface;
 import ch.hsr.objectCaching.interfaces.testFrameworkServer.ServerInterface;
 import ch.hsr.objectCaching.reporting.ReportGenerator;
@@ -186,11 +184,11 @@ public class Server implements ServerInterface
 //			}
 //			
 //		}
-//		ReportGenerator report = new ReportGenerator();
-//		report.addScenario(scenario);
-//		report.makeSummary();
+		ReportGenerator report = new ReportGenerator();
+		report.addScenario(scenario);
+		report.makeSummary();
 		
-		System.out.println("Account should be: 100000000000");
+		System.out.println("Account should be: ");
 		System.out.println("Account is actually: " + accounts.get(0).getBalance());
 		
 		for(int i = 0; i < testCases.size(); i++)

@@ -16,6 +16,7 @@ public class IncrementAction extends Action
 	@Override
 	public void execute(Account account) 
 	{
+		result.startMeasuring();
 		balanceResult = account.getBalance();
 		try {
 			Thread.sleep(delay);
@@ -24,6 +25,12 @@ public class IncrementAction extends Action
 			e.printStackTrace();
 		}
 		account.setBalance((int)(balanceResult * factor));
+		result.stopMeasuring();
+	}
+	
+	public long getDelay()
+	{
+		return delay;
 	}
 
 }

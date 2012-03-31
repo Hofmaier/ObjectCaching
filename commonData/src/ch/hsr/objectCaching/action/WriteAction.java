@@ -20,10 +20,16 @@ public class WriteAction extends Action {
 
 	@Override
 	public void execute(Account account) {
-		boolean successfull = true;
+		boolean successfull = false;
 		do {
 			result.startMeasuring();
-			account.setBalance(value);
+			try {
+				account.setBalance(value);
+				successfull = true;
+			} catch (RuntimeException exeption) {
+				System.out.println("Writing values failed with the value " + value);
+				successfull = false;
+			}
 			result.stopMeasuring();
 		} while (!successfull);
 	}

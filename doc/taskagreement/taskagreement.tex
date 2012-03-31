@@ -6,13 +6,20 @@
 \usepackage{url}
 \usepackage[pdftex]{graphicx}
 \usepackage{listings}
- 
+\usepackage{fancyhdr}
+
+\pagestyle{fancy}
+\lhead{\includegraphics[width=3cm]{hsrlogo}}
+\rhead{\includegraphics[width=3cm]{italogo}} 
+\renewcommand{\headrulewidth}{0pt}
 \setcounter{secnumdepth}{6}
 \title{Object Caching\\Project Proposal}
 \author{Lukas Hofmaier, Raphael Kohler, Timon Brüllmann}
 \date{\today}
+
 \begin{document}
 \maketitle
+\thispagestyle{fancy}
 \vspace{1cm}
 \section{Betreuer}
 J.M.Joller  Abteilung für Informatik HSR/FHO

@@ -91,6 +91,7 @@ public class ClientController implements ClientInterface {
 	private void notifyServerInitDone() {
 		try {
 			InetAddress addr = InetAddress.getLocalHost();
+			System.out.println(addr.getHostAddress());
 			server.setReady(addr.getHostAddress());
 		} catch (UnknownHostException e) {
 			System.out.println("Host not known: " + e.getMessage());

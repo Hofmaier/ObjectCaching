@@ -16,25 +16,29 @@ public class IncrementAction extends Action {
 	@Override
 	public void execute(Account account) {
 		boolean successfull = false;
+		boolean runOnce = true;
 
 		do {
 			result.startMeasuring();
 			// Read
 			balanceResult = account.getBalance();
 			// Delay
-			try {
-				Thread.sleep(delay);
-			} catch (InterruptedException e) {
-				System.out.println("Action execution with delay interrupted");
+			if (runOnce) {
+				try {
+					Thread.sleep(delay);
+					runOnce = false;
+				} catch (InterruptedException e) {
+					System.out
+							.println("Action execution with delay interrupted");
+				}
 			}
 			// Writing
 			try {
 				account.setBalance((int) (balanceResult * factor));
 				successfull = true;
 			} catch (RuntimeException exeption) {
-				System.out.println("Writing values failed with the value " + balanceResult * factor);
-				//TODO thread sleep nicht abhängig von delay machen
-				delay = 0;
+				System.out.println("Writing values failed with the value "
+						+ balanceResult * factor);
 				successfull = false;
 			}
 			result.stopMeasuring();

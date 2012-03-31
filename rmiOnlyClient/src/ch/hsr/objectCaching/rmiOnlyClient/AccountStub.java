@@ -1,4 +1,5 @@
 package ch.hsr.objectCaching.rmiOnlyClient;
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -9,13 +10,11 @@ import ch.hsr.objectCaching.account.Account;
 import ch.hsr.objectCaching.interfaces.serverSystemUnderTest.MethodCall;
 import ch.hsr.objectCaching.interfaces.serverSystemUnderTest.ReturnValue;
 
-
-
-public class AccountStub implements Account{
+public class AccountStub implements Account {
 
 	private int objectID;
 	private IStreamProvider streamProvider;
-	
+
 	public IStreamProvider getStreamProvider() {
 		return streamProvider;
 	}
@@ -26,8 +25,8 @@ public class AccountStub implements Account{
 
 	String invokeMethodMessage = "<invokeMethod><objectid>23</objectid><methodname>getBalance()</methodname></invokeMethod>";
 	private Object[] arguments;
-	
-	public int getBalance(){
+
+	public int getBalance() {
 		try {
 			arguments = null;
 			String methodName = "getBalance";
@@ -64,22 +63,23 @@ public class AccountStub implements Account{
 		oos.writeObject(methodCall);
 		oos.flush();
 	}
-	
-	public static void main(String[] args){
+
+	public static void main(String[] args) {
 		AccountStub account = new AccountStub();
-		System.out.println(account.getBalance()); 
+		System.out.println(account.getBalance());
 	}
 
 	@Override
 	public void setBalance(int balance) {
-		arguments = new Object[] {balance};
+		arguments = new Object[] { balance };
 		try {
 			sendMethodCall("setBalance");
-			try {
-				receiveResponse();
-			} catch (ClassNotFoundException e) {
-				e.printStackTrace();
+			ReturnValue returnValue = receiveResponse();
+			if(returnValue.getException() != null){
+				throw returnValue.getException();
 			}
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -92,12 +92,12 @@ public class AccountStub implements Account{
 	public void setObjectID(int objectID) {
 		this.objectID = objectID;
 	}
-	
+
 	private Method getMethod(String methodName) {
 		Method retVal = null;
 		Method[] allMethods = Account.class.getMethods();
-		for(Method method:allMethods){
-			if(method.getName().equals(methodName)){
+		for (Method method : allMethods) {
+			if (method.getName().equals(methodName)) {
 				retVal = method;
 			}
 		}

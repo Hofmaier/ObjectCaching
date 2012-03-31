@@ -11,11 +11,14 @@ import java.io.ObjectOutputStream;
 import java.lang.reflect.Method;
 import java.net.InetSocketAddress;
 
+import javax.print.attribute.standard.MediaSize.Other;
+
 import org.junit.Before;
 import org.junit.Test;
 
 import ch.hsr.objectCaching.account.Account;
 import ch.hsr.objectCaching.interfaces.serverSystemUnderTest.MethodCall;
+import ch.hsr.objectCaching.interfaces.serverSystemUnderTest.RMIException;
 import ch.hsr.objectCaching.interfaces.serverSystemUnderTest.ReturnValue;
 
 public class TestAccountStub {
@@ -97,6 +100,17 @@ public class TestAccountStub {
 		}
 		
 		assertNotNull(methodCallFromCUT.getArguments());
+	}
+	
+	@Test(expected = RMIException.class)
+	public void testSetBalanceWithExc() throws IOException{
+		ByteArrayOutputStream outByteArray = new ByteArrayOutputStream();
+		ObjectOutputStream streamToReadByStub = new ObjectOutputStream(outByteArray);
+		ReturnValue returnValue = new ReturnValue();
+		returnValue.setException(new RMIException());
+		streamToReadByStub.writeObject(returnValue);
+		objectInputStream = new ObjectInputStream(new ByteArrayInputStream(outByteArray.toByteArray()));
+		accountStub.setBalance(220);
 	}
 	
 	private void initMethods() {

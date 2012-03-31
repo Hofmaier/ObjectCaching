@@ -16,6 +16,7 @@ import ch.hsr.objectCaching.scenario.Scenario;
 public class ReportGenerator {
 
 	private List<Scenario> scenarios;
+	private final int NANOSEC_TO_MILISEC_FACTOR = 1000000;
 	private double totalTime = 0;
 	private int totalConflicts = 0;
 
@@ -95,7 +96,7 @@ public class ReportGenerator {
 
 	private double getDeltaInMilisec(TimeMeasure m) {
 		long nanoSek = m.getStopTime() - m.getStartTime();
-		return (double) nanoSek / 1000000;
+		return (double) nanoSek / NANOSEC_TO_MILISEC_FACTOR;
 	}
 
 }

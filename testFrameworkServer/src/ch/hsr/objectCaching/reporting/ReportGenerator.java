@@ -40,18 +40,18 @@ public class ReportGenerator {
 			out.write("******************************" + "\n");
 			out.write("Result for ScenarioID: " + s.getId() + "\n");
 			out.write("******************************" + "\n");
-			out.write("ActionNr;Time[ms];ACTION\n");
+			out.write("ActionNr_Try;Time[ms];ACTION\n");
 			for (Action action : s.getActionList()) {
 				if (action instanceof WriteAction) {
 					if (action.getResult().getNumberOfTry() > 1) {
 						totalConflicts += action.getResult().getNumberOfTry() - 1;
 					}
 
-					int konflict = 0;
+					int conflict = 0;
 					for (TimeMeasure m : action.getResult().getAttempt()) {
 						double time = getDeltaInMilisec(m);
-						out.write(actionNumber + "_" + konflict + ";" + time + ";" + "WRITE" + "\n");
-						konflict++;
+						out.write(actionNumber + "_" + conflict + ";" + time + ";" + "WRITE" + "\n");
+						conflict++;
 						totalTime += time;
 					}
 				}
@@ -61,12 +61,12 @@ public class ReportGenerator {
 					{
 						totalConflicts += action.getResult().getNumberOfTry() - 1;
 					}
-					int konflict = 0;
+					int conflict = 0;
 					IncrementAction iAction = (IncrementAction)action;
 					for (TimeMeasure m : action.getResult().getAttempt()) {
 						double time = getDeltaInMilisec(m);
-						out.write(actionNumber + "_" + konflict + ";" + time + ";" + "INCREMENT WITH DELAY: " + iAction.getDelay());
-						konflict++;
+						out.write(actionNumber + "_" + conflict + ";" + time + ";" + "INCREMENT WITH DELAY: " + iAction.getDelay());
+						conflict++;
 						totalTime += time;
 					}			
 				}
@@ -74,11 +74,11 @@ public class ReportGenerator {
 					if (action.getResult().getNumberOfTry() > 1) {
 						totalConflicts += action.getResult().getNumberOfTry() - 1;
 					}
-					int konflict = 0;
+					int conflict = 0;
 					for (TimeMeasure m : action.getResult().getAttempt()) {
 						double time = getDeltaInMilisec(m);
-						out.write(actionNumber + "_" + konflict + ";" + time + ";" + "READ" + "\n");
-						konflict++;
+						out.write(actionNumber + "_" + conflict + ";" + time + ";" + "READ" + "\n");
+						conflict++;
 						totalTime += time;
 					}
 				}

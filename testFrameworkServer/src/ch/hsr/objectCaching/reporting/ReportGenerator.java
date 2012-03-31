@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ch.hsr.objectCaching.action.Action;
+import ch.hsr.objectCaching.action.IncrementAction;
 import ch.hsr.objectCaching.action.ReadAction;
 import ch.hsr.objectCaching.action.WriteAction;
 import ch.hsr.objectCaching.action.result.TimeMeasure;
@@ -42,7 +43,6 @@ public class ReportGenerator {
 			out.write("ActionNr;Time[ms];ACTION\n");
 			for (Action action : s.getActionList()) {
 				if (action instanceof WriteAction) {
-
 					if (action.getResult().getNumberOfTry() > 1) {
 						totalConflicts += action.getResult().getNumberOfTry() - 1;
 					}
@@ -54,6 +54,21 @@ public class ReportGenerator {
 						konflict++;
 						totalTime += time;
 					}
+				}
+				if(action instanceof IncrementAction)
+				{
+					if(action.getResult().getNumberOfTry() > 1)
+					{
+						totalConflicts += action.getResult().getNumberOfTry() - 1;
+					}
+					int konflict = 0;
+					IncrementAction iAction = (IncrementAction)action;
+					for (TimeMeasure m : action.getResult().getAttempt()) {
+						double time = getDeltaInMilisec(m);
+						out.write(actionNumber + "_" + konflict + ";" + time + ";" + "INCREMENT WITH DELAY: " + iAction.getDelay());
+						konflict++;
+						totalTime += time;
+					}			
 				}
 				if (action instanceof ReadAction) {
 					if (action.getResult().getNumberOfTry() > 1) {

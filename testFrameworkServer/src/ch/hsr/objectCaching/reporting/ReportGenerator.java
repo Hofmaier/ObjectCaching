@@ -41,7 +41,7 @@ public class ReportGenerator {
 			out.write("******************************" + "\n");
 			out.write("Result for ScenarioID: " + s.getId() + "\n");
 			out.write("******************************" + "\n");
-			out.write("ActionNr_Try;Time[ms];ACTION\n");
+			out.write("ActionNr;#ofTries;Time[ms];ACTION\n");
 			for (Action action : s.getActionList()) {
 				if (action instanceof WriteAction) {
 					if (action.getResult().getNumberOfTry() > 1) {
@@ -51,7 +51,7 @@ public class ReportGenerator {
 					int conflict = 0;
 					for (TimeMeasure m : action.getResult().getAttempt()) {
 						double time = getDeltaInMilisec(m);
-						out.write(actionNumber + "_" + conflict + ";" + time + ";" + "WRITE" + "\n");
+						out.write(actionNumber + ";" + conflict + ";" + time + ";" + "WRITE" + "\n");
 						conflict++;
 						totalTime += time;
 					}
@@ -66,7 +66,14 @@ public class ReportGenerator {
 					IncrementAction iAction = (IncrementAction)action;
 					for (TimeMeasure m : action.getResult().getAttempt()) {
 						double time = getDeltaInMilisec(m);
-						out.write(actionNumber + "_" + conflict + ";" + time + ";" + "INCREMENT WITH DELAY: " + iAction.getDelay());
+						if(iAction.getDelay() < 1)
+						{
+							out.write(actionNumber + ";" + conflict + ";" + time + ";" + "INCREMENT WITHOUT DELAY\n");
+						}
+						else
+						{
+							out.write(actionNumber + ";" + conflict + ";" + time + ";" + "INCREMENT WITH DELAY: " + iAction.getDelay() + "\n");
+						}
 						conflict++;
 						totalTime += time;
 					}			
@@ -78,7 +85,7 @@ public class ReportGenerator {
 					int conflict = 0;
 					for (TimeMeasure m : action.getResult().getAttempt()) {
 						double time = getDeltaInMilisec(m);
-						out.write(actionNumber + "_" + conflict + ";" + time + ";" + "READ" + "\n");
+						out.write(actionNumber + ";" + conflict + ";" + time + ";" + "READ" + "\n");
 						conflict++;
 						totalTime += time;
 					}

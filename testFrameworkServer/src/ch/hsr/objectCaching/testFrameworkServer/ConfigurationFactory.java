@@ -70,6 +70,7 @@ public class ConfigurationFactory
 		}
 		try {
 			configuration.setServerIP(InetAddress.getLocalHost().getHostAddress());
+			
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

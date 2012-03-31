@@ -62,6 +62,8 @@ public class Dispatcher implements Runnable
 				OutputStream outputStream = socket.getOutputStream();
 				clientHandler.setInputStream(inputStream);
 				clientHandler.setOutputStream(outputStream);
+				
+				clientHandler.setClientIpAddress(socket.getInetAddress().toString());
 				new Thread(clientHandler).start();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block

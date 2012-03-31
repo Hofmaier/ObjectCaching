@@ -5,16 +5,17 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
 import ch.hsr.objectCaching.account.Account;
 import ch.hsr.objectCaching.account.AccountImpl;
 import ch.hsr.objectCaching.interfaces.serverSystemUnderTest.MethodCall;
+import ch.hsr.objectCaching.interfaces.serverSystemUnderTest.RMIException;
 import ch.hsr.objectCaching.interfaces.serverSystemUnderTest.ReturnValue;
 
 public class AccountSkeleton implements RMIonlySkeleton {
 	
 	private HashMap<Integer, Account> objectMap = new HashMap<Integer, Account>();
 	private HashMap<Account, Integer> writeMap = new HashMap<Account, Integer>();
+	private HashMap<String, Integer> readSetMap = new HashMap<String, Integer>();
 	
 	HashMap<Account, Integer> getWriteMap() {
 		return writeMap;
@@ -27,6 +28,12 @@ public class AccountSkeleton implements RMIonlySkeleton {
 		try {
 			Method method = getMethod(methodCall);
 			Class<?> returnType = method.getReturnType();
+			updateReadSet(methodCall);
+			if(!isWriteConsistent(methodCall)){
+				ReturnValue returnValue = new ReturnValue();
+				returnValue.setException(new RMIException());
+				return returnValue;
+			}
 			Object retVal = invokeMethodOnObject(method, accountObject, methodCall.getArguments());
 			updateWriteSet(methodCall);
 			ReturnValue returnValue = composeReturnValue(retVal, returnType);
@@ -37,6 +44,16 @@ public class AccountSkeleton implements RMIonlySkeleton {
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	private boolean isWriteConsistent(MethodCall method) {
+		if(!method.getMethodName().equals("setBalance")){
+			return true;
+		}
+		Integer currentVersion = writeMap.get(objectMap.get(method.getObjectID()));
+		Integer lastReadVersion = readSetMap.get(generateReadSetKey(method));
+		
+		return !(currentVersion > lastReadVersion);
 	}
 
 	void updateWriteSet(MethodCall method) {
@@ -96,5 +113,22 @@ public class AccountSkeleton implements RMIonlySkeleton {
 			retVal.add(i);
 		}
 		return retVal;
+	}
+
+	void updateReadSet(MethodCall methodCall) {
+		if(methodCall.getMethodName().equals("getBalance")){
+			String readSetKey = generateReadSetKey(methodCall);
+			Integer version = writeMap.get(objectMap.get(methodCall.getObjectID()));
+			readSetMap.put(readSetKey, version);
+		}
+	}
+
+	private String generateReadSetKey(MethodCall methodCall) {
+		String readSetKey = methodCall.getClientIp().concat(String.valueOf(methodCall.getObjectID()));
+		return readSetKey;
+	}
+
+	public HashMap<String, Integer> getReadSetMap() {
+		return readSetMap;
 	}
 }

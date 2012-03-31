@@ -10,7 +10,7 @@ public class ReturnValue implements Serializable{
 	private static final long serialVersionUID = 2163526171214692070L;
 	private Object value;
 	private Class<?> type;
-	
+	private RMIException exception;
 	
 	public Object getValue() {
 		return value;
@@ -23,5 +23,13 @@ public class ReturnValue implements Serializable{
 	}
 	public void setType(Class<?> type) {
 		this.type = type;
+	}
+	
+	public void setException(RMIException exception) {
+		this.exception = exception;
+	}
+	
+	public RMIException getException() {
+		return exception;
 	}
 }

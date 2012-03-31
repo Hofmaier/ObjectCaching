@@ -1,6 +1,7 @@
 package ch.hsr.objectCaching.rmiOnlyServer;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.lang.reflect.InvocationTargetException;
@@ -34,12 +35,20 @@ public class TestAccountSkeleton {
 		skeleton = new AccountSkeleton();
 		testAccount = new AccountImpl();
 		methodCall = new MethodCall();
+		initMethods();
 		getBalanceCall.setMethodName(getBalanceMethod.getName());
 		getBalanceCall.setObjectID(objectID);
+		getBalanceCall.setClientIp(clientIpAdressClient1);
+		Object[] args = {};
+		getBalanceCall.setArguments(args);
 		
 		setBalanceCall.setMethodName(setBalanceMethod.getName());
+		setBalanceCall.setParameterTypes(setBalanceMethod.getParameterTypes());
 		setBalanceCall.setObjectID(objectID);
-		initMethods();
+		Object[] setBalanceArgs = {240};
+		setBalanceCall.setArguments(setBalanceArgs);
+		
+		skeleton.addObject(objectID, testAccount);
 	}
 
 	@Test
@@ -91,10 +100,7 @@ public class TestAccountSkeleton {
 	
 	@Test
 	public void testInvokeMethod(){
-		methodCall.setMethodName(getBalanceMethod.getName());
-		int objectID = 23;
-		methodCall.setObjectID(objectID);
-		skeleton.addObject(objectID, testAccount);
+		methodCall = getBalanceCall;
 		
 		ReturnValue returnValue = skeleton.invokeMethod(methodCall);
 		
@@ -149,9 +155,29 @@ public class TestAccountSkeleton {
 	public void testIsWriteConsistent(){
 		getBalanceCall.setClientIp(clientIpAdressClient1);
 		skeleton.invokeMethod(getBalanceCall);
+		getBalanceCall.setClientIp(clientIpAddressClient2);
+		skeleton.invokeMethod(getBalanceCall);
 		setBalanceCall.setClientIp(clientIpAddressClient2);
 		skeleton.invokeMethod(setBalanceCall);
 		setBalanceCall.setClientIp(clientIpAdressClient1);
+		ReturnValue returnValue = skeleton.invokeMethod(setBalanceCall);
+		assertNotNull(returnValue.getException());
+	}
+	
+	@Test
+	public void testIsWriteConsistentWithCorrectOrder(){
+		getBalanceCall.setClientIp(clientIpAdressClient1);
+		setBalanceCall.setClientIp(clientIpAdressClient1);
+		skeleton.invokeMethod(getBalanceCall);
 		skeleton.invokeMethod(setBalanceCall);
+		getBalanceCall.setClientIp(clientIpAddressClient2);
+		setBalanceCall.setClientIp(clientIpAddressClient2);
+		skeleton.invokeMethod(getBalanceCall);
+		
+		int expectedBalance = 266;
+		Object[] setBalanceArgs = {expectedBalance};
+		setBalanceCall.setArguments(setBalanceArgs);
+		ReturnValue returnValue = skeleton.invokeMethod(setBalanceCall);
+		assertEquals(expectedBalance, testAccount.getBalance());
 	}
 }

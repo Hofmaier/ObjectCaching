@@ -1,4 +1,39 @@
 \section{Testing Framework}
 \label{sec:testing Framework}
+\begin{itemize}
+\item Warum das FW
+\item Idee verschiedene Clients testen
+\end{itemize}
 
-coming soon...
+\subsection{Konzept}
+Parallel zur Entwicklung des RMI mit Concurrency Control wurde ein Testframework entwickelt. Die Aufgabe des Testframework ist, dass die verschiedenen Prototypen mit Hilfe des Frameworks einheitlich getestet werden können. Das Framework kann verschiedene Testszenarien abarbeiten und speichert die Resultate für jedes Szenario ab. blabla
+
+
+\subsection{Realisierung des Test Frameworks}
+\label{sec:real test-FW}
+Sequenzdiagramm von Ablauf init(), start() setResult(), shutdown()
+
+\subsection{Server}
+\label{sec:test-FW Server}
+
+\begin{itemize}
+\item Aufbau / Infra
+\item Szenario definieren
+\item Konfiguration mit Property Datei
+\item Resultate \& Auswertung
+\item Shell, Deployment usw.
+\item Vorbereitungs Task via Java RMI, Szenarien laden
+\end{itemize}
+
+\subsection{Client}
+\label{sec:test-FW Client}
+
+\begin{itemize}
+\item RMI
+\item Szenario -> Kommand-Pattern
+\item Zeitmessung system.nanotime()
+\item Client herunterfahren
+\item Testclient Interface für ClientSystemUnderTest Interface
+\item VM Profiler (Abfallobjekte anschauen)
+\item Lost Update wird auf Server verhindert, Client muss entsprechen auf Exeption reagieren, neuer Versuch starten
+\end{itemize}

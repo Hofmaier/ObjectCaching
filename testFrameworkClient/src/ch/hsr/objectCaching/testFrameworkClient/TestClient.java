@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import ch.hsr.objectCaching.account.Account;
 import ch.hsr.objectCaching.account.AccountService;
 import ch.hsr.objectCaching.action.Action;
-import ch.hsr.objectCaching.interfaces.clientSystemUnderTest.ClientSystemUnderTest;
+import ch.hsr.objectCaching.interfaces.ClientSystemUnderTest;
 import ch.hsr.objectCaching.scenario.Scenario;
 
 public class TestClient {

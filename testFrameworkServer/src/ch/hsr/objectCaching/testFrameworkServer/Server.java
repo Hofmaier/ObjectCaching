@@ -10,8 +10,8 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 
 import ch.hsr.objectCaching.account.Account;
-import ch.hsr.objectCaching.interfaces.testFrameworkClient.ClientInterface;
-import ch.hsr.objectCaching.interfaces.testFrameworkServer.ServerInterface;
+import ch.hsr.objectCaching.interfaces.ClientInterface;
+import ch.hsr.objectCaching.interfaces.ServerInterface;
 import ch.hsr.objectCaching.reporting.ReportGenerator;
 import ch.hsr.objectCaching.scenario.Scenario;
 import ch.hsr.objectCaching.testFrameworkServer.Client.ShutedDown;

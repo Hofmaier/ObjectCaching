@@ -5,7 +5,7 @@ import java.io.ObjectOutputStream;
 import java.net.InetSocketAddress;
 
 import ch.hsr.objectCaching.account.AccountService;
-import ch.hsr.objectCaching.interfaces.clientSystemUnderTest.ClientSystemUnderTest;
+import ch.hsr.objectCaching.interfaces.ClientSystemUnderTest;
 
 public class RMIonlyClientSystem implements ClientSystemUnderTest {
 	

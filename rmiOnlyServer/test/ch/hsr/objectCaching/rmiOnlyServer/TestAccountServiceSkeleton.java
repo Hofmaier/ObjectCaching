@@ -10,8 +10,8 @@ import org.junit.Test;
 
 import ch.hsr.objectCaching.account.AccountImpl;
 import ch.hsr.objectCaching.account.AccountService;
-import ch.hsr.objectCaching.interfaces.serverSystemUnderTest.MethodCall;
-import ch.hsr.objectCaching.interfaces.serverSystemUnderTest.ReturnValue;
+import ch.hsr.objectCaching.dto.MethodCall;
+import ch.hsr.objectCaching.dto.ReturnValue;
 
 public class TestAccountServiceSkeleton {
 	

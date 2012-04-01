@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <TestRun>
-	<TestCase SystemUnderTest="RMIOnlyServerSystem">
+	<TestCase SystemUnderTest="ch.hsr.objectCaching.rmiOnlyClient.RMIonlyClientSystem">
 		<Account balance="1"></Account>
 		<Scenario id="1">
 			<ActionSequence>

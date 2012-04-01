@@ -30,11 +30,11 @@ public class ReportGenerator {
 
 	public void makeSummary() {
 		for (Scenario s : scenarios) {
-			generateReport(s);
+			generateReportforScenario(s);
 		}
 	}
 
-	private void generateReport(Scenario s) {
+	private void generateReportforScenario(Scenario s) {
 		int actionNumber = 0;
 		try {
 			BufferedWriter out = new BufferedWriter(new FileWriter("Scenario_" + s.getId() + ".txt"));

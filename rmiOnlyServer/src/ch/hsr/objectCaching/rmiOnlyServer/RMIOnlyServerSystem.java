@@ -1,7 +1,10 @@
 package ch.hsr.objectCaching.rmiOnlyServer;
 
+import java.util.ArrayList;
+
 import ch.hsr.objectCaching.account.Account;
 import ch.hsr.objectCaching.interfaces.serverSystemUnderTest.ClientHandler;
+import ch.hsr.objectCaching.interfaces.serverSystemUnderTest.MethodCalledListener;
 import ch.hsr.objectCaching.interfaces.serverSystemUnderTest.ServerSystemUnderTest;
 
 public class RMIOnlyServerSystem implements ServerSystemUnderTest {
@@ -9,6 +12,7 @@ public class RMIOnlyServerSystem implements ServerSystemUnderTest {
 	private AccountSkeleton accountSkeleton = new AccountSkeleton();
 	private AccountServiceSkeleton accountServiceSkeleton = new AccountServiceSkeleton();
 	private AccountServiceImpl accountService = new AccountServiceImpl();
+	private ArrayList<MethodCalledListener> listeners = new ArrayList<MethodCalledListener>();
 	
 	public RMIOnlyServerSystem(){
 		accountServiceSkeleton.setAccountSkeleton(accountSkeleton);
@@ -17,6 +21,7 @@ public class RMIOnlyServerSystem implements ServerSystemUnderTest {
 	@Override
 	public ClientHandler getClientHandlerInstance() {
 		RMIonlyClientHandler clientHandler = new RMIonlyClientHandler();
+		clientHandler.setMethodCalledListeners(listeners);
 		clientHandler.setAccountSkeleton(accountSkeleton);
 		clientHandler.setAccountServiceSkeleton(accountServiceSkeleton);
 		return clientHandler;
@@ -27,4 +32,12 @@ public class RMIOnlyServerSystem implements ServerSystemUnderTest {
 		accountSkeleton.addObject(ObjectIDGenerator.next(), testObject);
 		accountService.addAccount(testObject);
 	}
+
+	@Override
+	public void addMethodCalledListener(MethodCalledListener listener) {
+		listeners.add(listener);
+	}
+	
+	
+	
 }

@@ -1,4 +1,4 @@
-package ch.hsr.objectCaching.interfaces.testFrameworkServer;
+package ch.hsr.objectCaching.interfaces;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;

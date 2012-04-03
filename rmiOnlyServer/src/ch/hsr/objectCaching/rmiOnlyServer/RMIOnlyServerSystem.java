@@ -7,6 +7,7 @@ import ch.hsr.objectCaching.interfaces.serverSystemUnderTest.ClientHandler;
 import ch.hsr.objectCaching.interfaces.serverSystemUnderTest.MethodCalledListener;
 import ch.hsr.objectCaching.interfaces.serverSystemUnderTest.ServerSystemUnderTest;
 
+
 public class RMIOnlyServerSystem implements ServerSystemUnderTest {
 	
 	private AccountSkeleton accountSkeleton = new AccountSkeleton();
@@ -37,7 +38,4 @@ public class RMIOnlyServerSystem implements ServerSystemUnderTest {
 	public void addMethodCalledListener(MethodCalledListener listener) {
 		listeners.add(listener);
 	}
-	
-	
-	
 }

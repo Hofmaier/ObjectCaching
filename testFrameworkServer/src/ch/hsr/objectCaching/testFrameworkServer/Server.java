@@ -10,15 +10,16 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 
 import ch.hsr.objectCaching.account.Account;
-import ch.hsr.objectCaching.interfaces.testFrameworkClient.ClientInterface;
-import ch.hsr.objectCaching.interfaces.testFrameworkServer.ServerInterface;
+import ch.hsr.objectCaching.interfaces.ClientInterface;
+import ch.hsr.objectCaching.interfaces.MethodCalledListener;
+import ch.hsr.objectCaching.interfaces.ServerInterface;
 import ch.hsr.objectCaching.reporting.ReportGenerator;
 import ch.hsr.objectCaching.scenario.Scenario;
 import ch.hsr.objectCaching.testFrameworkServer.Client.ShutedDown;
 import ch.hsr.objectCaching.testFrameworkServer.Client.StartingState;
 import ch.hsr.objectCaching.util.Configuration;
 
-public class Server implements ServerInterface
+public class Server implements ServerInterface, MethodCalledListener
 {
 	private ClientList clientList;
 	private ArrayList<TestCase> testCases;
@@ -239,6 +240,12 @@ public class Server implements ServerInterface
 		}
 		return true;
 
+	}
+	
+	@Override
+	public void methodCalled(String methodName, String clientIPAddress) 
+	{
+		
 	}
 	
 	public static void main(String[] args) 

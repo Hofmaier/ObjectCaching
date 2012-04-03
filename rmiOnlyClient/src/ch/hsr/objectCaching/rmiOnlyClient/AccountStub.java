@@ -7,8 +7,8 @@ import java.lang.reflect.Method;
 import java.net.UnknownHostException;
 
 import ch.hsr.objectCaching.account.Account;
-import ch.hsr.objectCaching.interfaces.serverSystemUnderTest.MethodCall;
-import ch.hsr.objectCaching.interfaces.serverSystemUnderTest.ReturnValue;
+import ch.hsr.objectCaching.dto.MethodCall;
+import ch.hsr.objectCaching.dto.ReturnValue;
 
 public class AccountStub implements Account {
 

@@ -1,4 +1,4 @@
-package ch.hsr.objectCaching.interfaces.clientSystemUnderTest;
+package ch.hsr.objectCaching.interfaces;
 
 import java.net.InetSocketAddress;
 

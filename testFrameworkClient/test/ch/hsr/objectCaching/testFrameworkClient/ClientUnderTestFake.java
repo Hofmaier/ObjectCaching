@@ -6,7 +6,7 @@ import java.util.Collection;
 
 import ch.hsr.objectCaching.account.Account;
 import ch.hsr.objectCaching.account.AccountService;
-import ch.hsr.objectCaching.interfaces.clientSystemUnderTest.ClientSystemUnderTest;
+import ch.hsr.objectCaching.interfaces.ClientSystemUnderTest;
 
 public class ClientUnderTestFake implements ClientSystemUnderTest{
 

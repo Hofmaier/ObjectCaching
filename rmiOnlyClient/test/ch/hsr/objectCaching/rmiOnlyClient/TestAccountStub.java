@@ -17,9 +17,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 import ch.hsr.objectCaching.account.Account;
-import ch.hsr.objectCaching.interfaces.serverSystemUnderTest.MethodCall;
-import ch.hsr.objectCaching.interfaces.serverSystemUnderTest.RMIException;
-import ch.hsr.objectCaching.interfaces.serverSystemUnderTest.ReturnValue;
+import ch.hsr.objectCaching.dto.MethodCall;
+import ch.hsr.objectCaching.dto.RMIException;
+import ch.hsr.objectCaching.dto.ReturnValue;
 
 public class TestAccountStub {
 	

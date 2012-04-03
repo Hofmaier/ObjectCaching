@@ -5,11 +5,12 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
 import ch.hsr.objectCaching.account.Account;
 import ch.hsr.objectCaching.account.AccountImpl;
-import ch.hsr.objectCaching.interfaces.serverSystemUnderTest.MethodCall;
-import ch.hsr.objectCaching.interfaces.serverSystemUnderTest.RMIException;
-import ch.hsr.objectCaching.interfaces.serverSystemUnderTest.ReturnValue;
+import ch.hsr.objectCaching.dto.MethodCall;
+import ch.hsr.objectCaching.dto.RMIException;
+import ch.hsr.objectCaching.dto.ReturnValue;
 
 public class AccountSkeleton implements RMIonlySkeleton {
 	

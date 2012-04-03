@@ -1,4 +1,4 @@
-package ch.hsr.objectCaching.interfaces.serverSystemUnderTest;
+package ch.hsr.objectCaching.dto;
 import java.io.Serializable;
 
 

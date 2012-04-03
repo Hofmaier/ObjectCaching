@@ -4,7 +4,7 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
-import ch.hsr.objectCaching.interfaces.clientSystemUnderTest.ClientSystemUnderTest;
+import ch.hsr.objectCaching.interfaces.ClientSystemUnderTest;
 
 public class CUTFactoryTest {
 

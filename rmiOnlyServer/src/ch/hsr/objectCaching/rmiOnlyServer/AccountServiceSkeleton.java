@@ -1,7 +1,7 @@
 package ch.hsr.objectCaching.rmiOnlyServer;
 
-import ch.hsr.objectCaching.interfaces.serverSystemUnderTest.MethodCall;
-import ch.hsr.objectCaching.interfaces.serverSystemUnderTest.ReturnValue;
+import ch.hsr.objectCaching.dto.MethodCall;
+import ch.hsr.objectCaching.dto.ReturnValue;
 
 public class AccountServiceSkeleton implements RMIonlySkeleton {
 	

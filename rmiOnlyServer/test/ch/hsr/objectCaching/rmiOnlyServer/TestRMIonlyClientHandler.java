@@ -8,6 +8,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -15,6 +16,7 @@ import org.junit.Test;
 import ch.hsr.objectCaching.account.Account;
 import ch.hsr.objectCaching.account.AccountService;
 import ch.hsr.objectCaching.interfaces.serverSystemUnderTest.MethodCall;
+import ch.hsr.objectCaching.interfaces.serverSystemUnderTest.MethodCalledListener;
 import ch.hsr.objectCaching.interfaces.serverSystemUnderTest.ReturnValue;
 
 public class TestRMIonlyClientHandler {
@@ -47,7 +49,7 @@ public class TestRMIonlyClientHandler {
 		oos.close();
 		byteArrayInputStream = new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
 		clientHandler.setInputStream(byteArrayInputStream);
-		MethodCall testCall = clientHandler.readMethodCallfrom(null);
+		MethodCall testCall = clientHandler.readMethodCallfrom();
 		
 		assertEquals(methodCall.getMethodName(), testCall.getMethodName());
 	}
@@ -96,6 +98,21 @@ public class TestRMIonlyClientHandler {
 		assertEquals(valueForService, retValForService.getValue());
 	}
 	
+	@Test
+	public void testNotifyMethodCalledListener(){
+		String setBalanceMethodName = "getBalance";
+		methodCall.setMethodName(setBalanceMethodName);
+		String clientIpAdress = "152.96.38.56";
+		methodCall.setClientIp(clientIpAdress);
+		ArrayList<MethodCalledListener> listeners = new ArrayList<MethodCalledListener>();
+		FakeMethodCalledListener listener = new FakeMethodCalledListener();
+		listeners.add(listener );
+		clientHandler.setMethodCalledListeners(listeners );
+		clientHandler.notifiyListeners(methodCall);
+		assertEquals(setBalanceMethodName, listener.methodName);
+		assertEquals(clientIpAdress, listener.clieString);
+	}
+	
 	public class AccountSkeletonFake extends AccountSkeleton{
 
 		private Integer intValue;
@@ -125,5 +142,17 @@ public class TestRMIonlyClientHandler {
 			returnValue.setValue(intValue);
 			return returnValue;
 		}
+	}
+	
+	public class FakeMethodCalledListener implements MethodCalledListener{
+		public String methodName;
+		public String clieString;
+
+		@Override
+		public void methodCalled(String methodName, String clientIPAddress) {
+			this.methodName = methodName;
+			this.clieString = clientIPAddress;
+		}
+		
 	}
 }

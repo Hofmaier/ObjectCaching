@@ -4,11 +4,13 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 
 import ch.hsr.objectCaching.account.Account;
 import ch.hsr.objectCaching.account.AccountService;
 import ch.hsr.objectCaching.interfaces.serverSystemUnderTest.ClientHandler;
 import ch.hsr.objectCaching.interfaces.serverSystemUnderTest.MethodCall;
+import ch.hsr.objectCaching.interfaces.serverSystemUnderTest.MethodCalledListener;
 import ch.hsr.objectCaching.interfaces.serverSystemUnderTest.ReturnValue;
 
 public class RMIonlyClientHandler extends ClientHandler {
@@ -19,7 +21,7 @@ public class RMIonlyClientHandler extends ClientHandler {
 	private ObjectOutputStream objectOutputStream;
 	private ObjectInputStream objectInputStream;
 	private String clientIpAdress;
-	
+	private ArrayList<MethodCalledListener> listeners;
 	public void setAccountSkeleton(AccountSkeleton skeleton) {
 		this.accountSkeleton = skeleton;
 	}
@@ -52,8 +54,9 @@ public class RMIonlyClientHandler extends ClientHandler {
 	public void run() {
 		try {
 			MethodCall methodCall;
-			while(( methodCall = readMethodCallfrom(objectInputStream) )!= null){
+			while(( methodCall = readMethodCallfrom() )!= null){
 			methodCall.setClientIp(clientIpAdress);
+			notifiyListeners(methodCall);
 			processMethodCall(methodCall);
 			}
 			objectInputStream.close();
@@ -65,10 +68,16 @@ public class RMIonlyClientHandler extends ClientHandler {
 		}
 	}
 
-	MethodCall readMethodCallfrom(ObjectInputStream inputStream) throws IOException,
+	void notifiyListeners(MethodCall methodCall) {
+		for(MethodCalledListener listener:listeners){
+			listener.methodCalled(methodCall.getMethodName(), methodCall.getClientIp());
+		}
+	}
+
+	MethodCall readMethodCallfrom() throws IOException,
 			ClassNotFoundException {
 		Object objectFromStream = null;
-		if((objectFromStream = inputStream.readObject()) != null){
+		if((objectFromStream = objectInputStream.readObject()) != null){
 		 MethodCall methodCall = (MethodCall) objectFromStream;
 		 return methodCall;
 		}
@@ -107,5 +116,10 @@ public class RMIonlyClientHandler extends ClientHandler {
 	@Override
 	public void setClientIpAddress(String clientIpAddress) {
 		this.clientIpAdress = clientIpAddress;
+	}
+
+	public void setMethodCalledListeners(
+			ArrayList<MethodCalledListener> listeners) {
+		this.listeners = listeners;
 	}
 }

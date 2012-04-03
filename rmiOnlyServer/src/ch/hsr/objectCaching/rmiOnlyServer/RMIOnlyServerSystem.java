@@ -3,9 +3,9 @@ package ch.hsr.objectCaching.rmiOnlyServer;
 import java.util.ArrayList;
 
 import ch.hsr.objectCaching.account.Account;
-import ch.hsr.objectCaching.interfaces.serverSystemUnderTest.ClientHandler;
-import ch.hsr.objectCaching.interfaces.serverSystemUnderTest.MethodCalledListener;
-import ch.hsr.objectCaching.interfaces.serverSystemUnderTest.ServerSystemUnderTest;
+import ch.hsr.objectCaching.interfaces.ClientHandler;
+import ch.hsr.objectCaching.interfaces.MethodCalledListener;
+import ch.hsr.objectCaching.interfaces.ServerSystemUnderTest;
 
 
 public class RMIOnlyServerSystem implements ServerSystemUnderTest {

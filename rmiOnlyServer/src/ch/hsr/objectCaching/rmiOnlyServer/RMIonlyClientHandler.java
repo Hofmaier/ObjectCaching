@@ -8,10 +8,10 @@ import java.util.ArrayList;
 
 import ch.hsr.objectCaching.account.Account;
 import ch.hsr.objectCaching.account.AccountService;
-import ch.hsr.objectCaching.interfaces.serverSystemUnderTest.ClientHandler;
-import ch.hsr.objectCaching.interfaces.serverSystemUnderTest.MethodCall;
-import ch.hsr.objectCaching.interfaces.serverSystemUnderTest.MethodCalledListener;
-import ch.hsr.objectCaching.interfaces.serverSystemUnderTest.ReturnValue;
+import ch.hsr.objectCaching.dto.MethodCall;
+import ch.hsr.objectCaching.dto.ReturnValue;
+import ch.hsr.objectCaching.interfaces.ClientHandler;
+import ch.hsr.objectCaching.interfaces.MethodCalledListener;
 
 public class RMIonlyClientHandler extends ClientHandler {
 

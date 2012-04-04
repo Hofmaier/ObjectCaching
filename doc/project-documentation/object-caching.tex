@@ -1,0 +1,10 @@
+
+\section{Object Caching}
+\label{sec:object-caching}
+
+\subsection{Replica Management}
+\label{sec:replica-management}
+
+Ziel des Object Caching ist es die Zugriffszeit auf Objekte für Client zu verringern. Deshalb macht es Sinn, dass Repliken vom Client initiiert werden. Die Alternative wäre dass der Server die Repliken initiiert. Werden die Replikas vom Client initiiert spricht man von Client Caches. Client Caches verbessern die Zugriffszeit der Clients auf die Daten.
+
+In unserem RMIwithObjectCaching-System besitzt jeder Client einen lokalen Cache auf derselben Maschine. Der Cache ist nicht in der Grösse limitiert, da die Testcases keine Szenarien mit vielen Objekten vorsehen.

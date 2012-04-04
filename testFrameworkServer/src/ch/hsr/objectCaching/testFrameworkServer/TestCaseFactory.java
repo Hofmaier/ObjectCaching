@@ -2,6 +2,8 @@ package ch.hsr.objectCaching.testFrameworkServer;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -16,9 +18,11 @@ public class TestCaseFactory
 {
 	private ArrayList<TestCase> testCases;
 	private ArrayList<Account> accounts;
+	private Logger logger;
 	
 	public TestCaseFactory()
 	{
+		logger = Logger.getLogger("TestFrameWorkServer");
 		testCases = new ArrayList<TestCase>();
 		accounts = new ArrayList<Account>();
 	}
@@ -81,33 +85,7 @@ public class TestCaseFactory
 		    	  }
 		      }
 		} catch (XMLStreamException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.log(Level.SEVERE, "Uncaught exception", e);
 		}  
 	}
-	
-//	public void showTestCases()
-//	{
-//		for(int i = 0; i< testCases.size();i++)
-//		{
-//			System.out.println("TestCase");
-//			System.out.println("-------------------");
-//			System.out.println(testCases.get(i).getClientId());
-//			System.out.println(testCases.get(i).getSystemUnderTest());
-//			ArrayList<Action> temp = testCases.get(i).getActionList();
-//			System.out.println(temp.size());
-//			for(int z = 0; z < temp.size(); z++)
-//			{
-//				System.out.println(temp.get(z).getAction());
-//				System.out.println(temp.get(z).getValue());
-//			}
-//		}
-//	}
-//	
-//	public static void main(String[] args) 
-//	{
-//		TestCaseFactory test = new TestCaseFactory();
-//		test.convertXML();
-//		test.showTestCases();
-//	}
 }

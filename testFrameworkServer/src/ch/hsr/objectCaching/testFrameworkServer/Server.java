@@ -8,10 +8,11 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import ch.hsr.objectCaching.account.Account;
 import ch.hsr.objectCaching.interfaces.ClientInterface;
-import ch.hsr.objectCaching.interfaces.MethodCalledListener;
 import ch.hsr.objectCaching.interfaces.ServerInterface;
 import ch.hsr.objectCaching.reporting.ReportGenerator;
 import ch.hsr.objectCaching.scenario.Scenario;
@@ -19,7 +20,7 @@ import ch.hsr.objectCaching.testFrameworkServer.Client.ShutedDown;
 import ch.hsr.objectCaching.testFrameworkServer.Client.StartingState;
 import ch.hsr.objectCaching.util.Configuration;
 
-public class Server implements ServerInterface, MethodCalledListener
+public class Server implements ServerInterface
 {
 	private ClientList clientList;
 	private ArrayList<TestCase> testCases;
@@ -29,9 +30,13 @@ public class Server implements ServerInterface, MethodCalledListener
 	private Configuration configuration;
 	private ArrayList<Account> accounts;
 	private ConfigurationFactory configFactory;
+	private Logger logger;
+	private MethodCallLogger methodCallLogger;
 	
 	public Server()
 	{
+		methodCallLogger = new MethodCallLogger("textLog.txt");
+		logger = Logger.getLogger("TestFrameWorkServer");
 		configFactory = new ConfigurationFactory();
 		clientList = configFactory.getClientList();
 		configuration = configFactory.getConfiguration();
@@ -54,8 +59,8 @@ public class Server implements ServerInterface, MethodCalledListener
 	
 	private void startTestCase()
 	{
-		System.out.println("Starting TestCase");
-		dispatcher.setSystemUnderTest(activeTestCase.getSystemUnderTest(), accounts.get(0));
+		logger.info("Starting TestCase");
+		dispatcher.setSystemUnderTest(activeTestCase.getSystemUnderTest(), accounts.get(0), methodCallLogger);
 		initializeClients();
 	}
 	
@@ -73,46 +78,40 @@ public class Server implements ServerInterface, MethodCalledListener
 	
 	private void initializeClients()
 	{
-		System.out.println("initializeClients");
+		logger.info("initializeClients");
 		for(int i = 0; i < clientList.size(); i++)
 		{
 			try {
 				clientList.getClient(i).getClientStub().initialize(getScenarioForClient(i), configuration);
 			} catch (RemoteException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logger.log(Level.SEVERE, "Uncaught exception", e);
 			}
-			
 		}
 	}
 	
 	private void establishClientConnection() 
 	{
-		System.out.println("establishClientConnection");
+		logger.info("establishClientConnection");
 		try {
 			for(int i = 0; i < clientList.size(); i++)
 			{
-				System.out.println(clientList.getClient(i).getIp());
 				ClientInterface clientStub = (ClientInterface)Naming.lookup("rmi://" + clientList.getClient(i).getIp() + ":" + configuration.getClientRmiPort() + "/Client");
 				clientList.getClient(i).setClientStub(clientStub);
 			}
 			
 		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.log(Level.SEVERE, "Uncaught exception", e);
 		} catch (RemoteException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.log(Level.SEVERE, "Uncaught exception", e);
 		} catch (NotBoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.log(Level.SEVERE, "Uncaught exception", e);
 		}
 	}
 	
 	@Override
 	public void setReady(String ip) 
 	{
-		System.out.println("Setted ready with: " + ip);
+		logger.info("Setted ready with: " + ip);
 		Client temp;
 		if((temp = clientList.getClientByIp(ip)) != null)
 		{
@@ -131,7 +130,7 @@ public class Server implements ServerInterface, MethodCalledListener
 	
 	private void start()
 	{
-		System.out.println("start");
+		logger.info("Method start() invoked");
 		for(int i = 0; i < clientList.size(); i++)
 		{
 			ClientStart clientStart = new ClientStart(clientList.getClient(i));
@@ -159,38 +158,17 @@ public class Server implements ServerInterface, MethodCalledListener
 			Registry reg = LocateRegistry.getRegistry(configuration.getServerRMIPort());
 			reg.rebind(configuration.getServerRegistryName(), skeleton);
 		} catch (RemoteException e) {
-			e.printStackTrace();
+			logger.log(Level.SEVERE, "Uncaught exception", e);
 		}
 	}
-	
-
 	
 	@Override
 	public void setResults(Scenario scenario, String clientIp) 
 	{
-		//TODO: Auswertung der ankommenden Resultate
-		System.out.println("results setted");
-		System.out.println(scenario.getId());
-//		for(int i = 0; i < scenario.getActionList().size(); i++)
-//		{
-//			Action action = scenario.getActionList().get(i);
-//			if(action instanceof WriteAction)
-//			{
-//				System.out.println("Action was a Write-Action with: " + ((WriteAction)action).getValue());
-//			}
-//			
-//			if(action instanceof ReadAction)
-//			{
-//				System.out.println("Action was a Read-Action with: " + ((ReadAction)action).getBalance());
-//			}
-//			
-//		}
+		logger.info("Results from scenario " + scenario.getId() + " setted by " + clientIp);
 		ReportGenerator report = new ReportGenerator();
 		report.addScenario(scenario);
 		report.makeSummary();
-		
-		System.out.println("Account should be: ");
-		System.out.println("Account is actually: " + accounts.get(0).getBalance());
 		
 		for(int i = 0; i < testCases.size(); i++)
 		{
@@ -203,29 +181,26 @@ public class Server implements ServerInterface, MethodCalledListener
 			{
 				stopClient(clientIp);
 			}
-		
 		}
 	}
 	
 	private void stopClient(String clientIp)
 	{
-
 		Client temp;
 		try {
 			
 			if((temp = clientList.getClientByIp(clientIp)) != null)
 			{
-				System.out.println("Stop Client with " + clientIp);
+				logger.info("stop client with ip: " + clientIp);
 				temp.getClientStub().shutdown();
 				temp.setClientRunning(ShutedDown.DOWN);
 			}
 		} catch (RemoteException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.log(Level.SEVERE, "Uncaught exception", e);
 		}
 		if(checkAllShutedDown())
 		{
-			System.out.println("Alle Clients sind down!");
+			logger.info("All clients are down!");
 		}
 	}
 	
@@ -240,12 +215,6 @@ public class Server implements ServerInterface, MethodCalledListener
 		}
 		return true;
 
-	}
-	
-	@Override
-	public void methodCalled(String methodName, String clientIPAddress) 
-	{
-		
 	}
 	
 	public static void main(String[] args) 

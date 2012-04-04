@@ -17,7 +17,7 @@ public class Dispatcher implements Runnable
 	ClientHandler clientHandler;
 	private ServerSystemUnderTest systemUnderTest;
 	
-	public void setSystemUnderTest(String system, Account account) 
+	public void setSystemUnderTest(String system, Account account, MethodCallLogger listener) 
 	{
 		try {
 			//Class clazz = Class.forName(system);
@@ -25,6 +25,7 @@ public class Dispatcher implements Runnable
 			//systemUnderTest = (ServerSystemUnderTest) ctor.newInstance(null);
 			systemUnderTest = new RMIOnlyServerSystem();
 			systemUnderTest.addAccount(account);
+			systemUnderTest.addMethodCalledListener(listener);
 			
 		} catch (SecurityException e) {
 			// TODO Auto-generated catch block

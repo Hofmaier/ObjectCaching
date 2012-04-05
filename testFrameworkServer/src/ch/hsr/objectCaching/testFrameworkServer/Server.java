@@ -34,6 +34,7 @@ public class Server implements ServerInterface
 	private MethodCallLogger methodCallLogger;
 	private String testCaseFileName;
 	private ResultGenerator resultGenerator;
+	private ArrayList<String> summaries;
 	
 	public Server(String testCaseFileName)
 	{
@@ -50,6 +51,7 @@ public class Server implements ServerInterface
 		accounts = testCaseFactory.getAccounts();
 		resultGenerator = new ResultGenerator(activeTestCase, accounts.get(0).getBalance());
 		new Thread(dispatcher).start();
+		summaries = new ArrayList<String>();
 	}
 	
 	private void generateTestCases()
@@ -169,11 +171,28 @@ public class Server implements ServerInterface
 	public void setResults(Scenario scenario, String clientIp) 
 	{
 		logger.info("Results from scenario " + scenario.getId() + " setted by " + clientIp);
-		ReportGenerator report = new ReportGenerator();
-		report.addScenario(scenario);
-		report.makeSummary();
-		
+		ReportGenerator report = new ReportGenerator(scenario, clientIp);
+		summaries.add(report.getSummary());
 		stopClient(clientIp);
+	}
+	
+	private void printSummary()
+	{
+		logger.info("All clients are down!");
+		logger.info("AccountBalance is: " + accounts.get(0).getBalance());
+		logger.info("AccountBalance should be: " + resultGenerator.getResult());
+		if(resultGenerator.getResult() == accounts.get(0).getBalance())
+		{
+			logger.info("No Lost-Updates!");
+		}
+		else
+		{
+			logger.info("Lost-Update occured!");
+		}
+		for(int i = 0; i < summaries.size(); i++)
+		{
+			logger.info(summaries.get(i));
+		}
 	}
 	
 	private void stopClient(String clientIp)
@@ -192,17 +211,7 @@ public class Server implements ServerInterface
 		}
 		if(checkAllShutedDown())
 		{
-			logger.info("All clients are down!");
-			logger.info("AccountBalance is: " + accounts.get(0).getBalance());
-			logger.info("AccountBalance should be: " + resultGenerator.getResult());
-			if(resultGenerator.getResult() == accounts.get(0).getBalance())
-			{
-				logger.info("No Lost-Updates!");
-			}
-			else
-			{
-				logger.info("Lost-Update occured!");
-			}
+			printSummary();
 		}
 	}
 	

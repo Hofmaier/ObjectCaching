@@ -3,8 +3,7 @@ package ch.hsr.objectCaching.reporting;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.logging.Logger;
 
 import ch.hsr.objectCaching.action.Action;
 import ch.hsr.objectCaching.action.IncrementAction;
@@ -15,35 +14,34 @@ import ch.hsr.objectCaching.scenario.Scenario;
 
 public class ReportGenerator {
 
-	private List<Scenario> scenarios;
 	private final int NANOSEC_TO_MILISEC_FACTOR = 1000000;
 	private double totalTime = 0;
 	private int totalConflicts = 0;
+	private Scenario scenario;
+	private String clientIp;
+	private String summary;
 
-	public ReportGenerator() {
-		scenarios = new ArrayList<Scenario>();
+	public ReportGenerator(Scenario scenario, String clientIp) {
+		this.scenario = scenario;
+		this.clientIp = clientIp;
+		generateReport();
+	}
+	
+	public String getSummary()
+	{
+		return summary;
 	}
 
-	public void addScenario(Scenario s) {
-		scenarios.add(s);
-	}
-
-	public void makeSummary() {
-		for (Scenario s : scenarios) {
-			generateReportforScenario(s);
-		}
-	}
-
-	private void generateReportforScenario(Scenario s) {
+	private void generateReport() {
 		
 		int actionNumber = 0;
 		try {
-			BufferedWriter out = new BufferedWriter(new FileWriter("Scenario_" + s.getId() + ".txt"));
-			out.write("******************************" + "\n");
-			out.write("Result for ScenarioID: " + s.getId() + "\n");
-			out.write("******************************" + "\n");
+			BufferedWriter out = new BufferedWriter(new FileWriter("Client_" + clientIp + ".txt"));
+			out.write("************************************************************" + "\n");
+			out.write("Result for Client: " + clientIp + " with ScenarioID: " + scenario.getId() + "\n");
+			out.write("************************************************************" + "\n");
 			out.write("ActionNr;#ofTries;Time[ms];ACTION\n");
-			for (Action action : s.getActionList()) {
+			for (Action action : scenario.getActionList()) {
 				if (action instanceof WriteAction) {
 					if (action.getResult().getNumberOfTry() > 1) {
 						totalConflicts += action.getResult().getNumberOfTry() - 1;
@@ -93,8 +91,8 @@ public class ReportGenerator {
 				}
 				actionNumber++;
 			}
-
-			out.write("Total Konflict: " + totalConflicts + " / Gesamt Dauer: " + totalTime + " ms" + " / durch. Dauer pro Operation: " + totalTime/(s.getActionList().size()+totalConflicts));
+			summary= ("Total Konflict: " + totalConflicts + " / Gesamt Dauer: " + totalTime + " ms" + " / durch. Dauer pro Operation: " + totalTime/(scenario.getActionList().size()+totalConflicts));
+			out.write("Total Konflict: " + totalConflicts + " / Gesamt Dauer: " + totalTime + " ms" + " / durch. Dauer pro Operation: " + totalTime/(scenario.getActionList().size()+totalConflicts));
 			out.flush();
 			out.close();
 		} catch (IOException e) {

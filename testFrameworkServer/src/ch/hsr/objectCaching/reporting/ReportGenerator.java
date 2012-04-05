@@ -35,6 +35,7 @@ public class ReportGenerator {
 	}
 
 	private void generateReportforScenario(Scenario s) {
+		
 		int actionNumber = 0;
 		try {
 			BufferedWriter out = new BufferedWriter(new FileWriter("Scenario_" + s.getId() + ".txt"));
@@ -93,7 +94,7 @@ public class ReportGenerator {
 				actionNumber++;
 			}
 
-			out.write("Total Konflict: " + totalConflicts + " / Gesamt Dauer: " + totalTime + " ms");
+			out.write("Total Konflict: " + totalConflicts + " / Gesamt Dauer: " + totalTime + " ms" + " / durch. Dauer pro Operation: " + totalTime/(s.getActionList().size()+totalConflicts));
 			out.flush();
 			out.close();
 		} catch (IOException e) {

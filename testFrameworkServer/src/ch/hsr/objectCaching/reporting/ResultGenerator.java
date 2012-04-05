@@ -1,7 +1,8 @@
-package ch.hsr.objectCaching.testFrameworkServer;
+package ch.hsr.objectCaching.reporting;
 
 import ch.hsr.objectCaching.action.Action;
 import ch.hsr.objectCaching.action.IncrementAction;
+import ch.hsr.objectCaching.testFrameworkServer.TestCase;
 
 public class ResultGenerator 
 {

@@ -6,6 +6,7 @@ import static org.junit.Assert.assertNotNull;
 import org.junit.Before;
 import org.junit.Test;
 
+import ch.hsr.objectCaching.factories.TestCaseFactory;
 import ch.hsr.objectCaching.reporting.ResultGenerator;
 import ch.hsr.objectCaching.scenario.Scenario;
 
@@ -18,7 +19,6 @@ public class TestCaseFactoryTest
 	{
 		factory = new TestCaseFactory("testCases.xml");
 		factory.convertXML();
-		generator = new ResultGenerator(factory.getTestCase(), factory.getAccounts().get(0).getBalance());
 	}
 	
 	@Test
@@ -31,12 +31,6 @@ public class TestCaseFactoryTest
 	public void assertScenariosNotNull()
 	{
 		assertNotNull(factory.getTestCase().getScenarios());
-	}
-	
-	@Test
-	public void assertExactResult()
-	{
-		assertEquals(10000000, generator.getResult());
 	}
 	
 	@Test

@@ -1,27 +1,31 @@
 package ch.hsr.objectCaching.reporting;
 
+import java.util.HashMap;
+
 import ch.hsr.objectCaching.action.Action;
 import ch.hsr.objectCaching.action.IncrementAction;
-import ch.hsr.objectCaching.testFrameworkServer.TestCase;
+import ch.hsr.objectCaching.factories.TestCase;
+import ch.hsr.objectCaching.scenario.Scenario;
 
 public class ResultGenerator 
 {
-	private TestCase testCase;
 	private double result;
-	public ResultGenerator(TestCase testCase, double startValue)
+	private HashMap<String, Scenario> scenarioPerClient;
+	
+	public ResultGenerator(HashMap<String, Scenario> scenarioPerClient, double startValue)
 	{
-		this.testCase = testCase;
+		this.scenarioPerClient = scenarioPerClient;
 		result = startValue;
 		calculateResult();
 	}
 	
 	private void calculateResult()
 	{
-		for(int i = 0; i < testCase.getScenariosCount(); i++)
+		for(String ip : scenarioPerClient.keySet())
 		{
-			for(int x = 0; x < testCase.getScenarios().get(i).getActionList().size(); x++)
+			for(int i = 0; i < scenarioPerClient.get(ip).getActionList().size(); i++)
 			{
-				Action action = testCase.getScenarios().get(i).getActionList().get(x);
+				Action action = scenarioPerClient.get(ip).getActionList().get(i);
 				if(action instanceof IncrementAction)
 				{
 					result = result * ((IncrementAction)action).getFactor();

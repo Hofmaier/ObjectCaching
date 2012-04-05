@@ -2,9 +2,27 @@
 \section{Object Caching}
 \label{sec:object-caching}
 
-\subsection{Replica Management}
+\subsection{Replica Placement}
 \label{sec:replica-management}
 
 Ziel des Object Caching ist es die Zugriffszeit auf Objekte für Client zu verringern. Deshalb macht es Sinn, dass Repliken vom Client initiiert werden. Die Alternative wäre dass der Server die Repliken initiiert. Werden die Replikas vom Client initiiert spricht man von Client Caches. Client Caches verbessern die Zugriffszeit der Clients auf die Daten.
 
 In unserem RMIwithObjectCaching-System besitzt jeder Client einen lokalen Cache auf derselben Maschine. Der Cache ist nicht in der Grösse limitiert, da die Testcases keine Szenarien mit vielen Objekten vorsehen.
+
+\subsection{Update Distribution}
+\label{sec:update-distribution}
+
+Werden Kopien von Objekten in einem lokalen Cache angelegt, müssen diese Kopien aktualisiert werden. Um dies zu realisieren gibt es mehrere Möglichkeiten.
+
+\subsubsection{Invalidation versus Data Transfer}
+\label{sec:inval-vers-data}
+
+\begin{description}
+\item[Invalidation protocol] Bei einem Invalidation protocol werden nur Meldungen an die lokalen Caches gesendet, die dem Cache mitteilen, dass ein Objekt nicht mehr aktuell ist. Der Vorteil dieser Möglichkeit ist, das eine Invalidierungsmeldung nur beim ersten Write versendet werden muss. Ausserdem müssen keine Objektdaten übertragen werden. Das Verfahren spart also Bandbreite. Ein invalidation protocol macht ist sinnvoll, wenn das read-to-write-Verhältnis klein ist.
+\item[Transfer Data] Der zweite Ansatz ist bei jedem Update die kompletten Daten eines Objektes an die lokalen Caches zu versenden. In diesem Fall kann der Client immer aus dem lokalen Cache lesen. Dieser Ansatz macht Sinn bei einem hohen read-to-write Verhältnis.
+\end{description}
+
+\subsubsection{Pull versus Push}
+\label{sec:pull-versus-push}
+
+Die Verantwortung, der Cache Aktualisierung kann entweder beim Server oder beim Client liegen. Man unterscheided zwischen push-based und pull-based Protokollen.

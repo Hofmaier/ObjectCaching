@@ -23,7 +23,6 @@ import ch.hsr.objectCaching.util.Configuration;
 public class Server implements ServerInterface
 {
 	private ClientList clientList;
-	private ArrayList<TestCase> testCases;
 	private Dispatcher dispatcher;
 	private TestCase activeTestCase;
 	private TestCaseFactory testCaseFactory;
@@ -32,9 +31,12 @@ public class Server implements ServerInterface
 	private ConfigurationFactory configFactory;
 	private Logger logger;
 	private MethodCallLogger methodCallLogger;
+	private String testCaseFileName;
+	private ResultGenerator resultGenerator;
 	
-	public Server()
+	public Server(String testCaseFileName)
 	{
+		this.testCaseFileName = testCaseFileName;
 		methodCallLogger = new MethodCallLogger("textLog.txt");
 		logger = Logger.getLogger("TestFrameWorkServer");
 		configFactory = new ConfigurationFactory();
@@ -45,15 +47,15 @@ public class Server implements ServerInterface
 		createRmiRegistry();
 		dispatcher = new Dispatcher(configuration.getServerSocketPort());
 		accounts = testCaseFactory.getAccounts();
+		resultGenerator = new ResultGenerator(activeTestCase, accounts.get(0).getBalance());
 		new Thread(dispatcher).start();
 	}
 	
 	private void generateTestCases()
 	{
-		testCaseFactory = new TestCaseFactory();
+		testCaseFactory = new TestCaseFactory(testCaseFileName);
 		testCaseFactory.convertXML();
-		testCases = testCaseFactory.getTestCases();
-		activeTestCase = testCases.get(0);
+		activeTestCase = testCaseFactory.getTestCase();
 		configuration.setNameOfSystemUnderTest(activeTestCase.getSystemUnderTest());
 	}
 	
@@ -170,18 +172,7 @@ public class Server implements ServerInterface
 		report.addScenario(scenario);
 		report.makeSummary();
 		
-		for(int i = 0; i < testCases.size(); i++)
-		{
-			if(testCases.get(i).equals(activeTestCase) && testCases.size() > i+1)
-			{
-				activeTestCase = testCases.get(i + 1);
-				startTestCase();
-			}
-			else
-			{
-				stopClient(clientIp);
-			}
-		}
+		stopClient(clientIp);
 	}
 	
 	private void stopClient(String clientIp)
@@ -201,6 +192,16 @@ public class Server implements ServerInterface
 		if(checkAllShutedDown())
 		{
 			logger.info("All clients are down!");
+			logger.info("AccountBalance is: " + accounts.get(0).getBalance());
+			logger.info("AccountBalance should be: " + resultGenerator.getResult());
+			if(resultGenerator.getResult() == accounts.get(0).getBalance())
+			{
+				logger.info("No Lost-Updates!");
+			}
+			else
+			{
+				logger.info("Lost-Update occured!");
+			}
 		}
 	}
 	
@@ -214,12 +215,20 @@ public class Server implements ServerInterface
 			}
 		}
 		return true;
-
 	}
 	
 	public static void main(String[] args) 
 	{
-		Server myServer = new Server();
-		myServer.startTestCase();
+		if(args.length == 0)
+		{
+			Server myServer = new Server("testCases.xml");
+			myServer.startTestCase();
+		}
+		else
+		{
+			System.out.println("customized testCase");
+			Server myServer = new Server(args[0]);
+			myServer.startTestCase();
+		}	
 	}
 }

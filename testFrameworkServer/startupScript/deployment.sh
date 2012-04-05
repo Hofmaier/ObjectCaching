@@ -53,7 +53,7 @@ function func_startServer
 {
   cd ${serverJarPath}
   echo "STARTUPSCRIPT: Server started"
-  java -jar ${serverJar}
+  java -jar ${serverJar} $1
   cd ${startFolder}
   rm ${clientTemp}
 }
@@ -67,12 +67,17 @@ function func_startClient
   done
   echo "STARTUPSCRIPT: All clients started"
 }
-
-func_create_CLient_List
-sleep 1
-func_rm
-sleep 2
-func_copy
-func_startClient
-sleep 4
-func_startServer
+ls ${serverJarPath} | grep $1 > /dev/null 2>&1
+if [[ $? -eq 0 || $1 -eq "" ]]
+then
+	func_create_CLient_List
+	sleep 1
+	func_rm
+	sleep 2
+	func_copy
+	func_startClient
+	sleep 4
+	func_startServer $1
+else
+	echo "File $1 does not exist! Aborting..."
+fi

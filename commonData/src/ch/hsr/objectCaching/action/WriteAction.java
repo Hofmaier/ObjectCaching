@@ -8,13 +8,13 @@ public class WriteAction extends Action {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private int value;
+	private double value;
 
 	public WriteAction(int value) {
 		this.value = value;
 	}
 
-	public int getValue() {
+	public double getValue() {
 		return value;
 	}
 

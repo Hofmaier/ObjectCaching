@@ -2,7 +2,7 @@ package ch.hsr.objectCaching.account;
 
 public interface Account {
 
-	public int getBalance();
-	public void setBalance(int balance) throws RuntimeException;
+	public double getBalance();
+	public void setBalance(double balance) throws RuntimeException;
 	
 }

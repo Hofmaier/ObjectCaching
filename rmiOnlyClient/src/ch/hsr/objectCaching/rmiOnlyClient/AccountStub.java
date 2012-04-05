@@ -26,13 +26,13 @@ public class AccountStub implements Account {
 	String invokeMethodMessage = "<invokeMethod><objectid>23</objectid><methodname>getBalance()</methodname></invokeMethod>";
 	private Object[] arguments;
 
-	public int getBalance() {
+	public double getBalance() {
 		try {
 			arguments = null;
 			String methodName = "getBalance";
 			sendMethodCall(methodName);
 			ReturnValue retValue = receiveResponse();
-			Integer i = (Integer) retValue.getValue();
+			Double i = (Double) retValue.getValue();
 			return i;
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
@@ -70,7 +70,7 @@ public class AccountStub implements Account {
 	}
 
 	@Override
-	public void setBalance(int balance) {
+	public void setBalance(double balance) {
 		arguments = new Object[] { balance };
 		try {
 			sendMethodCall("setBalance");

@@ -16,31 +16,27 @@ import ch.hsr.objectCaching.scenario.Scenario;
 
 public class TestCaseFactory 
 {
-	private ArrayList<TestCase> testCases;
+	private TestCase testCase;
 	private ArrayList<Account> accounts;
 	private Logger logger;
+	private String testCaseFileName;
 	
-	public TestCaseFactory()
+	public TestCaseFactory(String testCaseFileName)
 	{
+		this.testCaseFileName = testCaseFileName;
 		logger = Logger.getLogger("TestFrameWorkServer");
-		testCases = new ArrayList<TestCase>();
 		accounts = new ArrayList<Account>();
 	}
-	private TestCase generateTestCase(String systemUnderTest)
-	{
-		TestCase temp = new TestCase(systemUnderTest);
-		testCases.add(temp);
-		return temp;
-	}
+	
 	
 	public ArrayList<Account> getAccounts()
 	{
 		return accounts;
 	}
 	
-	public ArrayList<TestCase> getTestCases()
+	public TestCase getTestCase()
 	{
-		return testCases;
+		return testCase;
 	}
 	
 	public void convertXML()
@@ -48,16 +44,15 @@ public class TestCaseFactory
 		XMLInputFactory inputFactory = XMLInputFactory.newInstance();
 	    XMLStreamReader stax;
 	    Account newAccount = null;
-	    TestCase newTestCase = null;
 	    Scenario newScenario = null;
 		try {
-			stax = inputFactory.createXMLStreamReader(new StreamSource(new File("testCases.xml")));
+			stax = inputFactory.createXMLStreamReader(new StreamSource(new File(testCaseFileName)));
 		      while(stax.hasNext()) 
 		      {
 		    	  stax.next();
 		    	  if(stax.hasName() && stax.getName().toString().equals("TestCase") && stax.isStartElement())
 		    	  {
-		    		  newTestCase = this.generateTestCase(stax.getAttributeValue(0));
+		    		  testCase = new TestCase(stax.getAttributeValue(0));
 		    	  }
 		    	  if(stax.hasName() && stax.getName().toString().equals("Account") && stax.isStartElement())
 		    	  {
@@ -68,7 +63,7 @@ public class TestCaseFactory
 		    	  
 		    	  if(stax.hasName() && stax.getName().toString().equals("Scenario") && stax.isStartElement())
 		    	  {
-		    		  newScenario = newTestCase.generateNewScenario(Integer.valueOf(stax.getAttributeValue(0)));
+		    		  newScenario = testCase.generateNewScenario(Integer.valueOf(stax.getAttributeValue(0)));
 		    	  }
 		    	  
 		    	  if(stax.hasName() && stax.getName().toString().equals("Write") && stax.isStartElement())

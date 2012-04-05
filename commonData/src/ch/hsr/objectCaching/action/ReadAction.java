@@ -8,12 +8,12 @@ public class ReadAction extends Action {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private int balanceResult;
+	private double balanceResult;
 
 	public ReadAction() {
 	}
 
-	public int getBalance() {
+	public double getBalance() {
 		return balanceResult;
 	}
 

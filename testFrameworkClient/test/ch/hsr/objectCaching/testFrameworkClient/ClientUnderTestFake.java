@@ -39,16 +39,16 @@ public class ClientUnderTestFake implements ClientSystemUnderTest{
 	}
 		
 	public class FakeAccount implements Account{
-		private int balance = 0;	
+		private double balance = 0;	
 		public FakeAccount(){}
 		
 		@Override
-		public int getBalance() {
+		public double getBalance() {
 			return balance;
 		}
 
 		@Override
-		public void setBalance(int balance) {
+		public void setBalance(double balance) {
 			this.balance = balance;
 		}		
 	}

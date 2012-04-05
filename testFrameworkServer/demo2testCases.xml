@@ -12,7 +12,7 @@
 		<Scenario id="2">
 			<ActionSequence>
 
-				<Increment count ="3" delay="50" factor="10"></Increment>
+				<Increment count ="4" delay="0" factor="10"></Increment>
 
 			</ActionSequence>
 		</Scenario>

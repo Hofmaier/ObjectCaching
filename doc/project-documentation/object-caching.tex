@@ -29,5 +29,9 @@ Die Verantwortung, der Cache Aktualisierung kann entweder beim Server oder beim 
 
 \begin{description}
 \item[push-based] Der Server sendet dem Client Updates ohne, dass der Client diese anfordert. Der Server muss Buch darüber führen, in welchen Caches Kopien aller Objekte vorhanden sind.
-\item[pull-based] Clients überprüfen bei jedem Zugriff, ob die Daten im Cache aktuell sind. Wenn nicht müssen die Daten neu angefordert werden.
+\item[pull-based] Clients überprüfen bei jedem Zugriff, ob die Daten im Cache aktuell sind. Wenn nicht müssen die Daten neu angefordert werden. Das macht den Zugriff auf Daten langsamer. Dafür muss sich der Server nicht darum kümmern.
 \end{description}
+
+In unsererem Cache werden Aktualisierungen durch push-based updated realisiert, da wir die Zugriffzeit für die Clients erhöhen wollen und sich die Anzahl der Clients in Grenzen hält. Der Server kann sich merken, welcher Cache welche Objekte enthält.
+
+In unserem System sind alle Objekte zentral auf dem Server abgespeichert. Das Objekt auf dem Server ist das Referenzobjekt. Alle Clients sollen die Updateoperationen in der Reihenfolge sehen, wie sie beim Server eintreffen. Ist jedem Objekt eine Maschine für die Koordination zugeordnet, nennt man das Protokol primary-based. Die Maschine, die das Objekt verwaltet nennt man primary. Ist der primary eine fixer Server werden alle Updateoperationen remote an diesen Server gesendet. In diesem Fall spricht man von Remote-Write Protocol.

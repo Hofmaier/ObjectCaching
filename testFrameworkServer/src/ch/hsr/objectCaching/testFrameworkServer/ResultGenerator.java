@@ -6,8 +6,8 @@ import ch.hsr.objectCaching.action.IncrementAction;
 public class ResultGenerator 
 {
 	private TestCase testCase;
-	private int result;
-	public ResultGenerator(TestCase testCase, int startValue)
+	private double result;
+	public ResultGenerator(TestCase testCase, double startValue)
 	{
 		this.testCase = testCase;
 		result = startValue;
@@ -23,13 +23,13 @@ public class ResultGenerator
 				Action action = testCase.getScenarios().get(i).getActionList().get(x);
 				if(action instanceof IncrementAction)
 				{
-					result = (int) (result * ((IncrementAction)action).getFactor());
+					result = result * ((IncrementAction)action).getFactor();
 				}
 			}
 		}
 	}
 	
-	public int getResult()
+	public double getResult()
 	{
 		return result;
 	}

@@ -34,7 +34,7 @@ public class IncrementAction extends Action {
 			}
 			// Writing
 			try {
-				account.setBalance((int) (balanceResult * factor));
+				account.setBalance((double)(balanceResult * factor));
 				successfull = true;
 			} catch (RuntimeException exeption) {
 				System.out.println("Writing values failed with the value "

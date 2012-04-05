@@ -68,7 +68,7 @@ function func_startClient
   echo "STARTUPSCRIPT: All clients started"
 }
 ls ${serverJarPath} | grep $1 > /dev/null 2>&1
-if [[ $? -eq 0 || $1 -eq "" ]]
+if [[ $? -eq 0 || "$1" = "" ]]
 then
 	func_create_CLient_List
 	sleep 1

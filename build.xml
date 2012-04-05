@@ -89,6 +89,8 @@
 <target name="copyConfig" depends="jar" >
   <copy file="testFrameworkServer/initFile.conf" tofile="${dist.server.dir}/initFile.conf" />
   <copy file="testFrameworkServer/testCases.xml" tofile="${dist.server.dir}/testCases.xml" />
+  <copy todir="${dist.server.dir}"><fileset dir="testFrameworkServer" includes="*testCases.xml"/>
+</copy>
 </target>
 
 </project>

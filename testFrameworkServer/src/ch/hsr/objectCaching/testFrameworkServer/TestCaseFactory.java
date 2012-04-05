@@ -19,9 +19,11 @@ public class TestCaseFactory
 	private ArrayList<TestCase> testCases;
 	private ArrayList<Account> accounts;
 	private Logger logger;
+	private String testCaseFileName;
 	
-	public TestCaseFactory()
+	public TestCaseFactory(String testCaseFileName)
 	{
+		this.testCaseFileName = testCaseFileName;
 		logger = Logger.getLogger("TestFrameWorkServer");
 		testCases = new ArrayList<TestCase>();
 		accounts = new ArrayList<Account>();
@@ -51,7 +53,7 @@ public class TestCaseFactory
 	    TestCase newTestCase = null;
 	    Scenario newScenario = null;
 		try {
-			stax = inputFactory.createXMLStreamReader(new StreamSource(new File("testCases.xml")));
+			stax = inputFactory.createXMLStreamReader(new StreamSource(new File(testCaseFileName)));
 		      while(stax.hasNext()) 
 		      {
 		    	  stax.next();

@@ -14,7 +14,7 @@ public class TestCaseFactoryTest
 	@Before
 	public void setUp()
 	{
-		factory = new TestCaseFactory();
+		factory = new TestCaseFactory("testCases.xml");
 		factory.convertXML();
 	}
 	

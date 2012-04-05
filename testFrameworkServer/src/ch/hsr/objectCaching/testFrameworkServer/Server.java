@@ -32,9 +32,11 @@ public class Server implements ServerInterface
 	private ConfigurationFactory configFactory;
 	private Logger logger;
 	private MethodCallLogger methodCallLogger;
+	private String testCaseFileName;
 	
-	public Server()
+	public Server(String testCaseFileName)
 	{
+		this.testCaseFileName = testCaseFileName;
 		methodCallLogger = new MethodCallLogger("textLog.txt");
 		logger = Logger.getLogger("TestFrameWorkServer");
 		configFactory = new ConfigurationFactory();
@@ -50,7 +52,7 @@ public class Server implements ServerInterface
 	
 	private void generateTestCases()
 	{
-		testCaseFactory = new TestCaseFactory();
+		testCaseFactory = new TestCaseFactory(testCaseFileName);
 		testCaseFactory.convertXML();
 		testCases = testCaseFactory.getTestCases();
 		activeTestCase = testCases.get(0);
@@ -166,21 +168,14 @@ public class Server implements ServerInterface
 	public void setResults(Scenario scenario, String clientIp) 
 	{
 		logger.info("Results from scenario " + scenario.getId() + " setted by " + clientIp);
+		logger.info("AccountBalance is: " + accounts.get(0).getBalance());
 		ReportGenerator report = new ReportGenerator();
 		report.addScenario(scenario);
 		report.makeSummary();
 		
 		for(int i = 0; i < testCases.size(); i++)
 		{
-			if(testCases.get(i).equals(activeTestCase) && testCases.size() > i+1)
-			{
-				activeTestCase = testCases.get(i + 1);
-				startTestCase();
-			}
-			else
-			{
-				stopClient(clientIp);
-			}
+			stopClient(clientIp);
 		}
 	}
 	
@@ -219,7 +214,16 @@ public class Server implements ServerInterface
 	
 	public static void main(String[] args) 
 	{
-		Server myServer = new Server();
-		myServer.startTestCase();
+		if(args.length == 0)
+		{
+			Server myServer = new Server("testCases.xml");
+			myServer.startTestCase();
+		}
+		else
+		{
+			System.out.println("customized testCase");
+			Server myServer = new Server(args[0]);
+			myServer.startTestCase();
+		}	
 	}
 }

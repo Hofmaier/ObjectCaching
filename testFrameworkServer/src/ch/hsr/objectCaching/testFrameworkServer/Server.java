@@ -23,7 +23,6 @@ import ch.hsr.objectCaching.util.Configuration;
 public class Server implements ServerInterface
 {
 	private ClientList clientList;
-	private ArrayList<TestCase> testCases;
 	private Dispatcher dispatcher;
 	private TestCase activeTestCase;
 	private TestCaseFactory testCaseFactory;
@@ -33,6 +32,7 @@ public class Server implements ServerInterface
 	private Logger logger;
 	private MethodCallLogger methodCallLogger;
 	private String testCaseFileName;
+	private ResultGenerator resultGenerator;
 	
 	public Server(String testCaseFileName)
 	{
@@ -47,6 +47,7 @@ public class Server implements ServerInterface
 		createRmiRegistry();
 		dispatcher = new Dispatcher(configuration.getServerSocketPort());
 		accounts = testCaseFactory.getAccounts();
+		resultGenerator = new ResultGenerator(activeTestCase, accounts.get(0).getBalance());
 		new Thread(dispatcher).start();
 	}
 	
@@ -54,8 +55,7 @@ public class Server implements ServerInterface
 	{
 		testCaseFactory = new TestCaseFactory(testCaseFileName);
 		testCaseFactory.convertXML();
-		testCases = testCaseFactory.getTestCases();
-		activeTestCase = testCases.get(0);
+		activeTestCase = testCaseFactory.getTestCase();
 		configuration.setNameOfSystemUnderTest(activeTestCase.getSystemUnderTest());
 	}
 	
@@ -168,15 +168,11 @@ public class Server implements ServerInterface
 	public void setResults(Scenario scenario, String clientIp) 
 	{
 		logger.info("Results from scenario " + scenario.getId() + " setted by " + clientIp);
-		logger.info("AccountBalance is: " + accounts.get(0).getBalance());
 		ReportGenerator report = new ReportGenerator();
 		report.addScenario(scenario);
 		report.makeSummary();
 		
-		for(int i = 0; i < testCases.size(); i++)
-		{
-			stopClient(clientIp);
-		}
+		stopClient(clientIp);
 	}
 	
 	private void stopClient(String clientIp)
@@ -196,6 +192,16 @@ public class Server implements ServerInterface
 		if(checkAllShutedDown())
 		{
 			logger.info("All clients are down!");
+			logger.info("AccountBalance is: " + accounts.get(0).getBalance());
+			logger.info("AccountBalance should be: " + resultGenerator.getResult());
+			if(resultGenerator.getResult() == accounts.get(0).getBalance())
+			{
+				logger.info("No Lost-Updates!");
+			}
+			else
+			{
+				logger.info("Lost-Update occured!");
+			}
 		}
 	}
 	
@@ -209,7 +215,6 @@ public class Server implements ServerInterface
 			}
 		}
 		return true;
-
 	}
 	
 	public static void main(String[] args) 

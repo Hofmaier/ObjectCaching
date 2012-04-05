@@ -5,5 +5,7 @@
 *.pdf
 *.synctex.gz
 *.rel
+*.conf
+*.*~
 testFrameworkServer/initFile.conf
 dist/*

@@ -17,19 +17,19 @@ public class TestCaseFactoryTest
 	{
 		factory = new TestCaseFactory("testCases.xml");
 		factory.convertXML();
-		generator = new ResultGenerator(factory.getTestCases().get(0), factory.getAccounts().get(0).getBalance());
+		generator = new ResultGenerator(factory.getTestCase(), factory.getAccounts().get(0).getBalance());
 	}
 	
 	@Test
 	public void assertTestCasesNotNull()
 	{
-		assertNotNull(factory.getTestCases());
+		assertNotNull(factory.getTestCase());
 	}
 	
 	@Test
 	public void assertScenariosNotNull()
 	{
-		assertNotNull(factory.getTestCases().get(0).getScenarios());
+		assertNotNull(factory.getTestCase().getScenarios());
 	}
 	
 	@Test
@@ -41,8 +41,8 @@ public class TestCaseFactoryTest
 	@Test
 	public void getSameById()
 	{
-		Scenario temp = factory.getTestCases().get(0).getScenarios().get(0);
+		Scenario temp = factory.getTestCase().getScenarios().get(0);
 		int id = temp.getId();
-		assertEquals(temp, factory.getTestCases().get(0).getScenario(id));
+		assertEquals(temp, factory.getTestCase().getScenario(id));
 	}
 }

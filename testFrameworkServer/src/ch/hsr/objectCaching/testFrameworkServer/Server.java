@@ -23,7 +23,6 @@ import ch.hsr.objectCaching.util.Configuration;
 public class Server implements ServerInterface
 {
 	private ClientList clientList;
-	private ArrayList<TestCase> testCases;
 	private Dispatcher dispatcher;
 	private TestCase activeTestCase;
 	private TestCaseFactory testCaseFactory;
@@ -48,7 +47,7 @@ public class Server implements ServerInterface
 		createRmiRegistry();
 		dispatcher = new Dispatcher(configuration.getServerSocketPort());
 		accounts = testCaseFactory.getAccounts();
-		resultGenerator = new ResultGenerator(testCases.get(0), accounts.get(0).getBalance());
+		resultGenerator = new ResultGenerator(activeTestCase, accounts.get(0).getBalance());
 		new Thread(dispatcher).start();
 	}
 	
@@ -56,8 +55,7 @@ public class Server implements ServerInterface
 	{
 		testCaseFactory = new TestCaseFactory(testCaseFileName);
 		testCaseFactory.convertXML();
-		testCases = testCaseFactory.getTestCases();
-		activeTestCase = testCases.get(0);
+		activeTestCase = testCaseFactory.getTestCase();
 		configuration.setNameOfSystemUnderTest(activeTestCase.getSystemUnderTest());
 	}
 	
@@ -174,10 +172,7 @@ public class Server implements ServerInterface
 		report.addScenario(scenario);
 		report.makeSummary();
 		
-		for(int i = 0; i < testCases.size(); i++)
-		{
-			stopClient(clientIp);
-		}
+		stopClient(clientIp);
 	}
 	
 	private void stopClient(String clientIp)

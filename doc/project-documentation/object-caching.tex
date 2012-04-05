@@ -26,3 +26,8 @@ Werden Kopien von Objekten in einem lokalen Cache angelegt, müssen diese Kopien
 \label{sec:pull-versus-push}
 
 Die Verantwortung, der Cache Aktualisierung kann entweder beim Server oder beim Client liegen. Man unterscheided zwischen push-based und pull-based Protokollen.
+
+\begin{description}
+\item[push-based] Der Server sendet dem Client Updates ohne, dass der Client diese anfordert. Der Server muss Buch darüber führen, in welchen Caches Kopien aller Objekte vorhanden sind.
+\item[pull-based] Clients überprüfen bei jedem Zugriff, ob die Daten im Cache aktuell sind. Wenn nicht müssen die Daten neu angefordert werden.
+\end{description}

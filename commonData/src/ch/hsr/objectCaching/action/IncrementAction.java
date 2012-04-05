@@ -48,5 +48,10 @@ public class IncrementAction extends Action {
 	public long getDelay() {
 		return delay;
 	}
+	
+	public float getFactor()
+	{
+		return factor;
+	}
 
 }

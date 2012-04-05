@@ -33,6 +33,7 @@ public class Server implements ServerInterface
 	private Logger logger;
 	private MethodCallLogger methodCallLogger;
 	private String testCaseFileName;
+	private ResultGenerator resultGenerator;
 	
 	public Server(String testCaseFileName)
 	{
@@ -47,6 +48,7 @@ public class Server implements ServerInterface
 		createRmiRegistry();
 		dispatcher = new Dispatcher(configuration.getServerSocketPort());
 		accounts = testCaseFactory.getAccounts();
+		resultGenerator = new ResultGenerator(testCases.get(0), accounts.get(0).getBalance());
 		new Thread(dispatcher).start();
 	}
 	
@@ -168,7 +170,6 @@ public class Server implements ServerInterface
 	public void setResults(Scenario scenario, String clientIp) 
 	{
 		logger.info("Results from scenario " + scenario.getId() + " setted by " + clientIp);
-		logger.info("AccountBalance is: " + accounts.get(0).getBalance());
 		ReportGenerator report = new ReportGenerator();
 		report.addScenario(scenario);
 		report.makeSummary();
@@ -196,6 +197,16 @@ public class Server implements ServerInterface
 		if(checkAllShutedDown())
 		{
 			logger.info("All clients are down!");
+			logger.info("AccountBalance is: " + accounts.get(0).getBalance());
+			logger.info("AccountBalance should be: " + resultGenerator.getResult());
+			if(resultGenerator.getResult() == accounts.get(0).getBalance())
+			{
+				logger.info("No Lost-Updates!");
+			}
+			else
+			{
+				logger.info("Lost-Update occured!");
+			}
 		}
 	}
 	
@@ -209,7 +220,6 @@ public class Server implements ServerInterface
 			}
 		}
 		return true;
-
 	}
 	
 	public static void main(String[] args) 

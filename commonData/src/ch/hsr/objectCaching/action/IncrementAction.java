@@ -4,7 +4,7 @@ import ch.hsr.objectCaching.account.Account;
 
 public class IncrementAction extends Action {
 	private static final long serialVersionUID = 1L;
-	private int balanceResult;
+	private double balanceResult;
 	private float factor;
 	private long delay;
 

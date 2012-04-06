@@ -17,7 +17,7 @@ public class ReadAction extends Action {
 	public void execute(Account account) {
 		result.startTimeMeasurement(BasicAction.READ);
 		balance = account.getBalance();
-		result.startTimeMeasurement();
+		result.stopTimeMeasurement();
 	}
 
 	public double getBalance() {

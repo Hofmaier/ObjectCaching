@@ -40,6 +40,7 @@ public class Result implements Serializable {
 
 	public void startTimeMeasurement(BasicAction type) {
 		currentTry = new TimeMeasure(type);
+		currentTry.setStartTime(System.nanoTime());
 	}
 
 }

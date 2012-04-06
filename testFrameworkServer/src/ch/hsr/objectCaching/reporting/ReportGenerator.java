@@ -47,8 +47,9 @@ public class ReportGenerator {
 			writeHeader();
 			for (Action action : scenario.getActionList()) {
 
-				if (action.getResult().getNumberOfTry() > 1) {
-					totalConflicts += action.getResult().getNumberOfTry() - 1;
+				int minimalNumberOfTimeRecords = action.getMinimalNumberOfRecords();
+				if (action.getResult().getNumberOfTry() > minimalNumberOfTimeRecords) {
+					totalConflicts += action.getResult().getNumberOfTry() - minimalNumberOfTimeRecords;
 				}
 
 				int numberOfConflictsPerAction = 0;
@@ -62,7 +63,7 @@ public class ReportGenerator {
 						writeActionResult(numberOfConflictsPerAction, executionTime, WRITE);
 						break;
 					case INCREMENT_ACTION:
-						writeActionResult(numberOfConflictsPerAction, executionTime, buildIncrementString(action, interimTime));
+						writeActionResult(numberOfConflictsPerAction, executionTime, buildIncrementActionDescription(action, interimTime));
 					}
 					numberOfConflictsPerAction++;
 					totalExecutionTime += executionTime;
@@ -94,12 +95,12 @@ public class ReportGenerator {
 		out.write(actionNumber + PARAMETER_SEPARATOR + conflict + PARAMETER_SEPARATOR + time + PARAMETER_SEPARATOR + specificDescription + NEWLINE);
 	}
 
-	private String buildIncrementString(Action action, TimeMeasure time) {
+	private String buildIncrementActionDescription(Action action, TimeMeasure time) {
 		IncrementAction a = (IncrementAction) action;
 		if (a.getDelay() < 1) {
 			return "INCREMENT("+ time.getActionTyp().toString() +") WITHOUT DELAY";
 		} else {
-			return "INCREMENT WITH DELAY: " + a.getDelay();
+			return "INCREMENT("+ time.getActionTyp().toString() +") WITH DELAY OF: " + a.getDelay();
 		}
 	}
 

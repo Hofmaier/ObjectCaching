@@ -8,18 +8,16 @@ import ch.hsr.objectCaching.account.Account;
 import ch.hsr.objectCaching.account.AccountService;
 import ch.hsr.objectCaching.interfaces.ClientSystemUnderTest;
 
-public class ClientUnderTestFake implements ClientSystemUnderTest{
+public class FakeClientUnderTest implements ClientSystemUnderTest{
 
 	private ArrayList<Account> accounts;
-	private InetSocketAddress socketAddress;
 	
-	public ClientUnderTestFake(){
+	public FakeClientUnderTest(){
 		initAccounts();
 	}
 	
 	private void initAccounts() {
 		accounts = new ArrayList<Account>();
-		accounts.add(new FakeAccount());
 		accounts.add(new FakeAccount());	
 	}
 
@@ -32,10 +30,15 @@ public class ClientUnderTestFake implements ClientSystemUnderTest{
 			}
 		};
 	}
+	
+	@Override
+	public void shutdown() {
+		// TODO Auto-generated method stub	
+	}
 
 	@Override
 	public void setServerSocketAdress(InetSocketAddress socketAdress) {
-		this.socketAddress = socketAdress;	
+		// TODO Auto-generated method stub	
 	}
 		
 	public class FakeAccount implements Account{
@@ -52,11 +55,4 @@ public class ClientUnderTestFake implements ClientSystemUnderTest{
 			this.balance = balance;
 		}		
 	}
-
-	@Override
-	public void shutdown() {
-		// TODO Auto-generated method stub
-		
-	}
-
 }

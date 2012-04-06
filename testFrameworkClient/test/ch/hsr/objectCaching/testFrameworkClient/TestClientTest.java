@@ -3,10 +3,13 @@ package ch.hsr.objectCaching.testFrameworkClient;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.util.List;
+
 import org.junit.Before;
 import org.junit.Test;
 
-import ch.hsr.objectCaching.account.Account;
+import ch.hsr.objectCaching.action.Action;
+import ch.hsr.objectCaching.action.result.TimeMeasure;
 import ch.hsr.objectCaching.scenario.Scenario;
 
 public class TestClientTest {
@@ -15,32 +18,53 @@ public class TestClientTest {
 	
 	@Before
 	public void setUp(){
-		ClientUnderTestFake fakeClient = new ClientUnderTestFake();
-		Scenario s = new Scenario(1);
+		FakeClientUnderTest fakeClient = new FakeClientUnderTest();
 		client = new TestClient(fakeClient);
-		client.setScenario(s);
 		client.init();
 	}
 	
 	@Test
-	public void testScenarioId(){
-		assertEquals("Scenario id is wrong", 1, client.getScenario().getId());
+	public void testSetScenario(){
+		Scenario scenario = new Scenario(1);
+		client.setScenario(scenario);
+		Scenario clientScenario = client.getScenario();
+		assertEquals(scenario, clientScenario);
+	}
+	
+	@Test
+	public void testRunScenario(){
+		client.setScenario(buildFakeScenario());
+		client.runScenario();
+	}
+	
+	@Test
+	public void testvalidateSenarioResult(){
+		client.setScenario(buildFakeScenario());
+		client.runScenario();
 		
+		Scenario resultScenario = client.getScenario();
+		List<Action> actions = resultScenario.getActionList();
+		for(Action a : actions){
+			assertEquals(1, a.getResult().getNumberOfTry());
+			assertTrue(checkTime(a));
+		}
 	}
-	
-	@Test
-	public void testNumberOfAccounts(){
-		client.init();
-		assertEquals("More accounts than expected", 2, client.getAccounts().size());
+
+	private boolean checkTime(Action a) {
+		List<TimeMeasure> times = a.getResult().getAttempt();
+		boolean startTimeSmallerThanStopTime = false;
+		for(TimeMeasure time : times){
+			if(time.getStartTime() <= time.getStopTime())
+				startTimeSmallerThanStopTime = true;
+		}
+		return startTimeSmallerThanStopTime;
 	}
-	
-	@Test
-	public void testGetNextAccount(){
-		client.init();
-		Account a1 = client.getNextAccount();
-		Account a2 = client.getNextAccount();
-		Account a3 = client.getNextAccount();
-		assertTrue(a1 == a3);
+
+	private Scenario buildFakeScenario() {
+		Scenario scenario = new Scenario(1);
+		scenario.setReadAction(1);
+		scenario.setWriteAction(2, 42);
+		return scenario;
 	}
 
 }

@@ -44,8 +44,7 @@ public class ClientController implements ClientInterface {
 		testClient.setScenario(scenario);
 		testClient.init();
 
-		if (server != null)
-			notifyServerInitDone();
+		notifyServerInitDone();
 	}
 
 	@Override
@@ -60,14 +59,14 @@ public class ClientController implements ClientInterface {
 		shutdownClientController();
 	}
 
-	private ServerInterface getServerStub(String serverIP, int port, String registryName) {
+	private ServerInterface getServerStub(String serverIP, int port, String registryName) throws RemoteException {
 		try {
 			String url = "rmi://" + serverIP + ":" + port + "/" + registryName;
 			return (ServerInterface) Naming.lookup(url);
 		} catch (Exception e) {
 			logger.severe("loading server stub failed " + e.getMessage());
+			throw new RemoteException("ServerStub could not be loaded on client");
 		}
-		return null;
 	}
 
 	private ClientSystemUnderTest createClientSystemUnderTest(String systemUnderTestName) {

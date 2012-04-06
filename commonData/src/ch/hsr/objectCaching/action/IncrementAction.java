@@ -2,56 +2,74 @@ package ch.hsr.objectCaching.action;
 
 import ch.hsr.objectCaching.account.Account;
 
-public class IncrementAction extends Action {
-	private static final long serialVersionUID = 1L;
-	private double balanceResult;
-	private float factor;
-	private long delay;
+public class IncrementAction extends Action{
 
-	public IncrementAction(long delay, float factor) {
-		this.factor = factor;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private long delay;
+	private double factor;
+
+	public IncrementAction() {
+		super();
+	}
+	
+	public IncrementAction(long delay, double fator) {
+		super();
 		this.delay = delay;
+		this.factor = fator;
 	}
 
-	@Override
-	public void execute(Account account) {
-		boolean successfull = false;
-		boolean runOnce = true;
-
-		do {
-			result.startMeasuring();
-			// Read
-			balanceResult = account.getBalance();
-			// Delay
-			if (runOnce) {
-				try {
-					Thread.sleep(delay);
-					runOnce = false;
-				} catch (InterruptedException e) {
-					System.out
-							.println("Action execution with delay interrupted");
-				}
-			}
-			// Writing
-			try {
-				account.setBalance((double)(balanceResult * factor));
-				successfull = true;
-			} catch (RuntimeException exeption) {
-				System.out.println("Writing values failed with the value "
-						+ balanceResult * factor);
-				successfull = false;
-			}
-			result.stopMeasuring();
-		} while (!successfull);
+	public void setDelay(long delay) {
+		this.delay = delay;
 	}
 
 	public long getDelay() {
 		return delay;
 	}
-	
-	public float getFactor()
-	{
+
+	public void setFactor(float f) {
+		this.factor = f;
+	}
+
+	public double getFactor() {
 		return factor;
+	}
+
+	public void execute(Account account) {
+		boolean successful = false;
+		double balance = 0;
+		int numberOfTry = 0;
+		while (!successful) {
+			result.startTimeMeasurement(BasicAction.READ);
+			balance = account.getBalance();
+			result.stopTimeMeasurement();
+			sleep(numberOfTry);
+			try {
+				result.startTimeMeasurement(BasicAction.WRITE);
+				account.setBalance(balance * factor);
+				result.stopTimeMeasurement();
+				successful = true;
+			} catch (RuntimeException e) {
+				successful = false;		
+			}
+			numberOfTry++;
+		}
+	}
+
+	private void sleep(int numberOfLoops) {
+		if(numberOfLoops == 0)
+			try {
+				Thread.sleep(delay);
+			} catch (InterruptedException e) {
+				System.out.println("sleep interupted");
+			}
+	}
+
+	@Override
+	public ActionTyp getActionTyp() {
+		return ActionTyp.INCREMENT_ACTION;
 	}
 
 }

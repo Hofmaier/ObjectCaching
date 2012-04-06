@@ -51,7 +51,7 @@ public class TestClientTest {
 	}
 
 	private boolean checkTime(Action a) {
-		List<TimeMeasure> times = a.getResult().getAttempt();
+		List<TimeMeasure> times = a.getResult().getAllIntermediateResult();
 		boolean startTimeSmallerThanStopTime = false;
 		for(TimeMeasure time : times){
 			if(time.getStartTime() <= time.getStopTime())

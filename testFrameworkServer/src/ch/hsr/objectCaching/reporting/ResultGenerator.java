@@ -4,7 +4,6 @@ import java.util.HashMap;
 
 import ch.hsr.objectCaching.action.Action;
 import ch.hsr.objectCaching.action.IncrementAction;
-import ch.hsr.objectCaching.factories.TestCase;
 import ch.hsr.objectCaching.scenario.Scenario;
 
 public class ResultGenerator 

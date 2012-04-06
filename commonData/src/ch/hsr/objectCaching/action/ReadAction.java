@@ -8,20 +8,24 @@ public class ReadAction extends Action {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private double balanceResult;
+	private double balance;
 
 	public ReadAction() {
+		super();
+	}
+
+	public void execute(Account account) {
+		result.startTimeMeasurement(BasicAction.READ);
+		balance = account.getBalance();
+		result.startTimeMeasurement();
 	}
 
 	public double getBalance() {
-		return balanceResult;
+		return balance;
 	}
 
 	@Override
-	public void execute(Account account) {
-		result.startMeasuring();
-		balanceResult = account.getBalance();
-		result.stopMeasuring();
+	public ActionTyp getActionTyp() {
+		return ActionTyp.READ_ACTION;
 	}
-
 }

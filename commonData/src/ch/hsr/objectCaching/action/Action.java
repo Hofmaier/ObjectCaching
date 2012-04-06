@@ -21,7 +21,7 @@ public abstract class Action implements Serializable
 		return result;
 	}
 	
-	
+	public abstract ActionTyp getActionTyp();
 	public abstract void execute(Account account);	
 	
 }

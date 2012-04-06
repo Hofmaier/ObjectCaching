@@ -11,11 +11,11 @@ public class Result implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private List<TimeMeasure> listOfAttempt;
-	private TimeMeasure currentTry;
+	private List<TimeRecord> listOfAttempt;
+	private TimeRecord currentTry;
 	
 	public enum BasicAction {
-		READ, WRITE, ABORT;
+		READ, WRITE;
 	}
 	
 	public enum ActionResult {
@@ -23,11 +23,11 @@ public class Result implements Serializable {
 	}
 
 	public Result() {
-		listOfAttempt = new ArrayList<TimeMeasure>();
+		listOfAttempt = new ArrayList<TimeRecord>();
 	}
 
 	public void startTimeMeasurement() {
-		currentTry = new TimeMeasure();
+		currentTry = new TimeRecord();
 		currentTry.setStartTime(System.nanoTime());
 	}
 
@@ -37,7 +37,7 @@ public class Result implements Serializable {
 		listOfAttempt.add(currentTry);
 	}
 
-	public List<TimeMeasure> getAllIntermediateResult() {
+	public List<TimeRecord> getAllIntermediateResult() {
 		return listOfAttempt;
 	}
 
@@ -46,7 +46,7 @@ public class Result implements Serializable {
 	}
 
 	public void startTimeMeasurement(BasicAction type) {
-		currentTry = new TimeMeasure(type);
+		currentTry = new TimeRecord(type);
 		currentTry.setStartTime(System.nanoTime());
 	}
 

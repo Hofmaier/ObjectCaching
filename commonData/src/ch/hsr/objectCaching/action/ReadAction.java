@@ -10,6 +10,7 @@ public class ReadAction extends Action {
 	 */
 	private static final long serialVersionUID = 1L;
 	private double balance;
+	private final int MINIMAL_TIME_RECORDS_FOR_SUCCESS = 1;
 
 	public ReadAction() {
 		super();
@@ -32,6 +33,6 @@ public class ReadAction extends Action {
 
 	@Override
 	public int getMinimalNumberOfTimeRecords() {
-		return 1;
+		return MINIMAL_TIME_RECORDS_FOR_SUCCESS;
 	}
 }

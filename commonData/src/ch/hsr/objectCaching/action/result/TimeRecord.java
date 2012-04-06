@@ -5,7 +5,7 @@ import java.io.Serializable;
 import ch.hsr.objectCaching.action.result.Result.ActionResult;
 import ch.hsr.objectCaching.action.result.Result.BasicAction;
 
-public class TimeMeasure implements Serializable {
+public class TimeRecord implements Serializable {
 
 	/**
 	 * 
@@ -16,12 +16,12 @@ public class TimeMeasure implements Serializable {
 	private BasicAction ActionTyp;
 	private ActionResult actionResult;
 
-	public TimeMeasure() {
+	public TimeRecord() {
 		startTime = 0;
 		stopTime = 0;
 	}
 
-	public TimeMeasure(BasicAction actionTyp) {
+	public TimeRecord(BasicAction actionTyp) {
 		this.ActionTyp = actionTyp;
 		startTime = 0;
 		stopTime = 0;

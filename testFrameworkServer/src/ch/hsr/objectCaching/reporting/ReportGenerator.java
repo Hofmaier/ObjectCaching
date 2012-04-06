@@ -6,7 +6,7 @@ import java.io.IOException;
 
 import ch.hsr.objectCaching.action.Action;
 import ch.hsr.objectCaching.action.IncrementAction;
-import ch.hsr.objectCaching.action.result.TimeMeasure;
+import ch.hsr.objectCaching.action.result.TimeRecord;
 import ch.hsr.objectCaching.scenario.Scenario;
 
 public class ReportGenerator {
@@ -62,7 +62,7 @@ public class ReportGenerator {
 			}
 
 			int numberOfConflictsPerAction = 0;
-			for (TimeMeasure interimTime : action.getResult().getAllIntermediateResult()) {
+			for (TimeRecord interimTime : action.getResult().getAllIntermediateResult()) {
 				double executionTime = getDeltaInMilisec(interimTime);
 				switch (action.getActionTyp()) {
 				case READ_ACTION:
@@ -100,7 +100,7 @@ public class ReportGenerator {
 		out.write(actionNumber + PARAMETER_SEPARATOR + conflict + PARAMETER_SEPARATOR + time + PARAMETER_SEPARATOR + specificDescription + NEWLINE);
 	}
 
-	private String buildIncrementActionDescription(Action action, TimeMeasure time) {
+	private String buildIncrementActionDescription(Action action, TimeRecord time) {
 		IncrementAction a = (IncrementAction) action;
 		if (a.getDelay() < 1) {
 			return "INCREMENT("+ time.getActionTyp().toString() +") WITHOUT DELAY";
@@ -109,7 +109,7 @@ public class ReportGenerator {
 		}
 	}
 
-	private double getDeltaInMilisec(TimeMeasure m) {
+	private double getDeltaInMilisec(TimeRecord m) {
 		long nanoSek = m.getStopTime() - m.getStartTime();
 		return (double) nanoSek / NANOSEC_TO_MILISEC_FACTOR;
 	}

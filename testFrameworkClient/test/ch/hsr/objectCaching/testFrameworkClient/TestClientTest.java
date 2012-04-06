@@ -9,7 +9,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import ch.hsr.objectCaching.action.Action;
-import ch.hsr.objectCaching.action.result.TimeMeasure;
+import ch.hsr.objectCaching.action.result.TimeRecord;
 import ch.hsr.objectCaching.scenario.Scenario;
 
 public class TestClientTest {
@@ -51,9 +51,9 @@ public class TestClientTest {
 	}
 
 	private boolean checkTime(Action a) {
-		List<TimeMeasure> times = a.getResult().getAllIntermediateResult();
+		List<TimeRecord> times = a.getResult().getAllIntermediateResult();
 		boolean startTimeSmallerThanStopTime = false;
-		for(TimeMeasure time : times){
+		for(TimeRecord time : times){
 			if(time.getStartTime() <= time.getStopTime())
 				startTimeSmallerThanStopTime = true;
 		}

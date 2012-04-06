@@ -11,6 +11,7 @@ public class WriteAction extends Action {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	private final int MINIMAL_TIME_RECORDS_FOR_SUCCESS = 1;
 	private double newBalance;
 	
 	public WriteAction(double balance) {
@@ -32,6 +33,6 @@ public class WriteAction extends Action {
 
 	@Override
 	public int getMinimalNumberOfTimeRecords() {
-		return 1;
+		return MINIMAL_TIME_RECORDS_FOR_SUCCESS;
 	}
 }

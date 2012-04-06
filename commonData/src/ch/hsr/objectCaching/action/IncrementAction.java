@@ -4,19 +4,20 @@ import ch.hsr.objectCaching.account.Account;
 import ch.hsr.objectCaching.action.result.Result.ActionResult;
 import ch.hsr.objectCaching.action.result.Result.BasicAction;
 
-public class IncrementAction extends Action{
+public class IncrementAction extends Action {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	private final int MINIMAL_TIME_RECORDS_FOR_SUCCESS = 2;
 	private long delay;
 	private double factor;
 
 	public IncrementAction() {
 		super();
 	}
-	
+
 	public IncrementAction(long delay, double fator) {
 		super();
 		this.delay = delay;
@@ -39,6 +40,7 @@ public class IncrementAction extends Action{
 		return factor;
 	}
 
+	@Override
 	public void execute(Account account) {
 		boolean successful = false;
 		double balance = 0;
@@ -61,15 +63,6 @@ public class IncrementAction extends Action{
 		}
 	}
 
-	private void sleep(int numberOfLoops) {
-		if(numberOfLoops == 0)
-			try {
-				Thread.sleep(delay);
-			} catch (InterruptedException e) {
-				System.out.println("sleep interupted");
-			}
-	}
-
 	@Override
 	public ActionTyp getActionTyp() {
 		return ActionTyp.INCREMENT_ACTION;
@@ -77,7 +70,17 @@ public class IncrementAction extends Action{
 
 	@Override
 	public int getMinimalNumberOfTimeRecords() {
-		return 2;
+		return MINIMAL_TIME_RECORDS_FOR_SUCCESS;
+	}
+
+	private void sleep(int numberOfLoops) {
+		if (numberOfLoops == 0) {
+			try {
+				Thread.sleep(delay);
+			} catch (InterruptedException e) {
+				System.out.println("sleep interupted");
+			}
+		}
 	}
 
 }

@@ -1,6 +1,8 @@
 package ch.hsr.objectCaching.action;
 
 import ch.hsr.objectCaching.account.Account;
+import ch.hsr.objectCaching.action.result.Result.ActionResult;
+import ch.hsr.objectCaching.action.result.Result.BasicAction;
 
 public class IncrementAction extends Action{
 
@@ -29,8 +31,8 @@ public class IncrementAction extends Action{
 		return delay;
 	}
 
-	public void setFactor(float f) {
-		this.factor = f;
+	public void setFactor(double factor) {
+		this.factor = factor;
 	}
 
 	public double getFactor() {
@@ -52,7 +54,8 @@ public class IncrementAction extends Action{
 				result.stopTimeMeasurement();
 				successful = true;
 			} catch (RuntimeException e) {
-				successful = false;		
+				successful = false;
+				result.stopTimeMeasurement(ActionResult.FAILED);
 			}
 			numberOfTry++;
 		}
@@ -70,6 +73,11 @@ public class IncrementAction extends Action{
 	@Override
 	public ActionTyp getActionTyp() {
 		return ActionTyp.INCREMENT_ACTION;
+	}
+
+	@Override
+	public int getMinimalNumberOfTimeRecords() {
+		return 2;
 	}
 
 }

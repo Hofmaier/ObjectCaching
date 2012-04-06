@@ -164,7 +164,7 @@ public class ClientController implements ClientInterface {
 			ClientInterface skeleton = (ClientInterface) UnicastRemoteObject.exportObject(controller, port);
 			Registry r = LocateRegistry.getRegistry(port);
 			r.rebind("Client", skeleton);
-			logger.info("Client is ready an listening on port: " + port);
+			logger.info("Client is ready and listening on port: " + port);
 		} catch (RemoteException e) {
 			logger.severe(e.getMessage());
 			System.exit(0);

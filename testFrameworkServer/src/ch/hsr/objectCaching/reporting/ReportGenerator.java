@@ -16,8 +16,8 @@ public class ReportGenerator {
 	private final String WRITE = "WRITE";
 	private final String NEWLINE;
 	private final String PARAMETER_SEPARATOR;
-	private double totalExecutionTime = 0;
-	private int totalConflicts = 0;
+	private double totalScenarioExecutionTime = 0;
+	private int totalScenarioConflicts = 0;
 	private Scenario scenario;
 	private String clientIp;
 	private String summary;
@@ -29,6 +29,7 @@ public class ReportGenerator {
 		this.clientIp = clientIp;
 		NEWLINE = System.getProperty("line.separator");
 		PARAMETER_SEPARATOR = "\t";
+		
 		try {
 			out = new BufferedWriter(new FileWriter("Client_" + clientIp + ".txt"));
 		} catch (IOException e) {
@@ -42,42 +43,46 @@ public class ReportGenerator {
 	}
 
 	private void generateReport() {
-		actionNumber = 0;
 		try {
 			writeHeader();
-			for (Action action : scenario.getActionList()) {
-
-				int minimalNumberOfTimeRecords = action.getMinimalNumberOfRecords();
-				if (action.getResult().getNumberOfTry() > minimalNumberOfTimeRecords) {
-					totalConflicts += action.getResult().getNumberOfTry() - minimalNumberOfTimeRecords;
-				}
-
-				int numberOfConflictsPerAction = 0;
-				for (TimeMeasure interimTime : action.getResult().getAllIntermediateResult()) {
-					double executionTime = getDeltaInMilisec(interimTime);
-					switch (action.getActionTyp()) {
-					case READ_ACTION:
-						writeActionResult(numberOfConflictsPerAction, executionTime, READ);
-						break;
-					case WRITE_ACTION:
-						writeActionResult(numberOfConflictsPerAction, executionTime, WRITE);
-						break;
-					case INCREMENT_ACTION:
-						writeActionResult(numberOfConflictsPerAction, executionTime, buildIncrementActionDescription(action, interimTime));
-					}
-					numberOfConflictsPerAction++;
-					totalExecutionTime += executionTime;
-				}
-				actionNumber++;
-			}
+			writeListOfActions();
 			finalizeReport();
 		} catch (IOException e) {
 			System.out.println("IO Error in Reportgenerator for scenario " + scenario.getId());
 		}
 	}
 
+	private void writeListOfActions() throws IOException {
+		actionNumber = 0;
+		for (Action action : scenario.getActionList()) {
+
+			int minimalNumberOfTimeRecords = action.getMinimalNumberOfTimeRecords();
+			if (action.getResult().getNumberOfTry() > minimalNumberOfTimeRecords) {
+				totalScenarioConflicts += action.getResult().getNumberOfTry() - minimalNumberOfTimeRecords;
+			}
+
+			int numberOfConflictsPerAction = 0;
+			for (TimeMeasure interimTime : action.getResult().getAllIntermediateResult()) {
+				double executionTime = getDeltaInMilisec(interimTime);
+				switch (action.getActionTyp()) {
+				case READ_ACTION:
+					writeActionResult(numberOfConflictsPerAction, executionTime, READ);
+					break;
+				case WRITE_ACTION:
+					writeActionResult(numberOfConflictsPerAction, executionTime, WRITE);
+					break;
+				case INCREMENT_ACTION:
+					writeActionResult(numberOfConflictsPerAction, executionTime, buildIncrementActionDescription(action, interimTime));
+				}
+				numberOfConflictsPerAction++;
+				totalScenarioExecutionTime += executionTime;
+			}
+			actionNumber++;
+		}
+	}
+
 	private void finalizeReport() throws IOException {
-		summary = ("Total Conflict: " + totalConflicts + " / Gesamt Dauer: " + totalExecutionTime + " ms" + " / durch. Dauer pro Operation: " + totalExecutionTime / (scenario.getActionList().size() + totalConflicts));
+		summary = ("Total Conflict: " + totalScenarioConflicts + " / Gesamt Dauer: " + totalScenarioExecutionTime + " ms" + " / durch. Dauer pro Operation: " + totalScenarioExecutionTime / (scenario.getActionList().size() + totalScenarioConflicts));
 		out.write(summary);
 		out.flush();
 		out.close();
@@ -100,7 +105,7 @@ public class ReportGenerator {
 		if (a.getDelay() < 1) {
 			return "INCREMENT("+ time.getActionTyp().toString() +") WITHOUT DELAY";
 		} else {
-			return "INCREMENT("+ time.getActionTyp().toString() +") WITH DELAY OF: " + a.getDelay();
+			return "INCREMENT("+ time.getActionTyp().toString() +") WITH DELAY OF: " + a.getDelay() + "ms AFTER READING THE BALANCE";
 		}
 	}
 

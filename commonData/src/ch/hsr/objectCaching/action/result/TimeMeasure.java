@@ -2,7 +2,8 @@ package ch.hsr.objectCaching.action.result;
 
 import java.io.Serializable;
 
-import ch.hsr.objectCaching.action.BasicAction;
+import ch.hsr.objectCaching.action.result.Result.ActionResult;
+import ch.hsr.objectCaching.action.result.Result.BasicAction;
 
 public class TimeMeasure implements Serializable {
 
@@ -13,6 +14,7 @@ public class TimeMeasure implements Serializable {
 	private long startTime;
 	private long stopTime;
 	private BasicAction ActionTyp;
+	private ActionResult actionResult;
 
 	public TimeMeasure() {
 		startTime = 0;
@@ -43,5 +45,17 @@ public class TimeMeasure implements Serializable {
 
 	public BasicAction getActionTyp() {
 		return ActionTyp;
+	}
+	
+	public void setActionTyp(BasicAction typ) {
+		ActionTyp = typ;
+	}
+
+	public ActionResult getActionResult() {
+		return actionResult;
+	}
+
+	public void setActionResult(ActionResult actionResult) {
+		this.actionResult = actionResult;
 	}
 }

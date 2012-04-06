@@ -1,6 +1,7 @@
 package ch.hsr.objectCaching.action;
 
 import ch.hsr.objectCaching.account.Account;
+import ch.hsr.objectCaching.action.result.Result.BasicAction;
 
 public class ReadAction extends Action {
 
@@ -27,5 +28,10 @@ public class ReadAction extends Action {
 	@Override
 	public ActionTyp getActionTyp() {
 		return ActionTyp.READ_ACTION;
+	}
+
+	@Override
+	public int getMinimalNumberOfTimeRecords() {
+		return 1;
 	}
 }

@@ -4,8 +4,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import ch.hsr.objectCaching.action.BasicAction;
-
 
 public class Result implements Serializable {
 
@@ -15,6 +13,14 @@ public class Result implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private List<TimeMeasure> listOfAttempt;
 	private TimeMeasure currentTry;
+	
+	public enum BasicAction {
+		READ, WRITE, ABORT;
+	}
+	
+	public enum ActionResult {
+		SUCCESSFUL, FAILED;
+	}
 
 	public Result() {
 		listOfAttempt = new ArrayList<TimeMeasure>();
@@ -27,6 +33,7 @@ public class Result implements Serializable {
 
 	public void stopTimeMeasurement() {
 		currentTry.setStopTime(System.nanoTime());
+		currentTry.setActionResult(ActionResult.SUCCESSFUL);
 		listOfAttempt.add(currentTry);
 	}
 
@@ -41,6 +48,13 @@ public class Result implements Serializable {
 	public void startTimeMeasurement(BasicAction type) {
 		currentTry = new TimeMeasure(type);
 		currentTry.setStartTime(System.nanoTime());
+	}
+
+	public void stopTimeMeasurement(ActionResult result) {
+		currentTry.setStopTime(System.nanoTime());
+		currentTry.setActionResult(result);
+		listOfAttempt.add(currentTry);
+		
 	}
 
 }

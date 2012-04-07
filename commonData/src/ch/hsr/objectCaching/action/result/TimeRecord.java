@@ -13,7 +13,7 @@ public class TimeRecord implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private long startTime;
 	private long stopTime;
-	private BasicAction ActionTyp;
+	private BasicAction actionTyp;
 	private ActionResult actionResult;
 
 	public TimeRecord() {
@@ -22,7 +22,7 @@ public class TimeRecord implements Serializable {
 	}
 
 	public TimeRecord(BasicAction actionTyp) {
-		this.ActionTyp = actionTyp;
+		this.actionTyp = actionTyp;
 		startTime = 0;
 		stopTime = 0;
 	}
@@ -44,11 +44,11 @@ public class TimeRecord implements Serializable {
 	}
 
 	public BasicAction getActionTyp() {
-		return ActionTyp;
+		return actionTyp;
 	}
 	
 	public void setActionTyp(BasicAction typ) {
-		ActionTyp = typ;
+		actionTyp = typ;
 	}
 
 	public ActionResult getActionResult() {

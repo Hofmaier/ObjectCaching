@@ -26,11 +26,6 @@ public class Result implements Serializable {
 		listOfAttempt = new ArrayList<TimeRecord>();
 	}
 
-	public void startTimeMeasurement() {
-		currentTry = new TimeRecord();
-		currentTry.setStartTime(System.nanoTime());
-	}
-
 	public void stopTimeMeasurement() {
 		currentTry.setStopTime(System.nanoTime());
 		currentTry.setActionResult(ActionResult.SUCCESSFUL);

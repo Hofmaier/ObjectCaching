@@ -6,6 +6,8 @@ import java.io.IOException;
 
 import ch.hsr.objectCaching.action.Action;
 import ch.hsr.objectCaching.action.IncrementAction;
+import ch.hsr.objectCaching.action.result.Result.ActionResult;
+import ch.hsr.objectCaching.action.result.Result.BasicAction;
 import ch.hsr.objectCaching.action.result.TimeRecord;
 import ch.hsr.objectCaching.scenario.Scenario;
 
@@ -28,8 +30,8 @@ public class ReportGenerator {
 		this.scenario = scenario;
 		this.clientIp = clientIp;
 		NEWLINE = System.getProperty("line.separator");
-		PARAMETER_SEPARATOR = "\t";
-		
+		PARAMETER_SEPARATOR = ";";
+
 		try {
 			out = new BufferedWriter(new FileWriter("Client_" + clientIp + ".txt"));
 		} catch (IOException e) {
@@ -46,10 +48,47 @@ public class ReportGenerator {
 		try {
 			writeHeader();
 			writeListOfActions();
+			writeDetailedSummary();
 			finalizeReport();
 		} catch (IOException e) {
 			System.out.println("IO Error in Reportgenerator for scenario " + scenario.getId());
 		}
+	}
+
+	private void writeDetailedSummary() throws IOException {
+		int numberOfReads = 0;
+		int numberOfWrite = 0;
+		int numberOfUnsuccessfulAction = 0;
+		double readTime = 0;
+		double writeTime = 0;
+
+		int numberOfActions = scenario.getActionList().size();
+		
+		for (Action action : scenario.getActionList()) {		
+			ActionResult result = ActionResult.FAILED;
+			for (TimeRecord records : action.getResult().getAllIntermediateResult()) {
+				if (records.getActionTyp() == BasicAction.READ){
+					numberOfReads++;
+					readTime += getDeltaInMilisec(records);
+					result = records.getActionResult();
+				}
+				if (records.getActionTyp() == BasicAction.WRITE){
+					numberOfWrite++;
+					writeTime += getDeltaInMilisec(records);
+					result = records.getActionResult();
+				}
+			}
+			if(result == ActionResult.FAILED)
+				numberOfUnsuccessfulAction++;
+			
+		}
+		out.write(NEWLINE);
+		out.write("------------------------------------------------" + NEWLINE);
+		out.write(100-(numberOfUnsuccessfulAction/numberOfActions) + "% of all Action executed are successful" + NEWLINE);
+		out.write("Total actions executed: " + numberOfActions + ", number of unsuccessful action " + numberOfUnsuccessfulAction + NEWLINE);
+		out.write("Total getBalance calls: " + numberOfReads + ", avg. execution time " + readTime/(double)numberOfReads + NEWLINE);
+		out.write("Total setBalance calls: " + numberOfWrite + ", avg. execution time " + writeTime/(double)numberOfWrite + NEWLINE);
+		out.write(NEWLINE);
 	}
 
 	private void writeListOfActions() throws IOException {
@@ -91,7 +130,7 @@ public class ReportGenerator {
 	private void writeHeader() throws IOException {
 		out.write("************************************************************" + NEWLINE);
 		out.write("Result for Client: " + clientIp + " with ScenarioID: " + scenario.getId() + NEWLINE);
-		out.write("OS: " + System.getProperty("os.name") +" / " +System.getProperty("os.version") + NEWLINE);
+		out.write("OS: " + System.getProperty("os.name") + " / " + System.getProperty("os.version") + NEWLINE);
 		out.write("************************************************************" + NEWLINE);
 		out.write("ActionNr;#ofTries;Time[ms];ACTION" + NEWLINE);
 	}
@@ -103,9 +142,9 @@ public class ReportGenerator {
 	private String buildIncrementActionDescription(Action action, TimeRecord time) {
 		IncrementAction a = (IncrementAction) action;
 		if (a.getDelay() < 1) {
-			return "INCREMENT("+ time.getActionTyp().toString() +") WITHOUT DELAY";
+			return "INCREMENT(" + time.getActionTyp().toString() + ") WITHOUT DELAY";
 		} else {
-			return "INCREMENT("+ time.getActionTyp().toString() +") WITH DELAY OF: " + a.getDelay() + "ms AFTER READING THE BALANCE";
+			return "INCREMENT(" + time.getActionTyp().toString() + ") WITH DELAY OF: " + a.getDelay() + "ms AFTER READING THE BALANCE";
 		}
 	}
 

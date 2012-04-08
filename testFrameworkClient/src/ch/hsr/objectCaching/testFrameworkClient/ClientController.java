@@ -107,10 +107,10 @@ public class ClientController implements ClientInterface {
 			throw new RemoteException("Unbinding the ClientController failed", e1);
 		}
 		UnicastRemoteObject.unexportObject(this, true);
-		exitClientController(2000);
+		closeClientController(2000);
 	}
 
-	private void exitClientController(final long delay) {
+	private void closeClientController(final long delay) {
 		new Thread() {
 			@Override
 			public void run() {
@@ -137,14 +137,14 @@ public class ClientController implements ClientInterface {
 
 		if (args.length == 0) {
 			logger.info("publishing ClientController on Port 1099");
-			loadClientInterface(this, DEFAULT_CLIENT_PORT);
+			publishingClient(this, DEFAULT_CLIENT_PORT);
 		} else if (args.length == 1) {
 			int port = Integer.valueOf(args[0]);
 
 			logger.info("publishing ClientController on Port " + port);
-			loadClientInterface(this, port);
+			publishingClient(this, port);
 		} else {
-			logger.warning("Number of parameters does not fit for the ClientController, ClientController will exit");
+			logger.warning("Number of parameters does not fit for the ClientController, ClientController is closing");
 			System.exit(0);
 		}
 	}
@@ -158,7 +158,7 @@ public class ClientController implements ClientInterface {
 		}
 	}
 
-	private void loadClientInterface(ClientController controller, int port) {
+	private void publishingClient(ClientController controller, int port) {
 		try {
 			LocateRegistry.createRegistry(port);
 			ClientInterface skeleton = (ClientInterface) UnicastRemoteObject.exportObject(controller, port);

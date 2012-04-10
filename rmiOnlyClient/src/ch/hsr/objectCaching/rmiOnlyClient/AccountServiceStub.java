@@ -30,7 +30,7 @@ public class AccountServiceStub implements AccountService {
 		return null;
 	}
 
-	private Collection<Account> composeCollection(ReturnValue returnValue) {
+	protected Collection<Account> composeCollection(ReturnValue returnValue) {
 		ArrayList<Account> retValCollection = new ArrayList<Account>();
 		Collection<Integer> objectIDcollection = (Collection<Integer>) returnValue.getValue(); 
 		

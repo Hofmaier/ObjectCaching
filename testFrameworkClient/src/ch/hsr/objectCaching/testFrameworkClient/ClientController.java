@@ -23,6 +23,7 @@ public class ClientController implements ClientInterface {
 
 	private static Logger logger = Logger.getLogger(ClientController.class.getName());
 	private static final int DEFAULT_CLIENT_PORT = 1099;
+	private int rmiPort;
 	private String[] args;
 	private ServerInterface server;
 	private TestClient testClient;
@@ -100,7 +101,7 @@ public class ClientController implements ClientInterface {
 
 	private void shutdownClientController() throws RemoteException {
 		try {
-			Naming.unbind("Client");
+			Naming.unbind("rmi://localhost:" + rmiPort + "/Client");
 		} catch (MalformedURLException e1) {
 			throw new RemoteException("Malformed URL has occurred in ClientController", e1);
 		} catch (NotBoundException e1) {
@@ -139,10 +140,10 @@ public class ClientController implements ClientInterface {
 			logger.info("publishing ClientController on Port 1099");
 			publishingClient(this, DEFAULT_CLIENT_PORT);
 		} else if (args.length == 1) {
-			int port = Integer.valueOf(args[0]);
+			rmiPort = Integer.valueOf(args[0]);
 
-			logger.info("publishing ClientController on Port " + port);
-			publishingClient(this, port);
+			logger.info("publishing ClientController on Port " + rmiPort);
+			publishingClient(this, rmiPort);
 		} else {
 			logger.warning("Number of parameters does not fit for the ClientController, ClientController is closing");
 			System.exit(0);

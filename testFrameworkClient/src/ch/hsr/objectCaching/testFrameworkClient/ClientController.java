@@ -23,11 +23,13 @@ public class ClientController implements ClientInterface {
 
 	private static Logger logger = Logger.getLogger(ClientController.class.getName());
 	private static final int DEFAULT_CLIENT_PORT = 1099;
-	private int rmiPort;
+	private int ClientRmiPort;
+	private String ClientRegistryName;
 	private String[] args;
 	private ServerInterface server;
 	private TestClient testClient;
 	private Configuration config;
+
 
 	public ClientController(String[] args) {
 		this.args = args;
@@ -101,7 +103,7 @@ public class ClientController implements ClientInterface {
 
 	private void shutdownClientController() throws RemoteException {
 		try {
-			Naming.unbind("rmi://localhost:" + rmiPort + "/Client");
+			Naming.unbind("rmi://localhost:" + ClientRmiPort + "/Client");
 		} catch (MalformedURLException e1) {
 			throw new RemoteException("Malformed URL has occurred in ClientController", e1);
 		} catch (NotBoundException e1) {
@@ -136,14 +138,13 @@ public class ClientController implements ClientInterface {
 
 		loadLogggerConfig();
 
-		if (args.length == 0) {
-			logger.info("publishing ClientController on Port 1099");
-			publishingClient(this, DEFAULT_CLIENT_PORT);
-		} else if (args.length == 1) {
-			rmiPort = Integer.valueOf(args[0]);
-
-			logger.info("publishing ClientController on Port " + rmiPort);
-			publishingClient(this, rmiPort);
+		if (args.length == 1) {			
+			ClientRegistryName = args[0];
+			publishingClient(this, ClientRegistryName, DEFAULT_CLIENT_PORT);
+		} else if (args.length == 2) {		
+			ClientRegistryName = args[0];
+			ClientRmiPort = Integer.valueOf(args[1]);
+			publishingClient(this, ClientRegistryName, ClientRmiPort);
 		} else {
 			logger.warning("Number of parameters does not fit for the ClientController, ClientController is closing");
 			System.exit(0);
@@ -159,13 +160,13 @@ public class ClientController implements ClientInterface {
 		}
 	}
 
-	private void publishingClient(ClientController controller, int port) {
+	private void publishingClient(ClientController controller, String rmiName, int port) {
 		try {
 			LocateRegistry.createRegistry(port);
 			ClientInterface skeleton = (ClientInterface) UnicastRemoteObject.exportObject(controller, port);
 			Registry r = LocateRegistry.getRegistry(port);
-			r.rebind("Client", skeleton);
-			logger.info("Client is ready and listening on port: " + port);
+			r.rebind(rmiName, skeleton);
+			logger.info("Client is ready and listening on port: " + port + " with ClientRegistryName: " + rmiName);
 		} catch (RemoteException e) {
 			logger.severe(e.getMessage());
 			System.exit(0);

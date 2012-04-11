@@ -30,6 +30,16 @@ function func_create_CLient_List
   cat ${initFile} | grep "Client*[0-9]" | awk -F"=" '{ print $2 }'> ${clientTemp} 
 }
 
+function func_get_CLient_RMI_Port
+{
+  clientPort=$( cat ${initFile} | grep "Clientport" | awk -F"=" '{ print $2 }' )
+}
+
+function func_get_CLient_RMI_Name
+{
+  clientRMIName=$( cat ${initFile} | grep "ClientRegistryName" | awk -F"=" '{ print $2 }' )
+}
+
 function func_rm
 {
   for i in `cat ${clientTemp}`
@@ -62,7 +72,7 @@ function func_startClient
 {
   for i in `cat "${startFolder}/${clientTemp}"`
   do
-    ssh student@${i} "java -jar ${remotePath}/${clientJar}" &
+    ssh student@${i} "java -jar ${remotePath}/${clientJar} ${clientRMIName} ${clientPort}" &
   echo "STARTUPSCRIPT: Client with ${i} started"
   done
   echo "STARTUPSCRIPT: All clients started"
@@ -71,6 +81,10 @@ ls ${serverJarPath} | grep $1 > /dev/null 2>&1
 if [[ $? -eq 0 || "$1" = "" ]]
 then
 	func_create_CLient_List
+	sleep 1
+	func_get_CLient_RMI_Port
+	sleep 1
+	func_get_CLient_RMI_Name
 	sleep 1
 	func_rm
 	sleep 2

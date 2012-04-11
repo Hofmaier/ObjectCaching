@@ -46,6 +46,7 @@ function func_rm
   for i in `cat ${clientTemp}`
   do
     ssh -q student@${i} "rm ${remotePath}/${clientJar}"
+    ssh -q student@${i} "rm ${remotePath}/${clientLog}"
   done
 }
 

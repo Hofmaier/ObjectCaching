@@ -44,14 +44,14 @@ public class AccountServiceStub implements AccountService {
 		return retValCollection;
 	}
 
-	private ReturnValue receiveMethodCall() throws IOException,
+	protected ReturnValue receiveMethodCall() throws IOException,
 			ClassNotFoundException {
 		ObjectInputStream ois = streamProvider.getObjectInputStream();
 		ReturnValue returnValue = (ReturnValue) ois.readObject();
 		return returnValue;
 	}
 
-	private void sendMethodCall() throws IOException {
+	protected void sendMethodCall() throws IOException {
 		MethodCall methodCall = new MethodCall();
 		methodCall.setClassName(AccountService.class.getName());
 		ObjectOutputStream oos = streamProvider.getObjectOutputStream();

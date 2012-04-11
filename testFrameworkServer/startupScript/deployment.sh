@@ -35,6 +35,11 @@ function func_get_CLient_RMI_Port
   clientPort=$( cat ${initFile} | grep "Clientport" | awk -F"=" '{ print $2 }' )
 }
 
+function func_get_CLient_RMI_Name
+{
+  clientRMIName=$( cat initFile.conf | grep "ClientRegistryName" | awk -F"=" '{ print $2 }' )
+}
+
 function func_rm
 {
   for i in `cat ${clientTemp}`
@@ -67,7 +72,7 @@ function func_startClient
 {
   for i in `cat "${startFolder}/${clientTemp}"`
   do
-    ssh student@${i} "java -jar ${remotePath}/${clientJar} ${clientPort}" &
+    ssh student@${i} "java -jar ${remotePath}/${clientJar} ${clientRMIName} ${clientPort}" &
   echo "STARTUPSCRIPT: Client with ${i} started"
   done
   echo "STARTUPSCRIPT: All clients started"

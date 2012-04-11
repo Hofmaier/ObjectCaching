@@ -1,5 +1,7 @@
 package ch.hsr.objectCaching.rmiWithCacheClient;
 
+import static org.junit.Assert.*;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -26,7 +28,7 @@ public class TestMessageManager {
 	}
 
 	@Test
-	public void testSendMessageCall() throws InterruptedException, IOException {
+	public void testSendMessageCall() throws InterruptedException, IOException, ClassNotFoundException {
 		MessageManager messageManager = new MessageManager();
 		IStreamProvider streamProvider = new StreamProviderFake();
 		messageManager.setStreamProvider(streamProvider);
@@ -35,7 +37,8 @@ public class TestMessageManager {
 		messageManager.sendMessageCall(methodCall);
 		Thread.sleep(500);
 		ObjectInputStream objectInputStream = new ObjectInputStream(new ByteArrayInputStream(byteArrayOutputStream.toByteArray()));
-		
+		MethodCall returnValue = (MethodCall) objectInputStream.readObject();
+		assertEquals(AccountService.class.getName(), returnValue.getClassName());
 	}
 
 	@Test

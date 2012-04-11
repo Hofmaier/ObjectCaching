@@ -37,7 +37,7 @@ function func_get_CLient_RMI_Port
 
 function func_get_CLient_RMI_Name
 {
-  clientRMIName=$( cat initFile.conf | grep "ClientRegistryName" | awk -F"=" '{ print $2 }' )
+  clientRMIName=$( cat ${initFile} | grep "ClientRegistryName" | awk -F"=" '{ print $2 }' )
 }
 
 function func_rm

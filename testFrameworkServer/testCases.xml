@@ -5,14 +5,14 @@
 		<Scenario id="1">
 			<ActionSequence>
 
-				<Increment count ="4" delay="0" factor="10"></Increment>
+				<Increment count ="2" delay="0" factor="1.1"></Increment>
 
 			</ActionSequence>
 		</Scenario>
 		<Scenario id="2">
 			<ActionSequence>
 
-				<Increment count ="3" delay="50" factor="10"></Increment>
+				<Increment count ="2" delay="0" factor="1.1"></Increment>
 
 			</ActionSequence>
 		</Scenario>

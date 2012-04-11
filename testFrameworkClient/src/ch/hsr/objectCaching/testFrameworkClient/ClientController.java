@@ -10,6 +10,8 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
 
 import ch.hsr.objectCaching.interfaces.ClientInterface;
 import ch.hsr.objectCaching.interfaces.ClientSystemUnderTest;
@@ -19,53 +21,51 @@ import ch.hsr.objectCaching.util.Configuration;
 
 public class ClientController implements ClientInterface {
 
-	private static final int CLIENT_PORT = 1099;
+	private static Logger logger = Logger.getLogger(ClientController.class.getName());
+	private static final int DEFAULT_CLIENT_PORT = 1099;
+	private String[] args;
 	private ServerInterface server;
 	private TestClient testClient;
 	private Configuration config;
-	
-	public ClientController() {
+
+	public ClientController(String[] args) {
+		this.args = args;
 	}
 
 	@Override
-	public void initialize(Scenario scenario, Configuration configuration) throws RemoteException {		
-		config = configuration;		
-		ClientSystemUnderTest clientSystemUnderTest = createClientSystemUnderTest(configuration.getNameOfSystemUnderTest());		
+	public void initialize(Scenario scenario, Configuration configuration) throws RemoteException {
+		config = configuration;
+		server = getServerStub(config.getServerIP(), config.getServerRMIPort(), config.getServerRegistryName());
+
+		ClientSystemUnderTest clientSystemUnderTest = createClientSystemUnderTest(config.getNameOfSystemUnderTest());
 		clientSystemUnderTest.setServerSocketAdress(new InetSocketAddress(config.getServerIP(), config.getServerSocketPort()));
-		
+
 		testClient = new TestClient(clientSystemUnderTest);
 		testClient.setScenario(scenario);
 		testClient.init();
 
-		loadServerStub(config.getServerIP(), config.getServerRMIPort(), config.getServerRegistryName());
 		notifyServerInitDone();
 	}
-	
+
 	@Override
 	public void startTest() throws RemoteException {
 		testClient.runScenario();
 		sendResultToServer(testClient.getScenario());
 	}
-	
+
 	@Override
-	public void shutdown(){
+	public void shutdown() throws RemoteException {
 		testClient.shutdown();
 		shutdownClientController();
 	}
-	
-	private void loadServerStub(String serverIP, int port, String registryName) {
+
+	private ServerInterface getServerStub(String serverIP, int port, String registryName) throws RemoteException {
 		try {
 			String url = "rmi://" + serverIP + ":" + port + "/" + registryName;
-			server = (ServerInterface) Naming.lookup(url);
-		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (RemoteException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (NotBoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			return (ServerInterface) Naming.lookup(url);
+		} catch (Exception e) {
+			logger.severe("loading server stub failed " + e.getMessage());
+			throw new RemoteException("ServerStub could not be loaded on client");
 		}
 	}
 
@@ -73,79 +73,101 @@ public class ClientController implements ClientInterface {
 		try {
 			return CUTFactory.generateCUT(systemUnderTestName);
 		} catch (Exception e) {
-			System.out.println("Generating ClientSystemUnderTest failed: " + e.getMessage());
+			logger.severe("Generating ClientSystemUnderTest instance failed: " + e.getMessage());
 		}
 		return null;
 	}
 
-	private void sendResultToServer(Scenario scenario) {
+	private void sendResultToServer(Scenario scenario) throws RemoteException {
 		try {
 			server.setResults(scenario, InetAddress.getLocalHost().getHostAddress());
-		} catch (RemoteException e) {
-			System.out.println("Failed to send Results back to server: " + e.getMessage());
 		} catch (UnknownHostException e) {
-			System.out.println("Host not known: " + e.getMessage());
+			logger.severe("Reading the local host address failed");
 		}
 	}
-	
+
 	private void notifyServerInitDone() {
 		try {
 			InetAddress addr = InetAddress.getLocalHost();
-			System.out.println(addr.getHostAddress());
 			server.setReady(addr.getHostAddress());
+			logger.info("Client has successfully notified server about his ready status");
 		} catch (UnknownHostException e) {
-			System.out.println("Host not known: " + e.getMessage());
+			logger.severe("Could not read local IP address");
 		} catch (RemoteException e) {
-			System.out.println("setReady failed on Server");
+			logger.severe("SetReady on server failed");
 		}
 	}
-	
 
-	
-	private void shutdownClientController() {
+	private void shutdownClientController() throws RemoteException {
 		try {
 			Naming.unbind("Client");
-	        UnicastRemoteObject.unexportObject(this, true);
-		} catch (RemoteException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (NotBoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (MalformedURLException e1) {
+			throw new RemoteException("Malformed URL has occurred in ClientController", e1);
+		} catch (NotBoundException e1) {
+			throw new RemoteException("Unbinding the ClientController failed", e1);
 		}
-        
-        new Thread() {
-            @Override
-            public void run() {
-            	System.out.println("ClientController exiting. Bye.");
-              try {
-                sleep(2000);
-              } catch (InterruptedException e) {
-              }
-              System.out.println("done");
-              System.exit(0);
-            }
+		UnicastRemoteObject.unexportObject(this, true);
+		closeClientController(2000);
+	}
 
-          }.start();
+	private void closeClientController(final long delay) {
+		new Thread() {
+			@Override
+			public void run() {
+				logger.info("ClientController is shutting down");
+				try {
+					sleep(delay);
+				} catch (InterruptedException e) {
+				}
+				System.exit(0);
+			}
+		}.start();
 	}
 
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		ClientController c = new ClientController();
-		try {
-			LocateRegistry.createRegistry(CLIENT_PORT);
-			ClientInterface skeleton = (ClientInterface) UnicastRemoteObject.exportObject(c, CLIENT_PORT);
-			Registry r = LocateRegistry.getRegistry(CLIENT_PORT);
-			r.rebind("Client", skeleton);
-			System.out.println("Client ready");
-		} catch (RemoteException e) {
-			e.printStackTrace();
+		new ClientController(args).startController();
+	}
+
+	private void startController() {
+
+		loadLogggerConfig();
+
+		if (args.length == 0) {
+			logger.info("publishing ClientController on Port 1099");
+			publishingClient(this, DEFAULT_CLIENT_PORT);
+		} else if (args.length == 1) {
+			int port = Integer.valueOf(args[0]);
+
+			logger.info("publishing ClientController on Port " + port);
+			publishingClient(this, port);
+		} else {
+			logger.warning("Number of parameters does not fit for the ClientController, ClientController is closing");
+			System.exit(0);
 		}
 	}
 
+	private void loadLogggerConfig() {
+		try {
+			System.setProperty("java.util.logging.config.file", "logger.config");
+			LogManager.getLogManager().readConfiguration();
+		} catch (Exception e) {
+			System.out.println("Logger configuration file could not be readed.");
+		}
+	}
+
+	private void publishingClient(ClientController controller, int port) {
+		try {
+			LocateRegistry.createRegistry(port);
+			ClientInterface skeleton = (ClientInterface) UnicastRemoteObject.exportObject(controller, port);
+			Registry r = LocateRegistry.getRegistry(port);
+			r.rebind("Client", skeleton);
+			logger.info("Client is ready and listening on port: " + port);
+		} catch (RemoteException e) {
+			logger.severe(e.getMessage());
+			System.exit(0);
+		}
+	}
 }

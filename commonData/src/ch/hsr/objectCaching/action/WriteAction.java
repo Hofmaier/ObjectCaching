@@ -1,6 +1,9 @@
 package ch.hsr.objectCaching.action;
 
 import ch.hsr.objectCaching.account.Account;
+import ch.hsr.objectCaching.action.result.Result.BasicAction;
+
+
 
 public class WriteAction extends Action {
 
@@ -8,29 +11,28 @@ public class WriteAction extends Action {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private double value;
-
-	public WriteAction(int value) {
-		this.value = value;
+	private final int MINIMAL_TIME_RECORDS_FOR_SUCCESS = 1;
+	private double newBalance;
+	
+	public WriteAction(double balance) {
+		super();
+		newBalance = balance;
 	}
-
-	public double getValue() {
-		return value;
+	
+	@Override
+	public void execute(Account account) {
+		result.startTimeMeasurement(BasicAction.WRITE);
+		account.setBalance(newBalance);
+		result.stopTimeMeasurement();
 	}
 
 	@Override
-	public void execute(Account account) {
-		boolean successfull = false;
-		do {
-			result.startMeasuring();
-			try {
-				account.setBalance(value);
-				successfull = true;
-			} catch (RuntimeException exeption) {
-				System.out.println("Writing values failed with the value " + value);
-				successfull = false;
-			}
-			result.stopMeasuring();
-		} while (!successfull);
+	public ActionTyp getActionTyp() {
+		return ActionTyp.WRITE_ACTION;
+	}
+
+	@Override
+	public int getMinimalNumberOfTimeRecords() {
+		return MINIMAL_TIME_RECORDS_FOR_SUCCESS;
 	}
 }

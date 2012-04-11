@@ -1,4 +1,4 @@
-package ch.hsr.objectCaching.testFrameworkServer;
+package ch.hsr.objectCaching.factories;
 
 import java.util.ArrayList;
 

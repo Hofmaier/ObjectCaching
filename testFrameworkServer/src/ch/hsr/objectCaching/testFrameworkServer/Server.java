@@ -8,17 +8,25 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import ch.hsr.objectCaching.account.Account;
+import ch.hsr.objectCaching.factories.Client;
+import ch.hsr.objectCaching.factories.Client.ShutedDown;
+import ch.hsr.objectCaching.factories.Client.StartingState;
+import ch.hsr.objectCaching.factories.ClientList;
+import ch.hsr.objectCaching.factories.ConfigurationFactory;
+import ch.hsr.objectCaching.factories.TestCase;
+import ch.hsr.objectCaching.factories.TestCaseFactory;
 import ch.hsr.objectCaching.interfaces.ClientInterface;
 import ch.hsr.objectCaching.interfaces.ServerInterface;
 import ch.hsr.objectCaching.reporting.ReportGenerator;
+import ch.hsr.objectCaching.reporting.ResultGenerator;
 import ch.hsr.objectCaching.scenario.Scenario;
-import ch.hsr.objectCaching.testFrameworkServer.Client.ShutedDown;
-import ch.hsr.objectCaching.testFrameworkServer.Client.StartingState;
 import ch.hsr.objectCaching.util.Configuration;
+
 
 public class Server implements ServerInterface
 {
@@ -33,6 +41,8 @@ public class Server implements ServerInterface
 	private MethodCallLogger methodCallLogger;
 	private String testCaseFileName;
 	private ResultGenerator resultGenerator;
+	private ArrayList<String> summaries;
+	private HashMap<String, Scenario> scenarioPerClient;
 	
 	public Server(String testCaseFileName)
 	{
@@ -46,15 +56,15 @@ public class Server implements ServerInterface
 		establishClientConnection();
 		createRmiRegistry();
 		dispatcher = new Dispatcher(configuration.getServerSocketPort());
-		accounts = testCaseFactory.getAccounts();
-		resultGenerator = new ResultGenerator(activeTestCase, accounts.get(0).getBalance());
 		new Thread(dispatcher).start();
+		summaries = new ArrayList<String>();
 	}
 	
 	private void generateTestCases()
 	{
 		testCaseFactory = new TestCaseFactory(testCaseFileName);
 		testCaseFactory.convertXML();
+		accounts = testCaseFactory.getAccounts();
 		activeTestCase = testCaseFactory.getTestCase();
 		configuration.setNameOfSystemUnderTest(activeTestCase.getSystemUnderTest());
 	}
@@ -80,15 +90,19 @@ public class Server implements ServerInterface
 	
 	private void initializeClients()
 	{
+		scenarioPerClient = new HashMap<String, Scenario>();
 		logger.info("initializeClients");
 		for(int i = 0; i < clientList.size(); i++)
 		{
 			try {
-				clientList.getClient(i).getClientStub().initialize(getScenarioForClient(i), configuration);
+				Scenario temp = getScenarioForClient(i);
+				scenarioPerClient.put(clientList.getClient(i).getIp(), temp);
+				clientList.getClient(i).getClientStub().initialize(temp, configuration);
 			} catch (RemoteException e) {
 				logger.log(Level.SEVERE, "Uncaught exception", e);
 			}
 		}
+		resultGenerator = new ResultGenerator(scenarioPerClient, accounts.get(0).getBalance());
 	}
 	
 	private void establishClientConnection() 
@@ -168,11 +182,28 @@ public class Server implements ServerInterface
 	public void setResults(Scenario scenario, String clientIp) 
 	{
 		logger.info("Results from scenario " + scenario.getId() + " setted by " + clientIp);
-		ReportGenerator report = new ReportGenerator();
-		report.addScenario(scenario);
-		report.makeSummary();
-		
+		ReportGenerator report = new ReportGenerator(scenario, clientIp);
+		summaries.add(report.getSummary());
 		stopClient(clientIp);
+	}
+	
+	private void printSummary()
+	{
+		logger.info("All clients are down!");
+		logger.info("AccountBalance is: " + accounts.get(0).getBalance());
+		logger.info("AccountBalance should be: " + resultGenerator.getResult());
+		if(resultGenerator.getResult() == accounts.get(0).getBalance())
+		{
+			logger.info("No Lost-Updates!");
+		}
+		else
+		{
+			logger.info("Lost-Update occured!");
+		}
+		for(int i = 0; i < summaries.size(); i++)
+		{
+			logger.info(summaries.get(i));
+		}
 	}
 	
 	private void stopClient(String clientIp)
@@ -191,17 +222,7 @@ public class Server implements ServerInterface
 		}
 		if(checkAllShutedDown())
 		{
-			logger.info("All clients are down!");
-			logger.info("AccountBalance is: " + accounts.get(0).getBalance());
-			logger.info("AccountBalance should be: " + resultGenerator.getResult());
-			if(resultGenerator.getResult() == accounts.get(0).getBalance())
-			{
-				logger.info("No Lost-Updates!");
-			}
-			else
-			{
-				logger.info("Lost-Update occured!");
-			}
+			printSummary();
 		}
 	}
 	

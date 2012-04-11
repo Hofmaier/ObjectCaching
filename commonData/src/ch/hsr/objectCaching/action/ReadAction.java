@@ -1,6 +1,7 @@
 package ch.hsr.objectCaching.action;
 
 import ch.hsr.objectCaching.account.Account;
+import ch.hsr.objectCaching.action.result.Result.BasicAction;
 
 public class ReadAction extends Action {
 
@@ -8,20 +9,30 @@ public class ReadAction extends Action {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private double balanceResult;
+	private double balance;
+	private final int MINIMAL_TIME_RECORDS_FOR_SUCCESS = 1;
 
 	public ReadAction() {
+		super();
+	}
+
+	public void execute(Account account) {
+		result.startTimeMeasurement(BasicAction.READ);
+		balance = account.getBalance();
+		result.stopTimeMeasurement();
 	}
 
 	public double getBalance() {
-		return balanceResult;
+		return balance;
 	}
 
 	@Override
-	public void execute(Account account) {
-		result.startMeasuring();
-		balanceResult = account.getBalance();
-		result.stopMeasuring();
+	public ActionTyp getActionTyp() {
+		return ActionTyp.READ_ACTION;
 	}
 
+	@Override
+	public int getMinimalNumberOfTimeRecords() {
+		return MINIMAL_TIME_RECORDS_FOR_SUCCESS;
+	}
 }

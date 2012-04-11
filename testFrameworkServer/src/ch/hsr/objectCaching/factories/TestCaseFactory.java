@@ -1,4 +1,4 @@
-package ch.hsr.objectCaching.testFrameworkServer;
+package ch.hsr.objectCaching.factories;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -57,7 +57,7 @@ public class TestCaseFactory
 		    	  if(stax.hasName() && stax.getName().toString().equals("Account") && stax.isStartElement())
 		    	  {
 		    		  newAccount = new AccountImpl();
-		    		  newAccount.setBalance(Integer.valueOf(stax.getAttributeValue(0)));
+		    		  newAccount.setBalance(Double.valueOf(stax.getAttributeValue(0)));
 		    		  accounts.add(newAccount);
 		    	  }
 		    	  

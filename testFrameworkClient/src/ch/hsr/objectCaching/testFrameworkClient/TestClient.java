@@ -1,6 +1,7 @@
 package ch.hsr.objectCaching.testFrameworkClient;
 
 import java.util.ArrayList;
+import java.util.logging.Logger;
 
 import ch.hsr.objectCaching.account.Account;
 import ch.hsr.objectCaching.account.AccountService;
@@ -10,6 +11,7 @@ import ch.hsr.objectCaching.scenario.Scenario;
 
 public class TestClient {
 
+	private static Logger logger = Logger.getLogger(TestClient.class.getName());
 	private Scenario scenario;
 	private AccountService accountService;
 	private ClientSystemUnderTest clientUnderTest;
@@ -19,48 +21,39 @@ public class TestClient {
 	
 	public TestClient(ClientSystemUnderTest clientUnderTest){
 		this.clientUnderTest = clientUnderTest;
-		setAccountService(clientUnderTest.getAccountService());
-	}
-	
-
-	public Scenario getScenario() {
-		return scenario;
+		accountService = clientUnderTest.getAccountService();
 	}
 
 	public void init() {
 		accounts = (ArrayList<Account>) accountService.getAllAccounts();
 	}
 
-	public ArrayList<Account> getAccounts() {
-		return accounts;
-	}
-
 	public void runScenario() {
-		System.out.println("Started Scenario with id= " + scenario.getId());
+		logger.info("Starting the test with the scenario " + scenario.getId());
 		for (Action action : scenario.getActionList()) {
 			Account acc = getNextAccount();
 			action.execute(acc);
 		}
 	}
 
-	private void setAccountService(AccountService accountService) {
-		this.accountService = accountService;
-	}
-
-	public Account getNextAccount() {
+	private Account getNextAccount() {
 		if (accountIndex == accounts.size()){
 			accountIndex = 0;
 		}
 		return accounts.get(accountIndex++);
-
 	}
 
 	public void shutdown() {
 		clientUnderTest.shutdown();
+		logger.info("TestClient shutdown was successfull");
 	}
 
 	public void setScenario(Scenario scenario) {
 		this.scenario = scenario;
+	}
+	
+	public Scenario getScenario() {
+		return scenario;
 	}
 
 }

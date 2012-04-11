@@ -3,105 +3,152 @@ package ch.hsr.objectCaching.reporting;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import ch.hsr.objectCaching.action.Action;
 import ch.hsr.objectCaching.action.IncrementAction;
-import ch.hsr.objectCaching.action.ReadAction;
-import ch.hsr.objectCaching.action.WriteAction;
-import ch.hsr.objectCaching.action.result.TimeMeasure;
+import ch.hsr.objectCaching.action.result.Result.ActionResult;
+import ch.hsr.objectCaching.action.result.Result.BasicAction;
+import ch.hsr.objectCaching.action.result.TimeRecord;
 import ch.hsr.objectCaching.scenario.Scenario;
 
 public class ReportGenerator {
 
-	private List<Scenario> scenarios;
 	private final int NANOSEC_TO_MILISEC_FACTOR = 1000000;
-	private double totalTime = 0;
-	private int totalConflicts = 0;
+	private final String READ = "READ";
+	private final String WRITE = "WRITE";
+	private final String NEWLINE;
+	private final String PARAMETER_SEPARATOR;
+	private double totalScenarioExecutionTime = 0;
+	private int totalScenarioConflicts = 0;
+	private Scenario scenario;
+	private String clientIp;
+	private String summary;
+	private int actionNumber;
+	private BufferedWriter out;
 
-	public ReportGenerator() {
-		scenarios = new ArrayList<Scenario>();
+	public ReportGenerator(Scenario scenario, String clientIp) {
+		this.scenario = scenario;
+		this.clientIp = clientIp;
+		NEWLINE = System.getProperty("line.separator");
+		PARAMETER_SEPARATOR = ";";
+
+		try {
+			out = new BufferedWriter(new FileWriter("Client_" + clientIp + ".txt"));
+		} catch (IOException e) {
+			System.out.println("IOException in ReportGenerator");
+		}
+		generateReport();
 	}
 
-	public void addScenario(Scenario s) {
-		scenarios.add(s);
+	public String getSummary() {
+		return summary;
 	}
 
-	public void makeSummary() {
-		for (Scenario s : scenarios) {
-			generateReportforScenario(s);
+	private void generateReport() {
+		try {
+			writeHeader();
+			writeListOfActions();
+			writeDetailedSummary();
+			finalizeReport();
+		} catch (IOException e) {
+			System.out.println("IO Error in Reportgenerator for scenario " + scenario.getId());
 		}
 	}
 
-	private void generateReportforScenario(Scenario s) {
-		int actionNumber = 0;
-		try {
-			BufferedWriter out = new BufferedWriter(new FileWriter("Scenario_" + s.getId() + ".txt"));
-			out.write("******************************" + "\n");
-			out.write("Result for ScenarioID: " + s.getId() + "\n");
-			out.write("******************************" + "\n");
-			out.write("ActionNr;#ofTries;Time[ms];ACTION\n");
-			for (Action action : s.getActionList()) {
-				if (action instanceof WriteAction) {
-					if (action.getResult().getNumberOfTry() > 1) {
-						totalConflicts += action.getResult().getNumberOfTry() - 1;
-					}
+	private void writeDetailedSummary() throws IOException {
+		int numberOfReads = 0;
+		int numberOfWrite = 0;
+		int numberOfUnsuccessfulAction = 0;
+		double readTime = 0;
+		double writeTime = 0;
 
-					int conflict = 0;
-					for (TimeMeasure m : action.getResult().getAttempt()) {
-						double time = getDeltaInMilisec(m);
-						out.write(actionNumber + ";" + conflict + ";" + time + ";" + "WRITE" + "\n");
-						conflict++;
-						totalTime += time;
-					}
+		int numberOfActions = scenario.getActionList().size();
+		
+		for (Action action : scenario.getActionList()) {		
+			ActionResult result = ActionResult.FAILED;
+			for (TimeRecord records : action.getResult().getAllIntermediateResult()) {
+				if (records.getActionTyp() == BasicAction.READ){
+					numberOfReads++;
+					readTime += getDeltaInMilisec(records);
+					result = records.getActionResult();
 				}
-				if(action instanceof IncrementAction)
-				{
-					if(action.getResult().getNumberOfTry() > 1)
-					{
-						totalConflicts += action.getResult().getNumberOfTry() - 1;
-					}
-					int conflict = 0;
-					IncrementAction iAction = (IncrementAction)action;
-					for (TimeMeasure m : action.getResult().getAttempt()) {
-						double time = getDeltaInMilisec(m);
-						if(iAction.getDelay() < 1)
-						{
-							out.write(actionNumber + ";" + conflict + ";" + time + ";" + "INCREMENT WITHOUT DELAY\n");
-						}
-						else
-						{
-							out.write(actionNumber + ";" + conflict + ";" + time + ";" + "INCREMENT WITH DELAY: " + iAction.getDelay() + "\n");
-						}
-						conflict++;
-						totalTime += time;
-					}			
+				if (records.getActionTyp() == BasicAction.WRITE){
+					numberOfWrite++;
+					writeTime += getDeltaInMilisec(records);
+					result = records.getActionResult();
 				}
-				if (action instanceof ReadAction) {
-					if (action.getResult().getNumberOfTry() > 1) {
-						totalConflicts += action.getResult().getNumberOfTry() - 1;
-					}
-					int conflict = 0;
-					for (TimeMeasure m : action.getResult().getAttempt()) {
-						double time = getDeltaInMilisec(m);
-						out.write(actionNumber + ";" + conflict + ";" + time + ";" + "READ" + "\n");
-						conflict++;
-						totalTime += time;
-					}
-				}
-				actionNumber++;
+			}
+			if(result == ActionResult.FAILED)
+				numberOfUnsuccessfulAction++;
+			
+		}
+		out.write(NEWLINE);
+		out.write("------------------------------------------------" + NEWLINE);
+		out.write(100-(numberOfUnsuccessfulAction/numberOfActions) + "% of all Action executed are successful" + NEWLINE);
+		out.write("Total actions executed: " + numberOfActions + ", number of unsuccessful action " + numberOfUnsuccessfulAction + NEWLINE);
+		out.write("Total getBalance calls: " + numberOfReads + ", avg. execution time " + readTime/(double)numberOfReads + NEWLINE);
+		out.write("Total setBalance calls: " + numberOfWrite + ", avg. execution time " + writeTime/(double)numberOfWrite + NEWLINE);
+		out.write(NEWLINE);
+	}
+
+	private void writeListOfActions() throws IOException {
+		actionNumber = 0;
+		for (Action action : scenario.getActionList()) {
+
+			int minimalNumberOfTimeRecords = action.getMinimalNumberOfTimeRecords();
+			if (action.getResult().getNumberOfTry() > minimalNumberOfTimeRecords) {
+				totalScenarioConflicts += action.getResult().getNumberOfTry() - minimalNumberOfTimeRecords;
 			}
 
-			out.write("Total Konflict: " + totalConflicts + " / Gesamt Dauer: " + totalTime + " ms");
-			out.flush();
-			out.close();
-		} catch (IOException e) {
-			System.out.println("Writing File failed");
+			int numberOfConflictsPerAction = 0;
+			for (TimeRecord interimTime : action.getResult().getAllIntermediateResult()) {
+				double executionTime = getDeltaInMilisec(interimTime);
+				switch (action.getActionTyp()) {
+				case READ_ACTION:
+					writeActionResult(numberOfConflictsPerAction, executionTime, READ);
+					break;
+				case WRITE_ACTION:
+					writeActionResult(numberOfConflictsPerAction, executionTime, WRITE);
+					break;
+				case INCREMENT_ACTION:
+					writeActionResult(numberOfConflictsPerAction, executionTime, buildIncrementActionDescription(action, interimTime));
+				}
+				numberOfConflictsPerAction++;
+				totalScenarioExecutionTime += executionTime;
+			}
+			actionNumber++;
 		}
 	}
 
-	private double getDeltaInMilisec(TimeMeasure m) {
+	private void finalizeReport() throws IOException {
+		summary = ("Total Conflict: " + totalScenarioConflicts + " / Gesamt Dauer: " + totalScenarioExecutionTime + " ms" + " / durch. Dauer pro Operation: " + totalScenarioExecutionTime / (scenario.getActionList().size() + totalScenarioConflicts));
+		out.write(summary);
+		out.flush();
+		out.close();
+	}
+
+	private void writeHeader() throws IOException {
+		out.write("************************************************************" + NEWLINE);
+		out.write("Result for Client: " + clientIp + " with ScenarioID: " + scenario.getId() + NEWLINE);
+		out.write("OS: " + System.getProperty("os.name") + " / " + System.getProperty("os.version") + NEWLINE);
+		out.write("************************************************************" + NEWLINE);
+		out.write("ActionNr;#ofTries;Time[ms];ACTION" + NEWLINE);
+	}
+
+	private void writeActionResult(int conflict, double time, String specificDescription) throws IOException {
+		out.write(actionNumber + PARAMETER_SEPARATOR + conflict + PARAMETER_SEPARATOR + time + PARAMETER_SEPARATOR + specificDescription + NEWLINE);
+	}
+
+	private String buildIncrementActionDescription(Action action, TimeRecord time) {
+		IncrementAction a = (IncrementAction) action;
+		if (a.getDelay() < 1) {
+			return "INCREMENT(" + time.getActionTyp().toString() + ") WITHOUT DELAY";
+		} else {
+			return "INCREMENT(" + time.getActionTyp().toString() + ") WITH DELAY OF: " + a.getDelay() + "ms AFTER READING THE BALANCE";
+		}
+	}
+
+	private double getDeltaInMilisec(TimeRecord m) {
 		long nanoSek = m.getStopTime() - m.getStartTime();
 		return (double) nanoSek / NANOSEC_TO_MILISEC_FACTOR;
 	}

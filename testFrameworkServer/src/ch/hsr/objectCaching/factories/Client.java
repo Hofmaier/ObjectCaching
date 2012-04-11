@@ -1,4 +1,4 @@
-package ch.hsr.objectCaching.testFrameworkServer;
+package ch.hsr.objectCaching.factories;
 
 import ch.hsr.objectCaching.interfaces.ClientInterface;
 
@@ -6,11 +6,11 @@ public class Client
 {
 	private String ip;
 	private ClientInterface clientStub;
-	enum StartingState{
+	public enum StartingState{
 		READY,
 		NOTREADY;
 	}
-	enum ShutedDown{
+	public enum ShutedDown{
 		RUNNING,
 		DOWN;
 	}

@@ -19,6 +19,7 @@ clientJarPath="../../dist/client"
 serverJarPath="../../dist/server"
 initFile="../initFile.conf"
 clientTemp="clients"
+clientLog="logger.config"
 
   
 # 
@@ -54,6 +55,7 @@ function func_copy
   for i in `cat "${startFolder}/${clientTemp}"`
   do
     scp ${clientJar} student@${i}:"${remotePath}/${clientJar}"
+    scp ${clientLog} student@${i}:"${remotePath}/${clientLog}"
   done
   echo "STARTUPSCRIPT: Clients deployed"
   cd ${startFolder}

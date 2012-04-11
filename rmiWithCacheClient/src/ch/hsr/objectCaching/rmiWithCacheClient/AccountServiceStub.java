@@ -1,16 +1,28 @@
 package ch.hsr.objectCaching.rmiWithCacheClient;
 
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 
 import ch.hsr.objectCaching.account.Account;
+import ch.hsr.objectCaching.account.AccountService;
+import ch.hsr.objectCaching.dto.MethodCall;
 import ch.hsr.objectCaching.dto.ReturnValue;
 
 
 public class AccountServiceStub extends ch.hsr.objectCaching.rmiOnlyClient.AccountServiceStub {
 	
 	private ObjectCache objectCache;
+	private MessageManager messageManager;
 	
+	@Override
+	protected void sendMethodCall() throws IOException {
+		MethodCall methodCall = new MethodCall();
+		methodCall.setClassName(AccountService.class.getName());
+		messageManager.sendMessageCall(methodCall);
+	}
+
 	protected Collection<Account> composeCollection(ReturnValue returnValue) {
 		ArrayList<Account> retValCollection = new ArrayList<Account>();
 		Collection<Integer> objectIDcollection = (Collection<Integer>) returnValue.getValue(); 
@@ -24,7 +36,21 @@ public class AccountServiceStub extends ch.hsr.objectCaching.rmiOnlyClient.Accou
 		return retValCollection;
 	}
 
+	public MessageManager getMessageManager() {
+		return messageManager;
+	}
 
+	public void setMessageManager(MessageManager messageManager) {
+		this.messageManager = messageManager;
+	}
+
+	@Override
+	protected ReturnValue receiveMethodCall() throws IOException,
+			ClassNotFoundException {
+		return messageManager.receiveMethodCallResponse();
+	}
+
+	
 	
 
 }

@@ -84,6 +84,8 @@ then
 	sleep 1
 	func_get_CLient_RMI_Port
 	sleep 1
+	func_get_CLient_RMI_Name
+	sleep 1
 	func_rm
 	sleep 2
 	func_copy

@@ -59,7 +59,7 @@ public class TestMessageManager {
 		objectInputStream = new ObjectInputStream(new ByteArrayInputStream(byteArrayOutputStream.toByteArray()));
 		ReceiverThread receiver = new ReceiverThread(messageManager);
 		new Thread(receiver).start();
-		ReturnValue actualReturnValue = messageManager.receiveMethodCallResponse();
+		ReturnValue actualReturnValue = messageManager.receiveObject();
 		
 		assertEquals(balanceAmount, actualReturnValue.getValue());
 	}
@@ -78,11 +78,7 @@ public class TestMessageManager {
 
 		@Override
 		public void setSocketAdress(InetSocketAddress socketAdress) {
-			// TODO Auto-generated method stub
 			
 		}
-		
 	}
-
-
 }

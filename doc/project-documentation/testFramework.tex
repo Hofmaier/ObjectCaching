@@ -42,14 +42,15 @@ Der Testframework Client sowie das CUT laufen in derselben Java Virtual Machine 
 
 \subsubsection{Action}
 \label{sec:action}
-Das Szenario beinhaltet eine Menge von Aktionen die auf ein Account Objekt ausgeführt werden.  Es lassen sich leicht neue Aktionen definieren, da wir das Command-Pattern eingesetzt haben. Action ist die Abstrakte Klasse welche ein Result Objekt erzeugt. Dieses Result Objekt beinhaltet die Messdaten für diese Aktion. Bei der Ausführung des Scenarios nimmt der TestClient die Liste von Action aus dem Scenario und führ auf jeder Action execute() aus. Die Implementierung der execute() Methode lässt sich durch das Command Pattern vom Aufruf trennen. 
+Das Szenario beinhaltet eine Menge von Aktionen die auf ein Account Objekt ausgeführt werden.  Es lassen sich leicht neue Aktionen definieren und implementieren, da wir das Command-Pattern genutzt haben. Action ist die abstrakte Klasse welche ein Result Objekt instanziiert. Dieses Result Objekt beinhaltet die Messdaten, die für diese Aktion gesammelt wurden. Bei der Ausführung des Scenarios nimmt der TestClient die Liste von Action aus dem Szenario und führt auf jeder Action execute() aus.
+ 
 \subsubsection{Increment Action}
 \label{sec:incrementAction}
-Für unsere Testumgebung benötigten wir nur eine KontoErhöhungs- Aktion die den aktuellen Kontostand holt und diesen mit dem gegeben Faktor multipliziert und den neuen Kontostand zurück in den Account schreibt. Zusätzlich war es nötig, dass zwischen der der getBalance() und der setBalance() eine definierbare Zeitdauer gewartet werden kann. Dies ist nötig damit sicher leicht ein Konflikt generieren lässt und dieser serverseitig zu keinem Lost-Updates führt.
+Für unsere Testumgebung benötigten wir nur eine KontoErhöhungs- Aktion die den aktuellen Kontostand holt und diesen mit dem gegeben Faktor multipliziert und den neuen Kontostand zurück in den Account schreibt. Zusätzlich war es nötig, dass zwischen der der getBalance() und der setBalance() eine definierbare Zeitdauer gewartet werden kann. Dies ist nötig damit sich leicht ein Konflikt erzeugen lässt und so gezeigt werden kann das  dieser serverseitig zu keinem Lost-Updates führt.
 
 \subsubsection{Result}
 \label{sec:result}
-Die Zeitmessung einer Aktion wir über den in Java eingebaute Zeitmessung System.nanoTime() auf gezeichnet. Die Result Klasse bietet eine startTimeMeasurement Methode die ein neues TimeRecord Objekt erzeugt und mit der Zeitmessung beginnt, diese Methode verlangt eine BasicAction Typ der als Enum realisiert wurde(Erklärung warum nötig unter Resultate). Über stopTimeMeasurement() lässt sich die aktuelle Messung beenden. Da innerhalb der execute Methode einer IncrementAction unter Umständen mehrmals Versucht wird, denn neuen Kontostand zusetzen, lassen sich mehrere TimeRecords pro Result erfassen.
+Die Zeitmessung einer Aktion wir über den in Java eingebaute Zeitmessung System.nanoTime() aufgezeichnet. Die Result Klasse bietet eine startTimeMeasurement Methode die ein neues TimeRecord Objekt erzeugt und mit der Zeitmessung beginnt, diese Methode verlangt eine BasicAction Typ der als Enum realisiert wurde(Erklärung warum nötig unter Resultate). Über stopTimeMeasurement() lässt sich die aktuelle Messung beenden und der aktuelle TimeRecord wird abgelegt. Da innerhalb der execute Methode mehrere setBalance() oder getBalance() möglich sind, lassen sich mehrere TimeRecords pro Result Typ erfassen.
 
 
 \subsubsection{Test Client}
@@ -63,7 +64,7 @@ public void shutdown();
 Über die getAccountService() Methode kann auf eine Liste von Account Objekten zugegriffen werden. Die Methode runScenario führt das gegebene Scenario aus hierfür wird auf dem Action Objekt die execute() Methode aufgerufen. Diese Methode verlangt ein Account Objekt auf welchem es die entsprechende Aktion ausführt. Der TestClient ist ebenfalls für die ordnungsgemässe Beendigung des ClientUnderTestSystem verantwortlich.
 
 
-\subsection{Open Points}
+\subsection{TODO}
 \begin{itemize}
 \item RMI
 \item Szenario -> Kommand-Pattern

@@ -14,24 +14,27 @@ import org.junit.Test;
 
 import ch.hsr.objectCaching.account.AccountService;
 import ch.hsr.objectCaching.dto.MethodCall;
+import ch.hsr.objectCaching.dto.ReturnValue;
 import ch.hsr.objectCaching.rmiOnlyClient.IStreamProvider;
 
 public class TestMessageManager {
 	
 	private ByteArrayOutputStream byteArrayOutputStream;
 	private ObjectOutputStream objectOutputStream;
+	private ObjectInputStream objectInputStream;
 	private MessageManager messageManager;
+	private IStreamProvider streamProvider;
 
 	@Before
 	public void setUp() throws Exception {
 		byteArrayOutputStream = new ByteArrayOutputStream();
 		objectOutputStream = new ObjectOutputStream(byteArrayOutputStream);
 		messageManager = new MessageManager();
+		streamProvider = new StreamProviderFake();
 	}
 
 	@Test
 	public void testSendMessageCall() throws InterruptedException, IOException, ClassNotFoundException {
-		IStreamProvider streamProvider = new StreamProviderFake();
 		messageManager.setStreamProvider(streamProvider);
 		MethodCall methodCall = new MethodCall();
 		methodCall.setClassName(AccountService.class.getName());
@@ -43,7 +46,16 @@ public class TestMessageManager {
 	}
 
 	@Test
-	public void testReceiveMethodCallResponse() {
+	public void testReceiveMethodCallResponse() throws IOException, ClassNotFoundException {
+		ReturnValue returnValue = new ReturnValue();
+		Double balanceAmount = 200.0;
+		returnValue.setValue(balanceAmount);
+		objectOutputStream.writeObject(returnValue);
+		objectInputStream = new ObjectInputStream(new ByteArrayInputStream(byteArrayOutputStream.toByteArray()));
+		
+		messageManager.setStreamProvider(streamProvider);
+		ReturnValue actualReturnValue = messageManager.receiveMethodCallResponse();
+		assertEquals(balanceAmount, actualReturnValue);
 	}
 	
 	class StreamProviderFake implements IStreamProvider{

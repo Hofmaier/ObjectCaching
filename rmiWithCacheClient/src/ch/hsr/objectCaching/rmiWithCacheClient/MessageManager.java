@@ -1,7 +1,6 @@
 package ch.hsr.objectCaching.rmiWithCacheClient;
 
 import java.io.IOException;
-import java.io.ObjectOutputStream;
 
 import ch.hsr.objectCaching.dto.MethodCall;
 import ch.hsr.objectCaching.dto.ReturnValue;

@@ -2,7 +2,7 @@ package ch.hsr.objectCaching.dto;
 import java.io.Serializable;
 
 
-public class MethodCall implements Serializable {
+public class MethodCall implements Serializable, TransferObject {
 	
 	/**
 	 * 

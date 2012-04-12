@@ -27,8 +27,9 @@ public class MessageManager {
 		}
 	}
 
-	public ReturnValue receiveMethodCallResponse() {
-		return null;
+	public ReturnValue receiveMethodCallResponse() throws IOException, ClassNotFoundException 
+	{
+		return (ReturnValue) streamProvider.getObjectInputStream().readObject();
 	}
 
 }

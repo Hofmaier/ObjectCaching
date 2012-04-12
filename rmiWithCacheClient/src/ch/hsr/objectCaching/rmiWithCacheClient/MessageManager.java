@@ -36,7 +36,7 @@ public class MessageManager {
 		sendingQueue.add(transferObject);
 	}
 
-	public ReturnValue receiveObject() throws IOException, ClassNotFoundException 
+	public Object receiveObject() throws IOException, ClassNotFoundException 
 	{
 		try {
 			return objectFromServerQueue.take();

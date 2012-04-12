@@ -14,7 +14,8 @@ import org.junit.Test;
 
 import ch.hsr.objectCaching.account.AccountService;
 import ch.hsr.objectCaching.dto.MethodCall;
-import ch.hsr.objectCaching.dto.ReturnValue;
+import ch.hsr.objectCaching.dto.ObjectRequest;
+import ch.hsr.objectCaching.dto.TransferObject;
 import ch.hsr.objectCaching.rmiOnlyClient.IStreamProvider;
 
 public class TestMessageManager {
@@ -51,17 +52,17 @@ public class TestMessageManager {
 	@Test
 	public void testReceiveMethodCallResponse() throws IOException, ClassNotFoundException {
 		messageManager.setStreamProvider(streamProvider);
-		ReturnValue returnValue = new ReturnValue();
-		Double balanceAmount = 200.0;
-		returnValue.setValue(balanceAmount);
-		objectOutputStream.writeObject(returnValue);
+		ObjectRequest request = new ObjectRequest();
+		int objectID = 3;
+		request.setObjectID(objectID);
+		objectOutputStream.writeObject(request);
 		objectOutputStream.close();
 		objectInputStream = new ObjectInputStream(new ByteArrayInputStream(byteArrayOutputStream.toByteArray()));
 		ReceiverThread receiver = new ReceiverThread(messageManager);
 		new Thread(receiver).start();
-		ReturnValue actualReturnValue = messageManager.receiveObject();
+		ObjectRequest actualRequest = (ObjectRequest) messageManager.receiveObject();
 		
-		assertEquals(balanceAmount, actualReturnValue.getValue());
+		assertEquals(objectID, actualRequest.getObjectID());
 	}
 	
 	class StreamProviderFake implements IStreamProvider{

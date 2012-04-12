@@ -1,7 +1,9 @@
 package ch.hsr.objectCaching.dto;
 
-public class ObjectRequest implements TransferObject {
-	public int objectID;
+import java.io.Serializable;
+
+public class ObjectRequest implements TransferObject, Serializable {
+	private int objectID;
 
 	public int getObjectID() {
 		return objectID;

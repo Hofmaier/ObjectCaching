@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import ch.hsr.objectCaching.dto.MethodCall;
 import ch.hsr.objectCaching.dto.ReturnValue;
+import ch.hsr.objectCaching.dto.TransferObject;
 import ch.hsr.objectCaching.rmiOnlyClient.IStreamProvider;
 
 public class MessageManager {
@@ -18,7 +19,7 @@ public class MessageManager {
 		this.streamProvider = streamProvider;
 	}
 
-	public void sendMessageCall(MethodCall methodCall) {
+	public void sendMessageCall(TransferObject methodCall) {
 		try {
 			streamProvider.getObjectOutputStream().writeObject(methodCall);
 		} catch (IOException e) {

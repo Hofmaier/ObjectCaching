@@ -19,9 +19,9 @@ import ch.hsr.objectCaching.dto.MethodCall;
 import ch.hsr.objectCaching.dto.ReturnValue;
 import ch.hsr.objectCaching.interfaces.MethodCalledListener;
 
-public class TestRMIonlyClientHandler {
+public class TestRMIOnlyClientHandler {
 	
-	private RMIonlyClientHandler clientHandler;
+	private RMIOnlyClientHandler clientHandler;
 	private ByteArrayOutputStream byteArrayOutputStream;
 	private ByteArrayInputStream byteArrayInputStream;
 	private AccountSkeletonFake fakeAccountSkeleton;
@@ -32,7 +32,7 @@ public class TestRMIonlyClientHandler {
 		
 		byteArrayOutputStream = new ByteArrayOutputStream();
 		byteArrayInputStream = new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
-		clientHandler = new RMIonlyClientHandler();
+		clientHandler = new RMIOnlyClientHandler();
 		clientHandler.setInputStream(byteArrayInputStream);
 		clientHandler.setOutputStream(byteArrayOutputStream);
 		methodCall = new MethodCall();

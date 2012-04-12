@@ -8,7 +8,7 @@ import org.junit.Test;
 
 import ch.hsr.objectCaching.interfaces.ClientHandler;
 
-public class TestRMIonlyServerSystem {
+public class TestRMIOnlyServerSystem {
 
 	@Before
 	public void setUp() throws Exception {
@@ -20,12 +20,12 @@ public class TestRMIonlyServerSystem {
 		RMIOnlyServerSystem system = new RMIOnlyServerSystem();
 		
 		ClientHandler clientHandler = system.getClientHandlerInstance();
-		RMIonlyClientHandler rmiClientHandler = (RMIonlyClientHandler) clientHandler;
+		RMIOnlyClientHandler rmiClientHandler = (RMIOnlyClientHandler) clientHandler;
 		
 		assertNotNull("null object", clientHandler);
 		assertNotNull("skeleton is null", rmiClientHandler.getSkeleton());
 		
-		RMIonlyClientHandler secondHandler = (RMIonlyClientHandler) system.getClientHandlerInstance();
+		RMIOnlyClientHandler secondHandler = (RMIOnlyClientHandler) system.getClientHandlerInstance();
 		assertTrue(secondHandler.getSkeleton() == rmiClientHandler.getSkeleton());
 	}
 

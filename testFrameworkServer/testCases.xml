@@ -1,18 +1,18 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <TestRun>
-	<TestCase SystemUnderTest="ch.hsr.objectCaching.rmiOnlyClient.RMIonlyClientSystem">
+	<TestCase ClientSystemUnderTest="ch.hsr.objectCaching.rmiOnlyClient.RMIOnlyClientSystem" ServerSystemUnderTest="ch.hsr.objectCaching.rmiOnlyServer.RMIOnlyServerSystem">
 		<Account balance="1"></Account>
 		<Scenario id="1">
 			<ActionSequence>
 
-				<Increment count ="4" delay="0" factor="10"></Increment>
+				<Increment count ="2" delay="0" factor="1.1"></Increment>
 
 			</ActionSequence>
 		</Scenario>
 		<Scenario id="2">
 			<ActionSequence>
 
-				<Increment count ="3" delay="50" factor="10"></Increment>
+				<Increment count ="2" delay="0" factor="1.1"></Increment>
 
 			</ActionSequence>
 		</Scenario>

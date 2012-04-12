@@ -7,7 +7,7 @@ import java.net.InetSocketAddress;
 import ch.hsr.objectCaching.account.AccountService;
 import ch.hsr.objectCaching.interfaces.ClientSystemUnderTest;
 
-public class RMIonlyClientSystem implements ClientSystemUnderTest {
+public class RMIOnlyClientSystem implements ClientSystemUnderTest {
 	
 	private IStreamProvider streamProvider = new StreamProvider();
 

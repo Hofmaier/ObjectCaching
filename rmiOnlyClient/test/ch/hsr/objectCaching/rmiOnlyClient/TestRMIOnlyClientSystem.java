@@ -5,13 +5,13 @@ import static org.junit.Assert.assertNotNull;
 import org.junit.Before;
 import org.junit.Test;
 
-public class TestRMIonlyClientSystem {
+public class TestRMIOnlyClientSystem {
 
-	private RMIonlyClientSystem system;
+	private RMIOnlyClientSystem system;
 	
 	@Before
 	public void setUp() throws Exception {
-		system = new RMIonlyClientSystem();
+		system = new RMIOnlyClientSystem();
 	}
 
 	@Test

@@ -3,7 +3,7 @@ package ch.hsr.objectCaching.rmiOnlyServer;
 import ch.hsr.objectCaching.dto.MethodCall;
 import ch.hsr.objectCaching.dto.ReturnValue;
 
-public class AccountServiceSkeleton implements RMIonlySkeleton {
+public class AccountServiceSkeleton implements RMIOnlySkeleton {
 	
 	private AccountSkeleton accountSkeleton;
 

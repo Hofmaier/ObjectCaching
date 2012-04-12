@@ -66,13 +66,13 @@ public class Server implements ServerInterface
 		testCaseFactory.convertXML();
 		accounts = testCaseFactory.getAccounts();
 		activeTestCase = testCaseFactory.getTestCase();
-		configuration.setNameOfSystemUnderTest(activeTestCase.getSystemUnderTest());
+		configuration.setNameOfSystemUnderTest(activeTestCase.getClientSystemUnderTest());
 	}
 	
 	private void startTestCase()
 	{
 		logger.info("Starting TestCase");
-		dispatcher.setSystemUnderTest(activeTestCase.getSystemUnderTest(), accounts.get(0), methodCallLogger);
+		dispatcher.setSystemUnderTest(activeTestCase.getServerSystemUnderTest(), accounts.get(0), methodCallLogger);
 		initializeClients();
 	}
 	
@@ -187,25 +187,6 @@ public class Server implements ServerInterface
 		stopClient(clientIp);
 	}
 	
-	private void printSummary()
-	{
-		logger.info("All clients are down!");
-		logger.info("AccountBalance is: " + accounts.get(0).getBalance());
-		logger.info("AccountBalance should be: " + resultGenerator.getResult());
-		if(resultGenerator.getResult() == accounts.get(0).getBalance())
-		{
-			logger.info("No Lost-Updates!");
-		}
-		else
-		{
-			logger.info("Lost-Update occured!");
-		}
-		for(int i = 0; i < summaries.size(); i++)
-		{
-			logger.info(summaries.get(i));
-		}
-	}
-	
 	private void stopClient(String clientIp)
 	{
 		Client temp;
@@ -214,8 +195,8 @@ public class Server implements ServerInterface
 			if((temp = clientList.getClientByIp(clientIp)) != null)
 			{
 				logger.info("stop client with ip: " + clientIp);
-				temp.getClientStub().shutdown();
 				temp.setClientRunning(ShutedDown.DOWN);
+				temp.getClientStub().shutdown();
 			}
 		} catch (RemoteException e) {
 			logger.log(Level.SEVERE, "Uncaught exception", e);
@@ -238,6 +219,59 @@ public class Server implements ServerInterface
 		return true;
 	}
 	
+	private void printSummary()
+	{
+		logger.info("All clients are down!");
+		logger.info("AccountBalance is: " + accounts.get(0).getBalance());
+		logger.info("AccountBalance should be: " + resultGenerator.getResult());
+		if(resultGenerator.getResult() == accounts.get(0).getBalance())
+		{
+			logger.info("No Lost-Updates!");
+		}
+		else
+		{
+			logger.info("Lost-Update occured!");
+		}
+		
+		for(int i = 0; i < summaries.size(); i++)
+		{
+			//logger.info(summaries.get(i));
+		}
+		
+		shutDownTestFrameWorkServer();
+	}
+	
+	private void shutDownTestFrameWorkServer() 
+	{
+		try {
+			Naming.unbind("rmi://localhost:" + configuration.getServerRMIPort() + "/" + configuration.getServerRegistryName());
+			UnicastRemoteObject.unexportObject(this, true);
+		} catch (RemoteException e) {
+			logger.log(Level.SEVERE, "Uncaught exception", e);
+		} catch (MalformedURLException e) {
+			logger.log(Level.SEVERE, "Uncaught exception", e);
+		} catch (NotBoundException e) {
+			logger.log(Level.SEVERE, "Uncaught exception", e);
+		}
+		
+		closeClientController(2000);
+	}
+
+	private void closeClientController(final long delay) 
+	{
+		new Thread() {
+			@Override
+			public void run() {
+				logger.info("TestFrameWorkServer is shutting down");
+				try {
+					sleep(delay);
+				} catch (InterruptedException e) {
+				}
+				System.exit(0);
+			}
+		}.start();
+	}
+
 	public static void main(String[] args) 
 	{
 		if(args.length == 0)

@@ -52,8 +52,9 @@ public class TestCaseFactory
 		    	  stax.next();
 		    	  if(stax.hasName() && stax.getName().toString().equals("TestCase") && stax.isStartElement())
 		    	  {
-		    		  testCase = new TestCase(stax.getAttributeValue(0));
+		    		  testCase = new TestCase(stax.getAttributeValue(0), stax.getAttributeValue(1));
 		    	  }
+		    	  
 		    	  if(stax.hasName() && stax.getName().toString().equals("Account") && stax.isStartElement())
 		    	  {
 		    		  newAccount = new AccountImpl();

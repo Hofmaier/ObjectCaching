@@ -13,9 +13,9 @@ import ch.hsr.objectCaching.dto.ReturnValue;
 import ch.hsr.objectCaching.interfaces.ClientHandler;
 import ch.hsr.objectCaching.interfaces.MethodCalledListener;
 
-public class RMIonlyClientHandler extends ClientHandler {
+public class RMIOnlyClientHandler extends ClientHandler {
 
-	private RMIonlySkeleton skeletonInUse;
+	private RMIOnlySkeleton skeletonInUse;
 	private AccountSkeleton accountSkeleton;
 	private AccountServiceSkeleton accountServiceSkeleton;
 	private ObjectOutputStream objectOutputStream;
@@ -26,7 +26,7 @@ public class RMIonlyClientHandler extends ClientHandler {
 		this.accountSkeleton = skeleton;
 	}
 
-	public RMIonlySkeleton getSkeleton() {
+	public RMIOnlySkeleton getSkeleton() {
 		return skeletonInUse;
 	}
 	

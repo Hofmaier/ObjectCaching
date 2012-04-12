@@ -9,13 +9,15 @@ public class TestCase implements Serializable
 {
 	
 	private static final long serialVersionUID = 1;
-	private String systemUnderTest;
+	private String clientSystemUnderTest;
+	private String serverSystemUnderTest;
 	private ArrayList<Scenario> scenarios;
 	
-	public TestCase(String systemUnderTest)
+	public TestCase(String clientSystemUnderTest, String serverSystemUnderTest)
 	{
 		scenarios = new ArrayList<Scenario>();
-		this.systemUnderTest = systemUnderTest;
+		this.clientSystemUnderTest = clientSystemUnderTest;
+		this.serverSystemUnderTest = serverSystemUnderTest;
 	}
 	
 	public Scenario generateNewScenario(int id)
@@ -47,11 +49,19 @@ public class TestCase implements Serializable
 		return scenarios.size();
 	}
 
-	public String getSystemUnderTest() {
-		return systemUnderTest;
+	public String getClientSystemUnderTest() {
+		return clientSystemUnderTest;
 	}
 
-	public void setSystemUnderTest(String systemUnderTest) {
-		this.systemUnderTest = systemUnderTest;
+	public void setClientSystemUnderTest(String clientSystemUnderTest) {
+		this.clientSystemUnderTest = clientSystemUnderTest;
+	}
+	
+	public String getServerSystemUnderTest() {
+		return serverSystemUnderTest;
+	}
+
+	public void setServerSystemUnderTest(String serverSystemUnderTest) {
+		this.serverSystemUnderTest = serverSystemUnderTest;
 	}
 }

@@ -66,13 +66,13 @@ public class Server implements ServerInterface
 		testCaseFactory.convertXML();
 		accounts = testCaseFactory.getAccounts();
 		activeTestCase = testCaseFactory.getTestCase();
-		configuration.setNameOfSystemUnderTest(activeTestCase.getSystemUnderTest());
+		configuration.setNameOfSystemUnderTest(activeTestCase.getClientSystemUnderTest());
 	}
 	
 	private void startTestCase()
 	{
 		logger.info("Starting TestCase");
-		dispatcher.setSystemUnderTest(activeTestCase.getSystemUnderTest(), accounts.get(0), methodCallLogger);
+		dispatcher.setSystemUnderTest(activeTestCase.getServerSystemUnderTest(), accounts.get(0), methodCallLogger);
 		initializeClients();
 	}
 	

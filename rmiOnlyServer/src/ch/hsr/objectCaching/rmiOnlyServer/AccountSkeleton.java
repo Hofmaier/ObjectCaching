@@ -12,7 +12,7 @@ import ch.hsr.objectCaching.dto.MethodCall;
 import ch.hsr.objectCaching.dto.RMIException;
 import ch.hsr.objectCaching.dto.ReturnValue;
 
-public class AccountSkeleton implements RMIonlySkeleton {
+public class AccountSkeleton implements RMIOnlySkeleton {
 	
 	private HashMap<Integer, Account> objectMap = new HashMap<Integer, Account>();
 	private HashMap<Account, Integer> writeMap = new HashMap<Account, Integer>();

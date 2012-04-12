@@ -6,19 +6,17 @@ Im folgenden Kapitel werden wir auf die einzelnen Komponenten des Test Framework
 \subsection{Konzept}
 Parallel zur Entwicklung des RMIOnly- Sytems mit Concurrency Control wurde ein Testframework entwickelt. Die Aufgabe des Testframework ist, dass die verschiedenen Prototypen, welche im Laufe der Semesterarbeit entwickelt wurden, einheitlich zu testen. Das Framework lässt sich über eine Konfigurationsdatei konfigurieren und kann Testfälle die via XML definiert wurden einlesen und die einzelnen Testszenarien auf die verfügbaren Clients verteilen. Die Messresultate jedes Szenario werden ausgewertet und abgespeichertaus. Dadurch lassen sich die verschieden System zu einem späteren Zeitpunkt gegeneinander vergleichen.
 
+\begin{itemize}
+\item Labumgebung \/ Client/Server
+\end{itemize}
 
-\subsection{Realisierung des Test Frameworks}
-\label{sec:real test-FW}
-Sequenzdiagramm von Ablauf init(), start() setResult(), shutdown()
 
 \subsection{Server}
 \label{sec:test-FW Server}
 \begin{itemize}
-\item Aufbau / Infra
 \item Szenario definieren via XML (mit Beispiel?)
 \item Konfiguration mit Property Datei
 \item Resultate \& Auswertung
-\item Shell, Deployment usw.
 \item Vorbereitungs Task via Java RMI, Szenarien laden und verteilen
 \item Für die Beweisführung das Lost Updates nicht mehr möglich sind, musste ein zusätzlicher Listener eingebaut der die event protokoliert.
 \end{itemize}

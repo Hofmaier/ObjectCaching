@@ -1,12 +1,10 @@
 \section{Testing Framework}
 \label{sec:testing Framework}
-\begin{itemize}
-\item Warum das FW
-\item Idee verschiedene Clients testen
-\end{itemize}
+Im folgenden Kapitel werden wir auf die einzelnen Komponenten des Test Frameworks eingehen und Ihre Funktionsweise erläutern.
+
 
 \subsection{Konzept}
-Parallel zur Entwicklung des RMI mit Concurrency Control wurde ein Testframework entwickelt. Die Aufgabe des Testframework ist, dass die verschiedenen Prototypen mit Hilfe des Frameworks einheitlich getestet werden können. Das Framework kann verschiedene Testszenarien abarbeiten und speichert die Resultate für jedes Szenario ab. blabla
+Parallel zur Entwicklung des RMIOnly- Sytems mit Concurrency Control wurde ein Testframework entwickelt. Die Aufgabe des Testframework ist, dass die verschiedenen Prototypen, welche im Laufe der Semesterarbeit entwickelt wurden, einheitlich zu testen. Das Framework lässt sich über eine Konfigurationsdatei konfigurieren und kann Testfälle die via XML definiert wurden einlesen und die einzelnen Testszenarien auf die verfügbaren Clients verteilen. Die Messresultate jedes Szenario werden ausgewertet und abgespeichertaus. Dadurch lassen sich die verschieden System zu einem späteren Zeitpunkt gegeneinander vergleichen.
 
 
 \subsection{Realisierung des Test Frameworks}
@@ -23,11 +21,51 @@ Sequenzdiagramm von Ablauf init(), start() setResult(), shutdown()
 \item Shell, Deployment usw.
 \item Vorbereitungs Task via Java RMI, Szenarien laden und verteilen
 \item Für die Beweisführung das Lost Updates nicht mehr möglich sind, musste ein zusätzlicher Listener eingebaut der die event protokoliert.
-
 \end{itemize}
 
 \subsection{Client}
 \label{sec:test-FW Client}
+In diesem Kapitel werden wir die Clientkomponente beschreibt, welche die verschiedenen CUT instanziieren und auf diesem System ein gegebenes Szenario ausführen kann. Der Client lässt sich vom Server aus konfigurieren. Das heisst ebenfalls, dass die Testframework Client Komponenten eine sehr schlanken Lösung darstellt. Die Generierung der verschiedenen Szenarien aus einer XML Datenstruktur und deren Auswertung werden auf dem Server durchgeführt. --> Serializable
+
+
+\subsubsection{ClientController}
+\label{sec:clientController}
+Die Kommunikation zwischen den Clients und dem Server haben wir über das in Java eingebaute RMI realisiert. Die Kommunikation beinhaltet das konfigurieren der Clients und das sammeln der Resultate nach einem Testlauf. Der ClientController ist der Startpunkt des Clients, er instanziiert das Remote Objekt und export dieses zur RMI Runtime. Das Java RMI veröffentlich das Objekt und macht dieses für Remote Invocation verfügbar.
+Folgendes Interface wird vom ClientController implementiert:
+\begin{lstlisting}	
+public void initialize(Scenario scenario, Configuration configuration) throws RemoteException;
+public void startTest() throws RemoteException;
+public void shutdown() throws RemoteException;
+\end{lstlisting}
+Über dieses Interface lässt sich das gewünschte ClientSystemUnderTest instanziieren und der Testframework Client konfigurieren. Zu Beginn wollten wir die Konfigurationswerte als Parameter übergeben, wir merkten jedoch schnell das es sinnvoller wäre einen Configuration Typ zu erstellen der als reines Data Transfer Objekt dient und alle Werte für die Konfiguration des CUT sowie der Kommunikation zwischen dem Testframework Server und dem Testframework Client kapselt. Des weitern sind im Configuration Objekt alle nötigen Daten gespeichert um erfolgreich eine RMI- Verbindung zum Server aufzubauen. Es wird weiter ein neues TestClient-Objekt erstellt. Der TestClient wird mit dem gegeben Szenario initialisiert. Sind alle Vorbereitungsschritte abgeschlossen, wird der Server über die erfolgreiche initialisierung des CUT und des ClientController informiert. Der Server startet den Testlauf parallel über die Methode startTest() auf allen ClientController, wenn sich zuvor alle ClientController als bereit für einen Testlauf gemeldet haben. Sind alle Aktionen des gegeben Szenarios abgearbeitet, wird das gesamte Szenario mit allen Messresultaten zurück an den Server geschickt. Die ganze Auswertung der Resultate wird vom Server übernommen. 
+
+\paragraph{JVM Status} 
+Der Testframework Client sowie das CUT laufen in derselben Java Virtual Machine um für jeden Testcase dieselben Systemvoraussetzungen zu gewährleisten, haben wir uns dazu entschlossen bei jedem Testcase das ganze System neu zu starten. Über die Methode shutdown() lassen lässt sich der Testframework Client sowie der CUT herunterfahren.
+
+\subsubsection{Action}
+\label{sec:action}
+Das Szenario beinhaltet eine Menge von Aktionen die auf ein Account Objekt ausgeführt werden.  Es lassen sich leicht neue Aktionen definieren, da wir das Command-Pattern eingesetzt haben. Action ist die Abstrakte Klasse welche ein Result Objekt erzeugt. Dieses Result Objekt beinhaltet die Messdaten für diese Aktion. Bei der Ausführung des Scenarios nimmt der TestClient die Liste von Action aus dem Scenario und führ auf jeder Action execute() aus. Die Implementierung der execute() Methode lässt sich durch das Command Pattern vom Aufruf trennen. 
+\subsubsection{Increment Action}
+\label{sec:incrementAction}
+Für unsere Testumgebung benötigten wir nur eine KontoErhöhungs- Aktion die den aktuellen Kontostand holt und diesen mit dem gegeben Faktor multipliziert und den neuen Kontostand zurück in den Account schreibt. Zusätzlich war es nötig, dass zwischen der der getBalance() und der setBalance() eine definierbare Zeitdauer gewartet werden kann. Dies ist nötig damit sicher leicht ein Konflikt generieren lässt und dieser serverseitig zu keinem Lost-Updates führt.
+
+\subsubsection{Result}
+\label{sec:result}
+Die Zeitmessung einer Aktion wir über den in Java eingebaute Zeitmessung System.nanoTime() auf gezeichnet. Die Result Klasse bietet eine startTimeMeasurement Methode die ein neues TimeRecord Objekt erzeugt und mit der Zeitmessung beginnt, diese Methode verlangt eine BasicAction Typ der als Enum realisiert wurde(Erklärung warum nötig unter Resultate). Über stopTimeMeasurement() lässt sich die aktuelle Messung beenden. Da innerhalb der execute Methode einer IncrementAction unter Umständen mehrmals Versucht wird, denn neuen Kontostand zusetzen, lassen sich mehrere TimeRecords pro Result erfassen.
+
+
+\subsubsection{Test Client}
+\label{sec:testclient}
+Die Klasse TestClient ist die Schnittstelle zwischen dem Testframework und dem ClientUnderTestSystem, welches getestet werden soll. Dieser Klasse kann im Konstruktor ein Objekt übergeben werden, welches das ClientSystemUnderTest Interface implementiert. Dieses Interface bietet folgende Methoden an:
+\begin{lstlisting}
+public AccountService getAccountService();
+public void setServerSocketAdress(InetSocketAddress socketAdress);
+public void shutdown();
+\end{lstlisting}	
+Über die getAccountService() Methode kann auf eine Liste von Account Objekten zugegriffen werden. Die Methode runScenario führt das gegebene Scenario aus hierfür wird auf dem Action Objekt die execute() Methode aufgerufen. Diese Methode verlangt ein Account Objekt auf welchem es die entsprechende Aktion ausführt. Der TestClient ist ebenfalls für die ordnungsgemässe Beendigung des ClientUnderTestSystem verantwortlich.
+
+
+\subsection{Open Points}
 \begin{itemize}
 \item RMI
 \item Szenario -> Kommand-Pattern
@@ -37,3 +75,5 @@ Sequenzdiagramm von Ablauf init(), start() setResult(), shutdown()
 \item VM Profiler (Abfallobjekte anschauen)
 \item Lost Update wird auf Server verhindert, Client muss entsprechen auf Exeption reagieren, neuer Versuch starten
 \end{itemize}
+
+

@@ -12,7 +12,7 @@ public class MessageManager {
 	
 	private IStreamProvider streamProvider;
 	private BlockingQueue<TransferObject> sendingQueue = new LinkedBlockingQueue<TransferObject>();
-	private BlockingQueue<ReturnValue> returnValueQueue = new LinkedBlockingQueue<ReturnValue>();
+	private BlockingQueue<ReturnValue> objectFromServerQueue = new LinkedBlockingQueue<ReturnValue>();
 	
 
 	public IStreamProvider getStreamProvider() {
@@ -36,10 +36,10 @@ public class MessageManager {
 		sendingQueue.add(transferObject);
 	}
 
-	public ReturnValue receiveMethodCallResponse() throws IOException, ClassNotFoundException 
+	public Object receiveObject() throws IOException, ClassNotFoundException 
 	{
 		try {
-			return returnValueQueue.take();
+			return objectFromServerQueue.take();
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -71,7 +71,7 @@ public class MessageManager {
 		}
 		if(temp instanceof ReturnValue)
 		{
-			returnValueQueue.add((ReturnValue)temp);
+			objectFromServerQueue.add((ReturnValue)temp);
 		}
 	}
 }

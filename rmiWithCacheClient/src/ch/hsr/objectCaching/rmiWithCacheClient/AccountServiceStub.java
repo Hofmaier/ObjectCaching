@@ -47,7 +47,7 @@ public class AccountServiceStub extends ch.hsr.objectCaching.rmiOnlyClient.Accou
 	@Override
 	protected ReturnValue receiveMethodCall() throws IOException,
 			ClassNotFoundException {
-		return messageManager.receiveMethodCallResponse();
+		return messageManager.receiveObject();
 	}
 
 }

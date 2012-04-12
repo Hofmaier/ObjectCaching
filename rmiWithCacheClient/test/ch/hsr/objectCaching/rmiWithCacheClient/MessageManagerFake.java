@@ -14,7 +14,7 @@ public class MessageManagerFake extends MessageManager {
 	}
 
 	@Override
-	public ReturnValue receiveMethodCallResponse() {
+	public ReturnValue receiveObject() {
 		return returnValue;
 	}
 }

@@ -50,7 +50,4 @@ public class AccountServiceStub extends ch.hsr.objectCaching.rmiOnlyClient.Accou
 		return messageManager.receiveMethodCallResponse();
 	}
 
-	
-	
-
 }

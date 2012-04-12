@@ -40,6 +40,8 @@ public class TestMessageManager {
 		MethodCall returnValue = (MethodCall) objectInputStream.readObject();
 		assertEquals(AccountService.class.getName(), returnValue.getClassName());
 	}
+	
+	
 
 	@Test
 	public void testReceiveMethodCallResponse() {

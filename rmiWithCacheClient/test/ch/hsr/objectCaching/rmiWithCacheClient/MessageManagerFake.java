@@ -2,14 +2,15 @@ package ch.hsr.objectCaching.rmiWithCacheClient;
 
 import ch.hsr.objectCaching.dto.MethodCall;
 import ch.hsr.objectCaching.dto.ReturnValue;
+import ch.hsr.objectCaching.dto.TransferObject;
 
 public class MessageManagerFake extends MessageManager {
-	MethodCall methodCall;
+	TransferObject transferObject;
 	ReturnValue returnValue;
 	
 	@Override
-	public void sendMessageCall(MethodCall methodCall) {
-		this.methodCall = methodCall;
+	public void sendMessageCall(TransferObject transferObj) {
+		this.transferObject = transferObj;
 	}
 
 	@Override

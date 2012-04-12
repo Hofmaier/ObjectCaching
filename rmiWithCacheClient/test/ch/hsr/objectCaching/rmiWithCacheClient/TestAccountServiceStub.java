@@ -31,11 +31,12 @@ public class TestAccountServiceStub {
 		messageManager.returnValue = returnValue;
 		service.setMessageManager(messageManager);
 		Collection<Account> accounts = service.getAllAccounts();
-		assertEquals(AccountService.class.getName(), messageManager.transferObject.getClassName());
+		MethodCall methodCall = (MethodCall) messageManager.transferObject;
+		assertEquals(AccountService.class.getName(), methodCall.getClassName());
 		for(Account account:accounts){
 			AccountStub accountStub = (AccountStub) account;
 			assertEquals((int)objectID, accountStub.getObjectID());
 		}
 	}
-
+	
 }

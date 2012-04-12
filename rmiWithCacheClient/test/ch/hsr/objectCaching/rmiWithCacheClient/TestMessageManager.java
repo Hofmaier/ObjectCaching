@@ -1,6 +1,6 @@
 package ch.hsr.objectCaching.rmiWithCacheClient;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -29,8 +29,11 @@ public class TestMessageManager {
 	public void setUp() throws Exception {
 		byteArrayOutputStream = new ByteArrayOutputStream();
 		objectOutputStream = new ObjectOutputStream(byteArrayOutputStream);
+
 		messageManager = new MessageManager();
 		streamProvider = new StreamProviderFake();
+		SenderThread sender = new SenderThread(messageManager);
+		new Thread(sender).start();
 	}
 
 	@Test
@@ -47,15 +50,18 @@ public class TestMessageManager {
 
 	@Test
 	public void testReceiveMethodCallResponse() throws IOException, ClassNotFoundException {
+		messageManager.setStreamProvider(streamProvider);
 		ReturnValue returnValue = new ReturnValue();
 		Double balanceAmount = 200.0;
 		returnValue.setValue(balanceAmount);
 		objectOutputStream.writeObject(returnValue);
+		objectOutputStream.close();
 		objectInputStream = new ObjectInputStream(new ByteArrayInputStream(byteArrayOutputStream.toByteArray()));
-		
-		messageManager.setStreamProvider(streamProvider);
+		ReceiverThread receiver = new ReceiverThread(messageManager);
+		new Thread(receiver).start();
 		ReturnValue actualReturnValue = messageManager.receiveMethodCallResponse();
-		assertEquals(balanceAmount, actualReturnValue);
+		
+		assertEquals(balanceAmount, actualReturnValue.getValue());
 	}
 	
 	class StreamProviderFake implements IStreamProvider{
@@ -67,7 +73,7 @@ public class TestMessageManager {
 
 		@Override
 		public ObjectInputStream getObjectInputStream() {
-			return null;
+			return objectInputStream;
 		}
 
 		@Override

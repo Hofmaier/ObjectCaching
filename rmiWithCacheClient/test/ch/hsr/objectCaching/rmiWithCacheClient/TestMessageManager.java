@@ -20,16 +20,17 @@ public class TestMessageManager {
 	
 	private ByteArrayOutputStream byteArrayOutputStream;
 	private ObjectOutputStream objectOutputStream;
+	private MessageManager messageManager;
 
 	@Before
 	public void setUp() throws Exception {
 		byteArrayOutputStream = new ByteArrayOutputStream();
 		objectOutputStream = new ObjectOutputStream(byteArrayOutputStream);
+		messageManager = new MessageManager();
 	}
 
 	@Test
 	public void testSendMessageCall() throws InterruptedException, IOException, ClassNotFoundException {
-		MessageManager messageManager = new MessageManager();
 		IStreamProvider streamProvider = new StreamProviderFake();
 		messageManager.setStreamProvider(streamProvider);
 		MethodCall methodCall = new MethodCall();

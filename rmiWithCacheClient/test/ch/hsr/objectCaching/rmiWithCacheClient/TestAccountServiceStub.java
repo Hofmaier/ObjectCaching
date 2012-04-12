@@ -12,6 +12,7 @@ import ch.hsr.objectCaching.account.Account;
 import ch.hsr.objectCaching.account.AccountService;
 import ch.hsr.objectCaching.dto.MethodCall;
 import ch.hsr.objectCaching.dto.ReturnValue;
+import ch.hsr.objectCaching.dto.TransferObject;
 
 public class TestAccountServiceStub {
 
@@ -40,12 +41,12 @@ public class TestAccountServiceStub {
 	
 	class MessageManagerFake extends MessageManager{
 		
-		MethodCall methodCall;
+		TransferObject transferObject;
 		ReturnValue returnValue;
 		
 		@Override
-		public void sendMessageCall(MethodCall methodCall) {
-			this.methodCall = methodCall;
+		public void sendMessageCall(TransferObject transferObject) {
+			this.transferObject = transferObject;
 		}
 
 		@Override

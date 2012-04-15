@@ -13,7 +13,7 @@ public class MessageManager {
 	private IStreamProvider streamProvider;
 	private BlockingQueue<TransferObject> sendingQueue = new LinkedBlockingQueue<TransferObject>();
 	private BlockingQueue<ReturnValue> objectFromServerQueue = new LinkedBlockingQueue<ReturnValue>();
-	
+	private BlockingQueue<ReturnValue> returnValueQueue = new LinkedBlockingQueue<ReturnValue>();
 
 	public IStreamProvider getStreamProvider() {
 		return streamProvider;
@@ -47,6 +47,15 @@ public class MessageManager {
 		return null;
 	}
 	
+	public ReturnValue receiveReturnValue(){
+		try {
+			return returnValueQueue.take();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
 	public void proccessOutgoingMessages()
 	{
 		try {
@@ -73,5 +82,9 @@ public class MessageManager {
 		{
 			objectFromServerQueue.add((ReturnValue)temp);
 		}
+	}
+	
+	public void startSenderThread(){
+		new Thread(new SenderThread(this)).start();
 	}
 }

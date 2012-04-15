@@ -15,7 +15,6 @@ import org.junit.Test;
 import ch.hsr.objectCaching.account.AccountService;
 import ch.hsr.objectCaching.dto.MethodCall;
 import ch.hsr.objectCaching.dto.ObjectRequest;
-import ch.hsr.objectCaching.dto.TransferObject;
 import ch.hsr.objectCaching.rmiOnlyClient.IStreamProvider;
 
 public class TestMessageManager {

@@ -16,13 +16,14 @@ public class RMIwithCacheClientSystem implements ClientSystemUnderTest {
 		MessageManager messageManager = new MessageManager();
 		messageManager.setStreamProvider(streamProvider);
 		messageManager.startSenderThread();
+		messageManager.startReceiverThread();
 		serviceStub.setMessageManager(messageManager);
-		 return serviceStub;
+		return serviceStub;
 	}
 
 	@Override
 	public void setServerSocketAdress(InetSocketAddress socketAdress) {
-		
+		streamProvider.setSocketAdress(socketAdress);
 	}
 
 	@Override

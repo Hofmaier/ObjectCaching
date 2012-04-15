@@ -1,6 +1,5 @@
 package ch.hsr.objectCaching.rmiWithCacheClient;
 
-import ch.hsr.objectCaching.dto.MethodCall;
 import ch.hsr.objectCaching.dto.ReturnValue;
 import ch.hsr.objectCaching.dto.TransferObject;
 
@@ -17,4 +16,11 @@ public class MessageManagerFake extends MessageManager {
 	public ReturnValue receiveObject() {
 		return returnValue;
 	}
+
+	@Override
+	public ReturnValue receiveReturnValue() {
+		return returnValue;
+	}
+	
+	
 }

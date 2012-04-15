@@ -10,7 +10,9 @@ public class RMIwithCacheClientSystem implements ClientSystemUnderTest {
 	@Override
 	public AccountService getAccountService() {
 		AccountServiceStub serviceStub = new AccountServiceStub();
-		serviceStub.setMessageManager(new MessageManager());
+		MessageManager messageManager = new MessageManager();
+		messageManager.startSenderThread();
+		serviceStub.setMessageManager(messageManager);
 		 return serviceStub;
 	}
 

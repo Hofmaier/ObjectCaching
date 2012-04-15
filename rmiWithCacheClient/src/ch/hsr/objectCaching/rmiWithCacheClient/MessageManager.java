@@ -1,6 +1,7 @@
 package ch.hsr.objectCaching.rmiWithCacheClient;
 
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -60,7 +61,10 @@ public class MessageManager {
 	{
 		try {
 			TransferObject transferObject = sendingQueue.take();
-			streamProvider.getObjectOutputStream().writeObject(transferObject);
+			ObjectOutputStream oos = streamProvider.getObjectOutputStream();
+			oos.writeObject(transferObject);
+			oos.flush();
+			
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (InterruptedException e) {
@@ -80,11 +84,15 @@ public class MessageManager {
 		}
 		if(temp instanceof ReturnValue)
 		{
-			objectFromServerQueue.add((ReturnValue)temp);
+			returnValueQueue.add((ReturnValue)temp);
 		}
 	}
 	
 	public void startSenderThread(){
 		new Thread(new SenderThread(this)).start();
+	}
+	
+	public void startReceiverThread(){
+		new Thread(new ReceiverThread(this)).start();
 	}
 }

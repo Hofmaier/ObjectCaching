@@ -16,6 +16,8 @@ public class TestRMIwithCacheClientSystem {
 		RMIwithCacheClientSystem system = new RMIwithCacheClientSystem();
 		AccountServiceStub serviceStub = (AccountServiceStub) system.getAccountService();
 		assertNotNull(serviceStub.getMessageManager());
+		MessageManager msnMng = serviceStub.getMessageManager();
+		assertNotNull(msnMng.getStreamProvider());
 	}
 
 }

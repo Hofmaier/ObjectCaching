@@ -1,6 +1,7 @@
 package ch.hsr.objectCaching.rmiWithCacheClient;
 
 import ch.hsr.objectCaching.account.Account;
+import ch.hsr.objectCaching.dto.MethodCall;
 
 public class AccountStub implements Account {
 
@@ -10,13 +11,13 @@ public class AccountStub implements Account {
 	@Override
 	public double getBalance() {
 		Account account = cache.getObject(objectID);
-		return 0;
+		return account.getBalance();
 	}
 
 	@Override
 	public void setBalance(double balance) throws RuntimeException {
-		// TODO Auto-generated method stub
-
+		MethodCall methodCall = new MethodCall();
+		
 	}
 
 	public void setObjectID(Integer i) {

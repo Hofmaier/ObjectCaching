@@ -1,4 +1,5 @@
 package ch.hsr.objectCaching.rmiOnlyServer;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
@@ -15,13 +16,14 @@ import ch.hsr.objectCaching.interfaces.MethodCalledListener;
 
 public class RMIOnlyClientHandler extends ClientHandler {
 
-	private RMIOnlySkeleton skeletonInUse;
+	protected RMIOnlySkeleton skeletonInUse;
 	private AccountSkeleton accountSkeleton;
 	private AccountServiceSkeleton accountServiceSkeleton;
-	private ObjectOutputStream objectOutputStream;
-	private ObjectInputStream objectInputStream;
+	protected ObjectOutputStream objectOutputStream;
+	protected ObjectInputStream objectInputStream;
 	private String clientIpAdress;
 	private ArrayList<MethodCalledListener> listeners;
+
 	public void setAccountSkeleton(AccountSkeleton skeleton) {
 		this.accountSkeleton = skeleton;
 	}
@@ -29,7 +31,7 @@ public class RMIOnlyClientHandler extends ClientHandler {
 	public RMIOnlySkeleton getSkeleton() {
 		return skeletonInUse;
 	}
-	
+
 	@Override
 	public void setInputStream(InputStream inputStream) {
 		try {
@@ -39,7 +41,6 @@ public class RMIOnlyClientHandler extends ClientHandler {
 		}
 	}
 
-	
 	@Override
 	public void setOutputStream(OutputStream outputStream) {
 		this.outputStream = outputStream;
@@ -54,10 +55,10 @@ public class RMIOnlyClientHandler extends ClientHandler {
 	public void run() {
 		try {
 			MethodCall methodCall;
-			while(( methodCall = readMethodCallfrom() )!= null){
-			methodCall.setClientIp(clientIpAdress);
-			notifiyListeners(methodCall);
-			processMethodCall(methodCall);
+			while ((methodCall = readMethodCallfrom()) != null) {
+				methodCall.setClientIp(clientIpAdress);
+				notifiyListeners(methodCall);
+				processMethodCall(methodCall);
 			}
 			objectInputStream.close();
 			objectOutputStream.close();
@@ -69,26 +70,26 @@ public class RMIOnlyClientHandler extends ClientHandler {
 	}
 
 	void notifiyListeners(MethodCall methodCall) {
-		for(MethodCalledListener listener:listeners){
-			listener.methodCalled(methodCall.getMethodName(), methodCall.getClientIp());
+		for (MethodCalledListener listener : listeners) {
+			listener.methodCalled(methodCall.getMethodName(),
+					methodCall.getClientIp());
 		}
 	}
 
-	MethodCall readMethodCallfrom() throws IOException,
-			ClassNotFoundException {
+	MethodCall readMethodCallfrom() throws IOException, ClassNotFoundException {
 		Object objectFromStream = null;
-		if((objectFromStream = objectInputStream.readObject()) != null){
-		 MethodCall methodCall = (MethodCall) objectFromStream;
-		 return methodCall;
+		if ((objectFromStream = objectInputStream.readObject()) != null) {
+			MethodCall methodCall = (MethodCall) objectFromStream;
+			return methodCall;
 		}
 		return null;
 	}
 
-	 void setSkeleton(MethodCall methodCall) {
-		if(methodCall.getClassName().equals(Account.class.getName())){
+	protected void setSkeleton(MethodCall methodCall) {
+		if (methodCall.getClassName().equals(Account.class.getName())) {
 			skeletonInUse = accountSkeleton;
 		}
-		if(methodCall.getClassName().equals(AccountService.class.getName())){
+		if (methodCall.getClassName().equals(AccountService.class.getName())) {
 			skeletonInUse = accountServiceSkeleton;
 		}
 	}

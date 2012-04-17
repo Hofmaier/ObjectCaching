@@ -1,98 +1,116 @@
 <?xml version="1.0"?>
 <project name="objectCaching" default="copyConfig" basedir=".">
 
-<property name="build.dir" location="build"/>
-<property name="build.prod.dir" location="${build.dir}/prod" />
-<property name="build.prod.server.dir" location="${build.prod.dir}/server" />
-<property name="build.prod.client.dir" location="${build.prod.dir}/client" />
-<property name="rmiServer.src.dir" location="rmiOnlyServer/src" />
-<property name="commonData.src.dir" location="commonData/src" />
-<property name="dist.dir" location="dist" />
-<property name="dist.server.dir" location="${dist.dir}/server" />
-<property name="dist.client.dir" location="${dist.dir}/client" />
-<property name="name" value="server" />
-<property name="client" value="client" />
-<property name="jar.name" value="${name}.jar" />
-<property name="jar.client.name" value="${client}.jar" />
-<property name="jar.server.path" location="${dist.server.dir}/${jar.name}" /> 
-<property name="jar.client.path" location="${dist.client.dir}/${jar.client.name}" />
-<property name="fmServer.src.dir" location="testFrameworkServer/src" />
-<property name="rmiClient.src.dir" location="rmiOnlyClient/src" />
-<property name="fmClient.src.dir" location="testFrameworkClient/src" />
+	<property name="build.dir" location="build" />
+	<property name="build.prod.dir" location="${build.dir}/prod" />
+	<property name="build.prod.server.dir" location="${build.prod.dir}/server" />
+	<property name="build.prod.client.dir" location="${build.prod.dir}/client" />
+	<property name="rmiServer.src.dir" location="rmiOnlyServer/src" />
+	<property name="commonData.src.dir" location="commonData/src" />
+	<property name="dist.dir" location="dist" />
+	<property name="dist.server.dir" location="${dist.dir}/server" />
+	<property name="dist.client.dir" location="${dist.dir}/client" />
+	<property name="name" value="server" />
+	<property name="client" value="client" />
+	<property name="jar.name" value="${name}.jar" />
+	<property name="jar.client.name" value="${client}.jar" />
+	<property name="jar.server.path" location="${dist.server.dir}/${jar.name}" />
+	<property name="jar.client.path" location="${dist.client.dir}/${jar.client.name}" />
+	<property name="fmServer.src.dir" location="testFrameworkServer/src" />
+	<property name="rmiClient.src.dir" location="rmiOnlyClient/src" />
+	<property name="fmClient.src.dir" location="testFrameworkClient/src" />
+	<property name="rmiWithCacheClient.src.dir" location="rmiWithCacheClient/src" />
+	<property name="rmiWithCacheServer.src.dir" location="rmiWithCacheServer/src" />
 
-<path id="project.classpath">
-  <pathelement location="${build.prod.server.dir}" />
-  <pathelement location="${build.prod.client.dir}" />
-</path>
+	<path id="project.classpath">
+		<pathelement location="${build.prod.server.dir}" />
+		<pathelement location="${build.prod.client.dir}" />
+	</path>
 
-<target name="prepare" depends="clean" >
-  <mkdir dir="${build.prod.server.dir}" />
-  <mkdir dir="${build.prod.client.dir}" />
-</target>
+	<target name="prepare" depends="clean">
+		<mkdir dir="${build.prod.server.dir}" />
+		<mkdir dir="${build.prod.client.dir}" />
+	</target>
 
-<target name="compileCommonData" depends="prepare">
-  <javac srcdir="${commonData.src.dir}" destdir="${build.prod.server.dir}" includeantruntime="false">
-    <classpath refid="project.classpath" />
-  </javac>
-</target>
+	<target name="compileCommonData" depends="prepare">
+		<javac srcdir="${commonData.src.dir}" destdir="${build.prod.server.dir}" includeantruntime="false">
+			<classpath refid="project.classpath" />
+		</javac>
+	</target>
 
-<target name="compileCommonDataClient" depends="prepare">
-  <javac srcdir="${commonData.src.dir}" destdir="${build.prod.client.dir}" includeantruntime="false">
-    <classpath refid="project.classpath" />
-  </javac>
-</target>
+	<target name="compileCommonDataClient" depends="prepare">
+		<javac srcdir="${commonData.src.dir}" destdir="${build.prod.client.dir}" includeantruntime="false">
+			<classpath refid="project.classpath" />
+		</javac>
+	</target>
 
-<target name="compileRMIServer" depends="compileCommonData" >
-  <javac srcdir="${rmiServer.src.dir}" destdir="${build.prod.server.dir}" includeantruntime="false">
-    <classpath refid="project.classpath" />
-  </javac>
-</target>
+	<target name="compileRMIServer" depends="compileCommonData">
+		<javac srcdir="${rmiServer.src.dir}" destdir="${build.prod.server.dir}" includeantruntime="false">
+			<classpath refid="project.classpath" />
+		</javac>
+	</target>
 
-<target name="compileFmServer" depends="compileRMIServer" >
-  <javac srcdir="${fmServer.src.dir}" destdir="${build.prod.server.dir}" includeantruntime="false">
-    <classpath refid="project.classpath" />
-  </javac>
-</target>
+	<target name="compileFmServer" depends="compileRMIServer, compileRMIWithCacheServer">
+		<javac srcdir="${fmServer.src.dir}" destdir="${build.prod.server.dir}" includeantruntime="false">
+			<classpath refid="project.classpath" />
+		</javac>
+	</target>
 
-<target name="clean">
-  <delete dir="${build.dir}" />
-  <delete dir="${dist.dir}" />
-</target>
 
-<target name="jar" depends="compileFmClient, compileFmServer" >
-  <mkdir dir="${dist.server.dir}" />
-  <mkdir dir="${dist.client.dir}" />
-  <jar destfile="${jar.server.path}" basedir="${build.prod.server.dir}" >
-    <manifest>
-      <attribute name="Main-Class" value="ch.hsr.objectCaching.testFrameworkServer.Server" />
-    </manifest>
-  </jar>
-  <jar destfile="${jar.client.path}" basedir="${build.prod.client.dir}" >
-    <manifest>
-      <attribute name="Main-Class" value="ch.hsr.objectCaching.testFrameworkClient.ClientController" />
-    </manifest>
-</jar>
-</target>
+	<target name="compileRMIWithCacheClient" depends="compileCommonData">
+		<javac srcdir="${rmiWithCacheClient.src.dir}" destdir="${build.prod.client.dir}" includeantruntime="false">
+			<classpath refid="project.classpath" />
+		</javac>
+	</target>
 
-<target name="compileRMIClient" depends="compileCommonDataClient" >
-  <javac srcdir="${rmiClient.src.dir}" destdir="${build.prod.client.dir}" includeantruntime="false">
-    <classpath refid="project.classpath" />
-  </javac>
-</target>
+	<target name="compileRMIWithCacheServer" depends="compileCommonData">
+		<javac srcdir="${rmiWithCacheServer.src.dir}" destdir="${build.prod.server.dir}" includeantruntime="false">
+			<classpath refid="project.classpath" />
+		</javac>
+	</target>
 
-<target name="compileFmClient" depends="compileRMIClient" >
-  <javac srcdir="${fmClient.src.dir}" destdir="${build.prod.client.dir}" includeantruntime="false">
-    <classpath refid="project.classpath" />
-  </javac>
-</target>
 
-<target name="copyConfig" depends="jar" >
-  <copy file="testFrameworkClient/logger.config" tofile="${dist.client.dir}/logger.config" />
-  <copy file="testFrameworkServer/initFile.conf" tofile="${dist.server.dir}/initFile.conf" />
-  <copy file="testFrameworkServer/testCases.xml" tofile="${dist.server.dir}/testCases.xml" />
-  <copy todir="${dist.server.dir}"><fileset dir="testFrameworkServer" includes="*testCases.xml"/>
-</copy>
-</target>
+
+	<target name="clean">
+		<delete dir="${build.dir}" />
+		<delete dir="${dist.dir}" />
+	</target>
+
+	<target name="jar" depends="compileFmClient, compileFmServer">
+		<mkdir dir="${dist.server.dir}" />
+		<mkdir dir="${dist.client.dir}" />
+		<jar destfile="${jar.server.path}" basedir="${build.prod.server.dir}">
+			<manifest>
+				<attribute name="Main-Class" value="ch.hsr.objectCaching.testFrameworkServer.Server" />
+			</manifest>
+		</jar>
+		<jar destfile="${jar.client.path}" basedir="${build.prod.client.dir}">
+			<manifest>
+				<attribute name="Main-Class" value="ch.hsr.objectCaching.testFrameworkClient.ClientController" />
+			</manifest>
+		</jar>
+	</target>
+
+	<target name="compileRMIClient" depends="compileCommonDataClient">
+		<javac srcdir="${rmiClient.src.dir}" destdir="${build.prod.client.dir}" includeantruntime="false">
+			<classpath refid="project.classpath" />
+		</javac>
+	</target>
+
+	<target name="compileFmClient" depends="compileRMIClient, compileRMIWithCacheClient">
+		<javac srcdir="${fmClient.src.dir}" destdir="${build.prod.client.dir}" includeantruntime="false">
+			<classpath refid="project.classpath" />
+		</javac>
+	</target>
+
+	<target name="copyConfig" depends="jar">
+		<copy file="testFrameworkClient/logger.config" tofile="${dist.client.dir}/logger.config" />
+		<copy file="testFrameworkServer/initFile.conf" tofile="${dist.server.dir}/initFile.conf" />
+		<copy file="testFrameworkServer/testCases.xml" tofile="${dist.server.dir}/testCases.xml" />
+		<copy todir="${dist.server.dir}">
+			<fileset dir="testFrameworkServer" includes="*testCases.xml" />
+		</copy>
+	</target>
 
 </project>
 

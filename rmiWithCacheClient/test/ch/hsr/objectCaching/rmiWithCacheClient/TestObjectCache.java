@@ -28,7 +28,7 @@ public class TestObjectCache {
 		assertEquals(expectedObj, actualObj);
 		
 		actualObj = objectCache.getObject(objectID);
-		
+		assertEquals(1, messageManager.sendMessageCount);
 	}
 
 }

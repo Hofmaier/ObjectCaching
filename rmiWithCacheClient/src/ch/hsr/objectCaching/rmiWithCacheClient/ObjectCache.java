@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.HashMap;
 
 import ch.hsr.objectCaching.account.Account;
-import ch.hsr.objectCaching.account.AccountImpl;
 import ch.hsr.objectCaching.dto.ObjectRequest;
 
 public class ObjectCache {

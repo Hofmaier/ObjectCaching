@@ -2,6 +2,7 @@ package ch.hsr.objectCaching.rmiWithCacheServer;
 
 import java.io.IOException;
 
+import ch.hsr.objectCaching.dto.MethodCall;
 import ch.hsr.objectCaching.dto.ObjectRequest;
 import ch.hsr.objectCaching.dto.ObjectRequestResponse;
 import ch.hsr.objectCaching.dto.TransferObject;
@@ -35,6 +36,10 @@ public class RMIWithCacheClientHandler extends RMIOnlyClientHandler{
 			ObjectRequest objectRequest = (ObjectRequest) objectFromStream;
 			ObjectRequestResponse response = objectManager.processObjectRequest(objectRequest);
 			sendResponse(response);
+		}
+		if(objectFromStream instanceof MethodCall){
+			MethodCall methodCall = (MethodCall) objectFromStream;
+			processMethodCall(methodCall);
 		}
 	}
 

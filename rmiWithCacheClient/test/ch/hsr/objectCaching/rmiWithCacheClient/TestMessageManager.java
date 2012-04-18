@@ -12,9 +12,11 @@ import java.net.InetSocketAddress;
 import org.junit.Before;
 import org.junit.Test;
 
+import ch.hsr.objectCaching.account.AccountImpl;
 import ch.hsr.objectCaching.account.AccountService;
 import ch.hsr.objectCaching.dto.MethodCall;
 import ch.hsr.objectCaching.dto.ObjectRequest;
+import ch.hsr.objectCaching.dto.ObjectRequestResponse;
 import ch.hsr.objectCaching.rmiOnlyClient.IStreamProvider;
 
 public class TestMessageManager {
@@ -51,17 +53,20 @@ public class TestMessageManager {
 	@Test
 	public void testReceiveMethodCallResponse() throws IOException, ClassNotFoundException {
 		messageManager.setStreamProvider(streamProvider);
-		ObjectRequest request = new ObjectRequest();
+		ObjectRequestResponse request = new ObjectRequestResponse();
 		int objectID = 3;
-		request.setObjectID(objectID);
+		AccountImpl requestedObject = new AccountImpl();
+		double balance = 230.0;
+		requestedObject.setBalance(balance );
+		request.setRequestedObject(requestedObject);
 		objectOutputStream.writeObject(request);
 		objectOutputStream.close();
 		objectInputStream = new ObjectInputStream(new ByteArrayInputStream(byteArrayOutputStream.toByteArray()));
 		ReceiverThread receiver = new ReceiverThread(messageManager);
 		new Thread(receiver).start();
-		ObjectRequest actualRequest = (ObjectRequest) messageManager.receiveObject();
-		
-		assertEquals(objectID, actualRequest.getObjectID());
+		Object actualRequestedObject =  messageManager.receiveObject();
+		AccountImpl actualAcc = (AccountImpl) actualRequestedObject;
+		assertEquals(balance, actualAcc.getBalance(), 0.1);
 	}
 	
 	class StreamProviderFake implements IStreamProvider{

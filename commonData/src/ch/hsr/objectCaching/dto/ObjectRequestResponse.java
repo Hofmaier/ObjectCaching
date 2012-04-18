@@ -1,6 +1,8 @@
 package ch.hsr.objectCaching.dto;
 
-public class ObjectRequestResponse {
+import java.io.Serializable;
+
+public class ObjectRequestResponse implements Serializable {
 	
 	private Object requestedObject;
 

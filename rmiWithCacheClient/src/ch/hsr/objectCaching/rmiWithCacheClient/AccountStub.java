@@ -28,5 +28,13 @@ public class AccountStub implements Account {
 		return objectID;
 	}
 
+	public ObjectCache getCache() {
+		return cache;
+	}
+
+	public void setCache(ObjectCache cache) {
+		this.cache = cache;
+	}
+
 
 }

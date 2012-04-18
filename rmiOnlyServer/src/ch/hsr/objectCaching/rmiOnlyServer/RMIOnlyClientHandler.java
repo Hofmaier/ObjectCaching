@@ -94,7 +94,7 @@ public class RMIOnlyClientHandler extends ClientHandler {
 		}
 	}
 
-	void processMethodCall(MethodCall methodCall) {
+	protected void processMethodCall(MethodCall methodCall) {
 		setSkeleton(methodCall);
 		ReturnValue returnValue = skeletonInUse.invokeMethod(methodCall);
 		sendResponse(returnValue);

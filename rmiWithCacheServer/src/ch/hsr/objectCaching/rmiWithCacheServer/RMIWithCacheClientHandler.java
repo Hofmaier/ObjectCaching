@@ -34,7 +34,17 @@ public class RMIWithCacheClientHandler extends RMIOnlyClientHandler{
 		if(objectFromStream instanceof ObjectRequest){
 			ObjectRequest objectRequest = (ObjectRequest) objectFromStream;
 			ObjectRequestResponse response = objectManager.processObjectRequest(objectRequest);
+			sendResponse(response);
 		}
+	}
+
+	private void sendResponse(ObjectRequestResponse response) {
+			try {
+				objectOutputStream.writeObject(response);
+				objectOutputStream.flush();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 	}
 
 	public ObjectManager getObjectManager() {

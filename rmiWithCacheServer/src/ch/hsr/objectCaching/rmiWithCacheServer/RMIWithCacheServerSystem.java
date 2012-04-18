@@ -1,10 +1,12 @@
 package ch.hsr.objectCaching.rmiWithCacheServer;
 
+import ch.hsr.objectCaching.account.Account;
 import ch.hsr.objectCaching.interfaces.ClientHandler;
+import ch.hsr.objectCaching.rmiOnlyServer.ObjectIDGenerator;
 import ch.hsr.objectCaching.rmiOnlyServer.RMIOnlyServerSystem;
 
 public class RMIWithCacheServerSystem extends RMIOnlyServerSystem {
-	
+
 	private ObjectManager objectManager = new ObjectManager();
 
 	@Override
@@ -12,5 +14,12 @@ public class RMIWithCacheServerSystem extends RMIOnlyServerSystem {
 		RMIWithCacheClientHandler clientHandler = new RMIWithCacheClientHandler();
 		clientHandler.setObjectManager(objectManager);
 		return clientHandler;
+	}
+	
+	@Override
+	public void addAccount(Account testObject) {
+		Integer objectID = ObjectIDGenerator.next();
+		objectManager.addAccount(objectID, testObject);
+		accountSkeleton.addObject(objectID, testObject);
 	}
 }

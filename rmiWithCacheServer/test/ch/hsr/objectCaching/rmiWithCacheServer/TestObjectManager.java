@@ -18,15 +18,16 @@ public class TestObjectManager {
 
 	@Test
 	public void testProcessObjectRequest() {
+
+		int objectID = 23;
 		ObjectManager objectManager = new ObjectManager();
 		Account account = new AccountImpl();
-		objectManager.addAccount(account);
-		
+		objectManager.addAccount(objectID, account);
+
 		ObjectRequest objectRequest = new ObjectRequest();
-		int objectID = 23;
 		objectRequest.setObjectID(objectID);
 		ObjectRequestResponse response = objectManager.processObjectRequest(objectRequest);
-		
+
 		assertNotNull(response);
 		assertNotNull(response.getRequestedObject());
 	}

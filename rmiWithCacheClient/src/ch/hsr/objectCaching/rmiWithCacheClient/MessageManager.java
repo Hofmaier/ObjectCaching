@@ -5,6 +5,7 @@ import java.io.ObjectOutputStream;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import ch.hsr.objectCaching.dto.ObjectRequestResponse;
 import ch.hsr.objectCaching.dto.ReturnValue;
 import ch.hsr.objectCaching.dto.TransferObject;
 import ch.hsr.objectCaching.rmiOnlyClient.IStreamProvider;
@@ -13,7 +14,7 @@ public class MessageManager {
 	
 	private IStreamProvider streamProvider;
 	private BlockingQueue<TransferObject> sendingQueue = new LinkedBlockingQueue<TransferObject>();
-	private BlockingQueue<ReturnValue> objectFromServerQueue = new LinkedBlockingQueue<ReturnValue>();
+	private BlockingQueue<ObjectRequestResponse> objectFromServerQueue = new LinkedBlockingQueue<ObjectRequestResponse>();
 	private BlockingQueue<ReturnValue> returnValueQueue = new LinkedBlockingQueue<ReturnValue>();
 
 	public IStreamProvider getStreamProvider() {
@@ -37,7 +38,7 @@ public class MessageManager {
 		sendingQueue.add(transferObject);
 	}
 
-	public Object receiveObject() throws IOException, ClassNotFoundException 
+	public ObjectRequestResponse receiveObject() throws IOException, ClassNotFoundException 
 	{
 		try {
 			return objectFromServerQueue.take();

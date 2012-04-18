@@ -1,8 +1,10 @@
 package ch.hsr.objectCaching.account;
 
+import java.io.Serializable;
 
 
-public class AccountImpl implements Account {
+
+public class AccountImpl implements Account, Serializable {
 	
 	private double balance;
 

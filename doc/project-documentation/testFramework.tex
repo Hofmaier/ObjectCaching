@@ -5,6 +5,15 @@ Im folgenden Kapitel werden wir auf die einzelnen Komponenten des von uns entwic
 \subsection{Konzept}
 Das Framework lässt sich über eine Konfigurationsdatei konfigurieren und kann Testfälle die in einer XML Datenstruktur vorliegen intepretieren und daraus die einzelnen Testszenarien generieren. Die Testszenarien werden vom Server auf die verfügbaren Testframework Clients verteilen und dort gestartet, hat ein Testframework Client ein Szenario auf einem ClientSystemUnderTest abgearbeitet, wird das Szenario mit den Messwerten zurück an den Server geschickt. Auf dem Server werden dann die Messresultate jedes Szenario ausgewertet und abgespeichert. Dadurch lassen sich die Resultate der verschieden System zu einem späteren Zeitpunkt vergleichen.
 
+\subsection{Open Points (TODO's)}
+\begin{itemize}	
+\item Netzwerk Traffic der im Zimmer Auftritt kann nicht kontrolliert werden. Messungen daher nicht verlässlich, man bäuchte ein eigenes Netz.
+\item JVM Profiler: Beweis für die Zombie Objekte in der JVM, soll das gemacht werden?
+\item Logger
+\item Exception Handling
+\end{itemize}
+
+
 
 \subsection{Der Frameworkserver}
 \label{sec:test-FW Server}
@@ -53,7 +62,7 @@ Die im Diagramm dargestellten Operationen lassen sich wie folgt erklären:
 Die Testcase-Factory liest ein XML-File, in welchem ein sogenannter "TestCase" definiert ist. Wird beim Starten des Frameworkservers kein Paramter mitgegeben, wird der Standard-Testcase gewählt, welcher in der Datei "testCases.xml" abgelegt ist. Wird aber ein Parameter mitgegeben, beschreibt dieser den Namen der auszuführenden TestCase-Datei.\newline
 Durch die eingelesenen Informationen erstellt die Factory die Szenarien, welche dann weiter an die verschiedenen Clients gesendet werden. Folgender Block ist ein Auszug aus einer TestCase-Datei:
 
-\begin{lstlisting}
+\begin{lstlisting}[language=XML, breaklines=true] 	
 <?xml version='1.0' encoding='UTF-8'?>
 <TestRun>
   <TestCase SystemUnderTest="ch.hsr.objectCaching.rmiOnlyClient.RMIonlyClientSystem">
@@ -182,15 +191,20 @@ Dieses Kapitel beschreibt die Aufgaben der Testframework Client Komponenten und 
 Die Kommunikation zwischen den Testframework Clients und dem Server haben wir über Java RMI realisiert. Beim Start eines Testframework Clients wird ein neuer ClientController instanziiert, daraufhin wird dieses Objekt zur Java RMI Runtime exportiert. Die Veröffentlichung, das ClientController- Objekts erledigt die RMI Runtime im Hindergrund, ist das Objekt erfolgreich unter dem Namen, der als Argument beim start des ClientController mitgegeben wurde registriert, lässt sich der ClientController über Remote Method Invocation vom Server steuern. Der Port auf der die RMI Registry Anfragen akzeptiert lässt sich ebenfalls via Argument mitgeben falls keine Portnummer mitgegeben wird, wird der Defaultport 1099 verwendet.
 
 Folgendes Interface wird vom ClientController implementiert und lässt sich über Java RMI benutzen:
-\begin{lstlisting}	
+\begin{lstlisting}[language=java, breaklines=true] 	
 public void initialize(Scenario scenario, Configuration configuration) throws RemoteException;
 public void startTest() throws RemoteException;
 public void shutdown() throws RemoteException;
 \end{lstlisting}
-Über dieses Interface lässt sich der gesamte Testprozess des Clients steuern. Zu Beginn wollten wir die einzelnen Konfigurationswerte als Parameter übergeben, wir merkten jedoch schnell das es sinnvoller wäre einen neuen Datentypen einzuführen, der die alle benötigten Parameter für die Konfiguration des ClientSystemUnderTest sowie des ClientController beinhaltet und die Werte kapselt. Dieses Konfiguration beinhaltet unter anderem den Namen des ClientSystemUnderTest sowie die nötigen Information für den erfolgreichen Aufbau der RMI Kommunikation zwischen dem Testframework Client und dem Testframework Server. In der initialize() Methode wird als erstes ein Server Stub geladen. Zweitens, wird aus dem Configuration Objekt das gewünschte ClientSystemUnderTest herausgelesen und via Reflection instanziiert. Die Instanziierung des konkreten ClientSystemUnderTest wird in einer seperaten Factory erledigt. Danach wird ein neues TestClient-Objekt mit dem zuvor erzeugten CUT erzeugt. Als letztes wird der TestClient wird mit dem gegeben Szenario initialisiert. Sind alle Vorbereitungsschritte abgeschlossen, wird der Server über die erfolgreiche Initialisierung des CUT und des ClientController informiert. Der Server startet den Testdurchlauf parallel auf allen ClientController über die Methode startTest(). Sind alle Aktionen des gegeben Szenarios abgearbeitet, wird das gesamte Szenario mit den enthaltenen Messresultaten zurück an den Server geschickt, dort wird die Auswertung der Resultate vom Server übernommen. Der Testframework Client sowie das ClientSystemUnderTest laufen in derselben Java Virtual Machine um für jeden Testlauf dieselben JVM Umgebung zu gewährleisten, haben wir uns dazu entschlossen, bei jedem Testcase das ganze System neu zu starten. Über die Methode shutdown() lässt sich daher der Testframework Client sowie der CUT herunterfahren. Die shutdown() Methode löscht das Binding zwischen dem spezifischen Namen und dem damit verbundenen Objekt. Danach wir das Objekt von der RMI Runtime entfernt. Ist dies erledigt beendet sich der ClientController selbst. Beim testen der shutdown() Funktionalität merken wir schnell das, wenn wir dies wie oben beschrieben umsetzten, dass der Server eine Exception bekommt, dies lag daran das der ClientController zu schnell die Verbindung zum Server beendet hat, so dass der Server keine Zeit fand seine RMI Verbindung zum ClientController zu schliessen. Als Lösung des Problems verzögern wir nun die Beendigung (System.exit()) des ClientController um zwei Sekunden. Die Beendigung des ClientController wird in einem seperaten Thread ausgeführt, sodass der main Thread noch genügend Zeit hat, alle offenen Verbindungen ordnungsgemäss zu schliessen.    
+Über dieses Interface lässt sich der gesamte Testprozess des Clients steuern. Zu Beginn wollten wir die einzelnen Konfigurationswerte als Parameter übergeben, wir merkten jedoch schnell das es sinnvoller wäre einen neuen Datentypen einzuführen, der die alle benötigten Parameter für die Konfiguration des ClientSystemUnderTest sowie des ClientController beinhaltet und die Werte kapselt. Dieses Konfiguration beinhaltet unter anderem den Namen des ClientSystemUnderTest sowie die nötigen Information für den erfolgreichen Aufbau der RMI Kommunikation zwischen dem Testframework Client und dem Testframework Server. In der initialize() Methode wird als erstes ein Server Stub geladen. Zweitens, wird aus dem Configuration Objekt das gewünschte ClientSystemUnderTest herausgelesen und via Reflection instanziiert. Die Instanziierung des konkreten ClientSystemUnderTest wird in einer seperaten Factory erledigt. Danach wird dem TestClient das erzeugte CUT übergeben. Als letztes wird der TestClient wird mit dem gegeben Szenario initialisiert. Sind alle Vorbereitungsschritte abgeschlossen, wird der Server über die erfolgreiche Initialisierung des CUT und des ClientController informiert. Der Server startet den Testdurchlauf parallel auf allen ClientController über die Methode startTest(). Sind alle Aktionen des gegeben Szenarios abgearbeitet, wird das gesamte Szenario mit den enthaltenen Messresultaten zurück an den Server geschickt, dort wird die Auswertung der Resultate vom Server übernommen. Der Testframework Client sowie das ClientSystemUnderTest laufen in derselben Java Virtual Machine um für jeden Testlauf dieselben JVM Umgebung zu gewährleisten, haben wir uns dazu entschlossen, bei jedem Testcase das ganze System neu zu starten. Über die Methode shutdown() lässt sich daher der Testframework Client sowie der CUT herunterfahren. Die shutdown() Methode löscht das Binding zwischen dem spezifischen Namen und dem damit verbundenen Objekt. Danach wir das Objekt von der RMI Runtime entfernt. Ist dies erledigt beendet sich der ClientController selbst. Beim testen der shutdown() Funktionalität merken wir schnell das, wenn wir dies wie oben beschrieben umsetzten, dass der Server eine Exception bekommt, dies lag daran das der ClientController zu schnell die Verbindung zum Server beendet hat, so dass der Server keine Zeit fand seine RMI Verbindung zum ClientController zu schliessen. Als Lösung des Problems verzögern wir nun die Beendigung (System.exit()) des ClientController um zwei Sekunden. Die Beendigung des ClientController wird in einem seperaten Thread ausgeführt, sodass der main Thread noch genügend Zeit hat, alle offenen Verbindungen ordnungsgemäss zu schliessen.    
 
 \subsubsection{Test Client}
 \label{sec:testclient}
+
+\begin{center}
+\includegraphics[scale=0.3]{image_testFramework/startTest.png}
+\end{center}
+
 Die Klasse TestClient ist die Schnittstelle zwischen dem Testframework und dem ClientSystemUnderTest. Im Konstruktor dieser Klasse kann ein Objekt übergeben werden, welches das ClientSystemUnderTest Interface implementiert. Startet der Server den Testlauf wird im TestClient das zuvor gesetzte Szenario abgearbeitet. Hierfür wird auf jedem Aktion Objekt die Methode execute(Account accunt) aufgerufen. Das Account Objekt, welches der execute Methode übergeben werden muss, wird aus der List von Accounts die von AccountService bereitgestellt wird geholt und übergeben.(Ringbuffer). Bei einem Shutdown durch den Server ist der TestClient ebenfalls für die ordnungsgemässe Beendigung des ClientSystemUnderTest zuständig.
 
 \subsubsection{Action}
@@ -207,7 +221,20 @@ Für die Zeitmessung einer Aktion nutzen wir die von Java bereitgestellte Method
 
 \subsubsection{TimeRecord}
 \label{sec:timeRecord}
-Der TimeRecordtyp ist als reines Data Tranfer Object ausgelegt. Es beinhaltet die Startzeit sowie die Stopzeit genau einer Aktion. Für einen genauen Auswertung einer Aktion sind noch weiter Daten nötig. Daher besitzt dieser Typ zwei weiter Felder. Der BasicActiontyp beinhaltet Informationen für welche Methode dieser Record gilt und das ActionResult speichert die Information über den Erfolg der BasicAction. Dadurch lassen sich zusammengesetzte Aktion, welche aus getBalance() und setBalance() zusammengesetzt sind unterteilen. 
+Der TimeRecordtyp ist als reines Data Tranfer Object ausgelegt. Es beinhaltet die Startzeit sowie die Stopzeit genau einer Aktion. Für einen genauen Auswertung einer Aktion sind noch weiter Daten nötig. Daher besitzt dieser Typ zwei weiter Felder. Der BasicActiontyp beinhaltet Informationen für welche Methode dieser Record gilt und das ActionResult speichert die Information über den Erfolg der BasicAction. Dadurch lassen sich zusammengesetzte Aktion, welche aus getBalance() und setBalance() zusammengesetzt sind unterteilen.
+
+\subsubsection{BasicAction}
+\label{sec:BasicAction}
+
+\subsubsection{ActionResult}
+\label{sec:ActionResult}
+
+\subsubsection{ReportGenerator}
+\label{sec:reportGenerator}
+Der ReportGenerator erzeugt für ein Szenario eine Datei, welche alle relevanten Information beinhaltet und die Daten so aufbereitet das diese leicht lesbar sind. Für die genau Auswertung der Resultate war es nötig, dass wir unterscheiden könne zwischen einer getBalance() und einer setBalance() Aktion. Da jedoch eine Aktion aus einer Abfolge von Reads und Writes bestehen kann war es nötig das diese Information gespeichert werden kann. Im TimeRecord lässt sich daher die BasicAction speichern. Um eine Statistik über die Fehlerrate zu bekommen war es desweitern noch nötig das der Erfolg einer BasicAction gespeichert werden kann. Damit lässt sich ein Szenario auf die zwei Grundoperation setBalance() und getBalance() herunterbrechen und gibt uns die Möglichkeit eine genau Auswertung der Messresultate zu machen.
+\newline
+Die Datei die der ReportGenerator erzeugt besteht aus drei Teilen. Der erste Teil gibt eine List der Aktionen aus und der BasicAktion. Darauf folgt eine Zusammenfassung der zwei BasicAktion Arten und zuletzt ein Zusammenfassung über das ganze Szenario.
+
 
 
 

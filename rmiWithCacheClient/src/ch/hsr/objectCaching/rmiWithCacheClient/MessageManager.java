@@ -14,7 +14,7 @@ public class MessageManager {
 	
 	private IStreamProvider streamProvider;
 	private BlockingQueue<TransferObject> sendingQueue = new LinkedBlockingQueue<TransferObject>();
-	private BlockingQueue<ObjectRequestResponse> objectFromServerQueue = new LinkedBlockingQueue<ObjectRequestResponse>();
+	private BlockingQueue<Object> objectFromServerQueue = new LinkedBlockingQueue<Object>();
 	private BlockingQueue<ReturnValue> returnValueQueue = new LinkedBlockingQueue<ReturnValue>();
 
 	public IStreamProvider getStreamProvider() {
@@ -38,7 +38,7 @@ public class MessageManager {
 		sendingQueue.add(transferObject);
 	}
 
-	public ObjectRequestResponse receiveObject() throws IOException, ClassNotFoundException 
+	public Object receiveObject() throws IOException, ClassNotFoundException 
 	{
 		try {
 			return objectFromServerQueue.take();
@@ -76,6 +76,7 @@ public class MessageManager {
 	{
 		Object temp = null;
 		try {
+			
 			temp = streamProvider.getObjectInputStream().readObject();
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -85,6 +86,10 @@ public class MessageManager {
 		if(temp instanceof ReturnValue)
 		{
 			returnValueQueue.add((ReturnValue)temp);
+		}
+		if(temp instanceof ObjectRequestResponse){
+			ObjectRequestResponse response = (ObjectRequestResponse) temp;
+			objectFromServerQueue.add(response.getRequestedObject());
 		}
 	}
 	

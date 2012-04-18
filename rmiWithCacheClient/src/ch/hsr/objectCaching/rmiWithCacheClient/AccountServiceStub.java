@@ -31,7 +31,7 @@ public class AccountServiceStub extends ch.hsr.objectCaching.rmiOnlyClient.Accou
 			AccountStub accountStub = new AccountStub();
 			accountStub.setObjectID(i); 
 			retValCollection.add(accountStub);
-			
+			accountStub.setCache(objectCache);
 		}
 		return retValCollection;
 	}
@@ -48,6 +48,14 @@ public class AccountServiceStub extends ch.hsr.objectCaching.rmiOnlyClient.Accou
 	protected ReturnValue receiveMethodCall() throws IOException,
 			ClassNotFoundException {
 		return messageManager.receiveReturnValue();
+	}
+
+	public ObjectCache getObjectCache() {
+		return objectCache;
+	}
+
+	public void setObjectCache(ObjectCache objectCache) {
+		this.objectCache = objectCache;
 	}
 
 }

@@ -62,7 +62,7 @@ Die im Diagramm dargestellten Operationen lassen sich wie folgt erklären:
 Die Testcase-Factory liest ein XML-File, in welchem ein sogenannter "TestCase" definiert ist. Wird beim Starten des Frameworkservers kein Paramter mitgegeben, wird der Standard-Testcase gewählt, welcher in der Datei "testCases.xml" abgelegt ist. Wird aber ein Parameter mitgegeben, beschreibt dieser den Namen der auszuführenden TestCase-Datei.\newline
 Durch die eingelesenen Informationen erstellt die Factory die Szenarien, welche dann weiter an die verschiedenen Clients gesendet werden. Folgender Block ist ein Auszug aus einer TestCase-Datei:
 
-\begin{lstlisting}
+\begin{lstlisting}[language=XML, breaklines=true] 	
 <?xml version='1.0' encoding='UTF-8'?>
 <TestRun>
   <TestCase SystemUnderTest="ch.hsr.objectCaching.rmiOnlyClient.RMIonlyClientSystem">
@@ -127,7 +127,7 @@ public void shutdown() throws RemoteException;
 \label{sec:testclient}
 
 \begin{center}
-\includegraphics[scale=0.2]{image_testFramework/startTest.png}
+\includegraphics[scale=0.3]{image_testFramework/startTest.png}
 \end{center}
 
 Die Klasse TestClient ist die Schnittstelle zwischen dem Testframework und dem ClientSystemUnderTest. Im Konstruktor dieser Klasse kann ein Objekt übergeben werden, welches das ClientSystemUnderTest Interface implementiert. Startet der Server den Testlauf wird im TestClient das zuvor gesetzte Szenario abgearbeitet. Hierfür wird auf jedem Aktion Objekt die Methode execute(Account accunt) aufgerufen. Das Account Objekt, welches der execute Methode übergeben werden muss, wird aus der List von Accounts die von AccountService bereitgestellt wird geholt und übergeben.(Ringbuffer). Bei einem Shutdown durch den Server ist der TestClient ebenfalls für die ordnungsgemässe Beendigung des ClientSystemUnderTest zuständig.

@@ -15,7 +15,7 @@ Das Framework lässt sich über eine Konfigurationsdatei konfigurieren und kann 
 
 
 
-\subsection{Server}
+\subsection{Der Frameworkserver}
 \label{sec:test-FW Server}
 \subsubsection{Das Startup-Script}
 \label{sec:startupScript}
@@ -37,26 +37,67 @@ Offensichtlich wartet das Script beim Ausführen eines Befehls auf einem fremden
  ssh student@${i} "java -jar ${remotePath}/${clientJar}" &
 \end{lstlisting}
 
-\subsubsection{Der FrameworkServer}
+\subsubsection{Starten der Testumgebung}
 \label{sec:frameWorkServer}
-Der Frameworkserver, einmal gestartet, administriert den ganzen weiteren Ablauf des Testdurchlaufs. Die Kommunikation des Frameworkservers mit den Frameworkclients ist in folgendem Sequenzdiagramm grob dargestellt:
+In diesem Kapitel werden die Schritte beschrieben, welche vor dem Starten des Testlaufs durchgeführt werden. Der Frameworkserver, einmal gestartet, administriert den ganzen weiteren Ablauf des Testlaufs. \newline
+Die Kommunikation des Frameworkservers mit den Frameworkclients ist in folgendem Sequenzdiagramm grob dargestellt:
 
 \begin{center}
 \includegraphics[scale=0.3]{image_testFramework/TestFWInit.png}
 \end{center}
 
-Die Methode generateTestCase() ruft eine Factory auf, welche aus einer XML-Datei einen Testcase generiert. Diese Factory wird unter dem Kapitel Testcase-Factory genauer beschrieben.
-\paragraph
-Alle Konfigurationsparameter welche der Server braucht, sind in einer Konfigurationsdatei abgelegt. Beim Start des Servers wird also diese Konfigurationsdatei in der Methode "readConfig()" ausgelesen. Darin sind unter anderem die Netzwerkports und die Ip-Adressen der Clients definiert. 
-Aus den für den Client wichtigen Informationen wird ein Configuration-Objekt erzeugt. Dieses Objekt wird dann bei initialize an die Clients übergeben. Diese brauchen die im Objekt gespeicherten Informationen, um eine funktionierende RMI-Verbindung mit dem Server herstellen zu können.
+Die im Diagramm dargestellten Operationen lassen sich wie folgt erklären:
 
+\begin{itemize}
+\item Die Methode generateTestCase() ruft eine Factory auf, welche aus einer XML-Datei einen Testcase generiert. Diese Factory wird unter dem Kapitel Testcase-Factory genauer beschrieben.
+\item Alle Konfigurationsparameter welche der Server braucht, sind in einer Konfigurationsdatei abgelegt. Durch eine Configurationfactory wird durch mit Hilfe der Konfigurationsdatei ein Configuration-Objekt erzeugt. Unter dem Kapitel "Configuration-Factory" wird dies näher beschrieben.
+\item Nachdem die Konfigurationsparameter ausgelesen wurden, kann der Dispatcher in einem seperaten Thread gestartet werden. Weitere Ausführungen sind unter dem Kapitel "Der Dispatcher" zu finden.
+\item Bei der Initialisierung der Clients, wird diesen je ein Scenario und ein Configuration-Objekt gesendet. Das Configuration-Objekt umfasst alle für den Client wichtigen Konfigurationsparameter, wie etwa die Ports, unter welchen der Server seine Dienste zur Verfügung stellt. Was ein Scenario genau ist wird unter dem "Kapitel Testcase-Factory" genauer beschrieben.
+\item Pro Client hat der Server beim Auslesen der Konfigurationsdatei ein Client-Objekt instanziert. Dies wurde vorallem zur Kontrolle der Clients durch den Server so implementiert. Darauf wird im Kapitel "ClientObjekt" eingegangen.
+\item Nachdem alle Clients "setReady()" aufgerufen haben, ruft der Server "start()" auf allen Clients auf. Diese beginnen dann mit dem eigentlichen Testlauf. Dadurch sichert der Server einen fairen Start des Testlaufs, da es ansonsten vorkommen könnte, dass einer der Clients massiv früher starten kann, als der andere.
+\end{itemize}
+
+\subsubsection{Testcase-Factory}
+\label{sec:testCaseFactory}
+Die Testcase-Factory liest ein XML-File, in welchem ein sogenannter "TestCase" definiert ist. Wird beim Starten des Frameworkservers kein Paramter mitgegeben, wird der Standard-Testcase gewählt, welcher in der Datei "testCases.xml" abgelegt ist. Wird aber ein Parameter mitgegeben, beschreibt dieser den Namen der auszuführenden TestCase-Datei.\newline
+Durch die eingelesenen Informationen erstellt die Factory die Szenarien, welche dann weiter an die verschiedenen Clients gesendet werden. Folgender Block ist ein Auszug aus einer TestCase-Datei:
+
+\begin{lstlisting}
+<?xml version='1.0' encoding='UTF-8'?>
+<TestRun>
+  <TestCase SystemUnderTest="ch.hsr.objectCaching.rmiOnlyClient.RMIonlyClientSystem">
+    <Account balance="1"></Account>
+      <Scenario id="1">
+        <ActionSequence>
+          <Increment count ="100" delay="0" factor="1.1"></Increment>
+	</ActionSequence>
+      </Scenario>
+      <Scenario id="2">
+	<ActionSequence>
+          <Increment count ="100" delay="0" factor="1.1"></Increment>
+	</ActionSequence>
+      </Scenario>
+  </TestCase>
+</TestRun>
+\end{lstlisting}
+
+Eine TestCase-Datei beschreibt genau einen TestCase. Ein TestCase kann verschiedene Szenarien beinhalten, oder aber auch nur ein Szenario beschreiben. Ist nur ein Szenario definiert, werden beide Clients mit demselben Szenario arbeiten. Falls mehrere Szenarien beschrieben sind, werden die Clients unterschiedliche Szenarien durchführen. \newline
+Ein Szenario besteht aus einer Abfolge von verschiedenen Actions. Was genau eine Action ist, ist unter dem Kapitel "Actions" erläutert.
+
+
+\subsubsection{Configuration-Factory}
+\label{sec:configurationFactory}
+
+\subsubsection{Der Dispatcher}
+\label{sec:dispatcher}
+
+\subsubsection{ClientObjekt}
+\label{sec:ClientObjekt}
 
 
 \begin{itemize}	
-\item Szenario definieren via XML (mit Beispiel?)
-\item Konfiguration mit Property Datei
+
 \item Resultate \& Auswertung
-\item Vorbereitungs Task via Java RMI, Szenarien laden und verteilen
 \item Für die Beweisführung das Lost Updates nicht mehr möglich sind, musste ein zusätzlicher Listener eingebaut der die event protokoliert.
 \end{itemize}
 

@@ -103,7 +103,7 @@ public class AccountSkeleton implements RMIOnlySkeleton {
 		return objectMap.get(methodCall.getObjectID());
 	}
 	
-	void addObject(Integer objectID, Account account){
+	public void addObject(Integer objectID, Account account){
 		objectMap.put(objectID, account);
 		writeMap.put(account, 0);
 	}

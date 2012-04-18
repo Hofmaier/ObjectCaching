@@ -10,9 +10,9 @@ import ch.hsr.objectCaching.interfaces.ServerSystemUnderTest;
 
 public class RMIOnlyServerSystem implements ServerSystemUnderTest {
 	
-	private AccountSkeleton accountSkeleton = new AccountSkeleton();
-	private AccountServiceSkeleton accountServiceSkeleton = new AccountServiceSkeleton();
-	private AccountServiceImpl accountService = new AccountServiceImpl();
+	protected AccountSkeleton accountSkeleton = new AccountSkeleton();
+	protected AccountServiceSkeleton accountServiceSkeleton = new AccountServiceSkeleton();
+	protected AccountServiceImpl accountService = new AccountServiceImpl();
 	private ArrayList<MethodCalledListener> listeners = new ArrayList<MethodCalledListener>();
 	
 	public RMIOnlyServerSystem(){

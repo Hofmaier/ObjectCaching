@@ -54,6 +54,10 @@ Um unsere Anforderungen abdenken zu können, benötigten wir nur eine Aktion (In
 \label{sec:result}
 Für die Zeitmessung einer Aktion nutzen wir die von Java bereitgestellte Methode System.nanoTime(). Die Result Klasse bietet eine startTimeMeasurement() Methode die ein neues TimeRecord Objekt erzeugt und die momentane Zeit in das TimeRecord Objekt schreibt. (diese Methode verlangt eine BasicAction Typ der als Enum realisiert wurde(Erklärung warum nötig unter Resultate)). Über stopTimeMeasurement() lässt sich die aktuelle Messung beenden und der aktuelle TimeRecord wird abgelegt. Da innerhalb der execute() Methode mehrere setBalance() oder getBalance() möglich sind, muss es möglich sein mehrere TimeRecords pro Result Objekt zuerfassen.
 
+\subsubsection{TimeRecord}
+\label{sec:timeRecord}
+Der TimeRecordtyp ist als reines Data Tranfer Object ausgelegt. Es beinhaltet die Startzeit sowie die Stopzeit einer Aktion. Für einen genauen Auswertung einer Aktion sind noch weiter Daten nötig. Daher besitzt dieser Typ zwei weiter Felder. Der BasicActiontyp beinhaltet Informationen für welche Methode dieser Record gilt und das ActionResult speichert die Information über den Erfolg der BasicAction. Dadurch lassen sich zusammengesetzte Aktion, welche aus getBalance() und setBalance() zusammengesetzt sind unterteilen. 
+
 
 
 

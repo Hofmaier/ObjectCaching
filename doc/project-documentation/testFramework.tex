@@ -158,7 +158,7 @@ Der TimeRecordtyp ist als reines Data Tranfer Object ausgelegt. Es beinhaltet di
 \label{sec:reportGenerator}
 Der ReportGenerator erzeugt für ein Szenario eine Datei, welche alle relevanten Information beinhaltet und die Daten so aufbereitet das diese leicht lesbar sind. Für die genau Auswertung der Resultate war es nötig, dass wir unterscheiden könne zwischen einer getBalance() und einer setBalance() Aktion. Da jedoch eine Aktion aus einer Abfolge von Reads und Writes bestehen kann war es nötig das diese Information gespeichert werden kann. Im TimeRecord lässt sich daher die BasicAction speichern. Um eine Statistik über die Fehlerrate zu bekommen war es desweitern noch nötig das der Erfolg einer BasicAction gespeichert werden kann. Damit lässt sich ein Szenario auf die zwei Grundoperation setBalance() und getBalance() herunterbrechen und gibt uns die Möglichkeit eine genau Auswertung der Messresultate zu machen.
 \newline
-Die Datei die der ReportGenerator erzeugt besteht aus drei Teilen. Der erste Teil gibt eine List der Aktionen mit und der BasicAktion. Darauf folgt eine Zusammenfassung der zwei BasicAktion und zuletzt ein Zusammenfassung über das ganze Szenario.
+Die Datei die der ReportGenerator erzeugt besteht aus drei Teilen. Der erste Teil gibt eine List der Aktionen aus und der BasicAktion. Darauf folgt eine Zusammenfassung der zwei BasicAktion Arten und zuletzt ein Zusammenfassung über das ganze Szenario.
 
 
 

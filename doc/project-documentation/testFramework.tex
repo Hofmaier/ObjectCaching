@@ -8,7 +8,42 @@ Das Framework lässt sich über eine Konfigurationsdatei konfigurieren und kann 
 
 \subsection{Server}
 \label{sec:test-FW Server}
-\begin{itemize}
+\subsubsection{Das Startup-Script}
+\label{sec:startupScript}
+Das  Startup-Script ist ein Shell-Script in der Bash-Sprache geschrieben. Das Script führt mehrere Methoden nacheinander aus:
+\begin{enumerate}
+\item Das Script prüft die in der Config-Datei eingetragenen Zielrechner auf bereits vorhandene "client.jar"-Dateien und löscht diese Dateien, falls vorhanden
+\item Durch die Applikation "Secure Copy" wird die zuvor im Buildprozess erstellte Datei "client.jar" auf die Zielrechner kopiert
+\item Via SSH wird der Frameworkclient auf den Zielrechnern gestartet
+\item Der Frameworkserver wird gestartet
+\end{enumerate}
+Sind diese Schritte abgeschlossen, beendet das Startupscript und die weitere Ausführung des Testlaufs wird durch den Frameworkserver orchestriert.
+Beim Starten des Scripts wird der Name der Datei mitgegeben, in welcher der genaue Testlauf definiert ist. Wird kein Argument mitgegeben, läuft der Standardtestlauf ab, welcher in der Datei "testCases.xml" beschrieben ist.
+Probleme beim Schreiben des Scripts waren selten. Ein Problem, welches gelöst werden musste war der Umstand, dass das Script nach dem Starten eines Clients nicht mehr weiterlief, sondern einfach wartete. Dies war bei folgende Zeile der Fall:
+\begin{lstlisting}	
+ ssh student@${i} "java -jar ${remotePath}/${clientJar}"
+\end{lstlisting}	
+Offensichtlich wartet das Script beim Ausführen eines Befehls auf einem fremden Rechner auf einen Rückgabewert in irgendeiner Form; also auf einen Errorcode oder aber auf einen Exitstatus. Das Absetzen dieses Befehls musste also in einem seperaten Kind-Prozess stattfinden, damit der Eltern-Prozess die weiteren Aufgaben des Scripts abarbeiten konnte und nicht auf einen Rückgabewert wartete. Dies kann in der Bash-Shell mit einem "\&" erreicht werden. Die simple Lösung des Problems sieht also fast gleich aus:
+\begin{lstlisting}
+ ssh student@${i} "java -jar ${remotePath}/${clientJar}" &
+\end{lstlisting}
+
+\subsubsection{Der FrameworkServer}
+\label{sec:frameWorkServer}
+Der Frameworkserver, einmal gestartet, administriert den ganzen weiteren Ablauf des Testdurchlaufs. Die Kommunikation des Frameworkservers mit den Frameworkclients ist in folgendem Sequenzdiagramm grob dargestellt:
+
+\begin{center}
+\includegraphics[scale=0.3]{image_testFramework/TestFWInit.png}
+\end{center}
+
+Die Methode generateTestCase() ruft eine Factory auf, welche aus einer XML-Datei einen Testcase generiert. Diese Factory wird unter dem Kapitel Testcase-Factory genauer beschrieben.
+\paragraph
+Alle Konfigurationsparameter welche der Server braucht, sind in einer Konfigurationsdatei abgelegt. Beim Start des Servers wird also diese Konfigurationsdatei in der Methode "readConfig()" ausgelesen. Darin sind unter anderem die Netzwerkports und die Ip-Adressen der Clients definiert. 
+Aus den für den Client wichtigen Informationen wird ein Configuration-Objekt erzeugt. Dieses Objekt wird dann bei initialize an die Clients übergeben. Diese brauchen die im Objekt gespeicherten Informationen, um eine funktionierende RMI-Verbindung mit dem Server herstellen zu können.
+
+
+
+\begin{itemize}	
 \item Szenario definieren via XML (mit Beispiel?)
 \item Konfiguration mit Property Datei
 \item Resultate \& Auswertung

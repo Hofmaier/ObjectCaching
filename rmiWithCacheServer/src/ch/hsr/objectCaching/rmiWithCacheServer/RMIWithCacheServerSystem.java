@@ -13,5 +13,4 @@ public class RMIWithCacheServerSystem extends RMIOnlyServerSystem {
 		clientHandler.setObjectManager(objectManager);
 		return clientHandler;
 	}
-	
 }

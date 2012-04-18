@@ -10,18 +10,18 @@ import ch.hsr.objectCaching.dto.ObjectRequest;
 public class ObjectCache {
 	
 	private MessageManager messageManager;
-	private HashMap<Integer, Account> objectCache;
+	private HashMap<Integer, Object> objectCache;
 	
 	public ObjectCache()
 	{
-		objectCache = new HashMap<Integer, Account>();
+		objectCache = new HashMap<Integer, Object>();
 	}
 
 	public void setMessageManager(MessageManager messageManager) {
 		this.messageManager = messageManager;
 	}
 
-	public Account getObject(int objectID) 
+	public Object getObject(int objectID) 
 	{
 		if(objectCache.containsKey(objectID))
 		{
@@ -30,16 +30,16 @@ public class ObjectCache {
 		else
 		{
 			sendObjectRequest(objectID);
-			Account receivedObject = null;
+			Object receivedObject = null;
 			receivedObject = receiveObject(objectID, receivedObject);
 			return receivedObject;
 		}
 		
 	}
 
-	private Account receiveObject(int objectID, Account receivedObject) {
+	private Object receiveObject(int objectID, Object receivedObject) {
 		try {
-			receivedObject = (Account) messageManager.receiveObject();
+			receivedObject =  messageManager.receiveObject();
 			objectCache.put(objectID, receivedObject);
 		} catch (IOException e) {
 			e.printStackTrace();

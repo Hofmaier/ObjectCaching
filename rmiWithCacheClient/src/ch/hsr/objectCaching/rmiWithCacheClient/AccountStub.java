@@ -10,7 +10,7 @@ public class AccountStub implements Account {
 	
 	@Override
 	public double getBalance() {
-		Account account = cache.getObject(objectID);
+		Account account = (Account) cache.getObject(objectID);
 		return account.getBalance();
 	}
 

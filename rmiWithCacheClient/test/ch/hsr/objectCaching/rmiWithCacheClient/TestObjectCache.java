@@ -18,11 +18,16 @@ public class TestObjectCache {
 		int objectID = 3;
 		ObjectCache objectCache = new ObjectCache();
 		MessageManagerFake messageManager = new MessageManagerFake();
+		Object expectedObj = new Object();
+		messageManager.requestedObject = expectedObj;
 		objectCache.setMessageManager(messageManager);
-		objectCache.getObject(objectID);
+		Object actualObj = objectCache.getObject(objectID);
 		ObjectRequest objectRequest = (ObjectRequest) messageManager.transferObject;
 		assertEquals(objectID, objectRequest.getObjectID());
+		assertEquals(1, messageManager.sendMessageCount);
+		assertEquals(expectedObj, actualObj);
 		
+		actualObj = objectCache.getObject(objectID);
 		
 	}
 

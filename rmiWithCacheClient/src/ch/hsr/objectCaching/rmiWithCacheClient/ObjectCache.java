@@ -11,11 +11,12 @@ public class ObjectCache {
 	
 	private MessageManager messageManager;
 	private HashMap<Integer, Object> objectCache;
-	private HashMap<Integer, Boolean> isInvalidMap;
+	private ConcurrencyControl conurrencyControl;
 	
 	public ObjectCache()
 	{
 		objectCache = new HashMap<Integer, Object>();
+		conurrencyControl = new ConcurrencyControl();
 	}
 
 	public void setMessageManager(MessageManager messageManager) {
@@ -26,6 +27,7 @@ public class ObjectCache {
 	{
 		if(objectCache.containsKey(objectID))
 		{
+			conurrencyControl.setObjectRead(objectID);
 			return objectCache.get(objectID);
 		}
 		else
@@ -33,6 +35,7 @@ public class ObjectCache {
 			sendObjectRequest(objectID);
 			Object receivedObject = null;
 			receivedObject = receiveObject(objectID, receivedObject);
+			conurrencyControl.addObject(objectID);
 			return receivedObject;
 		}
 		
@@ -59,6 +62,7 @@ public class ObjectCache {
 	public void addObject(int objectID, Account account)
 	{
 		objectCache.put(objectID, account);
+		conurrencyControl.addObject(objectID);
 	}
 
 	public void processMethodWithSideEffect(MethodCall methodCall) {

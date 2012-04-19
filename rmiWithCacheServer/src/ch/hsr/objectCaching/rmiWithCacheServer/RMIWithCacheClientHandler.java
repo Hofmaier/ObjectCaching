@@ -40,6 +40,7 @@ public class RMIWithCacheClientHandler extends RMIOnlyClientHandler{
 		}
 		if(objectFromStream instanceof MethodCall){
 			MethodCall methodCall = (MethodCall) objectFromStream;
+			methodCall.setClientIp(clientIpAdress);
 			processMethodCall(methodCall);
 		}
 	}

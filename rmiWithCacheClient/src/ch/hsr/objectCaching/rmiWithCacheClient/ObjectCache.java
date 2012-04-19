@@ -6,6 +6,7 @@ import java.util.HashMap;
 import ch.hsr.objectCaching.account.Account;
 import ch.hsr.objectCaching.dto.MethodCall;
 import ch.hsr.objectCaching.dto.ObjectRequest;
+import ch.hsr.objectCaching.dto.ObjectUpdate;
 
 public class ObjectCache {
 	
@@ -67,6 +68,20 @@ public class ObjectCache {
 
 	public void processMethodWithSideEffect(MethodCall methodCall) {
 		messageManager.sendMessageCall(methodCall);
+	}
+
+	public void listenForUpdates() {
+		try {
+			while(true){
+			ObjectUpdate objectUpdate = messageManager.receiveUpdate();
+			int objectID = objectUpdate.getObjectID();
+			objectCache.put(objectID, objectUpdate.getObject());
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
 	}
 	
 

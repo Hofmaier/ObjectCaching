@@ -9,10 +9,11 @@ Das Framework lässt sich über eine Konfigurationsdatei konfigurieren und kann 
 \begin{itemize}	
 \item Netzwerk Traffic der im Zimmer Auftritt kann nicht kontrolliert werden. Messungen daher nicht verlässlich, man bäuchte ein eigenes Netz.
 \item JVM Profiler: Beweis für die Zombie Objekte in der JVM, soll das gemacht werden?
-\item Logger
 \item Exception Handling
 \end{itemize}
 
+\subsection{Allgemeine Informationen}
+Zur Validierung des korrekten Prozess haben wir auf dem Server sowie dem Client eine Logger eingebaut, damit lassen sich die einzelnen Schritte von der Initialisierung, über den Testlauf, hin zum beenden des Testframeworks, einfach protokollieren.  
 
 
 \subsection{Der Frameworkserver}
@@ -210,6 +211,13 @@ Die Klasse TestClient ist die Schnittstelle zwischen dem Testframework und dem C
 \subsubsection{Action}
 \label{sec:action}
 Ein Szenario beinhaltet eine Menge von Aktionen die auf ein Account Objekt ausgeführt werden können. Für eine einfache Erweiterbarkeit von neuen Aktionen haben wir hierfür das Command-Pattern genutzt. Alle konkreten Implementierung von Aktionen leiten von der abstrakte Klasse Action ab. Im Konstruktor  dieser abstrakten Klasse wird ein neues Result Objekt instanziert. Dieses Objekt dient als Datenkontainer für alle Zeitmessungen die während dieser Aktion ausgeführt werden sollen. Desweiteren deklariert Action drei abstrakte Methoden die von Subklassen implementiert werden müssen.
+\begin{lstlisting}[language=java, breaklines=true] 	
+public abstract ActionTyp getActionTyp();
+public abstract int getMinimalNumberOfTimeRecords();
+public abstract void execute(Account account);	
+\end{lstlisting}
+Anmerkung: Eine Aktion kann aus mehreren setter/getter bestehen, daher ist es notwendig festzustellen ob die ganze Aktion erfolgreich war oder nicht. Dies wird über die minimale Anzahl von TimeRecords, die für den Erfolg der spezifischen Aktion notwendig sind, gemacht. 
+
 
 \subsubsection{ActionTyp}
 \label{sec:actionTyp}

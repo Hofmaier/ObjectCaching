@@ -1,14 +1,15 @@
 package ch.hsr.objectCaching.rmiWithCacheClient;
 
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import ch.hsr.objectCaching.dto.ObjectRequestResponse;
+import ch.hsr.objectCaching.dto.ObjectUpdate;
 import ch.hsr.objectCaching.dto.ReturnValue;
 import ch.hsr.objectCaching.dto.TransferObject;
-import ch.hsr.objectCaching.dto.ObjectUpdate;
 import ch.hsr.objectCaching.rmiOnlyClient.IStreamProvider;
 
 public class MessageManager {
@@ -50,6 +51,16 @@ public class MessageManager {
 		return null;
 	}
 	
+	public ObjectUpdate receiveUpdate() throws IOException, ClassNotFoundException 
+	{
+		try {
+			return objectUpdateQueue.take();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
 	public ReturnValue receiveReturnValue(){
 		try {
 			return returnValueQueue.take();
@@ -78,8 +89,8 @@ public class MessageManager {
 	{
 		Object temp = null;
 		try {
-			
-			temp = streamProvider.getObjectInputStream().readObject();
+			ObjectInputStream ois = streamProvider.getObjectInputStream();
+			temp = ois.readObject();
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (ClassNotFoundException e) {
@@ -95,7 +106,7 @@ public class MessageManager {
 		}
 		if(temp instanceof ObjectUpdate){
 			ObjectUpdate update = (ObjectUpdate) temp;
-			
+			objectUpdateQueue.add(update);
 		}
 	}
 	

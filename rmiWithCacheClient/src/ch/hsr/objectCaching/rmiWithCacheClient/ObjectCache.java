@@ -6,6 +6,7 @@ import java.util.HashMap;
 import ch.hsr.objectCaching.account.Account;
 import ch.hsr.objectCaching.dto.MethodCall;
 import ch.hsr.objectCaching.dto.ObjectRequest;
+import ch.hsr.objectCaching.dto.ObjectUpdate;
 
 public class ObjectCache {
 	
@@ -51,6 +52,11 @@ public class ObjectCache {
 			e.printStackTrace();
 		}
 		return receivedObject;
+	}
+	
+	public void updateObject(ObjectUpdate objectUpdate)
+	{
+		
 	}
 
 	private void sendObjectRequest(int objectID) {

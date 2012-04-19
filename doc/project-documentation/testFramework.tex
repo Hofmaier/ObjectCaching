@@ -38,8 +38,8 @@ Offensichtlich wartet das Script beim Ausführen eines Befehls auf einem fremden
  ssh student@${i} "java -jar ${remotePath}/${clientJar}" &
 \end{lstlisting}
 
-\subsubsection{Starten der Testumgebung}
-\label{sec:frameWorkServer}
+\subsubsection{Start des Frameworkservers}
+\label{sec:startFramework}
 In diesem Kapitel werden die Schritte beschrieben, welche vor dem Starten des Testlaufs durchgeführt werden. Der Frameworkserver, einmal gestartet, administriert den ganzen weiteren Ablauf des Testlaufs. \newline
 Die Kommunikation des Frameworkservers mit den Frameworkclients ist in folgendem Sequenzdiagramm grob dargestellt:
 
@@ -82,6 +82,7 @@ Durch die eingelesenen Informationen erstellt die Factory die Szenarien, welche 
 </TestRun>
 \end{lstlisting}
 
+Das Attribut "SystemUnderTest" definiert das zu testende System. Der Vorteil dieser Methode ist, dass das zu testende System einfach in XML angegeben wird und dann getestet werden kann. Es müssen also keine Anpassungen am Code vorgenommen werden, egal welches System getestet werden soll. Dem Framework ist es schlussendlich egal, welches System getestet werden soll.\newline
 Eine TestCase-Datei beschreibt genau einen TestCase. Ein TestCase kann verschiedene Szenarien beinhalten, oder aber auch nur ein Szenario beschreiben. Ist nur ein Szenario definiert, werden beide Clients mit demselben Szenario arbeiten. Falls mehrere Szenarien beschrieben sind, werden die Clients unterschiedliche Szenarien durchführen. \newline
 Aus obigem XML-Code generiert die Factory nun ein Objekt vom Typ TestCase. Dieses Objekt definiert nun zwei Szenarien, welche wiederum aus mehreren Actions bestehen. Was genau eine Action ist, ist unter dem Kapitel "Actions" beschrieben. Die Factory wird nun bei diesem Beispielcode eine Abfolge von 100 "Increment-Action" erstellen und diese in das Scenario-Objekt ablegen.
 
@@ -165,11 +166,39 @@ public void run() {
 }
 \end{lstlisting}
 
-Mit dieser Implementation wurden die Operationen zum Server hin gleichzeitig ausgeführt. Da die einzelnen Threads nach Beendigung der "run()"-Methode sterben, ist die Art der Implementation unbedenklich bezüglich Seiteneffekte oder "zombie-Threads".
+Mit dieser Implementation wird der Methodenaufruf "start()" nun von einem seperaten Thread ausgeführt. Dies führt dazu, dass die Clients nun zeitlich parallel gestartet werden und nicht nacheinander. Da die einzelnen Threads nach Beendigung der "run()"-Methode sterben, ist die Art der Implementation unbedenklich bezüglich Seiteneffekte oder "zombie-Threads".
 
 \subsubsection{Der Dispatcher}
 \label{sec:dispatcher}
 
+Der Dispatcher stellt die Verbindung zwischen dem Frameworkserver und dem Server des Systems, welches getestet werden soll, dar. Dem Dispatcher wird die Portnummer angegeben, unter welcher ein Socket öffnen soll. Weiter wird ihm ein String übergeben, in welchem der Pfad des zu testenden Systems drinnsteht. Der Dispatcher instanziert dann das zu testende System mit Hilfe des Strings und wartet dann in einem blockierten Zustand auf sich verbindende Clients. Nachdem ein Client auf dem geöffneten Socket eine Verbindung aufgebaut hat, übergibt der Dispatcher die Verbindung in Form eines Input und eines Outputstreams dem Server des zu testenden Systems.\newline
+Logischerweise läuft der Dispatcher wiederum in einem seperaten Thread.
+
+\subsubsection{Herunterfahren des Frameworkservers}
+\label{sec:herunterfahrenFramework}
+
+Nach Beendigung eines Testlaufs, muss der Server mehrere Arbeiten erledigen. Welche Operationen ausgeführt werden ist in folgender Grafik ersichtlich:
+
+\begin{center}
+\includegraphics[scale=0.2]{image_testFramework/BeendeTestlauf.png}
+\end{center}
+
+Die im Diagramm ersichtlichen Operationen können folgendermassen erläutert werden:
+\begin{itemize}
+\item Die Methode "setResults(Scenario)" wird vom Client auf dem Server aufgerufen. Beim Aufruf dieser Methode weiss der Server, dass der aufrufende Client sein Szenario durchgespielt hat und somit heruntergefahren werden kann. 
+\item Aus der "setResults(Scenario)"-Methode wird direkt "stopClient()" aufgerufen. Was diese Methode genau macht, wird im Kapitel "Stoppen eines Clients" genau beschrieben.
+\item Die Methode "shutDown()" wird auf dem Client aufgerufen. Der Client trennt daraufhin die RMI-Verbindung zum Server und schaltet sich selber ab. Nähere Informationen zum Abschaltungsprozess eines Clients kann unter dem Kapitel "Testframework Client" nachgelesen werden.
+\item Die Methode "printSummary()" verwertet die Ergebnisse, welche die CLients in ihrem Szenario gespeichert und wieder übertragen haben. Mehr Informationen dazu im Kapitel "Report Generator". Weiter wird auf der Console ausgegeben, ob es "Lost-Update"-Probleme gegeben hat oder nicht. Mehr zu diesem Thema unter "Result Generator".
+\end{itemize}
+
+\subsubsection{Stoppen eines Clients}
+\label{sec:stopClient}
+
+\subsubsection{Report Generator}
+\label{sec:reportGenerator}
+
+\subsubsection{Result Generator}
+\label{sec:resultGenerator}
 
 \begin{itemize}	
 

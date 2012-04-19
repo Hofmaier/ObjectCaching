@@ -1,4 +1,4 @@
-package ch.hsr.objectCaching.rmiWithCacheClient;
+package ch.hsr.objectCaching.util;
 
 import java.util.HashMap;
 

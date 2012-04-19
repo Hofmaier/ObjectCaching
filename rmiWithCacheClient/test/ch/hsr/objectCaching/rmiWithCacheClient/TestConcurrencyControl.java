@@ -7,6 +7,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import ch.hsr.objectCaching.account.Account;
+import ch.hsr.objectCaching.util.ConcurrencyControl;
 
 public class TestConcurrencyControl 
 {

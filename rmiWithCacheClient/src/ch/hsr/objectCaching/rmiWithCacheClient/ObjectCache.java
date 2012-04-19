@@ -7,6 +7,7 @@ import ch.hsr.objectCaching.account.Account;
 import ch.hsr.objectCaching.dto.MethodCall;
 import ch.hsr.objectCaching.dto.ObjectRequest;
 import ch.hsr.objectCaching.dto.ObjectUpdate;
+import ch.hsr.objectCaching.util.ConcurrencyControl;
 
 public class ObjectCache {
 	

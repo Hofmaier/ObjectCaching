@@ -1,10 +1,6 @@
 package ch.hsr.objectCaching.rmiOnlyServer;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
 
 import ch.hsr.objectCaching.account.Account;
@@ -19,8 +15,6 @@ public class RMIOnlyClientHandler extends ClientHandler {
 	protected RMIOnlySkeleton skeletonInUse;
 	private AccountSkeleton accountSkeleton;
 	private AccountServiceSkeleton accountServiceSkeleton;
-	protected ObjectOutputStream objectOutputStream;
-	protected ObjectInputStream objectInputStream;
 	private String clientIpAdress;
 	private ArrayList<MethodCalledListener> listeners;
 
@@ -30,25 +24,6 @@ public class RMIOnlyClientHandler extends ClientHandler {
 
 	public RMIOnlySkeleton getSkeleton() {
 		return skeletonInUse;
-	}
-
-	@Override
-	public void setInputStream(InputStream inputStream) {
-		try {
-			objectInputStream = new ObjectInputStream(inputStream);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
-	@Override
-	public void setOutputStream(OutputStream outputStream) {
-		this.outputStream = outputStream;
-		try {
-			objectOutputStream = new ObjectOutputStream(outputStream);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 	}
 
 	@Override

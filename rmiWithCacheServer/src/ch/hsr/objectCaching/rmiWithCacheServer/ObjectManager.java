@@ -6,7 +6,7 @@ import java.util.HashMap;
 import ch.hsr.objectCaching.account.Account;
 import ch.hsr.objectCaching.dto.ObjectRequest;
 import ch.hsr.objectCaching.dto.ObjectRequestResponse;
-import ch.hsr.objectCaching.dto.Update;
+import ch.hsr.objectCaching.dto.ObjectUpdate;
 import ch.hsr.objectCaching.interfaces.ClientHandler;
 
 public class ObjectManager {
@@ -46,7 +46,7 @@ public class ObjectManager {
 	public void updateClients(int objectID) {
 		ArrayList<ClientHandler> clients = clientListMap.get(objectID);
 		for(ClientHandler client:clients){
-			Update update = new Update();
+			ObjectUpdate update = new ObjectUpdate();
 			update.setObject(objectMap.get(objectID));
 			update.setObjectID(objectID);
 			client.send(update);

@@ -8,7 +8,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import ch.hsr.objectCaching.dto.ObjectRequestResponse;
 import ch.hsr.objectCaching.dto.ReturnValue;
 import ch.hsr.objectCaching.dto.TransferObject;
-import ch.hsr.objectCaching.dto.Update;
+import ch.hsr.objectCaching.dto.ObjectUpdate;
 import ch.hsr.objectCaching.rmiOnlyClient.IStreamProvider;
 
 public class MessageManager {
@@ -17,7 +17,7 @@ public class MessageManager {
 	private BlockingQueue<TransferObject> sendingQueue = new LinkedBlockingQueue<TransferObject>();
 	private BlockingQueue<Object> objectFromServerQueue = new LinkedBlockingQueue<Object>();
 	private BlockingQueue<ReturnValue> returnValueQueue = new LinkedBlockingQueue<ReturnValue>();
-	private BlockingQueue<Update> objectUpdateQueue = new LinkedBlockingQueue<Update>();
+	private BlockingQueue<ObjectUpdate> objectUpdateQueue = new LinkedBlockingQueue<ObjectUpdate>();
 
 	public IStreamProvider getStreamProvider() {
 		return streamProvider;
@@ -93,8 +93,8 @@ public class MessageManager {
 			ObjectRequestResponse response = (ObjectRequestResponse) temp;
 			objectFromServerQueue.add(response.getRequestedObject());
 		}
-		if(temp instanceof Update){
-			Update update = (Update) temp;
+		if(temp instanceof ObjectUpdate){
+			ObjectUpdate update = (ObjectUpdate) temp;
 			
 		}
 	}

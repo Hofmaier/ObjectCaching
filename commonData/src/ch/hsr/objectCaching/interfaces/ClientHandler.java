@@ -6,7 +6,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 
-import ch.hsr.objectCaching.dto.Update;
+import ch.hsr.objectCaching.dto.ObjectUpdate;
 
 public class ClientHandler implements Runnable {
 	

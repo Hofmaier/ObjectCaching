@@ -9,10 +9,11 @@ Das Framework lässt sich über eine Konfigurationsdatei konfigurieren und kann 
 \begin{itemize}	
 \item Netzwerk Traffic der im Zimmer Auftritt kann nicht kontrolliert werden. Messungen daher nicht verlässlich, man bäuchte ein eigenes Netz.
 \item JVM Profiler: Beweis für die Zombie Objekte in der JVM, soll das gemacht werden?
-\item Logger
 \item Exception Handling
 \end{itemize}
 
+\subsection{Allgemeine Informationen}
+Zur Validierung des korrekten Prozess haben wir auf dem Server sowie dem Client eine Logger eingebaut, damit lassen sich die einzelnen Schritte von der Initialisierung, über den Testlauf, hin zum beenden des Testframeworks, einfach protokollieren.  
 
 
 \subsection{Der Frameworkserver}
@@ -37,8 +38,8 @@ Offensichtlich wartet das Script beim Ausführen eines Befehls auf einem fremden
  ssh student@${i} "java -jar ${remotePath}/${clientJar}" &
 \end{lstlisting}
 
-\subsubsection{Starten der Testumgebung}
-\label{sec:frameWorkServer}
+\subsubsection{Start des Frameworkservers}
+\label{sec:startFramework}
 In diesem Kapitel werden die Schritte beschrieben, welche vor dem Starten des Testlaufs durchgeführt werden. Der Frameworkserver, einmal gestartet, administriert den ganzen weiteren Ablauf des Testlaufs. \newline
 Die Kommunikation des Frameworkservers mit den Frameworkclients ist in folgendem Sequenzdiagramm grob dargestellt:
 
@@ -81,6 +82,7 @@ Durch die eingelesenen Informationen erstellt die Factory die Szenarien, welche 
 </TestRun>
 \end{lstlisting}
 
+Das Attribut "SystemUnderTest" definiert das zu testende System. Der Vorteil dieser Methode ist, dass das zu testende System einfach in XML angegeben wird und dann getestet werden kann. Es müssen also keine Anpassungen am Code vorgenommen werden, egal welches System getestet werden soll. Dem Framework ist es schlussendlich egal, welches System getestet werden soll.\newline
 Eine TestCase-Datei beschreibt genau einen TestCase. Ein TestCase kann verschiedene Szenarien beinhalten, oder aber auch nur ein Szenario beschreiben. Ist nur ein Szenario definiert, werden beide Clients mit demselben Szenario arbeiten. Falls mehrere Szenarien beschrieben sind, werden die Clients unterschiedliche Szenarien durchführen. \newline
 Aus obigem XML-Code generiert die Factory nun ein Objekt vom Typ TestCase. Dieses Objekt definiert nun zwei Szenarien, welche wiederum aus mehreren Actions bestehen. Was genau eine Action ist, ist unter dem Kapitel "Actions" beschrieben. Die Factory wird nun bei diesem Beispielcode eine Abfolge von 100 "Increment-Action" erstellen und diese in das Scenario-Objekt ablegen.
 
@@ -164,11 +166,39 @@ public void run() {
 }
 \end{lstlisting}
 
-Mit dieser Implementation wurden die Operationen zum Server hin gleichzeitig ausgeführt. Da die einzelnen Threads nach Beendigung der "run()"-Methode sterben, ist die Art der Implementation unbedenklich bezüglich Seiteneffekte oder "zombie-Threads".
+Mit dieser Implementation wird der Methodenaufruf "start()" nun von einem seperaten Thread ausgeführt. Dies führt dazu, dass die Clients nun zeitlich parallel gestartet werden und nicht nacheinander. Da die einzelnen Threads nach Beendigung der "run()"-Methode sterben, ist die Art der Implementation unbedenklich bezüglich Seiteneffekte oder "zombie-Threads".
 
 \subsubsection{Der Dispatcher}
 \label{sec:dispatcher}
 
+Der Dispatcher stellt die Verbindung zwischen dem Frameworkserver und dem Server des Systems, welches getestet werden soll, dar. Dem Dispatcher wird die Portnummer angegeben, unter welcher ein Socket öffnen soll. Weiter wird ihm ein String übergeben, in welchem der Pfad des zu testenden Systems drinnsteht. Der Dispatcher instanziert dann das zu testende System mit Hilfe des Strings und wartet dann in einem blockierten Zustand auf sich verbindende Clients. Nachdem ein Client auf dem geöffneten Socket eine Verbindung aufgebaut hat, übergibt der Dispatcher die Verbindung in Form eines Input und eines Outputstreams dem Server des zu testenden Systems.\newline
+Logischerweise läuft der Dispatcher wiederum in einem seperaten Thread.
+
+\subsubsection{Herunterfahren des Frameworkservers}
+\label{sec:herunterfahrenFramework}
+
+Nach Beendigung eines Testlaufs, muss der Server mehrere Arbeiten erledigen. Welche Operationen ausgeführt werden ist in folgender Grafik ersichtlich:
+
+\begin{center}
+\includegraphics[scale=0.2]{image_testFramework/BeendeTestlauf.png}
+\end{center}
+
+Die im Diagramm ersichtlichen Operationen können folgendermassen erläutert werden:
+\begin{itemize}
+\item Die Methode "setResults(Scenario)" wird vom Client auf dem Server aufgerufen. Beim Aufruf dieser Methode weiss der Server, dass der aufrufende Client sein Szenario durchgespielt hat und somit heruntergefahren werden kann. 
+\item Aus der "setResults(Scenario)"-Methode wird direkt "stopClient()" aufgerufen. Was diese Methode genau macht, wird im Kapitel "Stoppen eines Clients" genau beschrieben.
+\item Die Methode "shutDown()" wird auf dem Client aufgerufen. Der Client trennt daraufhin die RMI-Verbindung zum Server und schaltet sich selber ab. Nähere Informationen zum Abschaltungsprozess eines Clients kann unter dem Kapitel "Testframework Client" nachgelesen werden.
+\item Die Methode "printSummary()" verwertet die Ergebnisse, welche die CLients in ihrem Szenario gespeichert und wieder übertragen haben. Mehr Informationen dazu im Kapitel "Report Generator". Weiter wird auf der Console ausgegeben, ob es "Lost-Update"-Probleme gegeben hat oder nicht. Mehr zu diesem Thema unter "Result Generator".
+\end{itemize}
+
+\subsubsection{Stoppen eines Clients}
+\label{sec:stopClient}
+
+\subsubsection{Report Generator}
+\label{sec:reportGenerator}
+
+\subsubsection{Result Generator}
+\label{sec:resultGenerator}
 
 \begin{itemize}	
 
@@ -210,6 +240,26 @@ Die Klasse TestClient ist die Schnittstelle zwischen dem Testframework und dem C
 \subsubsection{Action}
 \label{sec:action}
 Ein Szenario beinhaltet eine Menge von Aktionen die auf ein Account Objekt ausgeführt werden können. Für eine einfache Erweiterbarkeit von neuen Aktionen haben wir hierfür das Command-Pattern genutzt. Alle konkreten Implementierung von Aktionen leiten von der abstrakte Klasse Action ab. Im Konstruktor  dieser abstrakten Klasse wird ein neues Result Objekt instanziert. Dieses Objekt dient als Datenkontainer für alle Zeitmessungen die während dieser Aktion ausgeführt werden sollen. Desweiteren deklariert Action drei abstrakte Methoden die von Subklassen implementiert werden müssen.
+\begin{lstlisting}[language=java, breaklines=true] 	
+public abstract ActionTyp getActionTyp();
+public abstract int getMinimalNumberOfTimeRecords();
+public abstract void execute(Account account);	
+\end{lstlisting}
+Anmerkung: Eine Aktion kann aus mehreren setter/getter bestehen, daher ist es notwendig festzustellen ob die ganze Aktion erfolgreich war oder nicht. Dies wird über die minimale Anzahl von TimeRecords, die für den Erfolg der spezifischen Aktion notwendig sind, gemacht. 
+
+
+\subsubsection{ActionTyp}
+\label{sec:actionTyp}
+Der ActionTyp wird zur Indentizifierung der Aktion benutzt und ist als Enum realisiert. Folgende Aktionstypen sind bereits vorhanden.
+
+\begin{itemize}
+\item ReadAction
+\item WriteAction
+\item IncrementAction
+\end{itemize}
+(Underline im Item funktionieren nicht!!!!)
+Die Werte diese Enums werden zur Fallunterscheidung bei der Report Generierung verwendet.
+
  
 \subsubsection{Increment Action}
 \label{sec:incrementAction}
@@ -225,15 +275,30 @@ Der TimeRecordtyp ist als reines Data Tranfer Object ausgelegt. Es beinhaltet di
 
 \subsubsection{BasicAction}
 \label{sec:BasicAction}
+Damit eine genaue Analyse der Aktionen gemacht werden kann, ist es nötig das man unter getBalance() und setBalance() unterscheiden kann. Eine Aktion kann aus mehreren Methodenaufrufen bestehen, daher muss bei einer Zeitmessung die Art(setter / getter) angegeben werden. Da jedoch eine Aktion aus einer Abfolge von Reads und Writes bestehen kann ist es nötig das diese Information gespeichert wird. Im TimeRecord lässt sich daher die BasicAction speichern.
 
 \subsubsection{ActionResult}
 \label{sec:ActionResult}
+Den Erfolg eines getBalance() oder setBalance() Aufrufs lässt sich ebenfalls im TimeRecord speichern. Um eine Statistik über die Fehlerrate beider Methodenaufrufe zu bekommen, war es desweitern noch nötig, dass beim stoppen einer Messung, der eine BasicAction zugrunde liegt den Erfolgstatus gespeichert werden kann. Damit lässt sich ein Szenario auf die zwei Grundoperation setBalance() und getBalance() herunterbrechen und gibt uns die Möglichkeit eine genau Auswertung der Messresultate zu machen.
 
 \subsubsection{ReportGenerator}
 \label{sec:reportGenerator}
-Der ReportGenerator erzeugt für ein Szenario eine Datei, welche alle relevanten Information beinhaltet und die Daten so aufbereitet das diese leicht lesbar sind. Für die genau Auswertung der Resultate war es nötig, dass wir unterscheiden könne zwischen einer getBalance() und einer setBalance() Aktion. Da jedoch eine Aktion aus einer Abfolge von Reads und Writes bestehen kann war es nötig das diese Information gespeichert werden kann. Im TimeRecord lässt sich daher die BasicAction speichern. Um eine Statistik über die Fehlerrate zu bekommen war es desweitern noch nötig das der Erfolg einer BasicAction gespeichert werden kann. Damit lässt sich ein Szenario auf die zwei Grundoperation setBalance() und getBalance() herunterbrechen und gibt uns die Möglichkeit eine genau Auswertung der Messresultate zu machen.
+Der ReportGenerator analyisiert ein Szenario und schreibt die Resultate in eine Txt-Datei, welche alle relevanten Information beinhaltet. Wir haben uns für eine Textdatei entschieden, da ein Textfile leicht lesbar ist(Grund???). Folgende Messdaten müssen aus einem Report ersichtlicht sein:
+\begin{itemize}
+\item durchschnittliche Dauer des Methodenaufrufs getBalance()
+\item durchschnittliche Dauer des Methodenaufrufs setBalance()
+\item Anzahl aufgetretene Konflikte
+\item Dauer eines setBalance(); Methodenaufrufs im Falle einer Konfliktsituation
+  \begin{itemize}
+  \item Zeitdifferenz zwischen erstem setBalance bis erfolgreichem setBalance
+  \item Zeitdifferenz zwischen setBalance und Empfang der zugehörigen Exception
+  \end{itemize}
+\item Dauer des gesamten Szenario
+\end{itemize}
+
+Um die obigen Anforderung erfüllen zu können, war es nötig, dass wir unterscheiden können zwischen einer getBalance() und einer setBalance() Aktion, dies wird über den BasicAction-Typ erledigt.
 \newline
-Die Datei die der ReportGenerator erzeugt besteht aus drei Teilen. Der erste Teil gibt eine List der Aktionen aus und der BasicAktion. Darauf folgt eine Zusammenfassung der zwei BasicAktion Arten und zuletzt ein Zusammenfassung über das ganze Szenario.
+Die Resultatedatei ist in drei Teile unterteilt. Der erste Teil gibt eine List der Aktionen aus und die dazugehörigen BasicAktion. Über den ActionTyp wird der entsprechende Ausgabestring erzeugt. Es folgt eine Zusammenfassung der zwei BasicAktionarten und zuletzt ein Zusammenfassung über das ganze Szenario.
 
 
 

@@ -53,11 +53,6 @@ public class ObjectCache {
 		}
 		return receivedObject;
 	}
-	
-	public void updateObject(ObjectUpdate objectUpdate)
-	{
-		
-	}
 
 	private void sendObjectRequest(int objectID) {
 		ObjectRequest temp = new ObjectRequest();

@@ -13,6 +13,8 @@ public class ConcurrencyControl
 	public ConcurrencyControl()
 	{
 		invalidateMap  = new HashMap<Integer, Boolean>();
+		readMap = new HashMap<Integer, Integer>();
+		writeMap = new HashMap<Integer, Integer>();
 	}
 	
 	public void processMethod(MethodCall methodCall)
@@ -39,11 +41,16 @@ public class ConcurrencyControl
 	public void addObject(int objectID)
 	{
 		invalidateMap.put(objectID, false);
+		readMap.put(objectID, 0);
+		writeMap.put(objectID, 0);
 	}
 
-	public void setObjectRead(int objectID) {
-		// TODO Auto-generated method stub
-		
+	public void setObjectRead(int objectID) 
+	{
+		int currentVersion = writeMap.get(objectID).intValue();
+		if(readMap.get(objectID).intValue() != currentVersion)
+		{
+			readMap.put(objectID, currentVersion);
+		}
 	}
-	
 }

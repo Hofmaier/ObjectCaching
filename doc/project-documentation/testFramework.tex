@@ -242,13 +242,26 @@ Damit eine genaue Analyse der Aktionen gemacht werden kann, ist es nötig das ma
 
 \subsubsection{ActionResult}
 \label{sec:ActionResult}
-Das Resultat eines getBalance() oder setBalance() Aufrufs lässt sich ebenfalls im TimeRecord speichern. Um eine Statistik über die Fehlerrate zu bekommen, war es desweitern noch nötig das der Erfolg einer BasicAction gespeichert werden kann. Damit lässt sich ein Szenario auf die zwei Grundoperation setBalance() und getBalance() herunterbrechen und gibt uns die Möglichkeit eine genau Auswertung der Messresultate zu machen.
+Den Erfolg eines getBalance() oder setBalance() Aufrufs lässt sich ebenfalls im TimeRecord speichern. Um eine Statistik über die Fehlerrate beider Methodenaufrufe zu bekommen, war es desweitern noch nötig, dass beim stoppen einer Messung, der eine BasicAction zugrunde liegt den Erfolgstatus gespeichert werden kann. Damit lässt sich ein Szenario auf die zwei Grundoperation setBalance() und getBalance() herunterbrechen und gibt uns die Möglichkeit eine genau Auswertung der Messresultate zu machen.
 
 \subsubsection{ReportGenerator}
 \label{sec:reportGenerator}
-Der ReportGenerator erzeugt für ein Szenario eine Txt-Datei, welche alle relevanten Information beinhaltet und die Daten so aufbereitet das diese leicht lesbar sind. Wir haben uns für eine Textdatei entschieden, da ein Textfile leicht lesbar ist(Grund???). Für die genau Auswertung der Resultate war es nötig, dass wir unterscheiden könne zwischen einer getBalance() und einer setBalance() Aktion, dies wird über den BasicAction-Typ erledigt.
+Der ReportGenerator analyisiert ein Szenario und schreibt die Resultate in eine Txt-Datei, welche alle relevanten Information beinhaltet. Wir haben uns für eine Textdatei entschieden, da ein Textfile leicht lesbar ist(Grund???). Folgende Messdaten müssen aus einem Report ersichtlicht sein:
+\begin{itemize}
+\item durchschnittliche Dauer des Methodenaufrufs getBalance()
+\item durchschnittliche Dauer des Methodenaufrufs setBalance()
+\item Anzahl aufgetretene Konflikte
+\item Dauer eines setBalance(); Methodenaufrufs im Falle einer Konfliktsituation
+  \begin{itemize}
+  \item Zeitdifferenz zwischen erstem setBalance bis erfolgreichem setBalance
+  \item Zeitdifferenz zwischen setBalance und Empfang der zugehörigen Exception
+  \end{itemize}
+\item Dauer des gesamten Szenario
+\end{itemize}
+
+Um die obigen Anforderung erfüllen zu können, war es nötig, dass wir unterscheiden können zwischen einer getBalance() und einer setBalance() Aktion, dies wird über den BasicAction-Typ erledigt.
 \newline
-Die Datei die der ReportGenerator erzeugt besteht aus drei Teilen. Der erste Teil gibt eine List der Aktionen aus und die dazugehörigen BasicAktion. Es folgt eine Zusammenfassung der zwei BasicAktion Arten und zuletzt ein Zusammenfassung über das ganze Szenario.
+Die Resultatedatei ist in drei Teile unterteilt. Der erste Teil gibt eine List der Aktionen aus und die dazugehörigen BasicAktion. Über den ActionTyp wird der entsprechende Ausgabestring erzeugt. Es folgt eine Zusammenfassung der zwei BasicAktionarten und zuletzt ein Zusammenfassung über das ganze Szenario.
 
 
 

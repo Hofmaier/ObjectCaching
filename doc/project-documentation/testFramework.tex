@@ -210,6 +210,19 @@ Die Klasse TestClient ist die Schnittstelle zwischen dem Testframework und dem C
 \subsubsection{Action}
 \label{sec:action}
 Ein Szenario beinhaltet eine Menge von Aktionen die auf ein Account Objekt ausgeführt werden können. Für eine einfache Erweiterbarkeit von neuen Aktionen haben wir hierfür das Command-Pattern genutzt. Alle konkreten Implementierung von Aktionen leiten von der abstrakte Klasse Action ab. Im Konstruktor  dieser abstrakten Klasse wird ein neues Result Objekt instanziert. Dieses Objekt dient als Datenkontainer für alle Zeitmessungen die während dieser Aktion ausgeführt werden sollen. Desweiteren deklariert Action drei abstrakte Methoden die von Subklassen implementiert werden müssen.
+
+\subsubsection{ActionTyp}
+\label{sec:actionTyp}
+Der ActionTyp wird zur Indentizifierung der Aktion benutzt und ist als Enum realisiert. Folgende Aktionstypen sind bereits vorhanden.
+
+\begin{itemize}
+\item ReadAction
+\item WriteAction
+\item IncrementAction
+\end{itemize}
+(Underline im Item funktionieren nicht!!!!)
+Die Werte diese Enums werden zur Fallunterscheidung bei der Report Generierung verwendet.
+
  
 \subsubsection{Increment Action}
 \label{sec:incrementAction}
@@ -225,15 +238,17 @@ Der TimeRecordtyp ist als reines Data Tranfer Object ausgelegt. Es beinhaltet di
 
 \subsubsection{BasicAction}
 \label{sec:BasicAction}
+Damit eine genaue Analyse der Aktionen gemacht werden kann, ist es nötig das man unter getBalance() und setBalance() unterscheiden kann. Eine Aktion kann aus mehreren Methodenaufrufen bestehen, daher muss bei einer Zeitmessung die Art(setter / getter) angegeben werden. Da jedoch eine Aktion aus einer Abfolge von Reads und Writes bestehen kann ist es nötig das diese Information gespeichert wird. Im TimeRecord lässt sich daher die BasicAction speichern.
 
 \subsubsection{ActionResult}
 \label{sec:ActionResult}
+Das Resultat eines getBalance() oder setBalance() Aufrufs lässt sich ebenfalls im TimeRecord speichern. Um eine Statistik über die Fehlerrate zu bekommen, war es desweitern noch nötig das der Erfolg einer BasicAction gespeichert werden kann. Damit lässt sich ein Szenario auf die zwei Grundoperation setBalance() und getBalance() herunterbrechen und gibt uns die Möglichkeit eine genau Auswertung der Messresultate zu machen.
 
 \subsubsection{ReportGenerator}
 \label{sec:reportGenerator}
-Der ReportGenerator erzeugt für ein Szenario eine Datei, welche alle relevanten Information beinhaltet und die Daten so aufbereitet das diese leicht lesbar sind. Für die genau Auswertung der Resultate war es nötig, dass wir unterscheiden könne zwischen einer getBalance() und einer setBalance() Aktion. Da jedoch eine Aktion aus einer Abfolge von Reads und Writes bestehen kann war es nötig das diese Information gespeichert werden kann. Im TimeRecord lässt sich daher die BasicAction speichern. Um eine Statistik über die Fehlerrate zu bekommen war es desweitern noch nötig das der Erfolg einer BasicAction gespeichert werden kann. Damit lässt sich ein Szenario auf die zwei Grundoperation setBalance() und getBalance() herunterbrechen und gibt uns die Möglichkeit eine genau Auswertung der Messresultate zu machen.
+Der ReportGenerator erzeugt für ein Szenario eine Txt-Datei, welche alle relevanten Information beinhaltet und die Daten so aufbereitet das diese leicht lesbar sind. Wir haben uns für eine Textdatei entschieden, da ein Textfile leicht lesbar ist(Grund???). Für die genau Auswertung der Resultate war es nötig, dass wir unterscheiden könne zwischen einer getBalance() und einer setBalance() Aktion, dies wird über den BasicAction-Typ erledigt.
 \newline
-Die Datei die der ReportGenerator erzeugt besteht aus drei Teilen. Der erste Teil gibt eine List der Aktionen aus und der BasicAktion. Darauf folgt eine Zusammenfassung der zwei BasicAktion Arten und zuletzt ein Zusammenfassung über das ganze Szenario.
+Die Datei die der ReportGenerator erzeugt besteht aus drei Teilen. Der erste Teil gibt eine List der Aktionen aus und die dazugehörigen BasicAktion. Es folgt eine Zusammenfassung der zwei BasicAktion Arten und zuletzt ein Zusammenfassung über das ganze Szenario.
 
 
 

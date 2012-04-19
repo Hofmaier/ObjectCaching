@@ -4,12 +4,14 @@ import java.io.IOException;
 import java.util.HashMap;
 
 import ch.hsr.objectCaching.account.Account;
+import ch.hsr.objectCaching.dto.MethodCall;
 import ch.hsr.objectCaching.dto.ObjectRequest;
 
 public class ObjectCache {
 	
 	private MessageManager messageManager;
 	private HashMap<Integer, Object> objectCache;
+	private HashMap<Integer, Boolean> isInvalidMap;
 	
 	public ObjectCache()
 	{
@@ -57,6 +59,10 @@ public class ObjectCache {
 	public void addObject(int objectID, Account account)
 	{
 		objectCache.put(objectID, account);
+	}
+
+	public void processMethodWithSideEffect(MethodCall methodCall) {
+		messageManager.sendMessageCall(methodCall);
 	}
 	
 

@@ -6,19 +6,23 @@
 		<Account balance="1"></Account>
 		<Scenario id="1">
 			<ActionSequence>
-				<Read count="80" </Read>
+				<Read count="80"></Read>
 				<Write count="1" value="20"></Write>
 				<Increment count="5" delay="0" factor="1.1"></Increment>
-				<Read count="15" </Read>
+				<Read count="15">
+				</Read>
 			</ActionSequence>
 		</Scenario>
 		<Scenario id="2">
 			<ActionSequence>
-				<Read count="20" </Read>
+				<Read count="20">
+				</Read>
 				<Write count="1" value="100"></Write>
-				<Read count="80" </Read>
+				<Read count="80">
+				</Read>
 				<Increment count="2" delay="500" factor="1.1"></Increment>
-				<Read count="10" </Read>
+				<Read count="10">
+				</Read>
 			</ActionSequence>
 		</Scenario>
 	</TestCase>

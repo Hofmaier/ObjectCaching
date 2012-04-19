@@ -14,6 +14,10 @@ public class RMIWithCacheServerSystem extends RMIOnlyServerSystem {
 		RMIWithCacheClientHandler clientHandler = new RMIWithCacheClientHandler();
 		clientHandler.setObjectManager(objectManager);
 		clientHandler.setAccountServiceSkeleton(accountServiceSkeleton);
+		AccountSkeleton accountSkeletonWithCache = new AccountSkeleton();
+		accountSkeletonWithCache.setObjectManager(objectManager);
+		clientHandler.setAccountSkeleton(accountSkeleton);
+		
 		return clientHandler;
 	}
 	

@@ -51,6 +51,10 @@ Der Prozess Kontostand erhöhen läuft wie folgt ab.
 \item Erhält ein Client Cache ein Update \verb+update()+
 \end{enumerate}
 
+\begin{description}
+\item [setBalance] Das Object muss im Cache invalidiert werden. Mit ConcurrencyControl kann überprüft werden, ob mit einer alten Version gearbeitet wurde.
+\end{description}
+
 
 \subsubsection{Erwartetet Vorteile}
 \label{sec:erwartetet-vorteile}

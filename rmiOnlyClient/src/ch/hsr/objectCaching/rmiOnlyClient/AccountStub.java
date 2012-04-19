@@ -93,7 +93,7 @@ public class AccountStub implements Account {
 		this.objectID = objectID;
 	}
 
-	private Method getMethod(String methodName) {
+	protected Method getMethod(String methodName) {
 		Method retVal = null;
 		Method[] allMethods = Account.class.getMethods();
 		for (Method method : allMethods) {

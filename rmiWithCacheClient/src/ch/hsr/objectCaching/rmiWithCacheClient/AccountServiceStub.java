@@ -1,7 +1,6 @@
 package ch.hsr.objectCaching.rmiWithCacheClient;
 
 import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 

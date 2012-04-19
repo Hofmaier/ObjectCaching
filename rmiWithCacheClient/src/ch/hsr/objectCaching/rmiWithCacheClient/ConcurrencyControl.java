@@ -5,7 +5,7 @@ import java.util.HashMap;
 public class ConcurrencyControl 
 {
 
-	HashMap<Integer, Boolean> invalidateMap;
+	private HashMap<Integer, Boolean> invalidateMap;
 	public ConcurrencyControl()
 	{
 		invalidateMap  = new HashMap<Integer, Boolean>();
@@ -24,4 +24,10 @@ public class ConcurrencyControl
 	{
 		invalidateMap.put(objectId, true);
 	}
+	
+	public void addObject(int objectId)
+	{
+		invalidateMap.put(objectId, false);
+	}
+	
 }

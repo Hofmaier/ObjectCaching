@@ -14,7 +14,7 @@ import ch.hsr.objectCaching.dto.ReturnValue;
 
 public class AccountSkeleton implements RMIOnlySkeleton {
 	
-	private HashMap<Integer, Account> objectMap = new HashMap<Integer, Account>();
+	protected HashMap<Integer, Account> objectMap = new HashMap<Integer, Account>();
 	private HashMap<Account, Integer> writeMap = new HashMap<Account, Integer>();
 	private HashMap<String, Integer> readSetMap = new HashMap<String, Integer>();
 	
@@ -47,7 +47,7 @@ public class AccountSkeleton implements RMIOnlySkeleton {
 		return null;
 	}
 
-	private boolean isWriteConsistent(MethodCall method) {
+	protected boolean isWriteConsistent(MethodCall method) {
 		if(!method.getMethodName().equals("setBalance")){
 			return true;
 		}
@@ -57,7 +57,7 @@ public class AccountSkeleton implements RMIOnlySkeleton {
 		return !(currentVersion > lastReadVersion);
 	}
 
-	void updateWriteSet(MethodCall method) {
+	protected void updateWriteSet(MethodCall method) {
 		if(method.getMethodName().equals("setBalance")){
 			Account account = objectMap.get(method.getObjectID());
 			Integer version = writeMap.get(account);
@@ -66,7 +66,7 @@ public class AccountSkeleton implements RMIOnlySkeleton {
 		}
 	}
 
-	Method getMethod(MethodCall methodCall) {
+	protected Method getMethod(MethodCall methodCall) {
 		Class<AccountImpl> clazz = AccountImpl.class;
 		try {
 			return clazz.getDeclaredMethod(methodCall.getMethodName(), methodCall.getParameterTypes());
@@ -78,14 +78,14 @@ public class AccountSkeleton implements RMIOnlySkeleton {
 		return null;
 	}
 
-	private ReturnValue composeReturnValue(Object retVal, Class<?> returnType) {
+	protected ReturnValue composeReturnValue(Object retVal, Class<?> returnType) {
 		ReturnValue returnValue = new ReturnValue();
 		returnValue.setValue(retVal);
 		returnValue.setType(returnType);
 		return returnValue;
 	}
 
-	Object invokeMethodOnObject(Method method,
+	protected Object invokeMethodOnObject(Method method,
 			Account accountObject, Object[] args) {
 		try {
 			return method.invoke(accountObject, args);
@@ -116,7 +116,7 @@ public class AccountSkeleton implements RMIOnlySkeleton {
 		return retVal;
 	}
 
-	void updateReadSet(MethodCall methodCall) {
+	protected void updateReadSet(MethodCall methodCall) {
 		if(methodCall.getMethodName().equals("getBalance")){
 			String readSetKey = generateReadSetKey(methodCall);
 			Integer version = writeMap.get(objectMap.get(methodCall.getObjectID()));

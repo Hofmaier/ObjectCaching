@@ -2,7 +2,7 @@ package ch.hsr.objectCaching.dto;
 
 import java.io.Serializable;
 
-public class Update implements Serializable {
+public class ObjectUpdate implements Serializable {
 	private Object object;
 	private int objectID;
 	public Object getObject() {

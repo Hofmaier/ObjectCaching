@@ -5,6 +5,11 @@ Im folgenden Kapitel werden wir auf die einzelnen Komponenten des von uns entwic
 Das Framework lässt sich über eine Konfigurationsdatei konfigurieren und kann Testfälle die in einer XML Datenstruktur vorliegen intepretieren und daraus die einzelnen Testszenarien generieren. Die Testszenarien werden vom Server auf die verfügbaren Testframework Clients verteilen und dort gestartet. Das Framework startet das zu testende System auf den verschiedenen Rechnern und führt die im XML beschriebenen Szenarien durch.\newline
 Die mit den Messwerten ausgefüllten Szenarien werden an den Server zurückgeschickt und dort ausgewertet. Dies ermöglicht ein Vergleichen der verschiedenen eingesetzten Algorithmen. Folgende Eckpunkte muss das Framework erfüllen:
 
+\section{Allgemeine Informationen}
+\label{sec:allgInformationen}
+
+Um möglichst genaue Messdaten zu erlangen, wird das ganze System nach einem Testlauf beendet. Eine Aneinanderreihung von verschiedenen Testläufen würde die Messdaten aufgrund der JavaVirtualMachine beeinträchtigen. Es besteht die Möglichkeit, dass für einen zweiten Testlauf weniger Speicher zur Verfügung steht, weil der Speicher immer noch mit Objekten des ersten Testlaufs besetzt ist. Da dies nicht mit Sicherheit überprüft werden kann, daher es kann nicht gewährleistet werden, dass die Grundvoraussetzungen für beide Testläufe gleich sind, wurde auf eine Aneinanderreihung von Testläufen verzichtet.
+
 \begin{itemize}
 \item Die enwickelten Systeme müssen sich ohne Programmcode-Anpassungen an das Framework anbinden lassen
 \item Das Framework muss die genauen Zeiten, welche für die Ausführungen der Operationen nötig waren, messen können

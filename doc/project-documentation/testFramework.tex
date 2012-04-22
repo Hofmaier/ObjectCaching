@@ -1,5 +1,5 @@
 \chapter{Testing Framework}
-Im folgenden Kapitel werden wir auf die einzelnen Komponenten des von uns entwickelten Test Frameworks eingehen und die Funktionsweise erläutern. Die Aufgabe des Test Framework liegt darin, die verschiedenen Prototypen, welche im Laufe dieser Semesterarbeit entwickelt wurden, mit dieses Framework einheitlich testen zu lassen. Das Test Framework wurde parallel zum RMIOnly- Systems mit Concurrency Control entwickelt.
+Im folgenden Kapitel wird auf die einzelnen Komponenten des Test Frameworks eingegangen und deren Funktionsweise erläutert. Die Aufgabe des Test Framework liegt darin, die verschiedenen Prototypen, welche im Laufe dieser Semesterarbeit entwickelt wurden, mit dieses Framework einheitlich testen zu lassen. Das Test Framework wurde parallel zum RMIOnly- Systems mit Concurrency Control entwickelt.
 
 \section{Konzept}
 Das Framework lässt sich über eine Konfigurationsdatei konfigurieren und kann Testfälle die in einer XML Datenstruktur vorliegen intepretieren und daraus die einzelnen Testszenarien generieren. Die Testszenarien werden vom Server auf die verfügbaren Testframework Clients verteilen und dort gestartet. Das Framework startet das zu testende System auf den verschiedenen Rechnern und führt die im XML beschriebenen Szenarien durch.\newline
@@ -386,7 +386,7 @@ Die Werte diese Enums werden zur Fallunterscheidung bei der Report Generierung v
  
 \subsection{Increment Action}
 \label{sec:incrementAction}
-Um unsere Anforderungen abdenken zu können, benötigten wir nur die KontoErhöhen Aktion (IncrementAction), die den aktuellen Kontostand des Account Objekts holt (getBalance()) und den aktuellen Kontostand mit dem gegeben Faktor multipliziert und daraufhin den neuen berechneten Kontostand zurück in den Account schreibt(setBalance()). Zusätzlich war es nötig, dass zwischen der der getBalance() und der setBalance() eine minimal definierbare Zeitdauer gewartet werden kann. Diese Warteperiode ist nötig, damit sich leicht ein Konflikt erzeugen lässt und so gezeigt werden kann, dass der Fehler serverseitig zu keinem Lost-Updates führt. Tritt serverseitig ein Concurrency Fehler auf wird eine RuntimeExeption geworfen, dies führt auf der clientseite dazu, dass die ganze Aktion nochmals gestartet wird mit dem Unterschied das diesmal keine Verzögerung zwischen getBalance() und setBalance() vorkommt.
+Um unsere Anforderungen abdenken zu können, benötigten wir nur die KontoErhöhen Aktion (IncrementAction), die den aktuellen Kontostand des Account Objekts holt (getBalance()) und den aktuellen Kontostand mit dem gegeben Faktor multipliziert und daraufhin den neuen berechneten Kontostand zurück in den Account schreibt(setBalance()). Zusätzlich war es nötig, dass zwischen der der getBalance() und der setBalance() eine minimal definierbare Zeitdauer gewartet werden kann. Diese Warteperiode ist nötig, damit sich leicht ein Konflikt erzeugen lässt und so gezeigt werden kann, dass der Fehler serverseitig zu keinem Lost-Updates führt. Tritt serverseitig ein Concurrency Fehler auf wird eine RuntimeExeption geworfen, dies führt auf der clientseite dazu, dass die ganze Aktion nochmals gestartet wird mit dem Unterschied das diesmal keine Verzögerung zwischen getBalance() und setBalance() vorkommt. Verzögerung um Konflikt zu generieren!!!
 
 \subsection{WriteAction}
 \label{sec:writeAction}
@@ -408,7 +408,7 @@ Damit eine genaue Analyse der Aktionen gemacht werden kann, ist es nötig das ma
 
 \subsection{ActionResult}
 \label{sec:ActionResult}
-Den Erfolg eines getBalance() oder setBalance() Aufrufs lässt sich ebenfalls im TimeRecord speichern. Um eine Statistik über die Fehlerrate beider Methodenaufrufe zu bekommen, war es desweitern noch nötig, dass beim stoppen einer Messung, der eine BasicAction zugrunde liegt den Erfolgstatus gespeichert werden kann. Damit lässt sich ein Szenario auf die zwei Grundoperation setBalance() und getBalance() herunterbrechen und gibt uns die Möglichkeit eine genau Auswertung der Messresultate zu machen.
+Den Erfolg eines getBalance() oder setBalance() Aufrufs lässt sich ebenfalls im TimeRecord speichern. Um eine Statistik über die Fehlerrate beider Methodenaufrufe zu bekommen, war es desweitern noch nötig, dass beim stoppen einer Messung, der eine BasicAction zugrunde liegt den Erfolgstatus gespeichert werden kann. Damit lässt sich ein Szenario auf die zwei Grundoperation setBalance() und getBalance() herunterbrechen, dadurch lassen sich dieMessresultate genau Auswertung.
 
 \subsection{ReportGenerator}
 \label{sec:reportGenerator}

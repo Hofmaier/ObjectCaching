@@ -94,6 +94,10 @@ public class RMIOnlyClientHandler extends ClientHandler {
 		this.clientIpAdress = clientIpAddress;
 	}
 
+	public String getClientIpAdress() {
+		return clientIpAdress;
+	}
+
 	public void setMethodCalledListeners(
 			ArrayList<MethodCalledListener> listeners) {
 		this.listeners = listeners;

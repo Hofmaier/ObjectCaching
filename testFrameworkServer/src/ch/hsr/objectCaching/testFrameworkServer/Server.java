@@ -254,10 +254,10 @@ public class Server implements ServerInterface
 			logger.log(Level.SEVERE, "Uncaught exception", e);
 		}
 		
-		closeClientController(2000);
+		closeServer(2000);
 	}
 
-	private void closeClientController(final long delay) 
+	private void closeServer(final long delay) 
 	{
 		new Thread() {
 			@Override

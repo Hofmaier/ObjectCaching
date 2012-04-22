@@ -15,7 +15,7 @@ public class RMIOnlyClientHandler extends ClientHandler {
 	protected RMIOnlySkeleton skeletonInUse;
 	private AccountSkeleton accountSkeleton;
 	private AccountServiceSkeleton accountServiceSkeleton;
-	private String clientIpAdress;
+	protected String clientIpAdress;
 	private ArrayList<MethodCalledListener> listeners;
 
 	public void setAccountSkeleton(AccountSkeleton skeleton) {
@@ -72,7 +72,7 @@ public class RMIOnlyClientHandler extends ClientHandler {
 	protected void processMethodCall(MethodCall methodCall) {
 		setSkeleton(methodCall);
 		ReturnValue returnValue = skeletonInUse.invokeMethod(methodCall);
-		sendResponse(returnValue);
+		send(returnValue);
 	}
 
 	void sendResponse(ReturnValue returnValue) {

@@ -51,9 +51,16 @@ Offensichtlich wartet das Script beim Ausführen eines Befehls auf einem fremden
 In diesem Kapitel werden die Schritte beschrieben, welche vor dem Starten des Testlaufs durchgeführt werden. Der Frameworkserver, einmal gestartet, administriert den ganzen weiteren Ablauf des Testlaufs. \newline
 Die Kommunikation des Frameworkservers mit den Frameworkclients ist in folgendem Sequenzdiagramm grob dargestellt:
 
+
+\begin{figure}
 \begin{center}
 \includegraphics[scale=0.3]{image_testFramework/TestFWInit.png}
 \end{center}
+\caption{Testfamework Init}
+\label{labelname}
+\end{figure}
+
+
 
 Die im Diagramm dargestellten Operationen lassen sich wie folgt erklären:
 
@@ -187,9 +194,14 @@ Logischerweise läuft der Dispatcher wiederum in einem seperaten Thread.
 
 Nach Beendigung eines Testlaufs, muss der Server mehrere Arbeiten erledigen. Nachfolgend werden die wichtigsten Aufgaben, welche der Server nach einem Testlauf erledigen muss, aufgeführt:
 
+
+\begin{figure}
 \begin{center}
 \includegraphics[scale=0.2]{image_testFramework/BeendeTestlauf.png}
 \end{center}
+\caption{Testfamework Exit}
+\label{labelname}
+\end{figure}
 
 Die im Diagramm ersichtlichen Operationen können folgendermassen erläutert werden:
 \begin{itemize}
@@ -312,9 +324,14 @@ Dieses Kapitel beschreibt die Aufgaben der Testframework Client Komponenten und 
 \subsection{ClientController}
 \label{sec:clientController}
 
+
+\begin{figure}
 \begin{center}
 \includegraphics[scale=0.2]{image_testFramework/TestFWServerClientSeq.png}
 \end{center}
+\caption{Server Client Communication}
+\label{labelname}
+\end{figure}
  
 Die Kommunikation zwischen den Testframework Clients und dem Server ist mit Java RMI realisiert worden. Beim Start eines Testframework Clients wird ein neuer ClientController instanziiert, daraufhin wird dieses Objekt zur Java RMI Runtime exportiert. Die Veröffentlichung, das ClientController- Objekts erledigt die RMI Runtime im Hindergrund, ist das Objekt erfolgreich unter dem Namen, der als Argument beim start des ClientController mitgegeben wurde registriert, lässt sich der ClientController über Remote Method Invocation vom Server steuern. Der Port auf der die RMI Registry Anfragen akzeptiert lässt sich ebenfalls via Argument mitgeben falls keine Portnummer als Argument mitgegeben wird, kommt der Defaultport 1099 zum Einsatz.
 
@@ -329,9 +346,17 @@ public void shutdown() throws RemoteException;
 \subsection{Test Client}
 \label{sec:testclient}
 
+
+
+\begin{figure}
 \begin{center}
 \includegraphics[scale=0.3]{image_testFramework/startTest.png}
 \end{center}
+\caption{start Tests}
+\label{labelname}
+\end{figure}
+
+
 
 Die Klasse TestClient ist die Schnittstelle zwischen dem Testframework und dem ClientSystemUnderTest. Im Konstruktor dieser Klasse kann ein Objekt übergeben werden, welches das ClientSystemUnderTest Interface implementiert. Startet der Server den Testlauf wird im TestClient das zuvor gesetzte Szenario abgearbeitet. Hierfür wird auf jedem Aktion Objekt die Methode execute(Account accunt) aufgerufen. Das Account Objekt, welches der execute Methode übergeben werden muss, wird aus der List von Accounts die von AccountService bereitgestellt wird geholt und übergeben.(Ringbuffer). Bei einem Shutdown durch den Server ist der TestClient ebenfalls für die ordnungsgemässe Beendigung des ClientSystemUnderTest zuständig.
 
@@ -362,6 +387,12 @@ Die Werte diese Enums werden zur Fallunterscheidung bei der Report Generierung v
 \subsection{Increment Action}
 \label{sec:incrementAction}
 Um unsere Anforderungen abdenken zu können, benötigten wir nur die KontoErhöhen Aktion (IncrementAction), die den aktuellen Kontostand des Account Objekts holt (getBalance()) und den aktuellen Kontostand mit dem gegeben Faktor multipliziert und daraufhin den neuen berechneten Kontostand zurück in den Account schreibt(setBalance()). Zusätzlich war es nötig, dass zwischen der der getBalance() und der setBalance() eine minimal definierbare Zeitdauer gewartet werden kann. Diese Warteperiode ist nötig, damit sich leicht ein Konflikt erzeugen lässt und so gezeigt werden kann, dass der Fehler serverseitig zu keinem Lost-Updates führt. Tritt serverseitig ein Concurrency Fehler auf wird eine RuntimeExeption geworfen, dies führt auf der clientseite dazu, dass die ganze Aktion nochmals gestartet wird mit dem Unterschied das diesmal keine Verzögerung zwischen getBalance() und setBalance() vorkommt.
+
+\subsection{WriteAction}
+\label{sec:writeAction}
+
+\subsection{ReadAction}
+\label{sec:readAction}
 
 \subsection{Result}
 \label{sec:result}

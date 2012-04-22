@@ -32,8 +32,7 @@ public class TestConcurrencyControl {
 		concurrencyControl.setReadMap(readMap );
 		concurrencyControl.updateReadVersionOfClient(getBalanceMethod);
 		String versionKey = clientIP.concat(String.valueOf(objectID));
-		assertEquals(writeVersion, readMap.get(versionKey));
-		
+		assertEquals(writeVersion, readMap.get(versionKey));	
 	}
 
 }

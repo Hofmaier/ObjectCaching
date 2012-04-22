@@ -1,9 +1,14 @@
 \chapter{Testing Framework}
-
 Im folgenden Kapitel werden wir auf die einzelnen Komponenten des von uns entwickelten Test Frameworks eingehen und die Funktionsweise erläutern. Die Aufgabe des Test Framework liegt darin, die verschiedenen Prototypen, welche im Laufe dieser Semesterarbeit entwickelt wurden, mit dieses Framework einheitlich testen zu lassen. Das Test Framework wurde parallel zum RMIOnly- Systems mit Concurrency Control entwickelt.
 
 \subsection{Konzept}
-Das Framework lässt sich über eine Konfigurationsdatei konfigurieren und kann Testfälle die in einer XML Datenstruktur vorliegen intepretieren und daraus die einzelnen Testszenarien generieren. Die Testszenarien werden vom Server auf die verfügbaren Testframework Clients verteilen und dort gestartet, hat ein Testframework Client ein Szenario auf einem ClientSystemUnderTest abgearbeitet, wird das Szenario mit den Messwerten zurück an den Server geschickt. Auf dem Server werden dann die Messresultate jedes Szenario ausgewertet und abgespeichert. Dadurch lassen sich die Resultate der verschieden System zu einem späteren Zeitpunkt vergleichen.
+Das Framework lässt sich über eine Konfigurationsdatei konfigurieren und kann Testfälle die in einer XML Datenstruktur vorliegen intepretieren und daraus die einzelnen Testszenarien generieren. Die Testszenarien werden vom Server auf die verfügbaren Testframework Clients verteilen und dort gestartet. Das Framework startet das zu testende System auf den verschiedenen Rechnern und führt die im XML beschriebenen Szenarien durch.\newline
+Die mit den Messwerten ausgefüllten Szenarien werden an den Server zurückgeschickt und dort ausgewertet. Dies ermöglicht ein Vergleichen der verschiedenen eingesetzten Algorithmen. Folgende Eckpunkte muss das Framework erfüllen:
+
+\begin{itemize}
+\item Die enwickelten Systeme müssen sich ohne Programmcode-Anpassungen an das Framework anbinden lassen
+\item Das Framework muss die genauen Zeiten, welche für die Ausführungen der Operationen nötig waren, messen können
+\item Nach einem Testlauf muss ein Bericht erstellt werden können, welcher die nötigen Informationen darstellt
 
 \subsection{Open Points (TODO's)}
 \begin{itemize}	
@@ -11,9 +16,6 @@ Das Framework lässt sich über eine Konfigurationsdatei konfigurieren und kann 
 \item JVM Profiler: Beweis für die Zombie Objekte in der JVM, soll das gemacht werden?
 \item Exception Handling
 \end{itemize}
-
-\subsection{Allgemeine Informationen}
-Zur Validierung des korrekten Prozess haben wir auf dem Server sowie dem Client eine Logger eingebaut, damit lassen sich die einzelnen Schritte von der Initialisierung, über den Testlauf, hin zum beenden des Testframeworks, einfach protokollieren.  
 
 
 \subsection{Der Frameworkserver}
@@ -38,7 +40,7 @@ Offensichtlich wartet das Script beim Ausführen eines Befehls auf einem fremden
  ssh student@${i} "java -jar ${remotePath}/${clientJar}" &
 \end{lstlisting}
 
-\subsubsection{Start des Frameworkservers}
+\subsubsection{Startprozess des Frameworkservers}
 \label{sec:startFramework}
 In diesem Kapitel werden die Schritte beschrieben, welche vor dem Starten des Testlaufs durchgeführt werden. Der Frameworkserver, einmal gestartet, administriert den ganzen weiteren Ablauf des Testlaufs. \newline
 Die Kommunikation des Frameworkservers mit den Frameworkclients ist in folgendem Sequenzdiagramm grob dargestellt:
@@ -127,7 +129,7 @@ public void setReady(String ip)
 Interessant an dieser Methode ist die Funktion der "checkAllReady"-Methode. Dieser Mechanismus ist nicht nur dazu da, um alle Clients möglichst gleichzeitig zu starten, sondern auch, um die Threads zu steuern. Die Methode setReady() wird durch mehrere verschiedene Threads aufgerufen, von jedem Client genau ein Mal. Durch die Implementation von checkAllReady() wird aber nur der letzte Thread, welcher setReady() aufruft, weiterleben und start() ausführen können. Somit ist garantiert, dass auch danach nur ein Thread aktiv ist und keine Seiteneffekte entstehen können.\newline
 Die Implementation dieser Logik war nicht schwer, doch das Bewusstsein für die Problematik mit mehreren Threads muss ständig vorhanden sein. Die Einflüsse der parallelen Programmierung stellten ohnehin einen spannenden Aspekt dieser Arbeit dar. 
 
-\subsubsection{die Start-Methode}
+\subsubsection{Die Start-Methode}
 \label{sec:startMethode}
 
 Die Methode "start()", gibt dem Client an, mit der Abarbeitung des Szenarios zu beginnen. Die erste Implementation dieser Methode sah wie folgt aus:
@@ -177,7 +179,7 @@ Logischerweise läuft der Dispatcher wiederum in einem seperaten Thread.
 \subsubsection{Herunterfahren des Frameworkservers}
 \label{sec:herunterfahrenFramework}
 
-Nach Beendigung eines Testlaufs, muss der Server mehrere Arbeiten erledigen. Welche Operationen ausgeführt werden ist in folgender Grafik ersichtlich:
+Nach Beendigung eines Testlaufs, muss der Server mehrere Arbeiten erledigen. Nachfolgend werden die wichtigsten Aufgaben, welche der Server nach einem Testlauf erledigen muss, aufgeführt:
 
 \begin{center}
 \includegraphics[scale=0.2]{image_testFramework/BeendeTestlauf.png}
@@ -185,7 +187,7 @@ Nach Beendigung eines Testlaufs, muss der Server mehrere Arbeiten erledigen. Wel
 
 Die im Diagramm ersichtlichen Operationen können folgendermassen erläutert werden:
 \begin{itemize}
-\item Die Methode "setResults(Scenario)" wird vom Client auf dem Server aufgerufen. Beim Aufruf dieser Methode weiss der Server, dass der aufrufende Client sein Szenario durchgespielt hat und somit heruntergefahren werden kann. 
+\item Die Methode "setResults(Scenario)" wird vom Client auf dem Server aufgerufen. Durch den Aufruf dieser Methode weiss der Server, dass der aufrufende Client sein Szenario durchgespielt hat. Weiter wird mit dem Aufruf der Methode wiederum ein Thread durch den RMI-Daemon gestartet, welcher die weiter folgenden Methoden anstösst.
 \item Aus der "setResults(Scenario)"-Methode wird direkt "stopClient()" aufgerufen. Was diese Methode genau macht, wird im Kapitel "Stoppen eines Clients" genau beschrieben.
 \item Die Methode "shutDown()" wird auf dem Client aufgerufen. Der Client trennt daraufhin die RMI-Verbindung zum Server und schaltet sich selber ab. Nähere Informationen zum Abschaltungsprozess eines Clients kann unter dem Kapitel "Testframework Client" nachgelesen werden.
 \item Die Methode "printSummary()" verwertet die Ergebnisse, welche die CLients in ihrem Szenario gespeichert und wieder übertragen haben. Mehr Informationen dazu im Kapitel "Report Generator". Weiter wird auf der Console ausgegeben, ob es "Lost-Update"-Probleme gegeben hat oder nicht. Mehr zu diesem Thema unter "Result Generator".
@@ -193,18 +195,108 @@ Die im Diagramm ersichtlichen Operationen können folgendermassen erläutert wer
 
 \subsubsection{Stoppen eines Clients}
 \label{sec:stopClient}
+Ruft ein Client die Methode "setResults(Scenario)" auf dem Server auf, wird Serverintern der Status des Clients auf "Down" gesetzt. Da die Methode "stopClient()" wiederum pro Client genau ein Mal aufgerufen wird, entsteht wieder das Problem, dass mehrere Threads am Leben sind. Um dies ab einem gewissen Punkt zu verhindern, wurde ähnlich zur "setReady()"-Methode, folgende Implementation gewählt:
+\begin{lstlisting}
+private void stopClient(String clientIp)
+{
+	Client temp;
+	try {
+		
+		if((temp = clientList.getClientByIp(clientIp)) != null)
+		{
+			logger.info("stop client with ip: " + clientIp);
+			temp.setClientRunning(ShutedDown.DOWN);
+			temp.getClientStub().shutdown();
+		}
+	} catch (RemoteException e) {
+		logger.log(Level.SEVERE, "Uncaught exception", e);
+	}
+	if(checkAllShutedDown())
+	{
+		printSummary();
+	}
+}
+\end{lstlisting}
+
+Durch die Prüfung "checkAllShutedDown()", wird nur der letzte aller Threads weiterleben. Somit wird auch nur ein Thread fähig sein die Methode "printSummary()" auszuführen, während die anderen Threads die Methode zu Ende abarbeiten und am Ende der Methode sterben. Durch diese Implementation wird sichergestellt, dass nur ein Thread weiterlebt und keine "Zombi-Prozesse" mehr vorhanden sind.\newline
+Weiter wird beim Abarbeiten dieser Methode die Methode "shutdown()" auf dem Client aufgerufen. Nach diesem Aufruf fährt sich der Client herunter und kappt alle akiven Verbindungen zum Server. Weitere Informationen zum Shutdown-Prozess des Clients sind unter der Kapitel des Frameworkclients ersichtlich.
 
 \subsubsection{Report Generator}
 \label{sec:reportGenerator}
 
+Wir die Methode "printSummary" aufgerufen, wird ein ReportGenerator instanziert, welche die Daten der Clients ausliest und in eine Textdatei schreibt. Folgende Werte wurden durch die Clients erfasst:
+\begin{itemize}
+\item Zeit, welche benötigt wurde um die entsprechende Action durchzuführen
+\item Protokollierung, ob bei der Durchführung ein Konflikt generiert wurde oder nicht
+\item Zeit, welche in einem Konfliktfall gebraucht wurde, um den Konflikt zu behandeln und die Operation noch einmal auszuführen
+\end{itemize}
+
+Pro Client wird eine Datei erstellt, in welcher die Daten dargestellt werden. Folgend einen kurzen Auszug eines solchen Reports:
+
+\begin{lstlisting}
+************************************************************
+Result for Client: 152.96.193.18 with ScenarioID: 1
+OS: Linux / 3.0.0-17-generic-pae
+************************************************************
+ActionNr;#ofTries;Time[ms];ACTION
+0;0;42.674487;INCREMENT(READ) WITHOUT DELAY
+0;1;77.969046;INCREMENT(WRITE) WITHOUT DELAY
+1;0;79.684003;INCREMENT(READ) WITHOUT DELAY
+1;1;81.984427;INCREMENT(WRITE) WITHOUT DELAY
+
+------------------------------------------------
+100% of all Action executed are successful
+Total actions executed: 2, number of unsuccessful action 0
+Total getBalance calls: 2, avg. execution time 61.179245
+Total setBalance calls: 2, avg. execution time 79.9767365
+
+Total Conflict: 0 / Gesamt Dauer: 282.311963 ms / durch. Dauer pro Operation: 141.1559815
+\end{lstlisting}
+
+Die genaue Messerwerte, mit Durchschnittswerten und Vergleiche zwischen verschiedenen Systemen sind am Schluss dieser Arbeit zu finden.
+
 \subsubsection{Result Generator}
 \label{sec:resultGenerator}
+Der ResultGenerator ist ein Generator, welcher für die Berechnung des zu erwartenden Entbestandes des Account-Objektes verantwortlich ist. Wenn alle Clients ihre Operationen abgeschlossen haben, wird das aktuelle Ergebnis des Account-Objektes und das erwartete Ergebnis auf der Konsole ausgegeben. Zusätzlich wird kontrolliert, ob die Ergebnisse übereinstimmen und eine entsprechende Meldung wird auf der Konsole ausgegeben:
+\begin{lstlisting}
+19.04.2012 18:33:38 ch.hsr.objectCaching.testFrameworkServer.Server printSummary
+INFO: AccountBalance is: 1.4641001269340557
+19.04.2012 18:33:38 ch.hsr.objectCaching.testFrameworkServer.Server printSummary
+INFO: AccountBalance should be: 1.4641001269340557
+19.04.2012 18:33:38 ch.hsr.objectCaching.testFrameworkServer.Server printSummary
+INFO: No Lost-Updates!
+\end{lstlisting}
 
-\begin{itemize}	
+\subsubsection{Logger}
+\label{sec:logger}
+Wie in dem Konsolenauszug unter "Result Generator" gesehen werden kann, wurde ein Logger eingebaut, welcher alle Methodenaufrufe protokoliert. Der Logger schreibt die Ereignisse erstens auf die Konsole und zweitens schreibt er alle Informaionen zu einem Methodenaufruf in eine Datei. Diese Logdatei ist sehr Informationsreich:
 
-\item Resultate \& Auswertung
-\item Für die Beweisführung das Lost Updates nicht mehr möglich sind, musste ein zusätzlicher Listener eingebaut der die event protokoliert.
-\end{itemize}
+\begin{lstlisting}
+<record>
+  <date>2012-04-05T17:58:43</date>
+  <millis>1333641523151</millis>
+  <sequence>9</sequence>
+  <logger>TestFrameWorkServer</logger>
+  <level>INFO</level>
+  <class>ch.hsr.objectCaching.testFrameworkServer.MethodCallLogger</class>
+  <method>methodCalled</method>
+  <thread>11</thread>
+  <message>setBalance got invoked by /152.96.193.9</message>
+</record>
+<record>
+  <date>2012-04-05T17:58:43</date>
+  <millis>1333641523198</millis>
+  <sequence>10</sequence>
+  <logger>TestFrameWorkServer</logger>
+  <level>INFO</level>
+  <class>ch.hsr.objectCaching.testFrameworkServer.Server</class>
+  <method>setResults</method>
+  <thread>12</thread>
+  <message>Results from scenario 1 setted by 152.96.193.9</message>
+</record>
+\end{lstlisting}
+
+Die Notwendigkeit zur Implementierung eines Loggers wurde erst während das Projektes erkannt. Durch die vielen verschiedenen aktiven Threads war eine Überprüfung des korrekten Programmablaufs extrem schwierig. Mit der Hilfe des Loggers konnte dieses Problem behoben werden.
 
 \subsection{Testframework Client}
 \label{sec:test-FW Client}

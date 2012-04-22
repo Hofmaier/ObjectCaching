@@ -10,11 +10,11 @@ public class ConcurrencyControl
 	private HashMap<Integer, Boolean> invalidateMap;
 	private HashMap<Integer, Integer> writeMap;
 
-	private HashMap<Integer, Integer> readMap;
+	private HashMap<String, Integer> readMap;
 	public ConcurrencyControl()
 	{
 		invalidateMap  = new HashMap<Integer, Boolean>();
-		readMap = new HashMap<Integer, Integer>();
+		readMap = new HashMap<String, Integer>();
 		writeMap = new HashMap<Integer, Integer>();
 	}
 	
@@ -39,10 +39,12 @@ public class ConcurrencyControl
 		invalidateMap.put(objectID, true);
 	}
 	
+	
+	//TODO read the current version of the object from the server. Readmap key is a String instead of a Integer
 	public void addObject(int objectID)
 	{
 		invalidateMap.put(objectID, false);
-		readMap.put(objectID, 0);
+//		readMap.put(objectID, 0);
 		writeMap.put(objectID, 0);
 	}
 
@@ -51,20 +53,27 @@ public class ConcurrencyControl
 		int currentVersion = writeMap.get(objectID).intValue();
 		if(readMap.get(objectID).intValue() != currentVersion)
 		{
-			readMap.put(objectID, currentVersion);
+//			readMap.put(objectID, currentVersion);
 		}
 	}
 
 	public void updateReadVersionOfClient(MethodCall getBalanceMethod) {
-		// TODO Auto-generated method stub
-		
+		if(getBalanceMethod.getMethodName().equals("getBalance")){
+			String readKey = generateReadKey(getBalanceMethod);
+			Integer version = writeMap.get(getBalanceMethod.getObjectID());
+			readMap.put(readKey, version);
+		}	
 	}
 
-	public HashMap<Integer, Integer> getReadMap() {
+	private String generateReadKey(MethodCall getBalanceMethod) {
+		return getBalanceMethod.getClientIp().concat(String.valueOf(getBalanceMethod.getObjectID()));
+	}
+
+	public HashMap<String, Integer> getReadMap() {
 		return readMap;
 	}
 
-	public void setReadMap(HashMap<Integer, Integer> readMap) {
+	public void setReadMap(HashMap<String, Integer> readMap) {
 		this.readMap = readMap;
 	}
 	

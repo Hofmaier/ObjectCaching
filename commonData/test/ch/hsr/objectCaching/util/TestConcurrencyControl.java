@@ -28,7 +28,7 @@ public class TestConcurrencyControl {
 		getBalanceMethod.setClientIp(clientIP);
 		writeMap.put(objectID , writeVersion );
 		concurrencyControl.setWriteMap(writeMap );
-		HashMap<Integer, Integer> readMap = new HashMap<Integer, Integer>();
+		HashMap<String, Integer> readMap = new HashMap<String, Integer>();
 		concurrencyControl.setReadMap(readMap );
 		concurrencyControl.updateReadVersionOfClient(getBalanceMethod);
 		String versionKey = clientIP.concat(String.valueOf(objectID));

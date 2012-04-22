@@ -344,18 +344,20 @@ public void shutdown() throws RemoteException;
 Über dieses Interface lässt sich der gesamte Testprozess des Clients steuern. Die Idee zu Beginn des Projekts war, dass alle Konfigurationswerte seperator als Parameter an den ClientController übergeben werden. Es stellte sich jedoch schnell heraus, dass die Kappselung alles Parameter in einem seperaten Objekt eine bessere Lösung darstellt. Dieses neue Data Transfer Object, welches Configuration heisst, beinhaltet alle nötigen Parameter für die Konfiguration des ClientSystemUnderTest sowie des ClientController. In diesem Objekt ist unter anderem der Namen des ClientSystemUnderTest sowie die Information für den erfolgreichen Aufbau der RMI Kommunikation zwischen dem Testframework Client und dem Testframework Server.\\newline
 \subsubsection{Initialize des ClientControllers}
 In dieser Methode werden mehrer Aufgaben erledigt.
-\begin{itemize}
-\item Es wird ein Serverstub geladen
-\item Wird aus dem Configuration Objekt das gewünschte ClientSystemUnderTest herausgelesen und via Reflection instanziiert. Die Instanziierung des konkreten ClientSystemUnderTest wird in einer seperaten Factory erledigt.
-\item Dann wird eine TestClient erzeugt und das aktuelle ClientSystemUnderTest mitgegeben
-\item Dem TestClient wir nun das Scenario übergeben
-\item Der Server wird über die erfolgreiche Konfiguration informiert
-\end{itemize}
+
+\begin{enumerate}
+\item Es wird ein Serverstub geladen um den Erfolg der Initialisierung dem Server mit zuteilen
+\item Aus dem Configuration Objekt wird das gewünschte ClientSystemUnderTest herausgelesen und via Reflection instanziiert. Die Instanziierung des konkreten ClientSystemUnderTest übernimmt die CUTFactory.
+\item Ein neuer TestClient wird erzeugt und das aktuelle ClientSystemUnderTest Objekt wird im Konstruktor mitgegeben
+\item Auf dem TestClient wir das übergebene Scenario gesetzt
+\item Der Testframework Server wird über die erfolgreiche Konfiguration, des ClientController und des CUT informiert. Die Methode "notifyServerInitDone()" ruft setReady auf dem Serve auf.
+\end{enumerate}
+
 \subsubsection{Start eines Tests}
-Der Server startet den Testdurchlauf parallel auf allen ClientController über die Methode startTest(). Sind alle Aktionen des gegeben Szenarios abgearbeitet, wird das gesamte Szenario mit den enthaltenen Messresultaten zurück an den Server geschickt, dort wird die Auswertung der Resultate vom Server erledigt. 
+Der Server startet den Testdurchlauf parallel auf allen ClientController über die Methode "startTest()". Diese ruft auf dem TestClient "runScenario()" auf, eine Detailierte Erklärung was in dieser Methode passiert, ist im Kapitel "Test Client" zufinden. Sind alle Aktionen des gegeben Szenarios abgearbeitet, wird das gesamte Szenario mit den enthaltenen Messresultaten über die Methode "sendResultToServer()" zurück an den Server geschickt.
 
 \subsubsection{Herunterfahren des Clients}
-Über die Methode shutdown() lässt sich der Testframework Client sowie der CUT herunterfahren. Die shutdown() Methode löscht das Binding zwischen dem spezifischen Namen und dem damit verbundenen Objekt. Danach wird das Objekt von der RMI Runtime entfernt. Ist dies erledigt beendet sich der ClientController selbst. Beim testen der shutdown() Funktionalität konnte festgestellt werden, dass wenn die Umsetzung wie oben beschrieben realisiert wurde, dass der Server eine Exception bekommt, dies lag daran das der ClientController die Verbindung zum Server sofort beendet hat, so dass der Server keine Zeit hat seine RMI Verbindung zum ClientController korrekt zu schliessen. Die Lösung des Problems lag, in einer Verzögerung von zwei Sekunden bevor das System sich endgültig beendet. Die Beendigung des ClientController wird in einem seperaten Thread ausgeführt, sodass der main Thread noch genügend Zeit hat, alle offenen Verbindungen ordnungsgemäss zu schliessen.    
+Über die Methode shutdown() lässt sich der Testframework Client sowie der CUT herunterfahren. Die shutdown() Methode löscht das Binding zwischen dem spezifischen Namen und dem damit verbundenen Objekt. Danach wird das Objekt von der RMI Runtime entfernt. Ist dies erledigt beendet sich der ClientController selbst. Beim testen der shutdown() Funktionalität konnte festgestellt werden, dass bei der Umsetzung wie oben beschrieben, der Server eine Exception bekommt. Dies lag daran das der ClientController die Verbindung zum Server sofort beendet hat, so dass der Server keine Zeit hat seine RMI Verbindung zum ClientController korrekt zu schliessen. Die Lösung des Problems lag, in einer Verzögerung von zwei Sekunden bevor das System sich endgültig beendet. Die Beendigung des ClientController wird in einem seperaten Thread ausgeführt, sodass der main Thread noch genügend Zeit hat, alle offenen Verbindungen ordnungsgemäss zu schliessen.    
 
 \subsection{Test Client}
 \label{sec:testclient}
@@ -372,7 +374,7 @@ Die Klasse TestClient ist die Schnittstelle zwischen dem Testframework und dem C
 
 \subsection{Action}
 \label{sec:action}
-Ein Szenario beinhaltet eine Menge von Aktionen die auf ein Account Objekt ausgeführt werden können. Für eine einfache Erweiterbarkeit von neuen Aktionen haben wir hierfür das Command-Pattern genutzt. Alle konkreten Implementierung von Aktionen leiten von der abstrakte Klasse Action ab. Im Konstruktor  dieser abstrakten Klasse wird ein neues Result Objekt instanziert. Dieses Objekt dient als Datenkontainer für alle Zeitmessungen die während dieser Aktion ausgeführt werden sollen. Desweiteren deklariert Action drei abstrakte Methoden die von Subklassen implementiert werden müssen.
+Ein Szenario beinhaltet eine Menge von Aktionen die auf ein Account Objekt ausgeführt werden können. Für eine einfache Erweiterbarkeit von neuen Aktionen ist hierfür das Command-Pattern benutzt worden. Alle konkreten Implementierung von Aktionen leiten von der abstrakte Klasse Action ab. Im Konstruktor  dieser abstrakten Klasse wird ein neues Result Objekt instanziert. Dieses Objekt dient als Datenkontainer für alle Zeitmessungen die während dieser Aktion ausgeführt werden sollen. Desweiteren deklariert Action drei abstrakte Methoden die von Subklassen implementiert werden müssen.
 \begin{lstlisting}[language=java, breaklines=true] 	
 public abstract ActionTyp getActionTyp();
 public abstract int getMinimalNumberOfTimeRecords();

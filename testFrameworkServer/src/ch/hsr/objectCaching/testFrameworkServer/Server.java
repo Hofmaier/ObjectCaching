@@ -72,6 +72,7 @@ public class Server implements ServerInterface
 	private void startTestCase()
 	{
 		logger.info("Starting TestCase");
+		System.out.println(activeTestCase.getServerSystemUnderTest());
 		dispatcher.setSystemUnderTest(activeTestCase.getServerSystemUnderTest(), accounts.get(0), methodCallLogger);
 		initializeClients();
 	}

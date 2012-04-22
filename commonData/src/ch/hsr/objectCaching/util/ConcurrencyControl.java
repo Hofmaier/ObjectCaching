@@ -9,6 +9,7 @@ public class ConcurrencyControl
 
 	private HashMap<Integer, Boolean> invalidateMap;
 	private HashMap<Integer, Integer> writeMap;
+
 	private HashMap<Integer, Integer> readMap;
 	public ConcurrencyControl()
 	{
@@ -52,5 +53,26 @@ public class ConcurrencyControl
 		{
 			readMap.put(objectID, currentVersion);
 		}
+	}
+
+	public void updateReadVersionOfClient(MethodCall getBalanceMethod) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public HashMap<Integer, Integer> getReadMap() {
+		return readMap;
+	}
+
+	public void setReadMap(HashMap<Integer, Integer> readMap) {
+		this.readMap = readMap;
+	}
+	
+	public HashMap<Integer, Integer> getWriteMap() {
+		return writeMap;
+	}
+	
+	public void setWriteMap(HashMap<Integer, Integer> writeMap) {
+		this.writeMap = writeMap;
 	}
 }

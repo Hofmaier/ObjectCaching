@@ -1,28 +1,29 @@
 package ch.hsr.objectCaching.util;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.util.HashMap;
 
 import org.junit.Before;
 import org.junit.Test;
 
-import ch.hsr.objectCaching.dto.MethodCall;
-import ch.hsr.objectCaching.dto.ObjectRequest;
-
 public class TestConcurrencyControl {
+
+	private ConcurrencyControl concurrencyControl;
+	private Integer objectID = 23;
+	private String clientIP = "123";
 
 	@Before
 	public void setUp() throws Exception {
+		concurrencyControl = new ConcurrencyControl();
 	}
 
 	@Test
 	public void testUpdateReadVersionOfClient() {
-		ConcurrencyControl concurrencyControl = new ConcurrencyControl();
 		HashMap<Integer, Integer> writeMap = new HashMap<Integer, Integer>();
-		Integer objectID = 23;
 		Integer writeVersion = 11;
-		String clientIP = "123";
 		writeMap.put(objectID, writeVersion);
 		concurrencyControl.setWriteMap(writeMap);
 		HashMap<String, Integer> readMap = new HashMap<String, Integer>();
@@ -34,7 +35,6 @@ public class TestConcurrencyControl {
 
 	@Test
 	public void testUpdateReadVersionOfClientWithObjectRequest() {
-		ConcurrencyControl concurrencyControl = new ConcurrencyControl();
 		HashMap<Integer, Integer> writeMap = new HashMap<Integer, Integer>();
 		HashMap<String, Integer> readMap = new HashMap<String, Integer>();
 
@@ -48,6 +48,23 @@ public class TestConcurrencyControl {
 		String versionKey = clientIP.concat(String.valueOf(objectID));
 		assertEquals(resultVersion, readMap.get(versionKey));
 
+	}
+	
+	@Test
+	public void testIsWriteConsistent(){
+		concurrencyControl.updateReadVersionOfClient(clientIP, objectID);
+		assertTrue(concurrencyControl.isWriteConsistent(objectID, clientIP));
+		Integer version = concurrencyControl.getWriteMap().get(objectID);
+		concurrencyControl.getWriteMap().put(objectID, ++version);
+		assertTrue(!concurrencyControl.isWriteConsistent(objectID, clientIP));
+		
+	}
+	
+	@Test
+	public void testUpdateWriteVersion(){
+		concurrencyControl.updateReadVersionOfClient(clientIP, objectID);
+		concurrencyControl.updateWriteVersion(objectID);
+		assertTrue(!concurrencyControl.isWriteConsistent(objectID, clientIP));
 	}
 
 }

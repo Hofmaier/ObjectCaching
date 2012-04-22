@@ -49,6 +49,7 @@ public class ConcurrencyControl {
 		Integer version = writeMap.get(objectID);
 		if(version == null){
 			version = 0;
+			writeMap.put(objectID, version);
 		}
 		readMap.put(readKey, version);
 	}
@@ -71,5 +72,17 @@ public class ConcurrencyControl {
 
 	public void setWriteMap(HashMap<Integer, Integer> writeMap) {
 		this.writeMap = writeMap;
+	}
+
+	public boolean isWriteConsistent(Integer objectID, String clientIP) {
+		Integer actualClientVersion = readMap.get(generateReadMapKey(clientIP, objectID));
+		Integer actualServerVersion = writeMap.get(objectID);
+		return !(actualClientVersion < actualServerVersion);
+	}
+
+	public void updateWriteVersion(Integer objectID) {
+		Integer globalWriteVersion = writeMap.get(objectID);
+		globalWriteVersion++;
+		writeMap.put(objectID, globalWriteVersion);
 	}
 }

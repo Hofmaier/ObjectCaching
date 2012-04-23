@@ -318,7 +318,7 @@ Die Notwendigkeit zur Implementierung eines Loggers wurde erst während das Proj
 
 \section{Testframework Client}
 \label{sec:test-FW Client}
-Dieses Kapitel beschreibt die Aufgaben der Testframework Client Komponenten und deren Umsetzung. Der Testframework Clients besitzt zwei Hauptaufgaben, als erstes erzeugt und konfiguriert er das benötigte ClientSystemUnderTest. Zweitens muss er auf einem ClientSystemUnderTest eine gegebens Szenerio abarbeiten können. Die Umsetzung des Testframeworks wurde über das bewährte Client/Server Konzepts realisiert, was zu einer schlanke Lösung auf Seiten des Clients führte. Dadurch lässt sich der Framework Client und das ClientSystemUnderTest direkt vom Framework Server aus konfigurieren und steuern. Ein weiterer Vorteil liegt darin das sich neue Anforderungen jederzeit leicht umsetzen lassen.
+Dieses Kapitel beschreibt die Aufgaben der Testframework Client Komponenten und deren Umsetzung. Der Testframework Clients besitzt zwei Hauptaufgaben, als erstes erzeugt und konfiguriert der Testframework Client das benötigte ClientSystemUnderTest. Die wichtigste Aufgabe des Clients liegt jedoch darin auf dem ClientSystemUnderTest eine gegebens Szenerio durchzuarbeiten und Zeitmessungen für die einzelnen Aktionen durchführen zu können. Die Umsetzung des Testframeworks wurde über das bewährte Client/Server Konzepts realisiert, was zu einer schlanke Lösung auf Seiten des Clients führte. Der Framework Client und das ClientSystemUnderTest lassen sich dank dieses Konzepts direkt vom Framework Server aus konfigurieren und steuern. Ein weiterer Vorteil liegt darin das sich neue Anforderungen jederzeit leicht umsetzen lassen.
 
 
 \subsection{ClientController}
@@ -333,31 +333,33 @@ Dieses Kapitel beschreibt die Aufgaben der Testframework Client Komponenten und 
 \label{labelname}
 \end{figure}
  
-Die Kommunikation zwischen den Testframework Clients und dem Server ist mit Java RMI realisiert worden. Beim Start eines Testframework Clients wird ein neuer ClientController instanziiert, daraufhin wird dieses Objekt zur Java RMI Runtime exportiert. Die Veröffentlichung, das ClientController- Objekts erledigt die RMI Runtime im Hindergrund, ist das Objekt erfolgreich unter dem Namen, der als Argument beim start des ClientController mitgegeben wurde registriert, lässt sich der ClientController über Remote Method Invocation vom Server steuern. Der Port auf der die RMI Registry Anfragen akzeptiert lässt sich ebenfalls via Argument mitgeben falls keine Portnummer als Argument mitgegeben wird, kommt der Defaultport 1099 zum Einsatz.
+Die Kommunikation zwischen dem Testframework Client und dem Server ist über Java RMI realisiert worden. Beim Start eines Testframework Clients wird ein neuer ClientController instanziiert, dieses Objekt wird daraufhin zur Java RMI Runtime exportiert und für RMI Request zugänglich gemacht. Der Name sowie den Port unter dem das Objekt registriert ist, lässt sich als Argument bei Start des ClientControllers mitgeben. Der Port auf der die RMI Registry Anfragen akzeptiert lässt sich ebenfalls als optionales Argument mitgeben falls keine Portnummer als Argument mitgegeben wird, kommt der Defaultport 1099 zum Einsatz.
 
-Folgendes Interface wird vom ClientController implementiert und lässt sich über Java RMI benutzen:
+Über folgendes Remote Interface wird der ClientController konfiguriert und gesteuert:
 \begin{lstlisting}[language=java, breaklines=true] 	
 public void initialize(Scenario scenario, Configuration configuration) throws RemoteException;
 public void startTest() throws RemoteException;
 public void shutdown() throws RemoteException;
 \end{lstlisting}
-Über dieses Interface lässt sich der gesamte Testprozess des Clients steuern. Die Idee zu Beginn des Projekts war, dass alle Konfigurationswerte seperator als Parameter an den ClientController übergeben werden. Es stellte sich jedoch schnell heraus, dass die Kappselung alles Parameter in einem seperaten Objekt eine bessere Lösung darstellt. Dieses neue Data Transfer Object, welches Configuration heisst, beinhaltet alle nötigen Parameter für die Konfiguration des ClientSystemUnderTest sowie des ClientController. In diesem Objekt ist unter anderem der Namen des ClientSystemUnderTest sowie die Information für den erfolgreichen Aufbau der RMI Kommunikation zwischen dem Testframework Client und dem Testframework Server.\\newline
-\subsubsection{Initialize des ClientControllers}
-In dieser Methode werden mehrer Aufgaben erledigt.
+Die Grundidee zu Beginn des Projekts war, dass alle Konfigurationswerte seperator als Parameter an den ClientController übergeben werden. Es stellte sich jedoch schnell heraus, dass eine Kappselung der benötigen Parametern in einem seperaten Objekt eine wesentlich bessere Lösung darstellt. Dieses neue Data Transfer Object, mit dem Name Configuration, beinhaltet sowohl alle nötigen Parameter für die Konfiguration des ClientSystemUnderTest sowie des ClientController. Der Namen des ClientSystemUnderTest sowie die Informationen für den erfolgreichen Aufbau eines RMI Kommunikationkanals zwischen dem Testframework Client und dem Testframework Server sind in diesem Objekt hinterlegt.
 
+\subsubsection{Initialize des ClientControllers}
+In der konkreten Implementatin der Methode "initialize(Scenario scenario, Configuration configuration)" werden mehrer Aufgaben erledigt.
 \begin{enumerate}
-\item Es wird ein Serverstub geladen um den Erfolg der Initialisierung dem Server mit zuteilen
-\item Aus dem Configuration Objekt wird das gewünschte ClientSystemUnderTest herausgelesen und via Reflection instanziiert. Die Instanziierung des konkreten ClientSystemUnderTest übernimmt die CUTFactory.
+\item Aus dem Configuration Objekt wird die Server IP, der RMI Port und den Namen unter dem der Server registiriert ist ausgelesen. Aus diesen Information wird einen neuen RMI Verbindung zum Server erzeugt.
+\item Aus dem Configuration Objekt wird der Name des gewünschte ClientSystemUnderTest als fully qualified name herausgelesen und via Reflection instanziiert. Die Instanziierung des konkreten ClientSystemUnderTest übernimmt die CUTFactory.
+\item Auf dem ClientSystemUnderTest wird nun ein neues Socket, welches zum ServerSystemUnderTest zeigt gesetzt.
 \item Ein neuer TestClient wird erzeugt und das aktuelle ClientSystemUnderTest Objekt wird im Konstruktor mitgegeben
-\item Auf dem TestClient wir das übergebene Scenario gesetzt
-\item Der Testframework Server wird über die erfolgreiche Konfiguration, des ClientController und des CUT informiert. Die Methode "notifyServerInitDone()" ruft setReady auf dem Serve auf.
+\item Nun wird dem TestClient das übergebene Scenario übergeben und der TestClient initialisiert
+\item Der Testframework Server wird über die erfolgreiche Konfiguration, des ClientController und des ClientSystemUnderTest informiert. Über die zubeginn erzeugte RMI Verbindung wird nun "setReady()" auf dem Server aufgerufen.
+\item Der ClientController wartet, bis der Server den Test startet
 \end{enumerate}
 
-\subsubsection{Start eines Tests}
-Der Server startet den Testdurchlauf parallel auf allen ClientController über die Methode "startTest()". Diese ruft auf dem TestClient "runScenario()" auf, eine Detailierte Erklärung was in dieser Methode passiert, ist im Kapitel "Test Client" zufinden. Sind alle Aktionen des gegeben Szenarios abgearbeitet, wird das gesamte Szenario mit den enthaltenen Messresultaten über die Methode "sendResultToServer()" zurück an den Server geschickt.
+\subsubsection{Start eines Testlaufs}
+Der Server startet den Testdurchlauf parallel auf allen ClientController über die Methode "startTest()". Diese ruft auf dem TestClient "runScenario()" auf, eine detailierte Erklärung was in dieser Methode passiert, ist im Kapitel "Test Client" zufinden. Sind alle Aktionen des gegeben Szenarios abgearbeitet, wird das gesamte Szenario mit den enthaltenen Messresultaten über die Methode "setResults(Scenario scenario, String IP)" zurück an den Server geschickt.
 
 \subsubsection{Herunterfahren des Clients}
-Über die Methode shutdown() lässt sich der Testframework Client sowie der CUT herunterfahren. Die shutdown() Methode löscht das Binding zwischen dem spezifischen Namen und dem damit verbundenen Objekt. Danach wird das Objekt von der RMI Runtime entfernt. Ist dies erledigt beendet sich der ClientController selbst. Beim testen der shutdown() Funktionalität konnte festgestellt werden, dass bei der Umsetzung wie oben beschrieben, der Server eine Exception bekommt. Dies lag daran das der ClientController die Verbindung zum Server sofort beendet hat, so dass der Server keine Zeit hat seine RMI Verbindung zum ClientController korrekt zu schliessen. Die Lösung des Problems lag, in einer Verzögerung von zwei Sekunden bevor das System sich endgültig beendet. Die Beendigung des ClientController wird in einem seperaten Thread ausgeführt, sodass der main Thread noch genügend Zeit hat, alle offenen Verbindungen ordnungsgemäss zu schliessen.    
+Die Methode shutdown() beendet den Testframework Client und das ClientSystemUnderTest. Die shutdown() Methode besteht aus mehreren Teilschritten, als erstes wird das das Binding zwischen dem spezifischen Namen und dem damit verbundenen Objekt gelöscht. Danach wird das Objekt von der RMI Runtime entfernt. Als letztes beendet sich der ClientController selbst. Beim testen der shutdown() Funktionalität konnte festgestellt werden, dass bei der Umsetzung wie oben beschrieben, der Server immer eine Exception bekommt. Es stellte sich heraus das, dass sofortige herunterfahren des ClientControllers nach dem Unbinding und dem Unexport dem Server keine Zeit lässt, seine RMI Verbindung zum ClientController korrekt zu schliessen. Die Lösung dieses Problems lag, in einem verzögerten Herunterfahren des ClientControllers. Die Beendigung des ClientController wird in einem seperaten Thread ausgeführt, sodass der main Thread noch genügend Zeit hat, alle offenen Verbindungen ordnungsgemäss zu schliessen. Der shutdown Thread beendet den ClientController nach zwei Sekunden mit System.exit().   
 
 \subsection{Test Client}
 \label{sec:testclient}
@@ -370,64 +372,93 @@ Der Server startet den Testdurchlauf parallel auf allen ClientController über d
 \label{labelname}
 \end{figure}
 
-Die Klasse TestClient ist die Schnittstelle zwischen dem Testframework und dem ClientSystemUnderTest. Im Konstruktor dieser Klasse kann ein Objekt übergeben werden, welches das ClientSystemUnderTest Interface implementiert. Startet der Server den Testlauf wird im TestClient das zuvor gesetzte Szenario abgearbeitet. Hierfür wird auf jedem Aktion Objekt die Methode execute(Account accunt) aufgerufen. Das Account Objekt, welches der execute Methode übergeben werden muss, wird aus der List von Accounts die von AccountService bereitgestellt wird geholt und übergeben.(Ringbuffer). Bei einem Shutdown durch den Server ist der TestClient ebenfalls für die ordnungsgemässe Beendigung des ClientSystemUnderTest zuständig.
+Die Klasse TestClient ist die Schnittstelle zwischen dem Testframework und dem ClientSystemUnderTest. Im Konstruktor muss ein Objekt übergeben werden, welches das ClientSystemUnderTest Interface implementiert. Dadurch lassen sich alle System testen die dieses Interface implementiert haben. Die "init()" Methode bezieht alle Accounts die auf dem Server verfügbar sind. Startet der Server den Testlauf wird im TestClient das zuvor gesetzte Szenario abgearbeitet. Hierfür wird auf jedem Aktion Objekt die Methode "execute( Account accunt )" aufgerufen. Das Account Objekt, welches der execute Methode übergeben werden muss, wird aus der List von Accounts genommen, welche in der "Init()" Methode vom Server bezogen wurde. Es wird solange durch diese Liste iteriert bis alle Aktionen erledigt sind. Bei einem Shutdown durch den Server ist der TestClient ebenfalls für die ordnungsgemässe Beendigung des ClientSystemUnderTest zuständig.
 
 \subsection{Action}
 \label{sec:action}
-Ein Szenario beinhaltet eine Menge von Aktionen die auf ein Account Objekt ausgeführt werden können. Für eine einfache Erweiterbarkeit von neuen Aktionen ist hierfür das Command-Pattern benutzt worden. Alle konkreten Implementierung von Aktionen leiten von der abstrakte Klasse Action ab. Im Konstruktor  dieser abstrakten Klasse wird ein neues Result Objekt instanziert. Dieses Objekt dient als Datenkontainer für alle Zeitmessungen die während dieser Aktion ausgeführt werden sollen. Desweiteren deklariert Action drei abstrakte Methoden die von Subklassen implementiert werden müssen.
+Ein Szenario beinhaltet eine Menge von Aktionen die auf ein Account Objekt ausgeführt werden können. Für eine einfache Erweiterbarkeit von neuen Aktionen ist hierfür das Command-Pattern benutzt worden. Alle konkreten Implementierung einer Aktion müssen von der abstrakte Klasse Action ableiten. Im Konstruktor  dieser abstrakten Klasse wird ein neues Result Objekt(siehe Kapitel Result) instanziert. Dieses Objekt dient als Datenkontainer für alle Zeitmessungen die während dieser Aktion gesammelt werden sollen. Desweiteren deklariert Action drei abstrakte Methoden die von Subklassen implementiert werden müssen.
 \begin{lstlisting}[language=java, breaklines=true] 	
 public abstract ActionTyp getActionTyp();
 public abstract int getMinimalNumberOfTimeRecords();
 public abstract void execute(Account account);	
 \end{lstlisting}
-Anmerkung: Eine Aktion kann aus mehreren setter/getter bestehen, daher ist es notwendig festzustellen ob die ganze Aktion erfolgreich war oder nicht. Dies wird über die minimale Anzahl von TimeRecords, die für den Erfolg der spezifischen Aktion notwendig sind, gemacht. 
 
+\begin{itemize}
+\item Für eine detailierte Auswertung muss der Typ der Aktion zugänglich gemacht werden, dies wird über die Methode "getActionTyp()" möglich.
+\item Eine Aktion kann aus mehreren setter/getter bestehen, daher ist es notwendig festzustellen ob die ganze Aktion erfolgreich war oder nicht. Dies wird über die minimale Anzahl von TimeRecords, die für den Erfolg der spezifischen Aktion notwendig sind, gemacht. 
+\item Die Methode "execute(Account account)" beinhaltet die eigentliche Aktion die auf dem Account Objekt ausgeführt werden soll.
+\end{itemize} 
 
 \subsection{ActionTyp}
 \label{sec:actionTyp}
 Der ActionTyp wird zur Indentizifierung der Aktion benutzt und ist als Enum realisiert. Folgende Aktionstypen sind bereits vorhanden.
-
 \begin{itemize}
 \item ReadAction
 \item WriteAction
 \item IncrementAction
 \end{itemize}
-(Underline im Item funktionieren nicht!!!!)
-Die Werte diese Enums werden zur Fallunterscheidung bei der Report Generierung verwendet.
+Die Werte diese Enums werden zur Erkennung des Aktiontyps genutzt und wird bei der Report Generierung verwendet.
 
  
 \subsection{Increment Action}
 \label{sec:incrementAction}
 Die Aktion KontostandErhöhen (IncrementAction) ist die Kernaktion für alle Szenarien. 
-Sie besteht aus drei Aufgaben:
+Sie besteht aus drei Teilschritten:
 \begin{itemize}
-\item aktuellen Kontostand holen und zwischenspeichern
-\item den gespeicherten Wert mit dem gegeben Faktor multiplizieren
-\item den neuen Wert zurück in das Konto schreiben
+\item Aktuellen Kontostand über die Methode "getBalance()" aus dem Account holen und zwischenspeichern
+\item Den temporären Kontostand mit dem gegeben Faktor multiplizieren
+\item Versuchen den neuen Wert via "setBalance(double value)" Methode zurück in das Konto zuschreiben
 \end{itemize}
-Im laufe der Realisierung stellte sich heraus das zwischen der getBalance() und der setBalance() eine minimal definierbare Zeitdauer gewartet werden können muss. Diese Warteperiode ist nötig, damit sich leicht ein Konflikt erzeugen lässt und so leicht gezeigt werden kann, dass der Fehler serverseitig zu keinem Lost-Updates führt. Tritt serverseitig ein Concurrency Fehler auf, wird eine RuntimeExeption zurück an den Client geworfen. Dies veranlasst den Client dazu, dass die ganze Aktion nochmals gestartet wird mit dem Unterschied das diesmal keine Verzögerung zwischen getBalance() und setBalance() benutzt wird.
+
+\begin{lstlisting}[language=java, breaklines=true] 
+@Override
+public void execute(Account account) {
+	boolean successful = false;
+	double balance = 0;
+	int numberOfTry = 0;
+	while (!successful) {
+		result.startTimeMeasurement(BasicAction.READ);
+		balance = account.getBalance();
+		result.stopTimeMeasurement();
+		sleep(numberOfTry);
+		try {
+			result.startTimeMeasurement(BasicAction.WRITE);
+			account.setBalance(balance * factor);
+			result.stopTimeMeasurement();
+			successful = true;
+		} catch (RuntimeException e) {
+			successful = false;
+			result.stopTimeMeasurement(ActionResult.FAILED);
+		}
+		numberOfTry++;
+	}
+}
+\end{lstlisting}
+Im laufe der Realisierung stellte sich heraus das zwischen dem "getBalance()" und dem "setBalance()" Aufruf eine minimal definierbare Zeitdauer gewartet werden können muss. Diese Warteperiode ist nötig, damit sich leichter ein Konflikt erzeugen lässt und so gezeigt werden kann, dass der Fehler serverseitig zu keinem Lost-Updates führt. Die Methode "sleep()" veranlasst den aktuellen Thread für eine gewisse Zeit zu schlafen. Tritt serverseitig ein Concurrency Fehler auf, wird eine RuntimeExeption zurück an den Aktion geworfen. Dies veranlasst die Aktion dazu, dass sie mit der komplete Aktion nochmals neu beginnt mit dem Unterschied, das diesmal keine Verzögerung zwischen getBalance() und setBalance() benutzt wird. Dies wird über den Wert numberOfTry geprüft, ist dieser grosser eins wird die Verzögerung nicht nochmals ausgeführt.
 
 \subsection{WriteAction}
 \label{sec:writeAction}
+Die WriteAction wurde nur zu beginn der Realisierung benutzt und schreibt via "setBalance()" auf einem Account einen gegeben Wert. 
 
 \subsection{ReadAction}
 \label{sec:readAction}
+Die WriteAction wurde ebenfalls nur zu beginn der Realisierung benutzt, diese Aktion lisst den aktuellen Kontostand eine Objekts und speichert diesen ab. Über "getBalance()" kann auf den Kontostand zugegriffen werden.
 
 \subsection{Result}
 \label{sec:result}
-Für die Zeitmessung einer Aktion nutzen wir die von Java bereitgestellte Methode System.nanoTime(). Die Result Klasse bietet eine startTimeMeasurement() Methode die ein neues TimeRecord Objekt erzeugt und die momentane Zeit in das TimeRecord Objekt schreibt. (diese Methode verlangt eine BasicAction Typ der als Enum realisiert wurde(Erklärung warum nötig unter Resultate)). Über stopTimeMeasurement() lässt sich die aktuelle Messung beenden und der aktuelle TimeRecord wird abgelegt. Da innerhalb der execute() Methode mehrere setBalance() oder getBalance() möglich sind, muss es möglich sein mehrere TimeRecords pro Result Objekt zu erfassen.
+Für die möglichst genaue Zeitmessung einer Aktion wird die von Java bereitgestellte Methode System.nanoTime() genutzt. Die Result Klasse bietet eine "startTimeMeasurement(BasicAction type)" Methode die ein neues TimeRecord Objekt erzeugt und die momentane Zeit in dieses neue TimeRecord Objekt schreibt. Der BasicActiontype wird benötigt damit bei der Auswertung genau analysiert werden kann, für welchen Methodeaufruf(getBalance() / setBalance()) dieser TimeRecord gilt. Über stopTimeMeasurement() lässt sich die aktuelle Zeitmessung beenden und der aktuelle TimeRecord wird abgelegt. Da innerhalb der "execute(Account account)" Methode mehrere setBalance() oder getBalance() Aufrufe möglich sind wie zum Beispiel in der InrementAction, ist es daher möglich  mehrere TimeRecords pro Result Objekt zu erfassen.
 
 \subsection{TimeRecord}
 \label{sec:timeRecord}
-Der TimeRecordtyp ist als reines Data Tranfer Object ausgelegt. Es beinhaltet die Startzeit sowie die Stopzeit genau einer Aktion. Für einen genauen Auswertung einer Aktion sind noch weiter Daten nötig. Daher besitzt dieser Typ zwei weiter Felder. Der BasicActiontyp beinhaltet Informationen für welche Methode dieser Record gilt und das ActionResult speichert die Information über den Erfolg der BasicAction. Dadurch lassen sich zusammengesetzte Aktion, welche aus getBalance() und setBalance() zusammengesetzt sind unterteilen.
+Der TimeRecordtyp ist als reines Data Tranfer Object implementiert worden. Es beinhaltet die Startzeit sowie die Stopzeit genau eines Methoden Aufrufs. Für einen genauen Auswertung einer Aktion sind noch weiter Daten nötig. Daher besitzt dieser Typ zwei weiter Felder. Der BasicActiontyp beinhaltet Informationen für welche Account Methode, also getBalance oder setBalance, dieser Record gilt und in dem ActionResult kann die Information über den Erfolg der BasicAction gespeichert werden. Dadurch lassen sich zusammengesetzte Aktion, welche aus getBalance() und setBalance() zusammengesetzt sind einfach unterteilen.
 
 \subsection{BasicAction}
 \label{sec:BasicAction}
-Damit eine genaue Analyse der Aktionen gemacht werden kann, ist es nötig das man unter getBalance() und setBalance() unterscheiden kann. Eine Aktion kann aus mehreren Methodenaufrufen bestehen, daher muss bei einer Zeitmessung die Art(setter / getter) angegeben werden. Da jedoch eine Aktion aus einer Abfolge von Reads und Writes bestehen kann ist es nötig das diese Information gespeichert wird. Im TimeRecord lässt sich daher die BasicAction speichern.
+Damit eine genaue Analyse der Aktionen gemacht werden kann, ist es nötig das man zwischen "getBalance()" und "setBalance()" unterscheiden kann. Eine Aktion kann aus mehreren Methodenaufrufen bestehen, daher muss bei einer Zeitmessung die Art(setter / getter) angegeben werden können. Da jedoch eine Aktion aus einer Abfolge von Reads und Writes bestehen kann ist es nötig das diese Information gespeichert wird. Im TimeRecord lässt sich daher die BasicAction speichern.
 
 \subsection{ActionResult}
 \label{sec:ActionResult}
-Den Erfolg eines getBalance() oder setBalance() Aufrufs lässt sich ebenfalls im TimeRecord speichern. Um eine Statistik über die Fehlerrate beider Methodenaufrufe zu bekommen, war es desweitern noch nötig, dass beim stoppen einer Messung, der eine BasicAction zugrunde liegt den Erfolgstatus gespeichert werden kann. Damit lässt sich ein Szenario auf die zwei Grundoperation setBalance() und getBalance() herunterbrechen, dadurch lassen sich dieMessresultate genau Auswertung.
+Den Erfolg eines getBalance() oder setBalance() Aufrufs lässt sich ebenfalls im TimeRecord speichern. Um eine Statistik über die Fehlerrate beider Methodenaufrufe zu bekommen, war es daher nötig, dass beim stoppen einer Messung, der eine BasicAction zugrunde liegt den Erfolgstatus gespeichert werden kann. Damit lässt sich ein Szenario auf die zwei Grundoperation setBalance() und getBalance() herunterbrechen. Dies ermöglicht es die Auswertung bis auf diese zwei Methoden hinab zu analyisieren und auszuwerten.
 
 \subsection{ReportGenerator}
 \label{sec:reportGenerator}

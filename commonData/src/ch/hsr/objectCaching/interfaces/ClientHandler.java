@@ -26,6 +26,7 @@ public class ClientHandler implements Runnable {
 		try {
 			objectOutputStream.writeObject(object);
 			objectOutputStream.flush();
+			objectOutputStream.reset();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}		

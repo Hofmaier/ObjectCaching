@@ -53,4 +53,5 @@ public class RMIWithCacheClientHandler extends RMIOnlyClientHandler{
 	public void setObjectManager(ObjectManager objectManager) {
 		this.objectManager = objectManager;
 	}
+	
 }

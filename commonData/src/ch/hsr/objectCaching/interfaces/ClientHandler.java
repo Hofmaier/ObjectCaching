@@ -6,8 +6,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 
-import ch.hsr.objectCaching.dto.ObjectUpdate;
-
 public class ClientHandler implements Runnable {
 	
 	protected InputStream inputStream;
@@ -22,6 +20,7 @@ public class ClientHandler implements Runnable {
 	}
 	
 	public void setClientIpAddress(String clientIpAddress){}
+	public String getClientIpAddress() {return null;}
 
 	public void send(Object object) {
 		try {

@@ -15,7 +15,7 @@ public class StreamProvider implements IStreamProvider {
 	private ObjectInputStream objectInputStream; 
 
 	@Override
-	public ObjectOutputStream getObjectOutputStream() {
+	 synchronized public ObjectOutputStream getObjectOutputStream() {
 		try {
 			if(objectOutputStream == null){
 				initStreams();
@@ -26,7 +26,7 @@ public class StreamProvider implements IStreamProvider {
 		return objectOutputStream;
 	}
 
-	private void initStreams() throws UnknownHostException, IOException {
+	private synchronized void initStreams() throws UnknownHostException, IOException {
 		socket = new Socket();
 		socket.connect(socketAddress);
 		objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
@@ -34,7 +34,14 @@ public class StreamProvider implements IStreamProvider {
 	}
 
 	@Override
-	public ObjectInputStream getObjectInputStream() {
+	public synchronized ObjectInputStream getObjectInputStream() {
+		try{
+		if(objectInputStream == null){
+			initStreams();
+		}
+		}catch(IOException e){
+			e.printStackTrace();
+		}
 		return objectInputStream;
 	}
 

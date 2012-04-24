@@ -8,14 +8,19 @@ import ch.hsr.objectCaching.rmiOnlyServer.RMIOnlyServerSystem;
 public class RMIWithCacheServerSystem extends RMIOnlyServerSystem {
 
 	private ObjectManager objectManager = new ObjectManager();
+	
+	public RMIWithCacheServerSystem(){
+		AccountSkeleton accountSkeletonWithCache = new AccountSkeleton();
+		accountSkeletonWithCache.setObjectManager(objectManager);
+		accountSkeleton = accountSkeletonWithCache;
+		accountServiceSkeleton.setAccountSkeleton(accountSkeleton);
+	}
 
 	@Override
 	public ClientHandler getClientHandlerInstance() {
 		RMIWithCacheClientHandler clientHandler = new RMIWithCacheClientHandler();
 		clientHandler.setObjectManager(objectManager);
 		clientHandler.setAccountServiceSkeleton(accountServiceSkeleton);
-		AccountSkeleton accountSkeletonWithCache = new AccountSkeleton();
-		accountSkeletonWithCache.setObjectManager(objectManager);
 		clientHandler.setAccountSkeleton(accountSkeleton);
 		
 		return clientHandler;

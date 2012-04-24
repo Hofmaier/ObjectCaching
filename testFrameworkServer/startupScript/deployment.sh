@@ -15,8 +15,7 @@ swpw="${startFolder}/myKey"
 clientJar="client.jar"
 serverJar="server.jar"
 remotePath="/home/student/Downloads"
-clientJarPath="../../dist/client"
-serverJarPath="../../dist/server"
+
 initFile="../initFile.conf"
 clientTemp="clients"
 clientLog="logger.config"
@@ -25,6 +24,15 @@ clientLog="logger.config"
 # 
 # Code
 # 
+
+function func_build
+{
+  cd ../..
+  ant
+  cd ${startFolder}
+  clientJarPath="../../dist/client"
+  serverJarPath="../../dist/server"
+}
 
 function func_create_CLient_List
 {
@@ -83,6 +91,8 @@ function func_startClient
 ls ${serverJarPath} | grep $1 > /dev/null 2>&1
 if [[ $? -eq 0 || "$1" = "" ]]
 then
+	func_build
+	sleep 1
 	func_create_CLient_List
 	sleep 1
 	func_get_CLient_RMI_Port

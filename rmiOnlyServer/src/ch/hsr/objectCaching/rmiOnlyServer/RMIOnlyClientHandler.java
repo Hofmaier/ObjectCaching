@@ -93,8 +93,9 @@ public class RMIOnlyClientHandler extends ClientHandler {
 	public void setClientIpAddress(String clientIpAddress) {
 		this.clientIpAdress = clientIpAddress;
 	}
-
-	public String getClientIpAdress() {
+	
+	@Override
+	public String getClientIpAddress() {
 		return clientIpAdress;
 	}
 

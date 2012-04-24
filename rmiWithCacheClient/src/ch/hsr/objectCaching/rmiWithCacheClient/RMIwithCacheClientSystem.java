@@ -16,11 +16,13 @@ public class RMIwithCacheClientSystem implements ClientSystemUnderTest {
 		MessageManager messageManager = new MessageManager();
 		ObjectCache objectCache = new ObjectCache();
 		objectCache.setMessageManager(messageManager);
+		objectCache.startUpdateObjectThread();
 		streamProvider.getObjectInputStream();
 		messageManager.setStreamProvider(streamProvider);
-		messageManager.startSenderThread();
 		
+		messageManager.startSenderThread();
 		messageManager.startReceiverThread();
+		
 		serviceStub.setMessageManager(messageManager);
 		serviceStub.setObjectCache(objectCache);
 		return serviceStub;

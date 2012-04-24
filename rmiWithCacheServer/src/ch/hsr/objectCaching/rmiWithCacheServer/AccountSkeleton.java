@@ -6,13 +6,11 @@ import ch.hsr.objectCaching.account.Account;
 import ch.hsr.objectCaching.dto.MethodCall;
 import ch.hsr.objectCaching.dto.RMIException;
 import ch.hsr.objectCaching.dto.ReturnValue;
-import ch.hsr.objectCaching.util.ConcurrencyControl;
 
 public class AccountSkeleton extends
 		ch.hsr.objectCaching.rmiOnlyServer.AccountSkeleton {
 	
 	private ObjectManager objectManager;
-	private ConcurrencyControl concorrencyControl;
 	
 	public ReturnValue invokeMethod(MethodCall methodCall) {
 		
@@ -45,6 +43,4 @@ public class AccountSkeleton extends
 	public void setObjectManager(ObjectManager objectManager) {
 		this.objectManager = objectManager;
 	}
-	
-	
 }

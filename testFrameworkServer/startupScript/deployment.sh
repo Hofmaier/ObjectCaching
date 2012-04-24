@@ -28,7 +28,12 @@ clientLog="logger.config"
 function func_build
 {
   cd ../..
-  ant
+  ant > /dev/null 2>&1
+  if [ ${?} -eq 1 ]
+  then
+    echo "BUILD FAILED! Aborting..."
+    exit
+  fi
   cd ${startFolder}
   clientJarPath="../../dist/client"
   serverJarPath="../../dist/server"

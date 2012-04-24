@@ -37,6 +37,7 @@ public class ObjectManager {
 		
 		if(clients == null){
 			clients = new ArrayList<ClientHandler>();
+			clientListMap.put(objectID, clients);
 		}
 		
 		clients.add(objectRequest.getClientHandler());

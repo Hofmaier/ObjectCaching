@@ -7,6 +7,7 @@ import ch.hsr.objectCaching.account.Account;
 import ch.hsr.objectCaching.dto.MethodCall;
 import ch.hsr.objectCaching.dto.ObjectRequest;
 import ch.hsr.objectCaching.dto.ObjectUpdate;
+import ch.hsr.objectCaching.dto.ReturnValue;
 import ch.hsr.objectCaching.util.ConcurrencyControl;
 
 public class ObjectCache {
@@ -29,7 +30,7 @@ public class ObjectCache {
 	{
 		if(objectCache.containsKey(objectID))
 		{
-			conurrencyControl.setObjectRead(objectID);
+			//conurrencyControl.setObjectRead(objectID);
 			return objectCache.get(objectID);
 		}
 		else
@@ -69,6 +70,8 @@ public class ObjectCache {
 
 	public void processMethodWithSideEffect(MethodCall methodCall) {
 		messageManager.sendMessageCall(methodCall);
+		ReturnValue retVal = messageManager.receiveReturnValue();
+		
 	}
 
 	public void listenForUpdates() {
@@ -85,5 +88,8 @@ public class ObjectCache {
 		}
 	}
 	
+	public void startUpdateObjectThread(){
+		new Thread(new CacheUpdateThread(this)).start();
+	}
 
 }

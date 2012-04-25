@@ -1,4 +1,6 @@
 package ch.hsr.objectCaching.rmiWithCacheClient;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.net.InetSocketAddress;
 
 import ch.hsr.objectCaching.account.AccountService;
@@ -35,7 +37,14 @@ public class RMIwithCacheClientSystem implements ClientSystemUnderTest {
 
 	@Override
 	public void shutdown() {
-		
+		try {
+			 ObjectOutputStream oos = streamProvider.getObjectOutputStream();
+			 oos.writeObject(null);
+			 oos.close();
+			streamProvider.getObjectInputStream().close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 }

@@ -4,6 +4,7 @@ import java.lang.reflect.Method;
 
 import ch.hsr.objectCaching.account.Account;
 import ch.hsr.objectCaching.dto.MethodCall;
+import ch.hsr.objectCaching.dto.ReturnValue;
 
 public class AccountStub extends ch.hsr.objectCaching.rmiOnlyClient.AccountStub {
 
@@ -19,7 +20,8 @@ public class AccountStub extends ch.hsr.objectCaching.rmiOnlyClient.AccountStub 
 	@Override
 	public void setBalance(double balance) throws RuntimeException {
 		MethodCall methodCall = prepareMethodCall(balance);
-		cache.processMethodWithSideEffect(methodCall);
+		ReturnValue retVal = cache.processMethodWithSideEffect(methodCall);
+		checkForExceptions(retVal);
 	}
 
 	private MethodCall prepareMethodCall(double balance) {

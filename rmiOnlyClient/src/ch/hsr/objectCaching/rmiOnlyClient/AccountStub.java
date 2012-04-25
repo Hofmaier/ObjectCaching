@@ -75,13 +75,17 @@ public class AccountStub implements Account {
 		try {
 			sendMethodCall("setBalance");
 			ReturnValue returnValue = receiveResponse();
-			if(returnValue.getException() != null){
-				throw returnValue.getException();
-			}
+			checkForExceptions(returnValue);
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
+		}
+	}
+
+	protected void checkForExceptions(ReturnValue returnValue) {
+		if(returnValue.getException() != null){
+			throw returnValue.getException();
 		}
 	}
 

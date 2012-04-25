@@ -1,20 +1,20 @@
 \chapter{Testing Framework}
-Im folgenden Kapitel wird auf die einzelnen Komponenten des Test Frameworks eingegangen und deren Funktionsweise erläutert. Die Aufgabe des Test Framework liegt darin, die verschiedenen Prototypen, welche im Laufe dieser Semesterarbeit entwickelt wurden, mit dieses Framework einheitlich testen zu lassen. Das Test Framework wurde parallel zum RMIOnly- Systems mit Concurrency Control entwickelt.
+Im folgenden Kapitel wird auf die einzelnen Komponenten des Test Frameworks eingegangen und deren Funktionsweise erläutert. Die Aufgabe des Test Frameworks liegt darin, die verschiedenen Prototypen, welche im Laufe dieser Semesterarbeit entwickelt wurden, mit diesem Framework einheitlich testen zu lassen. Das Test Framework wurde parallel zum RMIOnly- Systems mit Concurrency Control entwickelt.
 
 \section{Konzept}
-Das Framework lässt sich über eine Konfigurationsdatei konfigurieren und kann Testfälle die in einer XML Datenstruktur vorliegen intepretieren und daraus die einzelnen Testszenarien generieren. Die Testszenarien werden vom Server auf die verfügbaren Testframework Clients verteilen und dort gestartet. Das Framework startet das zu testende System auf den verschiedenen Rechnern und führt die im XML beschriebenen Szenarien durch.\newline
-Die mit den Messwerten ausgefüllten Szenarien werden an den Server zurückgeschickt und dort ausgewertet. Dies ermöglicht ein Vergleichen der verschiedenen eingesetzten Algorithmen. Folgende Eckpunkte muss das Framework erfüllen:
-
-\section{Allgemeine Informationen}
-\label{sec:allgInformationen}
-
-Um möglichst genaue Messdaten zu erlangen, wird das ganze System nach einem Testlauf beendet. Eine Aneinanderreihung von verschiedenen Testläufen würde die Messdaten aufgrund der JavaVirtualMachine beeinträchtigen. Es besteht die Möglichkeit, dass für einen zweiten Testlauf weniger Speicher zur Verfügung steht, weil der Speicher immer noch mit Objekten des ersten Testlaufs besetzt ist. Da dies nicht mit Sicherheit überprüft werden kann, daher es kann nicht gewährleistet werden, dass die Grundvoraussetzungen für beide Testläufe gleich sind, wurde auf eine Aneinanderreihung von Testläufen verzichtet.
+Das Framework lässt sich über eine Konfigurationsdatei konfigurieren und kann Testfälle, welche in einer XML Datenstruktur vorliegen, intepretieren und daraus die einzelnen Testszenarien generieren. Die Testszenarien werden vom Server auf die verfügbaren Testframework Clients verteilt und dort gestartet. Das Framework startet das zu testende System auf den verschiedenen Rechnern, welches unmittelbar danach die Aktionen durchführt, welche im übergebenen Szenario definiert wurden.\newline
+Die mit den Messwerten ausgefüllten Szenarien werden an den Server zurückgeschickt und dort ausgewertet. Dies ermöglicht einen Vergleich der verschiedenen eingesetzten Algorithmen. Folgende Eckpunkte muss das Framework erfüllen:
 
 \begin{itemize}
 \item Die enwickelten Systeme müssen sich ohne Programmcode-Anpassungen an das Framework anbinden lassen
 \item Das Framework muss die genauen Zeiten, welche für die Ausführungen der Operationen nötig waren, messen können
 \item Nach einem Testlauf muss ein Bericht erstellt werden können, welcher die nötigen Informationen darstellt
 \end{itemize}
+
+\section{Allgemeine Informationen}
+\label{sec:allgInformationen}
+
+Um möglichst genaue Messdaten zu erlangen, wird das ganze System nach einem Testlauf beendet. Eine Aneinanderreihung von verschiedenen Testläufen würde die Messdaten aufgrund der JavaVirtualMachine beeinträchtigen. Es besteht die Möglichkeit, dass für einen zweiten Testlauf weniger Speicher zur Verfügung steht, weil der Speicher immer noch mit Objekten des ersten Testlaufs besetzt ist. Da dies nicht mit Sicherheit überprüft werden kann, daher es kann nicht gewährleistet werden, dass die Grundvoraussetzungen für beide Testläufe gleich sind, wurde auf eine Aneinanderreihung von Testläufen verzichtet.
 
 \section{Open Points (TODO's)}
 \begin{itemize}	
@@ -30,6 +30,7 @@ Um möglichst genaue Messdaten zu erlangen, wird das ganze System nach einem Tes
 \label{sec:startupScript}
 Das  Startup-Script ist ein Shell-Script in der Bash-Sprache geschrieben. Das Script führt mehrere Methoden nacheinander aus:
 \begin{enumerate}
+\item Ein ant-Script wird angestossen, welches die Projekte kompiliert. Durch diesen Schritt entstehen die .jar-Dateien, welche im nächsten Schritt benötigt werden
 \item Das Script prüft die in der Config-Datei eingetragenen Zielrechner auf bereits vorhandene "client.jar"-Dateien und löscht diese Dateien, falls vorhanden
 \item Durch die Applikation "Secure Copy" wird die zuvor im Buildprozess erstellte Datei "client.jar" auf die Zielrechner kopiert
 \item Via SSH wird der Frameworkclient auf den Zielrechnern gestartet
@@ -52,15 +53,12 @@ In diesem Kapitel werden die Schritte beschrieben, welche vor dem Starten des Te
 Die Kommunikation des Frameworkservers mit den Frameworkclients ist in folgendem Sequenzdiagramm grob dargestellt:
 
 
-\begin{figure}
+\begin{figure}[H]
 \begin{center}
 \includegraphics[scale=0.3]{image_testFramework/TestFWInit.png}
 \end{center}
-\caption{Testfamework Init}
-\label{labelname}
+\caption{Testframework Init}
 \end{figure}
-
-
 
 Die im Diagramm dargestellten Operationen lassen sich wie folgt erklären:
 
@@ -115,8 +113,8 @@ ServerRegistryName=Server
 ClientRegistryName=Client
 \end{lstlisting}
 
-In der Konfigurationsdatei ist definiert, welche Clients auf welchem port kontaktiert werden können. Weiter ist der Registry-Name definiert, damit der Server weiss, über welche Registry er die Methoden auf dem Client aufrufen muss. \newline
-Auf diesen Informationen erstellt die Factory ein Configuration-Objekt, welches sie dem Client als erstes sendet. Damit ist gewährleistet, dass der Frameworkserver und die Frameworkclients miteinander über RMI kommunizieren können. \newline
+In der Konfigurationsdatei ist definiert, welche Clients auf welchem Port kontaktiert werden können. Weiter ist der Registry-Name definiert, damit der Server weiss, über welche Registry er die Methoden auf dem Client aufrufen muss. \newline
+Aus diesen Informationen erstellt die Factory ein Configuration-Objekt, welches sie dem Client als erstes sendet. Damit ist gewährleistet, dass der Frameworkserver und die Frameworkclients miteinander über RMI kommunizieren können. \newline
 Pro Client, welcher hier definiert ist, wird ein Client-Objekt instanziert, was im folgenden Kapitel beschrieben wird.
 
 \subsubsection{ClientObjekt}
@@ -157,7 +155,7 @@ private void start()
 }
 \end{lstlisting}
 
-Nach einigen Testdurchläufen konnte festgestellt werden, dass die Clients ihre Szenarien nur sequentiell abarbeiteten und die Operationen auf den Server nicht gleichzeitig geschehen. Schuld an diesem Umstand war obige Implementation der "start"-Methode. Der Server-Thread, welcher "startTest()" auf dem Client aufrief, wartete solange, bis die Methode zurückkehrte. Da die Methode natürlich erst nach der Beendigung des Szenarios zurückkehrt, konnte nur immer genau ein Client zu einem gewissen zeitpunkt aktiv sein.\newline
+Nach einigen Testdurchläufen konnte festgestellt werden, dass die Clients ihre Szenarien nur sequentiell abarbeiteten und die Operationen auf dem Server nicht gleichzeitig geschehen. Schuld an diesem Umstand war obige Implementation der "start"-Methode. Der Server-Thread, welcher "startTest()" auf dem Client aufrief, wartete solange, bis die Methode zurückkehrte. Da die Methode natürlich erst nach der Beendigung des Szenarios zurückkehrt, konnte nur immer genau ein Client zu einem gewissen zeitpunkt aktiv sein.\newline
 Die jetzige Implementation und somit die Lösung des Problems sieht wie folgt aus:
 \begin{lstlisting}
 private void start()
@@ -186,7 +184,7 @@ Mit dieser Implementation wird der Methodenaufruf "start()" nun von einem sepera
 \subsubsection{Der Dispatcher}
 \label{sec:dispatcher}
 
-Der Dispatcher stellt die Verbindung zwischen dem Frameworkserver und dem Server des Systems, welches getestet werden soll, dar. Dem Dispatcher wird die Portnummer angegeben, unter welcher ein Socket öffnen soll. Weiter wird ihm ein String übergeben, in welchem der Pfad des zu testenden Systems drinnsteht. Der Dispatcher instanziert dann das zu testende System mit Hilfe des Strings und wartet dann in einem blockierten Zustand auf sich verbindende Clients. Nachdem ein Client auf dem geöffneten Socket eine Verbindung aufgebaut hat, übergibt der Dispatcher die Verbindung in Form eines Input und eines Outputstreams dem Server des zu testenden Systems.\newline
+Der Dispatcher stellt die Verbindung zwischen dem Frameworkserver und dem Server des Systems, welches getestet werden soll, dar. Dem Dispatcher wird die Portnummer angegeben, unter welcher er ein Socket öffnen soll. Weiter wird ihm ein String übergeben, in welchem der Pfad des zu testenden Systems drinnsteht. Der Dispatcher instanziert dann das zu testende System mit Hilfe des Strings und wartet dann in einem blockierten Zustand auf sich verbindende Clients. Nachdem ein Client auf dem geöffneten Socket eine Verbindung aufgebaut hat, übergibt der Dispatcher die Verbindung in Form eines Input und eines Outputstreams dem Server des zu testenden Systems.\newline
 Logischerweise läuft der Dispatcher wiederum in einem seperaten Thread.
 
 \subsection{Herunterfahren des Frameworkservers}
@@ -200,7 +198,6 @@ Nach Beendigung eines Testlaufs, muss der Server mehrere Arbeiten erledigen. Nac
 \includegraphics[scale=0.2]{image_testFramework/BeendeTestlauf.png}
 \end{center}
 \caption{Testfamework Exit}
-\label{labelname}
 \end{figure}
 
 Die im Diagramm ersichtlichen Operationen können folgendermassen erläutert werden:
@@ -208,7 +205,7 @@ Die im Diagramm ersichtlichen Operationen können folgendermassen erläutert wer
 \item Die Methode "setResults(Scenario)" wird vom Client auf dem Server aufgerufen. Durch den Aufruf dieser Methode weiss der Server, dass der aufrufende Client sein Szenario durchgespielt hat. Weiter wird mit dem Aufruf der Methode wiederum ein Thread durch den RMI-Daemon gestartet, welcher die weiter folgenden Methoden anstösst.
 \item Aus der "setResults(Scenario)"-Methode wird direkt "stopClient()" aufgerufen. Was diese Methode genau macht, wird im Kapitel "Stoppen eines Clients" genau beschrieben.
 \item Die Methode "shutDown()" wird auf dem Client aufgerufen. Der Client trennt daraufhin die RMI-Verbindung zum Server und schaltet sich selber ab. Nähere Informationen zum Abschaltungsprozess eines Clients kann unter dem Kapitel "Testframework Client" nachgelesen werden.
-\item Die Methode "printSummary()" verwertet die Ergebnisse, welche die CLients in ihrem Szenario gespeichert und wieder übertragen haben. Mehr Informationen dazu im Kapitel "Report Generator". Weiter wird auf der Console ausgegeben, ob es "Lost-Update"-Probleme gegeben hat oder nicht. Mehr zu diesem Thema unter "Result Generator".
+\item Die Methode "printSummary()" verwertet die Ergebnisse, welche die Clients in ihrem Szenario gespeichert und wieder übertragen haben. Mehr Informationen dazu im Kapitel "Report Generator". Weiter wird auf der Console ausgegeben, ob es "Lost-Update"-Probleme gegeben hat oder nicht. Mehr zu diesem Thema unter "Result Generator".
 \end{itemize}
 
 \subsubsection{Stoppen eines Clients}
@@ -330,7 +327,6 @@ Dieses Kapitel beschreibt die Aufgaben der Testframework Client Komponenten und 
 \includegraphics[scale=0.2]{image_testFramework/TestFWServerClientSeq.png}
 \end{center}
 \caption{Server Client Communication}
-\label{labelname}
 \end{figure}
  
 Die Kommunikation zwischen dem Testframework Client und dem Server ist über Java RMI realisiert worden. Beim Start eines Testframework Clients wird ein neuer ClientController instanziiert, dieses Objekt wird daraufhin zur Java RMI Runtime exportiert und für RMI Request zugänglich gemacht. Der Name sowie den Port unter dem das Objekt registriert ist, lässt sich als Argument bei Start des ClientControllers mitgeben. Der Port auf der die RMI Registry Anfragen akzeptiert lässt sich ebenfalls als optionales Argument mitgeben falls keine Portnummer als Argument mitgegeben wird, kommt der Defaultport 1099 zum Einsatz.
@@ -369,7 +365,6 @@ Die Methode shutdown() beendet den Testframework Client und das ClientSystemUnde
 \includegraphics[scale=0.3]{image_testFramework/startTest.png}
 \end{center}
 \caption{start Tests}
-\label{labelname}
 \end{figure}
 
 Die Klasse TestClient ist die Schnittstelle zwischen dem Testframework und dem ClientSystemUnderTest. Im Konstruktor muss ein Objekt übergeben werden, welches das ClientSystemUnderTest Interface implementiert. Dadurch lassen sich alle System testen die dieses Interface implementiert haben. Die "init()" Methode bezieht alle Accounts die auf dem Server verfügbar sind. Startet der Server den Testlauf wird im TestClient das zuvor gesetzte Szenario abgearbeitet. Hierfür wird auf jedem Aktion Objekt die Methode "execute( Account accunt )" aufgerufen. Das Account Objekt, welches der execute Methode übergeben werden muss, wird aus der List von Accounts genommen, welche in der "Init()" Methode vom Server bezogen wurde. Es wird solange durch diese Liste iteriert bis alle Aktionen erledigt sind. Bei einem Shutdown durch den Server ist der TestClient ebenfalls für die ordnungsgemässe Beendigung des ClientSystemUnderTest zuständig.
@@ -478,8 +473,4 @@ Der ReportGenerator analyisiert ein Szenario und schreibt die Resultate in eine 
 Um die obigen Anforderung erfüllen zu können, war es nötig, dass wir unterscheiden können zwischen einer getBalance() und einer setBalance() Aktion, dies wird über den BasicAction-Typ erledigt.
 \newline
 Die Resultatedatei ist in drei Teile unterteilt. Der erste Teil gibt eine List der Aktionen aus und die dazugehörigen BasicAktion. Über den ActionTyp wird der entsprechende Ausgabestring erzeugt. Es folgt eine Zusammenfassung der zwei BasicAktionarten und zuletzt ein Zusammenfassung über das ganze Szenario.
-
-
-
-
 

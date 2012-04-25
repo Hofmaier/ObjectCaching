@@ -3,6 +3,7 @@ package ch.hsr.objectCaching.reporting;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Date;
 
 import ch.hsr.objectCaching.action.Action;
 import ch.hsr.objectCaching.action.IncrementAction;
@@ -128,7 +129,12 @@ public class ReportGenerator {
 	}
 
 	private void writeHeader() throws IOException {
+		
+		Date now = new Date();
+		
+		
 		out.write("************************************************************" + NEWLINE);
+		out.write("Date & Time: " + now.toString() + NEWLINE);
 		out.write("Result for Client: " + clientIp + " with ScenarioID: " + scenario.getId() + NEWLINE);
 		out.write("OS: " + System.getProperty("os.name") + " / " + System.getProperty("os.version") + NEWLINE);
 		out.write("************************************************************" + NEWLINE);

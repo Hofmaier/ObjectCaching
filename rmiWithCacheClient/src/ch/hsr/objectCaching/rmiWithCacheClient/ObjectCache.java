@@ -7,6 +7,7 @@ import ch.hsr.objectCaching.account.Account;
 import ch.hsr.objectCaching.dto.MethodCall;
 import ch.hsr.objectCaching.dto.ObjectRequest;
 import ch.hsr.objectCaching.dto.ObjectUpdate;
+import ch.hsr.objectCaching.dto.RMIException;
 import ch.hsr.objectCaching.dto.ReturnValue;
 import ch.hsr.objectCaching.util.ConcurrencyControl;
 
@@ -14,12 +15,12 @@ public class ObjectCache {
 	
 	private MessageManager messageManager;
 	private HashMap<Integer, Object> objectCache;
-	private ConcurrencyControl conurrencyControl;
+	private ConcurrencyControl concurrencyControl;
 	
 	public ObjectCache()
 	{
 		objectCache = new HashMap<Integer, Object>();
-		conurrencyControl = new ConcurrencyControl();
+		concurrencyControl = new ConcurrencyControl();
 	}
 
 	public void setMessageManager(MessageManager messageManager) {
@@ -38,7 +39,7 @@ public class ObjectCache {
 			sendObjectRequest(objectID);
 			Object receivedObject = null;
 			receivedObject = receiveObject(objectID, receivedObject);
-			conurrencyControl.addObject(objectID);
+			concurrencyControl.updateReadVersionOfClient(objectID);
 			return receivedObject;
 		}
 		
@@ -65,13 +66,16 @@ public class ObjectCache {
 	public void addObject(int objectID, Account account)
 	{
 		objectCache.put(objectID, account);
-		conurrencyControl.addObject(objectID);
 	}
 
-	public void processMethodWithSideEffect(MethodCall methodCall) {
+	public ReturnValue processMethodWithSideEffect(MethodCall methodCall) {
+		if(!concurrencyControl.isWriteConsistent(methodCall.getObjectID())){
+			ReturnValue returnValue = new ReturnValue();
+			returnValue.setException(new RMIException());
+			return returnValue;
+		}
 		messageManager.sendMessageCall(methodCall);
-		ReturnValue retVal = messageManager.receiveReturnValue();
-		
+		return messageManager.receiveReturnValue();
 	}
 
 	public void listenForUpdates() {
@@ -79,7 +83,9 @@ public class ObjectCache {
 			while(true){
 			ObjectUpdate objectUpdate = messageManager.receiveUpdate();
 			int objectID = objectUpdate.getObjectID();
+			concurrencyControl.updateWriteVersion(objectID);
 			objectCache.put(objectID, objectUpdate.getObject());
+			
 			}
 		} catch (IOException e) {
 			e.printStackTrace();

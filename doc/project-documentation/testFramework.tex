@@ -53,12 +53,11 @@ In diesem Kapitel werden die Schritte beschrieben, welche vor dem Starten des Te
 Die Kommunikation des Frameworkservers mit den Frameworkclients ist in folgendem Sequenzdiagramm grob dargestellt:
 
 
-\begin{figure}
+\begin{figure}[H]
 \begin{center}
 \includegraphics[scale=0.3]{image_testFramework/TestFWInit.png}
 \end{center}
-\caption{Testfamework Init}
-\label{labelname}
+\caption{Testframework Init}
 \end{figure}
 
 Die im Diagramm dargestellten Operationen lassen sich wie folgt erklären:
@@ -199,7 +198,6 @@ Nach Beendigung eines Testlaufs, muss der Server mehrere Arbeiten erledigen. Nac
 \includegraphics[scale=0.2]{image_testFramework/BeendeTestlauf.png}
 \end{center}
 \caption{Testfamework Exit}
-\label{labelname}
 \end{figure}
 
 Die im Diagramm ersichtlichen Operationen können folgendermassen erläutert werden:
@@ -329,7 +327,6 @@ Dieses Kapitel beschreibt die Aufgaben der Testframework Client Komponenten und 
 \includegraphics[scale=0.2]{image_testFramework/TestFWServerClientSeq.png}
 \end{center}
 \caption{Server Client Communication}
-\label{labelname}
 \end{figure}
  
 Die Kommunikation zwischen dem Testframework Client und dem Server ist über Java RMI realisiert worden. Beim Start eines Testframework Clients wird ein neuer ClientController instanziiert, dieses Objekt wird daraufhin zur Java RMI Runtime exportiert und für RMI Request zugänglich gemacht. Der Name sowie den Port unter dem das Objekt registriert ist, lässt sich als Argument bei Start des ClientControllers mitgeben. Der Port auf der die RMI Registry Anfragen akzeptiert lässt sich ebenfalls als optionales Argument mitgeben falls keine Portnummer als Argument mitgegeben wird, kommt der Defaultport 1099 zum Einsatz.
@@ -368,7 +365,6 @@ Die Methode shutdown() beendet den Testframework Client und das ClientSystemUnde
 \includegraphics[scale=0.3]{image_testFramework/startTest.png}
 \end{center}
 \caption{start Tests}
-\label{labelname}
 \end{figure}
 
 Die Klasse TestClient ist die Schnittstelle zwischen dem Testframework und dem ClientSystemUnderTest. Im Konstruktor muss ein Objekt übergeben werden, welches das ClientSystemUnderTest Interface implementiert. Dadurch lassen sich alle System testen die dieses Interface implementiert haben. Die "init()" Methode bezieht alle Accounts die auf dem Server verfügbar sind. Startet der Server den Testlauf wird im TestClient das zuvor gesetzte Szenario abgearbeitet. Hierfür wird auf jedem Aktion Objekt die Methode "execute( Account accunt )" aufgerufen. Das Account Objekt, welches der execute Methode übergeben werden muss, wird aus der List von Accounts genommen, welche in der "Init()" Methode vom Server bezogen wurde. Es wird solange durch diese Liste iteriert bis alle Aktionen erledigt sind. Bei einem Shutdown durch den Server ist der TestClient ebenfalls für die ordnungsgemässe Beendigung des ClientSystemUnderTest zuständig.

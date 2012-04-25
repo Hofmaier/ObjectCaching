@@ -13,7 +13,7 @@ public class RMIOnlyServerSystem implements ServerSystemUnderTest {
 	protected AccountSkeleton accountSkeleton = new AccountSkeleton();
 	protected AccountServiceSkeleton accountServiceSkeleton = new AccountServiceSkeleton();
 	protected AccountServiceImpl accountService = new AccountServiceImpl();
-	private ArrayList<MethodCalledListener> listeners = new ArrayList<MethodCalledListener>();
+	protected ArrayList<MethodCalledListener> listeners = new ArrayList<MethodCalledListener>();
 	
 	public RMIOnlyServerSystem(){
 		accountServiceSkeleton.setAccountSkeleton(accountSkeleton);

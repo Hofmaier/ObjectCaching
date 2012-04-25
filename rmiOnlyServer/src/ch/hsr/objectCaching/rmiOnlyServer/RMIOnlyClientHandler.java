@@ -16,7 +16,7 @@ public class RMIOnlyClientHandler extends ClientHandler {
 	private AccountSkeleton accountSkeleton;
 	private AccountServiceSkeleton accountServiceSkeleton;
 	protected String clientIpAdress;
-	private ArrayList<MethodCalledListener> listeners;
+	protected ArrayList<MethodCalledListener> listeners;
 
 	public void setAccountSkeleton(AccountSkeleton skeleton) {
 		this.accountSkeleton = skeleton;
@@ -44,7 +44,7 @@ public class RMIOnlyClientHandler extends ClientHandler {
 		}
 	}
 
-	void notifiyListeners(MethodCall methodCall) {
+	protected void notifiyListeners(MethodCall methodCall) {
 		for (MethodCalledListener listener : listeners) {
 			listener.methodCalled(methodCall.getMethodName(),
 					methodCall.getClientIp());

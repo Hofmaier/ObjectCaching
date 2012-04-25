@@ -22,7 +22,7 @@ public class RMIWithCacheServerSystem extends RMIOnlyServerSystem {
 		clientHandler.setObjectManager(objectManager);
 		clientHandler.setAccountServiceSkeleton(accountServiceSkeleton);
 		clientHandler.setAccountSkeleton(accountSkeleton);
-		
+		clientHandler.setMethodCalledListeners(listeners);
 		return clientHandler;
 	}
 	

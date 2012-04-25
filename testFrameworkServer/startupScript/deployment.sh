@@ -93,11 +93,10 @@ function func_startClient
   done
   echo "STARTUPSCRIPT: All clients started"
 }
+func_build
 ls ${serverJarPath} | grep $1 > /dev/null 2>&1
 if [[ $? -eq 0 || "$1" = "" ]]
 then
-	func_build
-	sleep 1
 	func_create_CLient_List
 	sleep 1
 	func_get_CLient_RMI_Port

@@ -19,6 +19,10 @@ public class MessageManager {
 	private BlockingQueue<Object> objectFromServerQueue = new LinkedBlockingQueue<Object>();
 	private BlockingQueue<ReturnValue> returnValueQueue = new LinkedBlockingQueue<ReturnValue>();
 	private BlockingQueue<ObjectUpdate> objectUpdateQueue = new LinkedBlockingQueue<ObjectUpdate>();
+	private boolean senderRunning = true;
+	private boolean receiverRunning = true;
+
+	
 
 	public IStreamProvider getStreamProvider() {
 		return streamProvider;
@@ -77,7 +81,6 @@ public class MessageManager {
 			ObjectOutputStream oos = streamProvider.getObjectOutputStream();
 			oos.writeObject(transferObject);
 			oos.flush();
-			
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (InterruptedException e) {
@@ -108,6 +111,10 @@ public class MessageManager {
 			ObjectUpdate update = (ObjectUpdate) temp;
 			objectUpdateQueue.add(update);
 		}
+		if(temp == null)
+		{
+			receiverRunning = false;
+		}
 	}
 	
 	public void startSenderThread(){
@@ -116,5 +123,19 @@ public class MessageManager {
 	
 	public void startReceiverThread(){
 		new Thread(new ReceiverThread(this)).start();
+	}
+	
+	public void shutDown()
+	{
+		objectUpdateQueue.add(null);
+		sendMessageCall(null);
+		senderRunning = false;
+	}
+
+	public boolean isSenderRunning() {
+		return senderRunning;
+	}
+	public boolean isReceiverRunning() {
+		return receiverRunning;
 	}
 }

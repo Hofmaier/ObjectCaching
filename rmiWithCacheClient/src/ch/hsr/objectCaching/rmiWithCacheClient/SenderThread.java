@@ -1,5 +1,7 @@
  package ch.hsr.objectCaching.rmiWithCacheClient;
 
+import java.io.IOException;
+
 
 public class SenderThread implements Runnable
 {
@@ -13,10 +15,20 @@ public class SenderThread implements Runnable
 	@Override
 	public void run() 
 	{
-		while(true)
+		while(messageManager.isSenderRunning())
 		{
 			messageManager.proccessOutgoingMessages();
 		}
+		try {
+			messageManager.getStreamProvider().getObjectOutputStream().close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public boolean close()
+	{
+		return true;
 	}
 
 }

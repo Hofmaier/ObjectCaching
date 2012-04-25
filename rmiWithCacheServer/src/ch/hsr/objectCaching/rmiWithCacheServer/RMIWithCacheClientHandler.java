@@ -22,6 +22,7 @@ public class RMIWithCacheClientHandler extends RMIOnlyClientHandler{
 					processTransferObject(transferObject);
 					
 				}
+				objectOutputStream.write(null);
 				objectInputStream.close();
 				objectOutputStream.close();
 			} catch (IOException e) {

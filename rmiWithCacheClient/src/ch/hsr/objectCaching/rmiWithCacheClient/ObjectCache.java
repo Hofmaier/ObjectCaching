@@ -80,8 +80,8 @@ public class ObjectCache {
 
 	public void listenForUpdates() {
 		try {
-			while(true){
-			ObjectUpdate objectUpdate = messageManager.receiveUpdate();
+			ObjectUpdate objectUpdate;
+			while((objectUpdate = messageManager.receiveUpdate()) != null){
 			int objectID = objectUpdate.getObjectID();
 			concurrencyControl.updateWriteVersion(objectID);
 			objectCache.put(objectID, objectUpdate.getObject());

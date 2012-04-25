@@ -191,16 +191,15 @@ public class Server implements ServerInterface
 	private void stopClient(String clientIp)
 	{
 		Client temp;
-		try {
-			
-			if((temp = clientList.getClientByIp(clientIp)) != null)
-			{
-				logger.info("stop client with ip: " + clientIp);
-				temp.setClientRunning(ShutedDown.DOWN);
+		if((temp = clientList.getClientByIp(clientIp)) != null)
+		{
+			logger.info("stop client with ip: " + clientIp);
+			temp.setClientRunning(ShutedDown.DOWN);
+			try {
 				temp.getClientStub().shutdown();
+			} catch (RemoteException e) {
+				e.printStackTrace();
 			}
-		} catch (RemoteException e) {
-			logger.log(Level.SEVERE, "Uncaught exception", e);
 		}
 		if(checkAllShutedDown())
 		{

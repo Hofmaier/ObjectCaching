@@ -11,11 +11,12 @@ import ch.hsr.objectCaching.rmiOnlyClient.StreamProvider;
 public class RMIwithCacheClientSystem implements ClientSystemUnderTest {
 	
 	private StreamProvider streamProvider = new StreamProvider();
+	private MessageManager messageManager;
 
 	@Override
 	public AccountService getAccountService() {
 		AccountServiceStub serviceStub = new AccountServiceStub();
-		MessageManager messageManager = new MessageManager();
+		messageManager = new MessageManager();
 		ObjectCache objectCache = new ObjectCache();
 		objectCache.setMessageManager(messageManager);
 		objectCache.startUpdateObjectThread();
@@ -37,14 +38,7 @@ public class RMIwithCacheClientSystem implements ClientSystemUnderTest {
 
 	@Override
 	public void shutdown() {
-		try {
-			 ObjectOutputStream oos = streamProvider.getObjectOutputStream();
-			 oos.writeObject(null);
-			 oos.close();
-			streamProvider.getObjectInputStream().close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		messageManager.shutDown();
 	}
 
 }

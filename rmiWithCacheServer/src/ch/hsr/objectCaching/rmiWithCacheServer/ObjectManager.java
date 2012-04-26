@@ -55,6 +55,7 @@ public class ObjectManager {
 			update.setObject(objectMap.get(objectID));
 			update.setObjectID(objectID);
 			client.send(update);
+			concurrencyControl.updateReadVersionOfClient(client.getClientIpAddress(), objectID);
 		}
 	}
 	

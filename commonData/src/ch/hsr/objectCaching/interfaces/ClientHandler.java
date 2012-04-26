@@ -23,7 +23,7 @@ public class ClientHandler implements Runnable {
 	public void setClientIpAddress(String clientIpAddress){}
 	public String getClientIpAddress() {return null;}
 
-	public void send(Object object) {
+	public synchronized void send(Object object) {
 		if(isActiv){
 		try {
 			objectOutputStream.writeObject(object);

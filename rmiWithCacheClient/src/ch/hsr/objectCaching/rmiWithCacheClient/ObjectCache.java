@@ -82,6 +82,9 @@ public class ObjectCache {
 		try {
 			ObjectUpdate objectUpdate;
 			while((objectUpdate = messageManager.receiveUpdate()) != null){
+				if(objectUpdate.getObject() == null){
+					break;
+				}
 			int objectID = objectUpdate.getObjectID();
 			concurrencyControl.updateWriteVersion(objectID);
 			objectCache.put(objectID, objectUpdate.getObject());

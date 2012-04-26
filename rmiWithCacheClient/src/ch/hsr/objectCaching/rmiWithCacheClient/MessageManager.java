@@ -9,6 +9,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import ch.hsr.objectCaching.dto.ObjectRequestResponse;
 import ch.hsr.objectCaching.dto.ObjectUpdate;
 import ch.hsr.objectCaching.dto.ReturnValue;
+import ch.hsr.objectCaching.dto.Shutdown;
 import ch.hsr.objectCaching.dto.TransferObject;
 import ch.hsr.objectCaching.rmiOnlyClient.IStreamProvider;
 
@@ -79,8 +80,14 @@ public class MessageManager {
 		try {
 			TransferObject transferObject = sendingQueue.take();
 			ObjectOutputStream oos = streamProvider.getObjectOutputStream();
-			oos.writeObject(transferObject);
-			oos.flush();
+			if(transferObject instanceof Shutdown){
+				oos.writeObject(null);
+				oos.flush();
+			}
+			else{
+				oos.writeObject(transferObject);
+				oos.flush();
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (InterruptedException e) {
@@ -127,8 +134,12 @@ public class MessageManager {
 	
 	public void shutDown()
 	{
-		objectUpdateQueue.add(null);
-		sendMessageCall(null);
+		ObjectUpdate objectUpdate = new ObjectUpdate();
+		objectUpdate.setObject(null);
+		objectUpdateQueue.add(objectUpdate);
+		
+		TransferObject transferObject = new Shutdown();
+		sendMessageCall(transferObject);
 		senderRunning = false;
 	}
 

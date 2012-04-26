@@ -31,7 +31,7 @@ public class ObjectCache {
 	{
 		if(objectCache.containsKey(objectID))
 		{
-			//conurrencyControl.setObjectRead(objectID);
+			concurrencyControl.updateReadVersionOfClient(objectID);
 			return objectCache.get(objectID);
 		}
 		else

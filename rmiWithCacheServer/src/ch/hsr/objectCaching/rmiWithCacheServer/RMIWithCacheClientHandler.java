@@ -38,6 +38,7 @@ public class RMIWithCacheClientHandler extends RMIOnlyClientHandler{
 			if(transferObject instanceof MethodCall)
 			{
 				MethodCall methodCall = (MethodCall) transferObject;
+				methodCall.setClientIp(clientIpAdress);
 				listener.methodCalled(methodCall.getMethodName(), methodCall.getClientIp());
 			}
 			if(transferObject instanceof ObjectRequest)

@@ -15,6 +15,7 @@ public class RMIWithCacheClientHandler extends RMIOnlyClientHandler{
 
 	@Override
 	public void run() {
+			isActiv = true;
 			try {
 				Object objectFromStream = null;
 				while ((objectFromStream = objectInputStream.readObject()) != null) {
@@ -23,7 +24,7 @@ public class RMIWithCacheClientHandler extends RMIOnlyClientHandler{
 					processTransferObject(transferObject);
 					
 				}
- 
+				isActiv = false;
 				//objectInputStream.close();
 				//objectOutputStream.close();
 			} catch (IOException e) {

@@ -12,6 +12,7 @@ public class ClientHandler implements Runnable {
 	protected OutputStream outputStream;
 	protected ObjectOutputStream objectOutputStream;
 	protected ObjectInputStream objectInputStream;
+	protected boolean isActiv;
 	
 
 	@Override
@@ -23,13 +24,16 @@ public class ClientHandler implements Runnable {
 	public String getClientIpAddress() {return null;}
 
 	public void send(Object object) {
+		if(isActiv){
 		try {
 			objectOutputStream.writeObject(object);
 			objectOutputStream.flush();
 			objectOutputStream.reset();
 		} catch (IOException e) {
 			e.printStackTrace();
-		}		
+		}	
+		}
+		
 	}
 
 	public void setInputStream(InputStream inputStream) {

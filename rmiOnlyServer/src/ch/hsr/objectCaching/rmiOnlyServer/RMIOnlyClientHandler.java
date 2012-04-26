@@ -28,6 +28,7 @@ public class RMIOnlyClientHandler extends ClientHandler {
 
 	@Override
 	public void run() {
+		isActiv = true;
 		try {
 			MethodCall methodCall;
 			while ((methodCall = readMethodCallfrom()) != null) {

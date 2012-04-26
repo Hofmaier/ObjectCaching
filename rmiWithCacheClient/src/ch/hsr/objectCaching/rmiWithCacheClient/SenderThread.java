@@ -19,11 +19,7 @@ public class SenderThread implements Runnable
 		{
 			messageManager.proccessOutgoingMessages();
 		}
-		try {
-			messageManager.getStreamProvider().getObjectOutputStream().close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		
 	}
 	
 	public boolean close()

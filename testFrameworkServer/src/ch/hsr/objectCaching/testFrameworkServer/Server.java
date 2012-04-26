@@ -188,7 +188,7 @@ public class Server implements ServerInterface
 		stopClient(clientIp);
 	}
 	
-	private void stopClient(String clientIp)
+	synchronized private void stopClient(String clientIp)
 	{
 		Client temp;
 		if((temp = clientList.getClientByIp(clientIp)) != null)
@@ -207,7 +207,7 @@ public class Server implements ServerInterface
 		}
 	}
 	
-	private boolean checkAllShutedDown()
+	synchronized private boolean checkAllShutedDown()
 	{
 		for(int i = 0; i < clientList.size(); i++)
 		{

@@ -14,11 +14,13 @@ public class AccountStub extends ch.hsr.objectCaching.rmiOnlyClient.AccountStub 
 	@Override
 	public double getBalance() {
 		Account account = (Account) cache.getObject(objectID);
+		System.out.println("[CLIENT]read balance: " + account.getBalance());
 		return account.getBalance();
 	}
 
 	@Override
 	public void setBalance(double balance) throws RuntimeException {
+		System.out.println("[CLIENT]set balance: " + balance);
 		MethodCall methodCall = prepareMethodCall(balance);
 		ReturnValue retVal = cache.processMethodWithSideEffect(methodCall);
 		checkForExceptions(retVal);

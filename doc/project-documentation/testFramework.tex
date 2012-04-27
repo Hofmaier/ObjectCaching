@@ -234,7 +234,20 @@ private void stopClient(String clientIp)
 \end{lstlisting}
 
 Durch die Prüfung "checkAllShutedDown()", wird nur der letzte aller Threads weiterleben. Somit wird auch nur ein Thread fähig sein die Methode "printSummary()" auszuführen, während die anderen Threads die Methode zu Ende abarbeiten und am Ende der Methode sterben. Durch diese Implementation wird sichergestellt, dass nur ein Thread weiterlebt und keine "Zombi-Prozesse" mehr vorhanden sind.\newline
-Weiter wird beim Abarbeiten dieser Methode die Methode "shutdown()" auf dem Client aufgerufen. Nach diesem Aufruf fährt sich der Client herunter und kappt alle akiven Verbindungen zum Server. Weitere Informationen zum Shutdown-Prozess des Clients sind unter der Kapitel des Frameworkclients ersichtlich.
+Weiter wird beim Abarbeiten dieser Methode die Methode "shutdown()" auf dem Client aufgerufen. Nach diesem Aufruf fährt sich der Client herunter und kappt alle akiven Verbindungen zum Server. Weitere Informationen zum Shutdown-Prozess des Clients sind unter der Kapitel des Frameworkclients ersichtlich.\newline
+Oben genannte Implementation der "stopClient(String clientIP)"-Methode hat lange funktioniert. Während des Entwicklungsprozesses der RMI-Only Lösung lief das Framework mit der erwähnten Methode ohne Probleme. Bei den ersten Testläufen der RMI-Cache Lösung wurden beim Herunterfahren der Umgebung allerdings Exceptions generiert. Da die Fehlersuche bei Software mit einer vielzahl von Threads sehr langwierig ist, dauerte die Analyse des Fehlers relativ lange.\newline Schlussendlich wurde bemerkt, dass die Methode "printSummary()" trotz aller Vorsichtsmassnahmen von jedem Client ein Mal ausgeführt wurde, was dazu führte, dass mehrere Zusammenfassungen generiert wurden und probiert wurde, den FrameworkServer mehrere Male herunterzufahren. Der Versuch den FrameworkServer mehrmals herunterzufahren war natürlich der Grund für die Exceptions, da dem zweiten Client einfach der Verbindungspartner weggerissen wurde.\newline
+Der Grund des Fehlverhaltens lag in der nicht funktionierenden Barriere "checkAllShutedDown()". Nachdem der Methodenkopf durch snychronized erweitert wurde, funktionierte das Framework wieder problemlos:
+\begin{lstlisting}
+synchronized private void stopClient(String clientIp)
+\end{lstlisting}
+Anscheinend sind die Clients bei der Cache-Implementation immer zum fast gleichen Zeitpunkt fertig, was dazu führte, dass der Status "ShutedDown.DOWN" nur unzuverlässig gesetzt wurde. Das Fehlerszenario lief wie folgt ab:
+\begin{itemize}
+\item Thread1 betritt die "stopClient(String clientIp)"-Methode und setzt seinen Status auf DOWN
+\item Kurz nachdem Thread1 seinen Status gesetzt hat, wird im die Ressource entzogen und Thread2 kommt zum Zug
+\item Thread2 betritt nun seinerseits die Methode und setzt seinen Status ebenfalls auf DOWN
+\item Da nun alle Threads auf DOWN sind, wird die Barriere nicht mehr funktionieren und mehrere Threads führen "printSummary()" aus
+\end{itemize}
+Dadurch, dass die Methode nun synchronized ist, ist gewährleistet, dass sich nur ein Thread in der Methode aufhalten kann. Das wiederum bedeutet, dass die Barriere "checkAllShutedDown()" nun wieder funktioniert, da die Stati der Threads wieder zuverlässig gesetzt werden.
 
 \subsubsection{Report Generator}
 \label{sec:reportGenerator}

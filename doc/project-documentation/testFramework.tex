@@ -434,7 +434,7 @@ public abstract void execute(Account account);
 
 \begin{itemize}
 \item Für eine detailierte Auswertung muss der Typ der Aktion zugänglich gemacht werden, dies ist über die Methode "getActionTyp()" möglich.
-\item Eine Aktion kann aus mehreren setter/getter bestehen, daher ist es notwendig festzustellen ob die ganze Aktion erfolgreich war oder nicht. Dies wird über die minimale Anzahl von TimeRecords, die für den Erfolg der spezifischen Aktion notwendig sind, gemacht. 
+\item Eine Aktion besteht aus einer Abfolge von "getBalance()" und "setBalance(double value)" Aufrufen. Jenach Aktion können mehrer Methodenaufrufe auf das Account Objekt nötig sein um die Aktion erfolgreich auszuführen. Um im Reporting festzustellen ob die ganze Aktion beim ersten Versuch erfolgreich war, muss die minimale Anzahl von TimeRecords, die für den Erfolg der Aktion nötig sind, über die Methode "getMinimalNumberOfTimeRecords()" zugänglich gemacht werden. So lassen sich Konflikte, die bei der Ausführung dieser Aktion auftreten, im Reporting feststellen.
 \item Die Methode "execute(Account account)" beinhaltet die eigentliche Aktion die auf dem Account-Objekt ausgeführt werden soll.
 \end{itemize} 
 

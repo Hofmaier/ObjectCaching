@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<project name="objectCaching" default="copyConfig" basedir=".">
+<project name="objectCaching" default="run-junit" basedir=".">
 
 	<property name="build.dir" location="build" />
 	<property name="build.prod.dir" location="${build.dir}/prod" />
@@ -22,14 +22,22 @@
 	<property name="rmiWithCacheClient.src.dir" location="rmiWithCacheClient/src" />
 	<property name="rmiWithCacheServer.src.dir" location="rmiWithCacheServer/src" />
 
+	<property name="build.test.dir" location="${build.dir}/test" />
+
 	<path id="project.classpath">
 		<pathelement location="${build.prod.server.dir}" />
 		<pathelement location="${build.prod.client.dir}" />
+		<pathelement location="${build.test.dir}" />
+		<fileset dir="lib">
+			<include name="*.jar" />
+		</fileset>
 	</path>
 
 	<target name="prepare" depends="clean">
 		<mkdir dir="${build.prod.server.dir}" />
 		<mkdir dir="${build.prod.client.dir}" />
+		<mkdir dir="${build.test.dir}" />
+		<mkdir dir="result" />
 	</target>
 
 	<target name="compileCommonData" depends="prepare">
@@ -74,6 +82,7 @@
 	<target name="clean">
 		<delete dir="${build.dir}" />
 		<delete dir="${dist.dir}" />
+		<delete dir="result" />
 	</target>
 
 	<target name="jar" depends="compileFmClient, compileFmServer">
@@ -110,6 +119,61 @@
 		<copy todir="${dist.server.dir}">
 			<fileset dir="testFrameworkServer" includes="*testCases.xml" />
 		</copy>
+	</target>
+
+
+	<!-- Compile and Running JUnit Tests -->
+
+	<target name="compile-testframeworkClientTest" depends="copyConfig">
+		<javac srcdir="testFrameworkClient/test" destdir="${build.test.dir}" includeantruntime="false">
+			<classpath refid="project.classpath" />
+		</javac>
+	</target>
+
+	<target name="compile-testFrameworkServerTest" depends="copyConfig">
+		<javac srcdir="testFrameworkServer/test" destdir="${build.test.dir}" includeantruntime="false">
+			<classpath refid="project.classpath" />
+		</javac>
+	</target>
+
+	<target name="compile-commonDataTest" depends="copyConfig">
+		<javac srcdir="commonData/test" destdir="${build.test.dir}" includeantruntime="false">
+			<classpath refid="project.classpath" />
+		</javac>
+	</target>
+
+	<target name="compile-rmiOnlyClientTest" depends="copyConfig">
+		<javac srcdir="rmiOnlyClient/test" destdir="${build.test.dir}" includeantruntime="false">
+			<classpath refid="project.classpath" />
+		</javac>
+	</target>
+
+	<target name="compile-rmiOnlyServerTest" depends="copyConfig">
+		<javac srcdir="rmiOnlyServer/test" destdir="${build.test.dir}" includeantruntime="false">
+			<classpath refid="project.classpath" />
+		</javac>
+	</target>
+
+	<target name="compile-rmiWithCacheServerTest" depends="copyConfig">
+		<javac srcdir="rmiWithCacheServer/test" destdir="${build.test.dir}" includeantruntime="false">
+			<classpath refid="project.classpath" />
+		</javac>
+	</target>
+
+	<target name="compile-rmiWithCacheClientTest" depends="copyConfig">
+		<javac srcdir="rmiWithCacheClient/test" destdir="${build.test.dir}" includeantruntime="false">
+			<classpath refid="project.classpath" />
+		</javac>
+	</target>
+
+	<target name="run-junit" depends="compile-commonDataTest, compile-rmiOnlyClientTest, compile-rmiOnlyServerTest, compile-rmiWithCacheClientTest, compile-rmiWithCacheServerTest, compile-testframeworkClientTest, compile-testFrameworkServerTest">
+		<junit printsummary="yes" haltonfailure="false">
+			<classpath refid="project.classpath">
+			</classpath>
+			<batchtest fork="no" todir="result">
+				<fileset dir="${build.test.dir}" includes="**/Test*.class" excludes="**/*$*.class" />
+			</batchtest>
+		</junit>
 	</target>
 
 </project>

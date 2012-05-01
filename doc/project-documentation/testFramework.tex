@@ -421,7 +421,25 @@ Die Beendigung des ClientControllers wird in einem seperaten Thread ausgeführt,
 \caption{start Tests}
 \end{figure}
 
-Die Klasse TestClient ist die Schnittstelle zwischen dem Testframework und dem ClientSystemUnderTest. Dem Konstruktor muss ein Objekt übergeben werden, welches das ClientSystemUnderTest Interface implementiert. Dadurch lassen sich alle System testen die dieses Interface implementiert haben. Die "init()" Methode bezieht alle Accounts, welche auf dem Server verfügbar sind. Startet der Server den Testlauf, wird im TestClient das zuvor gesetzte Szenario abgearbeitet. Hierfür wird auf jedem Aktion-Objekt die Methode "execute( Account account )" aufgerufen. Das Account Objekt, welches der execute-Methode übergeben werden muss, wird aus der List von Accounts genommen, welche in der "Init()" Methode vom Server bezogen wurde. Es wird solange durch diese Liste iteriert, bis alle Aktionen erledigt sind. Bei einem Shutdown durch den Server ist der TestClient ebenfalls für die ordnungsgemässe Beendigung des ClientSystemUnderTest zuständig.
+Die TestClient Klasse ist die Schnittstelle zwischen dem ClientController und dem ClientSystemUnderTest. Das Interface ClientSystemUnderTest ist die  Schnittstelle die alle ClientSystemUnderTest Clients implementieren müssen, so lassen sich alle Varianten von ClientSystemUnderTest über diesen TestClient testen. Desweiteren kann auf dem TestClient das Szenario gesetzt werden, welches der TestClient beim Aufruf von "runScenario()" durch den ClientController abarbeitet.
+
+Das ClientSystemUnderTest Interface ist wie folgt definiert:
+\begin{lstlisting}[language=java, breaklines=true] 	
+public interface ClientSystemUnderTest {	
+	public AccountService getAccountService();
+	public void setServerSocketAdress(InetSocketAddress socketAdress);
+	public void shutdown();
+}	
+\end{lstlisting}
+\subsubsection{Ablauf}
+\label{sec:ablauf}
+\begin{itemize}
+\item Der ClientController setzt die Socket Adresse des Server in das ClientSystemUnderTest. Die nötigen Imformationen sind ebenfalls im Configuration Objekt gespeichert.
+\item Im Konstruktor des TestClients wird der AccountService, des übergebenen ClientSystemUnderTest über die Methode "getAccountService()" geladen. 
+\item Während der Initialisierungs- Phase des ClientController ruft dieser ebenfalls die "init()" Methode des TestClients auf, dadurch wird eine Liste aller Accounts Objekte aus dem AccountService in den TestClient geladen.
+\item Startet der Server nun den Testlauf wird endlos durch die Liste der Accounts interiert bis alle Aktionen des gesetzten Szenarios abgearbeitet sind.
+\item Bei einem Shutdown durch den Server ist der TestClient ebenfalls für die ordnungsgemässe Beendigung des ClientSystemUnderTest zuständig.
+\end{itemize}
 
 \subsection{Action}
 \label{sec:action}
@@ -485,7 +503,10 @@ public void execute(Account account) {
 \end{lstlisting}
 Im laufe der Realisierung stellte sich heraus das zwischen dem "getBalance()" und dem "setBalance()" Aufruf eine minimal definierbare Zeitdauer gewartet werden können muss. Diese Warteperiode ist nötig, damit sich leichter ein Konflikt erzeugen lässt und so gezeigt werden kann, dass der Fehler serverseitig zu keinem Lost-Updates führt.
 \newline
-Tritt serverseitig ein Concurrency Fehler auf, wird eine RuntimeExeption an den aufrufenden Client geworfen. Dies veranlasst die Aktion dazu, dass sie mit der komplete Aktion nochmals neu beginnt, mit dem Unterschied, das diesmal keine Verzögerung zwischen getBalance() und setBalance() benutzt wird. Dies wird über den Wert numberOfTry geprüft, ist dieser grösser als eins wird die Verzögerung nicht nochmals ausgeführt.
+Tritt serverseitig ein Concurrency Fehler auf, wird eine RuntimeExeption zurück an den Client geworfen. Dieser Fehler führt dazu, dass die Aktion nochmals neu gestartet wird. Die Aktion wird solange wiederholt bis diese erfolgreich aus der While-Schleife kommt. Die Verzögerung zwischen dem Lesen und Schreiben, welche über die Methode "sleep()" realisiert ist, führt nur beim ersten Versuch der IncrementAction zu einer zeitlichen Verzögerung.
+
+
+Dies veranlasst die Aktion dazu, dass sie mit der komplete Aktion nochmals neu beginnt, mit dem Unterschied, das diesmal keine Verzögerung zwischen getBalance() und setBalance() benutzt wird. Dies wird über den Wert numberOfTry geprüft, ist dieser grösser als eins wird die Verzögerung nicht nochmals ausgeführt.
 
 \subsection{WriteAction}
 \label{sec:writeAction}
@@ -497,7 +518,7 @@ Die WriteAction wurde ebenfalls nur zu Beginn der Realisierung benutzt. Diese Ak
 
 \subsection{Result}
 \label{sec:result}
-Für die möglichst genaue Zeitmessung einer Aktion wird die von Java bereitgestellte Methode System.nanoTime() genutzt. Die Result Klasse bietet eine "startTimeMeasurement(BasicAction type)" Methode die ein neues TimeRecord Objekt erzeugt und die momentane Zeit in dieses neue TimeRecord Objekt schreibt. Der BasicActiontype wird benötigt, damit bei der Auswertung genau analysiert werden kann, für welchen Methodeaufruf(getBalance() / setBalance()) dieser TimeRecord gilt. Über stopTimeMeasurement() lässt sich die aktuelle Zeitmessung beenden und der aktuelle TimeRecord wird abgelegt. Da innerhalb der "execute(Account account)" Methode mehrere setBalance() oder getBalance() Aufrufe möglich sind, wie zum Beispiel in der IncrementAction, ist es daher möglich  mehrere TimeRecords pro Result-Objekt zu erfassen.
+Für die möglichst genaue Zeitmessung einer Aktion wird die von Java bereitgestellte Methode System.nanoTime() genutzt. Die Klasse Result bietet eine "startTimeMeasurement(BasicAction type)" Methode die ein neues TimeRecord Objekt erzeugt und die momentane Zeit in dieses TimeRecord Objekt schreibt. Die Information, ob es sich bei dieser Messung um eine lesende oder schreibende Methode handelt wird über denn BasicAction-Typ an den TimeRecord weiter gegeben. Diese ist nötig, damit bei der Auswertung genau analysiert werden kann, für welchen Methodeaufruf (getBalance() / setBalance()) dieser TimeRecord erzeugt wurde. Über die Methode "stopTimeMeasurement(ActionResult result)" lässt sich die Zeitmessung beenden und der aktuelle TimeRecord wird in einer Liste gespeichert. Das Argument, welches in der "stopTimeMeasurment()" Methode übergeben wird beinhaltet die Information über den Erfolg der Aktion. So lassen sich auch Aktionen erzeugen die aus mehreren setBalance() oder getBalance() Aufrufe bestehen. Dies ist zum Beispiel in der IncrementAction der Fall.
 
 \subsection{TimeRecord}
 \label{sec:timeRecord}
@@ -505,28 +526,9 @@ Der TimeRecordtyp ist als reines Data Tranfer Object implementiert worden. Es be
 
 \subsection{BasicAction}
 \label{sec:BasicAction}
-Damit eine genaue Analyse der Aktionen gemacht werden kann, ist es nötig, dass zwischen "getBalance()" und "setBalance()" unterscheiden werden kann. Eine Aktion kann aus mehreren Methodenaufrufen bestehen, daher muss bei einer Zeitmessung die Art(setter / getter) angegeben werden können. Da jedoch eine Aktion aus einer Abfolge von Reads und Writes bestehen kann, ist es nötig das diese Information gespeichert wird. Im TimeRecord lässt sich daher die BasicAction speichern.
+Damit eine genaue Analyse der Aktionen gemacht werden kann, ist es nötig, dass zwischen "getBalance()" und "setBalance()" unterscheiden werden kann. Eine Aktion kann aus mehreren Methodenaufrufen bestehen, daher muss bei einer Zeitmessung die Art(setter / getter) angegeben werden können. Da jedoch eine Aktion aus einer Abfolge von Reads und Writes bestehen kann, ist es nötig, dass diese Information gespeichert wird. Im TimeRecord lässt sich daher die BasicAction speichern.
 
 \subsection{ActionResult}
 \label{sec:ActionResult}
 Den Erfolg eines getBalance() oder setBalance() Aufrufs lässt sich ebenfalls im TimeRecord speichern. Um eine Statistik über die Fehlerrate beider Methodenaufrufe zu bekommen, war es daher nötig, dass beim stoppen einer Messung, der eine BasicAction zugrunde liegt den Erfolgstatus gespeichert werden kann. Damit lässt sich ein Szenario auf die zwei Grundoperation setBalance() und getBalance() herunterbrechen. Dies ermöglicht es die Auswertung bis auf diese zwei Methoden hinab zu analyisieren und auszuwerten.
-
-\subsection{ReportGenerator <- abundant}
-\label{sec:reportGenerator}
-Der ReportGenerator analyisiert ein Szenario und schreibt die Resultate in eine Txt-Datei, welche alle relevanten Information beinhaltet. Wir haben uns für eine Textdatei entschieden, da ein Textfile leicht lesbar ist(Grund???). Folgende Messdaten müssen aus einem Report ersichtlicht sein:
-\begin{itemize}
-\item durchschnittliche Dauer des Methodenaufrufs getBalance()
-\item durchschnittliche Dauer des Methodenaufrufs setBalance()
-\item Anzahl aufgetretene Konflikte
-\item Dauer eines setBalance(); Methodenaufrufs im Falle einer Konfliktsituation
-  \begin{itemize}
-  \item Zeitdifferenz zwischen erstem setBalance bis erfolgreichem setBalance
-  \item Zeitdifferenz zwischen setBalance und Empfang der zugehörigen Exception
-  \end{itemize}
-\item Dauer des gesamten Szenario
-\end{itemize}
-
-Um die obigen Anforderung erfüllen zu können, war es nötig, dass wir unterscheiden können zwischen einer getBalance() und einer setBalance() Aktion, dies wird über den BasicAction-Typ erledigt.
-\newline
-Die Resultatedatei ist in drei Teile unterteilt. Der erste Teil gibt eine List der Aktionen aus und die dazugehörigen BasicAktion. Über den ActionTyp wird der entsprechende Ausgabestring erzeugt. Es folgt eine Zusammenfassung der zwei BasicAktionarten und zuletzt ein Zusammenfassung über das ganze Szenario.
 

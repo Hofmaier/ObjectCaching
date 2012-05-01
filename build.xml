@@ -23,6 +23,7 @@
 	<property name="rmiWithCacheServer.src.dir" location="rmiWithCacheServer/src" />
 
 	<property name="build.test.dir" location="${build.dir}/test" />
+	<property name="result.dir" location="result"/>
 
 	<path id="project.classpath">
 		<pathelement location="${build.prod.server.dir}" />
@@ -37,7 +38,7 @@
 		<mkdir dir="${build.prod.server.dir}" />
 		<mkdir dir="${build.prod.client.dir}" />
 		<mkdir dir="${build.test.dir}" />
-		<mkdir dir="result" />
+		<mkdir dir="${result.dir}" />
 	</target>
 
 	<target name="compileCommonData" depends="prepare">
@@ -82,7 +83,7 @@
 	<target name="clean">
 		<delete dir="${build.dir}" />
 		<delete dir="${dist.dir}" />
-		<delete dir="result" />
+		<delete dir="${result.dir}" />
 	</target>
 
 	<target name="jar" depends="compileFmClient, compileFmServer">
@@ -166,11 +167,16 @@
 		</javac>
 	</target>
 
+	<target name="copytestCases" depends="copyConfig">
+		<copy file="testFrameworkServer/testCases.xml" tofile="build/testCases.xml" />
+	</target>
+
 	<target name="run-junit" depends="compile-commonDataTest, compile-rmiOnlyClientTest, compile-rmiOnlyServerTest, compile-rmiWithCacheClientTest, compile-rmiWithCacheServerTest, compile-testframeworkClientTest, compile-testFrameworkServerTest">
 		<junit printsummary="yes" haltonfailure="false">
 			<classpath refid="project.classpath">
 			</classpath>
-			<batchtest fork="no" todir="result">
+			<formatter type="plain"/>
+			<batchtest fork="no" todir="${result.dir}">
 				<fileset dir="${build.test.dir}" includes="**/Test*.class" excludes="**/*$*.class" />
 			</batchtest>
 		</junit>

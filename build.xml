@@ -172,7 +172,7 @@
 	</target>
 
 	<target name="run-junit" depends="compile-commonDataTest, compile-rmiOnlyClientTest, compile-rmiOnlyServerTest, compile-rmiWithCacheClientTest, compile-rmiWithCacheServerTest, compile-testframeworkClientTest, compile-testFrameworkServerTest">
-		<junit printsummary="yes" haltonfailure="true">
+		<junit printsummary="yes" haltonfailure="false">
 			<classpath refid="project.classpath">
 			</classpath>
 			<formatter type="plain"/>

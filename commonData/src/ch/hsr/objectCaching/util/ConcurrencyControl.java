@@ -58,6 +58,7 @@ public class ConcurrencyControl {
 	public boolean isWriteConsistent(Integer objectID, String clientIP) {
 		Integer actualClientVersion = readMap.get(generateReadMapKey(clientIP, objectID));
 		Integer actualServerVersion = writeMap.get(objectID);
+		System.out.println("[CLIENT] isConsistentCheck: clientVersion: " + actualClientVersion + " serverVersion: " + actualServerVersion);
 		return !(actualClientVersion < actualServerVersion);
 	}
 

@@ -43,6 +43,7 @@ public class MessageManager {
 
 	public void sendMessageCall(TransferObject transferObject) 
 	{
+		System.out.println("[CLIENT] send setBalance to Server");
 		sendingQueue.add(transferObject);
 	}
 

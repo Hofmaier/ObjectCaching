@@ -55,6 +55,54 @@ Der Prozess Kontostand erhöhen läuft wie folgt ab.
 \item [setBalance] Das Object muss im Cache invalidiert werden. Mit ConcurrencyControl kann überprüft werden, ob mit einer alten Version gearbeitet wurde.
 \end{description}
 
+\subsubsection{Mögliche Aufrufszenarien}
+\label{sec:mogl-aufr}
+
+Im ersten Szenario treten keine Konsistenzprobleme auf. Laufen die Methodenaufrufe in dieser Reihenfolge ab, benötigt das System keine Concurrency Control.
+\begin{enumerate}
+\item Beim ersten \verb|getBalance()| fordert der Cache ein neues Objekt an und speichert es.
+\item Beim zweiten \verb|getBalance()|  liegt das Objekt bereits im Cache und muss nicht nochmals vom Server angefordert werden.
+\item Ruft der Client ein \verb|setBalance()| auf, wird dieser Aufruf direkt an der Server weitergeleitet. Der Aufruf blockiert, bis der Server eine Antwort sendet. Der Server sendet zuerst allen Clients das Update danach sendet er das ReturnValue des Methodenaufrufs. Die Update-Message wird also vor dem ReturnValue versendet. Im ClientCache wird das Update und das ReturnValue verarbeitet. Es kann nicht gesagt werden, ob der Cache bereits ein Update erfahren hat, wenn  \verb|setBalance()|  zurückkehrt.
+\item Nachdem der ClientCache die Update Nachricht des Server verarbeitet hat, ruft der Client nochmals \verb|getBalance()| auf, erhält er den Kontostand des neuesten Objektes.
+\end{enumerate}
+
+\includegraphics[scale=0.5]{image_testFramework/conflictscenario_noconflict}
+
+
+Verändert ein zweiter Client zur gleichen Zeit das selbe Account Objekt, muss die Konsistenz sichergestellt werden. 
+\begin{enumerate}
+\item Client 1 forder aufgrund eines \verb|getBalance| ein Objekt an.
+\item Client 2 fordert das selbe Objekt auch an.
+\item Client 2 ruft \verb|setBalance| auf und verändert das Objekt auf dem Server. Der Server sendet allen Clients, die das Objekt in ihrem Cache haben ein Update.
+\item Client 1 ruft ebenfalls \verb|setBalance| auf. Da sich das Objekt in zwischenzeit geändert hat und Client 1 kein \verb|getBalance()|ausgeführt hat, arbeitet der Client mit veralteten Daten. Der Clientcache vergleicht die aktuelle Versionnummer mit der Versionnummer, die das Objekt beim letzen \verb|getBalance()|-Aufruf hatte. Das Objekt hat inzwischen ein Update erfahren und hat somit eine höhere Versionsnummer. Der Cache wirft eine Exception.
+\item Client 1 ruft 
+\end{enumerate}
+
+\includegraphics[scale=0.5]{images_objectcaching/conflictInCache}
+
+Eine weitere Möglichkeit in welcher Reihenfolge Methodenaufrufe verarbeitet werden, beinhaltet dass der Server ein \verb|setBalance()|von einem Client erhält und bevor er das Update an alle versendet verarbeitet er ein \verb|setBalance() | eines anderen Clients. In diesem Fall detektiert der Server die Inkonsistenz. Beide Client haben sich die selbe Version des selben Objektes geholt.
+\begin{enumerate}
+\item Client 2 sendet ein \verb|setBalance()| an den Server. Bei der Verabeitung dieses Methodenaufrufs macht der Server drei Dinge in dieser Reihenfolge.
+  \begin{enumerate}
+  \item Methode auf Object ausführen
+  \item Update an alle Clients senden
+  \item Versionnummern der ConcurrencyControl für jeden Client updaten
+\end{enumerate}
+\item Client 1 sendet ebenfalls ein \verb|getBalance()|. Der Cache in Client 1 hat für den Methodenaufruf von Client 2 noch kein Update erhalten. Er wird an den Server weitergeleitet. Der Methodenaufruf trifft beim Server vor dem Versionsnummernupdate des Methodenaufrufs von Client 2 ein. Der Server stellt fest, dass Client 1 noch mit einer alten Version arbeitet und returniert Client 1 eine Exception.
+\end{enumerate}
+
+\includegraphics[scale=0.5]{images_objectcaching/conflictOnServer}
+
+Bei allen Fällen kann Inkonsistenz festgestellt werden, indem sich der Server und der Clientcache merkt, welche Version an den Client vor dem \verb|setBalance()|herausgegeben wurde und überprüft, ob die Version des Objektes mittlerweile höher ist. Dabei müssen die Versionnummern im Cache und auf dem Server nicht synchron sein. Es gibt jedoch eine Aufrufabfolgemöglichkeit bei der Inkonsistenz entstehen kann, wenn man sich nur darauf verlässt, welche Versionsnummer zuletzt herausgegeben wurde.
+
+\begin{enumerate}
+\item Client 2 sendet ein \verb|setBalance()|. Der Server versendet das Update und aktualisiert die Versionsnummern der Clients.
+\item Client 1 sendet ebenfalls ein \verb|setBalance()|. Er sendet den Methodenaufruf dem Server bevor er den Update erhalten hat. Zum Zeitpunkt der Ankunft des Methodenaufrufs beim Server, hat der Server aber bereits das Update versendet und die Versionsnummer aktualisiert. Der Methodenaufruf und der Update haben sich also gekreuzt. Da der Server meint, dass Client 1 mit der aktuellen Version arbeitet, wird er den \verb|setBalance()| Aufruf auf dem Objekt ausführen. Es kommt zu einem Lost Update.
+\end{enumerate}
+
+\includegraphics[scale=0.5]{images_objectcaching/conflictCross}
+
+Um Inkonsistenz bei diesem Szenario zu erkennen und zu verhindern, muss die Nachricht die den \verb|setBalance()| Methodenaufruf enthält, die Versionnummer des Clients, der die Methode aufruft, mitsenden. Ist diese Versionnummer tiefer als die aktuelle Versionnummer des Objektes wird eine Exception geworfen. Damit die Versionnummern auf Server und auf Client immer synchron sind muss bei einem ObjectRequest die aktuelle Versionnummer an den Client gesendet werden. Bei einem Update wird die Nummer einfach inkrementiert.
 
 \subsubsection{Erwartetet Vorteile}
 \label{sec:erwartetet-vorteile}
@@ -70,6 +118,10 @@ Der Prozess Kontostand erhöhen läuft wie folgt ab.
 \begin{description}
 \item[Cache] Die Stubs, z.B. AccountStub, fordern beim Cache Objekte an. Der Cache holt die Objekte aus dem Memory oder er fodert sie über Netzwerk beim Server an. Er fordert sie beim Server an, wenn sie noch nicht vorhanden sind oder wenn ein Objekt invalidiert wurde. Der Cache muss bei einem Update, die Objekte im Hauptspeicher aktualisieren.
 \item[Concurrency Control] Überprüft ob \verb+getBalance+ und \verb+setBalance()+ ausgeführt werden können, ohne dass Inkonsistenzen entstehen.
+<<<<<<< HEAD
 \item[Message Manager] Nimmt Messages für Remote-Methodenaufruf und Ob\-jekt-Request entgegen und sorgt dafür dass sie an den Server versendet werden und die Antwort darauf an den Absender weitergeleitet werden. Nimmt vom Server Update-Messages entgegen und leitet sie an den Cache weiter. 
+=======
+\item[Message Manager] Nimmt Messages für Remote-Methodenaufruf und Objekt-Request entgegen und sorgt dafür dass sie an den Server versendet werden und die Antwort darauf an den Absender weitergeleitet werden. Nimmt vom Server Update-Messages entgegen und leitet sie an den Cache weiter.
+>>>>>>> 60ef5ed314d47225d91a622128e3043a86aa3bee
 \end{description}
 

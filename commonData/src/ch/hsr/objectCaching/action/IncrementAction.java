@@ -1,8 +1,11 @@
 package ch.hsr.objectCaching.action;
 
+import java.util.logging.Logger;
+
 import ch.hsr.objectCaching.account.Account;
 import ch.hsr.objectCaching.action.result.Result.ActionResult;
 import ch.hsr.objectCaching.action.result.Result.BasicAction;
+import ch.hsr.objectCaching.dto.RMIException;
 
 public class IncrementAction extends Action {
 
@@ -10,6 +13,7 @@ public class IncrementAction extends Action {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	private static Logger logger = Logger.getLogger(IncrementAction.class.getName());
 	private final int MINIMAL_TIME_RECORDS_FOR_SUCCESS = 2;
 	private long delay;
 	private double factor;
@@ -55,7 +59,8 @@ public class IncrementAction extends Action {
 				account.setBalance(balance * factor);
 				result.stopTimeMeasurement();
 				successful = true;
-			} catch (RuntimeException e) {
+			} catch (RMIException e) {
+				logger.severe(e.getMessage());
 				successful = false;
 				result.stopTimeMeasurement(ActionResult.FAILED);
 			}

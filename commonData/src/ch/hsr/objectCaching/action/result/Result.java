@@ -13,9 +13,10 @@ public class Result implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private List<TimeRecord> listOfAttempt;
 	private TimeRecord currentTry;
+	private TimeRecord totalTimeRecord;
 	
 	public enum BasicAction {
-		READ, WRITE;
+		READ, WRITE, TOTAL_ACTION_TIME;
 	}
 	
 	public enum ActionResult {
@@ -48,8 +49,16 @@ public class Result implements Serializable {
 	public void stopTimeMeasurement(ActionResult result) {
 		currentTry.setStopTime(System.nanoTime());
 		currentTry.setActionResult(result);
-		listOfAttempt.add(currentTry);
-		
+		listOfAttempt.add(currentTry);	
 	}
-
+	
+	public void startTotalTimeMeasurement(){
+		totalTimeRecord = new TimeRecord(BasicAction.TOTAL_ACTION_TIME);
+		totalTimeRecord.setStartTime(System.nanoTime());
+	}
+	
+	public void stopTotalTimeMeasurement(){
+		totalTimeRecord.setStopTime(System.nanoTime());
+		listOfAttempt.add(totalTimeRecord);
+	}
 }

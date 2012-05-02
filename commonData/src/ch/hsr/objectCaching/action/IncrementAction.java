@@ -46,6 +46,7 @@ public class IncrementAction extends Action {
 
 	@Override
 	public void execute(Account account) {
+		result.startTotalTimeMeasurement();
 		boolean successful = false;
 		double balance = 0;
 		int numberOfTry = 0;
@@ -66,6 +67,7 @@ public class IncrementAction extends Action {
 			}
 			numberOfTry++;
 		}
+		result.stopTotalTimeMeasurement();
 	}
 
 	@Override

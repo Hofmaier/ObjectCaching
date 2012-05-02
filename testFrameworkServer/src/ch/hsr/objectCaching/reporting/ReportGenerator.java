@@ -59,36 +59,44 @@ public class ReportGenerator {
 	private void writeDetailedSummary() throws IOException {
 		int numberOfReads = 0;
 		int numberOfWrite = 0;
+		int numberOfIncrement = 0;
 		int numberOfUnsuccessfulAction = 0;
 		double readTime = 0;
 		double writeTime = 0;
+		double totalTime = 0;
 
 		int numberOfActions = scenario.getActionList().size();
-		
-		for (Action action : scenario.getActionList()) {		
+
+		for (Action action : scenario.getActionList()) {
 			ActionResult result = ActionResult.FAILED;
 			for (TimeRecord records : action.getResult().getAllIntermediateResult()) {
-				if (records.getActionTyp() == BasicAction.READ){
+				if (records.getActionTyp() == BasicAction.READ) {
 					numberOfReads++;
 					readTime += getDeltaInMilisec(records);
 					result = records.getActionResult();
 				}
-				if (records.getActionTyp() == BasicAction.WRITE){
+				if (records.getActionTyp() == BasicAction.WRITE) {
 					numberOfWrite++;
 					writeTime += getDeltaInMilisec(records);
 					result = records.getActionResult();
 				}
+				if(records.getActionTyp() == BasicAction.TOTAL_ACTION_TIME){
+					totalTime += getDeltaInMilisec(records);
+					numberOfIncrement++;
+				}
+
 			}
-			if(result == ActionResult.FAILED)
+			if (result == ActionResult.FAILED)
 				numberOfUnsuccessfulAction++;
-			
+
 		}
 		out.write(NEWLINE);
 		out.write("------------------------------------------------" + NEWLINE);
-		out.write(100-(numberOfUnsuccessfulAction/numberOfActions) + "% of all Action executed are successful" + NEWLINE);
+		out.write(100 - (numberOfUnsuccessfulAction / numberOfActions) + "% of all Action executed are successful" + NEWLINE);
 		out.write("Total actions executed: " + numberOfActions + ", number of unsuccessful action " + numberOfUnsuccessfulAction + NEWLINE);
-		out.write("Total getBalance calls: " + numberOfReads + ", avg. execution time " + readTime/(double)numberOfReads + NEWLINE);
-		out.write("Total setBalance calls: " + numberOfWrite + ", avg. execution time " + writeTime/(double)numberOfWrite + NEWLINE);
+		out.write("Total getBalance calls: " + numberOfReads + ", avg. execution time " + readTime / (double) numberOfReads + NEWLINE);
+		out.write("Total setBalance calls: " + numberOfWrite + ", avg. execution time " + writeTime / (double) numberOfWrite + NEWLINE);
+		out.write("Total increment time: " + totalTime + ", avg. execution time " + totalTime / (double) numberOfIncrement + NEWLINE);
 		out.write(NEWLINE);
 	}
 
@@ -122,17 +130,17 @@ public class ReportGenerator {
 	}
 
 	private void finalizeReport() throws IOException {
-		summary = ("Total Conflict: " + totalScenarioConflicts + " / Gesamt Dauer: " + totalScenarioExecutionTime + " ms" + " / durch. Dauer pro Operation: " + totalScenarioExecutionTime / (scenario.getActionList().size() + totalScenarioConflicts));
+		summary = ("Total Conflict: " + totalScenarioConflicts + " / Gesamt Dauer: " + totalScenarioExecutionTime + " ms" + " / durch. Dauer pro Operation: " + totalScenarioExecutionTime
+				/ (scenario.getActionList().size() + totalScenarioConflicts));
 		out.write(summary);
 		out.flush();
 		out.close();
 	}
 
 	private void writeHeader() throws IOException {
-		
+
 		Date now = new Date();
-		
-		
+
 		out.write("************************************************************" + NEWLINE);
 		out.write("Date & Time: " + now.toString() + NEWLINE);
 		out.write("Result for Client: " + clientIp + " with ScenarioID: " + scenario.getId() + NEWLINE);

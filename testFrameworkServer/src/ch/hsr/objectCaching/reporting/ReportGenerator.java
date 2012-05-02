@@ -80,16 +80,18 @@ public class ReportGenerator {
 					writeTime += getDeltaInMilisec(records);
 					result = records.getActionResult();
 				}
-				if(records.getActionTyp() == BasicAction.TOTAL_ACTION_TIME){
-					totalTime += getDeltaInMilisec(records);
-					numberOfIncrement++;
-				}
-
 			}
 			if (result == ActionResult.FAILED)
 				numberOfUnsuccessfulAction++;
 
 		}
+
+		for (Action action : scenario.getActionList()) {
+			TimeRecord record = action.getResult().getTotalTimeRecord();
+			totalTime += getDeltaInMilisec(record);
+			numberOfIncrement++;
+		}
+
 		out.write(NEWLINE);
 		out.write("------------------------------------------------" + NEWLINE);
 		out.write(100 - (numberOfUnsuccessfulAction / numberOfActions) + "% of all Action executed are successful" + NEWLINE);

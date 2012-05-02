@@ -59,6 +59,9 @@ public class Result implements Serializable {
 	
 	public void stopTotalTimeMeasurement(){
 		totalTimeRecord.setStopTime(System.nanoTime());
-		listOfAttempt.add(totalTimeRecord);
+	}
+
+	public TimeRecord getTotalTimeRecord() {
+		return totalTimeRecord;
 	}
 }

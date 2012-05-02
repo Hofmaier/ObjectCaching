@@ -60,7 +60,7 @@ public class IncrementAction extends Action {
 				result.stopTimeMeasurement();
 				successful = true;
 			} catch (RMIException e) {
-				logger.info(e.getMessage());
+				logger.info(e.getMessage() + ": " + e.getStackTrace());
 				successful = false;
 				result.stopTimeMeasurement(ActionResult.FAILED);
 			}

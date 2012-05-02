@@ -108,7 +108,7 @@ public class ReportGenerator {
 
 			int minimalNumberOfTimeRecords = action.getMinimalNumberOfTimeRecords();
 			if (action.getResult().getNumberOfTry() > minimalNumberOfTimeRecords) {
-				totalScenarioConflicts += action.getResult().getNumberOfTry() - minimalNumberOfTimeRecords;
+				totalScenarioConflicts += (action.getResult().getNumberOfTry() - minimalNumberOfTimeRecords)/minimalNumberOfTimeRecords;
 			}
 
 			int numberOfConflictsPerAction = 0;

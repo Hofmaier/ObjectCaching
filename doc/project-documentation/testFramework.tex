@@ -39,11 +39,11 @@ Das  Startup-Script ist ein Shell-Script in der Bash-Sprache geschrieben. Das Sc
 Sind diese Schritte abgeschlossen, beendet das Startupscript und die weitere Ausführung des Testlaufs wird durch den Frameworkserver orchestriert.
 Beim Starten des Scripts wird der Name der Datei mitgegeben, in welcher der genaue Testlauf definiert ist. Wird kein Argument mitgegeben, läuft der Standardtestlauf ab, welcher in der Datei "testCases.xml" beschrieben ist.
 Probleme beim Schreiben des Scripts waren selten. Ein Problem, welches gelöst werden musste war der Umstand, dass das Script nach dem Starten eines Clients nicht mehr weiterlief, sondern einfach wartete. Dies war bei folgende Zeile der Fall:
-\begin{lstlisting}	
+\begin{lstlisting}[breaklines=true]
  ssh student@${i} "java -jar ${remotePath}/${clientJar}"
 \end{lstlisting}	
 Offensichtlich wartet das Script beim Ausführen eines Befehls auf einem fremden Rechner auf einen Rückgabewert in irgendeiner Form; also auf einen Errorcode oder aber auf einen Exitstatus. Das Absetzen dieses Befehls musste also in einem seperaten Kind-Prozess stattfinden, damit der Eltern-Prozess die weiteren Aufgaben des Scripts abarbeiten konnte und nicht auf einen Rückgabewert wartete. Dies kann in der Bash-Shell mit einem "\&" erreicht werden. Die simple Lösung des Problems sieht also fast gleich aus:
-\begin{lstlisting}
+\begin{lstlisting}[breaklines=true]
  ssh student@${i} "java -jar ${remotePath}/${clientJar}" &
 \end{lstlisting}
 
@@ -121,7 +121,7 @@ Pro Client, welcher hier definiert ist, wird ein Client-Objekt instanziert, was 
 \label{sec:ClientObjekt}
 
 Das Clientobjekt besitzt unter anderem ein Datenfeld, welches genau zwei Zustände annehmen kann: Ready und NotReady. Führt der Frameworkclient die Methode "setReady()" auf dem Server aus, wird der Status auf dem jeweiligen Objekt auf Ready gesetzt. Folgend die Implementation der setReady-Methode:
-\begin{lstlisting}
+\begin{lstlisting}[language=Java, breaklines=true]
 public void setReady(String ip) 
 {
 	logger.info("Setted ready with: " + ip);
@@ -144,7 +144,7 @@ Die Implementation dieser Logik war nicht schwer, doch das Bewusstsein für die 
 \label{sec:startMethode}
 
 Die Methode "start()", gibt dem Client an, mit der Abarbeitung des Szenarios zu beginnen. Die erste Implementation dieser Methode sah wie folgt aus:
-\begin{lstlisting}
+\begin{lstlisting}[language=java, breaklines=true]
 private void start()
 {
 	logger.info("Method start() invoked");
@@ -157,7 +157,7 @@ private void start()
 
 Nach einigen Testdurchläufen konnte festgestellt werden, dass die Clients ihre Szenarien nur sequentiell abarbeiteten und die Operationen auf dem Server nicht gleichzeitig geschehen. Schuld an diesem Umstand war obige Implementation der "start"-Methode. Der Server-Thread, welcher "startTest()" auf dem Client aufrief, wartete solange, bis die Methode zurückkehrte. Da die Methode natürlich erst nach der Beendigung des Szenarios zurückkehrt, konnte nur immer genau ein Client zu einem gewissen zeitpunkt aktiv sein.\newline
 Die jetzige Implementation und somit die Lösung des Problems sieht wie folgt aus:
-\begin{lstlisting}
+\begin{lstlisting}[language=java, breaklines=true]
 private void start()
 {
 	logger.info("Method start() invoked");
@@ -169,7 +169,7 @@ private void start()
 }
 \end{lstlisting}
 Um das Problem mit der Erstellung eines neuen Threads für jeden zu startenden Client zu umgehen, musste eine weitere Klasse Namens ClientStart geschrieben werden. Die Klasse im\-p\-le\-men\-tiert natür\-lich das Inter\-face "Runnable" und implementiert die "run()"-Methode wie folgt:
-\begin{lstlisting}
+\begin{lstlisting}[language=java, breaklines=true]
 public void run() {
 	try {
 		client.getClientStub().startTest();
@@ -211,7 +211,7 @@ Die im Diagramm ersichtlichen Operationen können folgender\-massen er\-läu\-te
 \subsubsection{Stoppen eines Clients}
 \label{sec:stopClient}
 Ruft ein Client die Methode "setResults(Scenario)" auf dem Server auf, wird Serverintern der Status des Clients auf "Down" gesetzt. Da die Methode "stopClient()" wiederum pro Client genau ein Mal aufgerufen wird, entsteht wieder das Problem, dass mehrere Threads am Leben sind. Um dies ab einem gewissen Punkt zu verhindern, wurde ähnlich zur "setReady()"-Methode, folgende Implementation gewählt:
-\begin{lstlisting}
+\begin{lstlisting}[language=java, breaklines=true]
 private void stopClient(String clientIp)
 {
 	Client temp;
@@ -237,7 +237,7 @@ Durch die Prüfung "checkAllShutedDown()", wird nur der letzte aller Threads wei
 Weiter wird beim Abarbeiten dieser Methode die Methode "shutdown()" auf dem Client aufgerufen. Nach diesem Aufruf fährt sich der Client herunter und kappt alle akiven Verbindungen zum Server. Weitere Informationen zum Shutdown-Prozess des Clients sind unter der Kapitel des Frameworkclients ersichtlich.\newline
 Oben genannte Implementation der "stopClient(String clientIP)"-Methode hat lange funktioniert. Während des Entwicklungsprozesses der RMI-Only Lösung lief das Framework mit der erwähnten Methode ohne Probleme. Bei den ersten Testläufen der RMI-Cache Lösung wurden beim Herunterfahren der Umgebung allerdings Exceptions generiert. Da die Fehlersuche bei Software mit einer vielzahl von Threads sehr langwierig ist, dauerte die Analyse des Fehlers relativ lange.\newline Schlussendlich wurde bemerkt, dass die Methode "printSummary()" trotz aller Vorsichtsmassnahmen von jedem Client ein Mal ausgeführt wurde, was dazu führte, dass mehrere Zusammenfassungen generiert wurden und probiert wurde, den FrameworkServer mehrere Male herunterzufahren. Der Versuch den FrameworkServer mehrmals herunterzufahren war natürlich der Grund für die Ex\-cep\-tions, da dem zweiten Client ein\-fach der Verbindungspartner weggerissen wurde.\newline
 Der Grund des Fehlverhaltens lag in der nicht funktionierenden Barriere "checkAllShutedDown()". Nachdem der Methodenkopf durch snychronized erweitert wurde, funktionierte das Framework wieder problemlos:
-\begin{lstlisting}
+\begin{lstlisting}[language=java, breaklines=true]
 synchronized private void stopClient(String clientIp)
 \end{lstlisting}
 Anscheinend sind die Clients bei der Cache-Implementation immer zum fast gleichen Zeit\-punkt fer\-tig, was dazu führte, dass der Sta\-tus "ShutedDown.DOWN" nur unzuverlässig gesetzt wurde. Das Fehlerszenario lief wie folgt ab:
@@ -286,7 +286,7 @@ Die genaue Messerwerte, mit Durchschnittswerten und Vergleiche zwischen verschie
 \subsubsection{Result Generator}
 \label{sec:resultGenerator}
 Der ResultGenerator ist ein Generator, welcher für die Berechnung des zu erwartenden Entbestandes des Account-Objektes verantwortlich ist. Wenn alle Clients ihre Operationen abgeschlossen haben, wird das aktuelle Ergebnis des Account-Objektes und das erwartete Ergebnis auf der Konsole ausgegeben. Zusätzlich wird kontrolliert, ob die Ergebnisse übereinstimmen und eine entsprechende Meldung wird auf der Konsole ausgegeben:
-\begin{lstlisting}
+\begin{lstlisting}[breaklines=true]
 19.04.2012 18:33:38 ch.hsr.objectCaching.testFrameworkServer.Server printSummary
 INFO: AccountBalance is: 1.4641001269340557
 19.04.2012 18:33:38 ch.hsr.objectCaching.testFrameworkServer.Server printSummary
@@ -299,7 +299,7 @@ INFO: No Lost-Updates!
 \label{sec:logger}
 Wie in dem Konsolenauszug unter "Result Generator" gesehen werden kann, wurde ein Logger eingebaut, welcher alle Methodenaufrufe protokoliert. Der Logger schreibt die Ereignisse erstens auf die Konsole und zweitens schreibt er alle Informaionen zu einem Methodenaufruf in eine Datei. Diese Logdatei ist sehr Informationsreich:
 
-\begin{lstlisting}
+\begin{lstlisting}[language=XML, breaklines=true]
 <record>
   <date>2012-04-05T17:58:43</date>
   <millis>1333641523151</millis>
@@ -394,7 +394,7 @@ Die Methode "shutdown()" be\-endet den TestframeworkClient und das ClientSystemU
 
 
 Beim Testen der shutdown()-Funktionalität konnte festgestellt werden, dass bei der Umsetzung wie oben beschrieben, der Server immer eine Exception bekommt. Es stellte sich heraus, dass das sofortige Herunterfahren des ClientControllers nach dem Unbinding und dem Unexport dem Server keine Zeit lässt, seine RMI Verbindung zum ClientController korrekt zu schliessen. Die Lösung dieses Problems lag, in einem verzögerten Herunterfahren des ClientControllers. Folgender Codeausschnitt zeigt die Lösung des Problems.
-\begin{lstlisting}
+\begin{lstlisting}[language=java, breaklines=true]
 private void closeClientController(final long delay) {
 new Thread() {
 	@Override
@@ -414,7 +414,7 @@ Die Beendigung des ClientControllers wird in einem seperaten Thread ausgeführt,
 \subsection{Test Client}
 \label{sec:testclient}
 
-\begin{figure}
+\begin{figure}[H]
 \begin{center}
 \includegraphics[scale=0.3]{image_testFramework/startTest.png}
 \end{center}

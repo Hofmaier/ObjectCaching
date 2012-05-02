@@ -66,4 +66,9 @@ public class ConcurrencyControl {
 		globalWriteVersion++;
 		writeMap.put(objectID, globalWriteVersion);
 	}
+
+	public void updateWriteVersion(int objectID, int objectVersion) {
+		writeMap.put(objectID, objectVersion);
+	}
+
 }

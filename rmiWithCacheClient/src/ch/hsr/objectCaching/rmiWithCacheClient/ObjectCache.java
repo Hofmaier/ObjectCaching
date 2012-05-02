@@ -6,6 +6,7 @@ import java.util.HashMap;
 import ch.hsr.objectCaching.account.Account;
 import ch.hsr.objectCaching.dto.MethodCall;
 import ch.hsr.objectCaching.dto.ObjectRequest;
+import ch.hsr.objectCaching.dto.ObjectRequestResponse;
 import ch.hsr.objectCaching.dto.ObjectUpdate;
 import ch.hsr.objectCaching.dto.RMIException;
 import ch.hsr.objectCaching.dto.ReturnValue;
@@ -37,24 +38,26 @@ public class ObjectCache {
 		else
 		{
 			sendObjectRequest(objectID);
-			Object receivedObject = null;
-			receivedObject = receiveObject(objectID, receivedObject);
+			Object receivedObject = receiveObject(objectID);
 			concurrencyControl.updateReadVersionOfClient(objectID);
 			return receivedObject;
 		}
 		
 	}
 
-	private Object receiveObject(int objectID, Object receivedObject) {
+	private Object receiveObject(int objectID) {
+		Object retVal = null;
 		try {
-			receivedObject =  messageManager.receiveObject();
-			objectCache.put(objectID, receivedObject);
+			ObjectRequestResponse receivedObject =  messageManager.receiveObject();
+			objectCache.put(objectID, receivedObject.getRequestedObject());
+			retVal = receivedObject.getRequestedObject();
+			concurrencyControl.updateWriteVersion(objectID, receivedObject.getObjectVersion());
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
-		return receivedObject;
+		return retVal;
 	}
 
 	private void sendObjectRequest(int objectID) {

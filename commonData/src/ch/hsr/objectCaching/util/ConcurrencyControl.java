@@ -66,4 +66,14 @@ public class ConcurrencyControl {
 		globalWriteVersion++;
 		writeMap.put(objectID, globalWriteVersion);
 	}
+
+	public void updateWriteVersion(int objectID, int objectVersion) {
+		writeMap.put(objectID, objectVersion);
+	}
+
+	public boolean isWriteConsistent(MethodCall methodCall) {
+		Integer actualServerVersion = writeMap.get(methodCall.getObjectID());
+		return !(actualServerVersion > methodCall.getObjectVersion());
+	}
+
 }

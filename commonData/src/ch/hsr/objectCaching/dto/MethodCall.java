@@ -10,6 +10,7 @@ public class MethodCall implements Serializable, TransferObject {
 	private static final long serialVersionUID = 9029224749086063746L;
 	private String methodName;
 	private int ObjectID;
+	private int objectVersion;
 	private String className;
 	private Class<?>[] parameterTypes;
 	private Object[] arguments;
@@ -65,5 +66,13 @@ public class MethodCall implements Serializable, TransferObject {
 	
 	public String getClientIp(){
 		return clientIpAddress;
+	}
+
+	public int getObjectVersion() {
+		return objectVersion;
+	}
+
+	public void setObjectVersion(int objectVersion) {
+		this.objectVersion = objectVersion;
 	}
 }

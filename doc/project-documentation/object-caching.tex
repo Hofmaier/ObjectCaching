@@ -12,7 +12,7 @@ In unserem RMIwithObjectCaching-System besitzt jeder Client einen lokalen Cache 
 \subsection{Update Distribution}
 \label{sec:update-distribution}
 
-Werden Kopien von Objekten in einem lokalen Cache angelegt, müssen diese Kopien aktualisiert werden. Um dies zu realisieren gibt es mehrere Möglichkeiten.
+Werden Kopien von Objekten in einem lokalen Cache angelegt, müssen diese Kopien aktualisiert werden. Um dies zu realisieren gibt es mehrere Möglich\-keiten.
 
 \subsubsection{Invalidation versus Data Transfer}
 \label{sec:inval-vers-data}
@@ -118,6 +118,10 @@ Um Inkonsistenz bei diesem Szenario zu erkennen und zu verhindern, muss die Nach
 \begin{description}
 \item[Cache] Die Stubs, z.B. AccountStub, fordern beim Cache Objekte an. Der Cache holt die Objekte aus dem Memory oder er fodert sie über Netzwerk beim Server an. Er fordert sie beim Server an, wenn sie noch nicht vorhanden sind oder wenn ein Objekt invalidiert wurde. Der Cache muss bei einem Update, die Objekte im Hauptspeicher aktualisieren.
 \item[Concurrency Control] Überprüft ob \verb+getBalance+ und \verb+setBalance()+ ausgeführt werden können, ohne dass Inkonsistenzen entstehen.
+<<<<<<< HEAD
+\item[Message Manager] Nimmt Messages für Remote-Methodenaufruf und Ob\-jekt-Request entgegen und sorgt dafür dass sie an den Server versendet werden und die Antwort darauf an den Absender weitergeleitet werden. Nimmt vom Server Update-Messages entgegen und leitet sie an den Cache weiter. 
+=======
 \item[Message Manager] Nimmt Messages für Remote-Methodenaufruf und Objekt-Request entgegen und sorgt dafür dass sie an den Server versendet werden und die Antwort darauf an den Absender weitergeleitet werden. Nimmt vom Server Update-Messages entgegen und leitet sie an den Cache weiter.
+>>>>>>> 60ef5ed314d47225d91a622128e3043a86aa3bee
 \end{description}
 

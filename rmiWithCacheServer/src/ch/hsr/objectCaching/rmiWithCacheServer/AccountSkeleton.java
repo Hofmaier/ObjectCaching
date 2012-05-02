@@ -12,14 +12,14 @@ public class AccountSkeleton extends
 	
 	private ObjectManager objectManager;
 	
-	public ReturnValue invokeMethod(MethodCall methodCall) {
+	public synchronized ReturnValue invokeMethod(MethodCall methodCall) {
 		
 		Account accountObject = objectMap.get(methodCall.getObjectID());
 		
 		try {
 			Method method = getMethod(methodCall);
 			Class<?> returnType = method.getReturnType();
-			if(!objectManager.isWriteConsistent(methodCall.getObjectID(), methodCall.getClientIp())){
+			if(!objectManager.isWriteConsistent(methodCall)){
 				ReturnValue returnValue = new ReturnValue();
 				returnValue.setException(new RMIException());
 				return returnValue;

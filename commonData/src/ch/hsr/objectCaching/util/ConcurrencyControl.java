@@ -71,4 +71,9 @@ public class ConcurrencyControl {
 		writeMap.put(objectID, objectVersion);
 	}
 
+	public boolean isWriteConsistent(MethodCall methodCall) {
+		Integer actualServerVersion = writeMap.get(methodCall.getObjectID());
+		return !(actualServerVersion > methodCall.getObjectVersion());
+	}
+
 }

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import ch.hsr.objectCaching.account.Account;
+import ch.hsr.objectCaching.dto.MethodCall;
 import ch.hsr.objectCaching.dto.ObjectRequest;
 import ch.hsr.objectCaching.dto.ObjectRequestResponse;
 import ch.hsr.objectCaching.dto.ObjectUpdate;
@@ -50,8 +51,8 @@ public class ObjectManager {
 	}
 
 	public void updateClients(int objectID) {
-		ArrayList<ClientHandler> clients = clientListMap.get(objectID);
 		concurrencyControl.updateWriteVersion(objectID);
+		ArrayList<ClientHandler> clients = clientListMap.get(objectID);
 		for(ClientHandler client:clients){
 			ObjectUpdate update = new ObjectUpdate();
 			update.setObject(objectMap.get(objectID));
@@ -61,8 +62,8 @@ public class ObjectManager {
 		}
 	}
 	
-	public boolean isWriteConsistent(Integer objectID, String clientIP){
-		return concurrencyControl.isWriteConsistent(objectID, clientIP);
+	public boolean isWriteConsistent(MethodCall methodCall){
+		return concurrencyControl.isWriteConsistent(methodCall);
 	}
 
 }

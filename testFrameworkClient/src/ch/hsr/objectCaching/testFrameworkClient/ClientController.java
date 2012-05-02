@@ -1,5 +1,6 @@
 package ch.hsr.objectCaching.testFrameworkClient;
 
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.MalformedURLException;
@@ -155,8 +156,10 @@ public class ClientController implements ClientInterface {
 		try {
 			System.setProperty("java.util.logging.config.file", "logger.config");
 			LogManager.getLogManager().readConfiguration();
-		} catch (Exception e) {
-			System.out.println("Logger configuration file could not be read.");
+		} catch (IOException e) {
+			System.out.println("Logger configuration file could not be read. (IOException)");
+		}catch(SecurityException se){
+			System.out.println("Security exception");
 		}
 	}
 

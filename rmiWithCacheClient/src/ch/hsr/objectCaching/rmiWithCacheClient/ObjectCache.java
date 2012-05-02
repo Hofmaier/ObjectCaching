@@ -77,7 +77,7 @@ public class ObjectCache {
 			returnValue.setException(new RMIException());
 			return returnValue;
 		}
-		methodCall.setObjectVersion(methodCall.getObjectVersion());
+		methodCall.setObjectVersion(concurrencyControl.getReadMap().get(methodCall.getObjectID()));
 		messageManager.sendMessageCall(methodCall);
 		return messageManager.receiveReturnValue();
 	}

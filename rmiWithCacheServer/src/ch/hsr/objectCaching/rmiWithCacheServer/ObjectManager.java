@@ -28,6 +28,8 @@ public class ObjectManager {
 		Object requestedObject = objectMap.get(objectID);
 		ObjectRequestResponse response = new ObjectRequestResponse();
 		response.setRequestedObject(requestedObject);
+		Integer objectVersion = concurrencyControl.getWriteMap().get(objectID);
+		response.setObjectVersion(objectVersion);
 		return response;
 	}
 

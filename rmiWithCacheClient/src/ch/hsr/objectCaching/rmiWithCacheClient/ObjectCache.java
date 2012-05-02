@@ -77,6 +77,7 @@ public class ObjectCache {
 			returnValue.setException(new RMIException());
 			return returnValue;
 		}
+		methodCall.setObjectVersion(methodCall.getObjectVersion());
 		messageManager.sendMessageCall(methodCall);
 		return messageManager.receiveReturnValue();
 	}

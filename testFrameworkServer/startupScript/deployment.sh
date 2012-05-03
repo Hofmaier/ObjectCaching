@@ -94,7 +94,7 @@ function func_startClient
   echo "STARTUPSCRIPT: All clients started"
 }
 func_build
-ls ${serverJarPath} | grep $1 > /dev/null 2>&1
+ls ${serverJarPath}/template | grep $1 > /dev/null 2>&1
 if [[ $? -eq 0 || "$1" = "" ]]
 then
 	func_create_CLient_List

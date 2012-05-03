@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <TestRun>
-	<TestCase ClientSystemUnderTest="ch.hsr.objectCaching.rmiWithCacheClient.RMIOnlyClientSystem"
-		ServerSystemUnderTest="ch.hsr.objectCaching.rmiWithCacheServer.RMIOnlyServerSystem">
+	<TestCase ClientSystemUnderTest="ch.hsr.objectCaching.rmiOnlyClient.RMIOnlyClientSystem"
+		ServerSystemUnderTest="ch.hsr.objectCaching.rmiOnlyServer.RMIOnlyServerSystem">
 		<Account balance="1"></Account>
 		<Scenario id="1">
 			<ActionSequence>

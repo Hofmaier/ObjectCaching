@@ -59,6 +59,7 @@ public class Result implements Serializable {
 	
 	public void stopTotalTimeMeasurement(){
 		totalTimeRecord.setStopTime(System.nanoTime());
+		totalTimeRecord.setActionResult(ActionResult.SUCCESSFUL);
 	}
 
 	public TimeRecord getTotalTimeRecord() {

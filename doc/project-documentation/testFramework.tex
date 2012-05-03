@@ -96,7 +96,7 @@ Durch die eingelesenen Informationen er\-stellt die Factory die Szena\-rien, wel
 \end{lstlisting}
 
 Das Attribut "SystemUnderTest" definiert das zu testende System. Der Vorteil dieser Methode ist, dass das zu testende System einfach in XML angegeben wird und dann getestet werden kann. Es müssen also keine Anpassungen am Code vorgenommen werden, egal welches System getestet werden soll. Dem Framework ist es schlussendlich egal, welches System getestet werden soll.\newline
-Eine TestCase-Datei beschreibt genau einen TestCase. Ein TestCase kann verschiedene Szenarien beinhalten, oder aber auch nur ein Szena\-rio be\-schreiben. Ist nur ein Szenario definiert, werden beide Clients mit demselben Szenario arbeiten. Falls mehrere Szenarien beschrieben sind, werden die Clients unterschiedliche Szenarien durchführen. \newline
+Eine TestCase-Datei beschreibt genau einen TestCase. Ein Test\-Case kann ver\-schie\-dene Sze\-na\-ri\-en be\-in\-hal\-ten, oder aber auch nur ein Szena\-rio be\-schrei\-ben. Ist nur ein Sz\-enario definiert, werden beide Clients mit dem\-selben Szenario arbeiten. Falls mehrere Szenarien beschrieben sind, werden die Clients unterschiedliche Szenarien durchführen. \newline
 Aus obigem XML-Code generiert die Factory nun ein Objekt vom Typ TestCase. Dieses Objekt definiert nun zwei Szenarien, welche wiederum aus mehreren Actions bestehen. Was genau eine Action ist, ist unter dem Kapitel "Actions" beschrieben. Die Factory wird nun bei diesem Beispielcode eine Abfolge von 100 "Increment-Action" erstellen und diese in das Scenario-Objekt ablegen.
 
 
@@ -261,11 +261,11 @@ Wir die Methode "printSummary" aufgerufen, wird ein ReportGenerator instanziert,
 
 Pro Client wird eine Datei erstellt, in welcher die Daten dargestellt werden. Folgend einen kurzen Auszug eines solchen Reports:
 
-\begin{lstlisting}
-************************************************************
+\begin{lstlisting}[breaklines=true]
+**************************************************
 Result for Client: 152.96.193.18 with ScenarioID: 1
 OS: Linux / 3.0.0-17-generic-pae
-************************************************************
+**************************************************
 ActionNr;#ofTries;Time[ms];ACTION
 0;0;42.674487;INCREMENT(READ) WITHOUT DELAY
 0;1;77.969046;INCREMENT(WRITE) WITHOUT DELAY
@@ -526,7 +526,7 @@ Der TimeRecordtyp ist als reines Data Tranfer Object implementiert worden. Es be
 
 \subsection{BasicAction}
 \label{sec:BasicAction}
-Damit eine genaue Analyse der Aktionen gemacht werden kann, ist es nötig, dass zwischen "getBalance()" und "setBalance()" un\-ter\-schieden wer\-den kann. Eine Aktion kann aus mehreren Methodenaufrufen bestehen, daher muss bei einer Zeitmessung die Art(setter / getter) angegeben werden können. Da jedoch eine Aktion aus einer Abfolge von Reads und Writes bestehen kann, ist es nötig, dass diese Information gespeichert wird. Im TimeRecord lässt sich daher die BasicAction speichern.
+Damit eine genaue Analyse der Aktionen ge\-macht werden kann, ist es nö\-tig, dass zwi\-schen "get\-Ba\-lan\-ce()" und "set\-Ba\-lan\-ce()" un\-ter\-schieden wer\-den kann. Eine Aktion kann aus mehreren Methoden\-auf\-rufen bestehen, daher muss bei einer Zeitmessung die Art(setter / getter) angegeben werden können. Da jedoch eine Aktion aus einer Abfolge von Reads und Writes bestehen kann, ist es nötig, dass diese Information gespeichert wird. Im TimeRecord lässt sich daher die BasicAction speichern.
 
 \subsection{ActionResult}
 \label{sec:ActionResult}

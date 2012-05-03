@@ -157,9 +157,9 @@ public class ClientController implements ClientInterface {
 			System.setProperty("java.util.logging.config.file", "logger.config");
 			LogManager.getLogManager().readConfiguration();
 		} catch (IOException e) {
-			System.out.println("Logger configuration file could not be read. (IOException)");
+			System.out.println("Logger configuration file could not be read: " + e.getMessage());
 		}catch(SecurityException se){
-			System.out.println("Security exception");
+			System.out.println("Security exception occurred: " + se.getMessage());
 		}
 	}
 

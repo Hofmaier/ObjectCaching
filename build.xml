@@ -118,7 +118,7 @@
 		<copy file="testFrameworkServer/initFile.conf" tofile="${dist.server.dir}/initFile.conf" />
 		<copy file="testFrameworkServer/template/testCases.xml" tofile="${dist.server.dir}/template/testCases.xml" />
 		<copy todir="${dist.server.dir}/template">
-			<fileset dir="testFrameworkServer" includes="*testCases.xml" />
+			<fileset dir="testFrameworkServer/template" includes="*testCases.xml" />
 		</copy>
 	</target>
 

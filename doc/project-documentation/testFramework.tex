@@ -30,7 +30,7 @@ Um möglichst genaue Messdaten zu erlangen, wird das ganze System nach einem Tes
 \label{sec:startupScript}
 Das  Startup-Script ist ein Shell-Script in der Bash-Sprache geschrieben. Das Script führt mehrere Methoden nacheinander aus:
 \begin{enumerate}
-\item Ein ant-Script wird an\-ge\-stos\-sen, wel\-ches die Pro\-jekte kom\-pi\-liert. Durch die\-sen Schritt ent\-stehen die .jar- Dateien, welche im nächs\-ten Schritt benötigt werden
+\item Ein ant- Script wird an\-ge\-stos\-sen, wel\-ches die Pro\-jek\-te kom\-pi\-liert. Durch die\-sen Schritt ent\-stehen die .jar- Dateien, welche im nächs\-ten Schritt benötigt werden
 \item Das Script prüft die in der Config-Datei eingetragenen Zielrechner auf bereits vorhandene "client.jar"-Dateien und löscht diese Dateien, falls vorhanden
 \item Durch die Applikation "Secure Copy" wird die zuvor im Buildprozess erstellte Datei "client.jar" auf die Zielrechner kopiert
 \item Via SSH wird der Frameworkclient auf den Zielrechnern gestartet
@@ -67,14 +67,14 @@ Die im Diagramm dargestellten Operationen lassen sich wie folgt erklären:
 \item Alle Konfigurationsparameter welche der Server braucht, sind in einer Konfigurations\-datei ab\-ge\-legt. Durch eine Configurationfactory wird durch mit Hilfe der Konfig\-urationsdatei ein Configuration- Objekt er\-zeugt. Unter dem Kapi\-tel "Configuration-Factory" wird dies näher beschrieben.
 \item Nachdem die Konfigurationsparameter ausgelesen wurden, kann der Dis\-patcher in einem seper\-aten Thread ge\-startet werden. Weitere Aus\-füh\-run\-gen sind unter dem Kapitel "Der Dispatcher" zu finden.
 \item Bei der Initialisierung der Clients, wird diesen je ein Scenario und ein Configuration-Objekt gesendet. Das Configuration-Objekt umfasst alle für den Client wichtigen Konfigurationsparameter, wie etwa die Ports, unter welchen der Server seine Dienste zur Verfügung stellt. Was ein Scenario genau ist wird unter dem "Kapitel Testcase-Factory" genauer beschrieben.
-\item Pro Client hat der Server beim Auslesen der Konfigurationsdatei ein Client-Objekt instanziert. Dies wurde voral\-lem zur Kon\-trol\-le der Clients durch den Server so implementiert. Darauf wird im Kapitel "ClientObjekt" eingegangen.
+\item Pro Client hat der Server beim Auslesen der Konfigurationsdatei ein Client-Objekt instanziert. Dies wurde voral\-lem zur Kon\-trol\-le der Cli\-ents durch den Server so implementiert. Darauf wird im Kapitel "ClientObjekt" eingegangen.
 \item Nachdem alle Clients "setReady()" aufgerufen haben, ruft der Server "start()" auf allen Clients auf. Dieser Vorgang wird unter dem Punkt "die Start-Methode" genauer erläutert.
 \end{itemize}
 
 \subsubsection{Testcase-Factory}
 \label{sec:testCaseFactory}
 Die Testcase-Factory liest ein XML-File, in welchem ein sogenannter "TestCase" definiert ist. Wird beim Starten des Frameworkservers kein Paramter mitgegeben, wird der Standard-Testcase gewählt, welcher in der Datei "testCases.xml" abgelegt ist. Wird aber ein Parameter mitgegeben, beschreibt dieser den Namen der auszuführenden TestCase-Datei.\newline
-Durch die eingelesenen Informationen er\-stellt die Factory die Szena\-rien, welche dann weiter an die verschiedenen Clients gesendet werden. Folgender Block ist ein Auszug aus einer TestCase-Datei:
+Durch die ein\-ge\-lesenen In\-for\-ma\-tio\-nen er\-stellt die Fac\-tory die Szena\-rien, wel\-che dann wei\-ter an die ver\-schie\-denen Clients ge\-sendet werden. Folgender Block ist ein Auszug aus einer TestCase-Datei:
 
 \begin{lstlisting}[language=XML, breaklines=true] 	
 <?xml version='1.0' encoding='UTF-8'?>

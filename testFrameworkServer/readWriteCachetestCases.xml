@@ -1,0 +1,21 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<TestRun>
+	<TestCase ClientSystemUnderTest="ch.hsr.objectCaching.rmiWithCacheClient.RMIwithCacheClientSystem"
+		ServerSystemUnderTest="ch.hsr.objectCaching.rmiWithCacheServer.RMIWithCacheServerSystem">
+		<Account balance="1"></Account>
+		<Scenario id="1">
+			<ActionSequence>
+
+				<Read count ="2000"></Read>
+
+			</ActionSequence>
+		</Scenario>
+		<Scenario id="2">
+			<ActionSequence>
+
+				<Increment count ="1000" delay="0" factor="1.1"></Increment>
+
+			</ActionSequence>
+		</Scenario>
+	</TestCase>
+</TestRun>

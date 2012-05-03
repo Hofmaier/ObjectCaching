@@ -30,7 +30,7 @@ Um möglichst genaue Messdaten zu erlangen, wird das ganze System nach einem Tes
 \label{sec:startupScript}
 Das  Startup-Script ist ein Shell-Script in der Bash-Sprache geschrieben. Das Script führt mehrere Methoden nacheinander aus:
 \begin{enumerate}
-\item Ein ant-Script wird angestossen, welches die Pro\-jekte kom\-piliert. Durch diesen Schritt entstehen die .jar-Dateien, welche im nächsten Schritt benötigt werden
+\item Ein ant-Script wird an\-ge\-stos\-sen, wel\-ches die Pro\-jekte kom\-pi\-liert. Durch die\-sen Schritt ent\-stehen die .jar- Dateien, welche im nächs\-ten Schritt benötigt werden
 \item Das Script prüft die in der Config-Datei eingetragenen Zielrechner auf bereits vorhandene "client.jar"-Dateien und löscht diese Dateien, falls vorhanden
 \item Durch die Applikation "Secure Copy" wird die zuvor im Buildprozess erstellte Datei "client.jar" auf die Zielrechner kopiert
 \item Via SSH wird der Frameworkclient auf den Zielrechnern gestartet
@@ -168,7 +168,7 @@ private void start()
 	}
 }
 \end{lstlisting}
-Um das Problem mit der Erstellung eines neuen Threads für jeden zu startenden Client zu umgehen, musste eine weitere Klasse Namens ClientStart geschrieben werden. Die Klasse im\-p\-le\-men\-tiert natür\-lich das Inter\-face "Runnable" und implementiert die "run()"-Methode wie folgt:
+Um das Problem mit der Erstellung eines neuen Threads für jeden zu startenden Client zu umgehen, musste eine weitere Klasse Namens ClientStart ge\-schrie\-ben wer\-den. Die Klas\-se im\-p\-le\-men\-tiert natür\-lich das Inter\-face "Run\-nable" und im\-p\-le\-men\-tiert die "run()"-Methode wie folgt:
 \begin{lstlisting}[language=java, breaklines=true]
 public void run() {
 	try {
@@ -203,7 +203,7 @@ Nach Beendigung eines Testlaufs, muss der Server mehrere Arbeiten erledigen. Nac
 Die im Diagramm ersichtlichen Operationen können folgender\-massen er\-läu\-tert werden:
 \begin{itemize}
 \item Die Methode "setResults(Scenario)" wird vom Client auf dem Server auf\-ge\-rufen. Durch den Aufruf dieser Methode weiss der Server, dass der aufrufende Client sein Szenario durchgespielt hat. Weiter wird mit dem Aufruf der Methode wiederum ein Thread durch den RMI-Daemon gestartet, welcher die weiter folgenden Methoden anstösst.
-\item Aus der "setResults(Scenario)"-Methode wird di\-rekt "stopClient()" auf\-ge\-rufen. Was diese Methode genau macht, wird im Kapitel "Stoppen eines Clients" genau beschrieben.
+\item Aus der "setResults(Scenario)"- Methode wird di\-rekt "stopClient()" auf\-ge\-rufen. Was diese Methode genau macht, wird im Kapitel "Stoppen eines Clients" genau beschrieben.
 \item Die Methode "shutDown()" wird auf dem Client aufgerufen. Der Client trennt daraufhin die RMI-Verbindung zum Server und schaltet sich selber ab. Nähere Informationen zum Abschaltungsprozess eines Clients kann unter dem Kapitel "Testframework Client" nachgelesen werden.
 \item Die Methode "printSummary()" verwertet die Ergebnisse, welche die Clients in ihrem Szenario gespeichert und wieder übertragen haben. Mehr Informationen dazu im Kapitel "Report Generator". Weiter wird auf der Console ausgegeben, ob es "Lost-Update"-Probleme gegeben hat oder nicht. Mehr zu diesem Thema unter "Result Generator".
 \end{itemize}
@@ -235,12 +235,12 @@ private void stopClient(String clientIp)
 
 Durch die Prüfung "checkAllShutedDown()", wird nur der letzte aller Threads weiterleben. Somit wird auch nur ein Thread fähig sein die Methode "printSummary()" auszuführen, während die anderen Threads die Methode zu Ende abarbeiten und am Ende der Methode sterben. Durch diese Implementation wird sichergestellt, dass nur ein Thread weiterlebt und keine "Zombi-Prozesse" mehr vorhanden sind.\newline
 Weiter wird beim Abarbeiten dieser Methode die Methode "shutdown()" auf dem Client aufgerufen. Nach diesem Aufruf fährt sich der Client herunter und kappt alle akiven Verbindungen zum Server. Weitere Informationen zum Shutdown-Prozess des Clients sind unter der Kapitel des Frameworkclients ersichtlich.\newline
-Oben genannte Implementation der "stopClient(String clientIP)"-Methode hat lange funktioniert. Während des Entwicklungsprozesses der RMI-Only Lösung lief das Framework mit der erwähnten Methode ohne Probleme. Bei den ersten Testläufen der RMI-Cache Lösung wurden beim Herunterfahren der Umgebung allerdings Exceptions generiert. Da die Fehlersuche bei Software mit einer vielzahl von Threads sehr langwierig ist, dauerte die Analyse des Fehlers relativ lange.\newline Schlussendlich wurde bemerkt, dass die Methode "printSummary()" trotz aller Vorsichtsmassnahmen von jedem Client ein Mal ausgeführt wurde, was dazu führte, dass mehrere Zusammenfassungen generiert wurden und probiert wurde, den FrameworkServer mehrere Male herunterzufahren. Der Versuch den FrameworkServer mehrmals herunterzufahren war natürlich der Grund für die Ex\-cep\-tions, da dem zweiten Client ein\-fach der Verbindungspartner weggerissen wurde.\newline
+Oben genannte Implementation der "stopClient(String clientIP)"-Methode hat lange funktioniert. Während des Entwicklungsprozesses der RMI-Only Lösung lief das Framework mit der erwähnten Methode ohne Probleme. Bei den ersten Testläufen der RMI-Cache Lösung wurden beim Herunterfahren der Umgebung allerdings Exceptions generiert. Da die Fehlersuche bei Software mit einer vielzahl von Threads sehr langwierig ist, dauerte die Analyse des Fehlers relativ lange.\newline Schlussendlich wurde bemerkt, dass die Methode "printSummary()" trotz aller Vorsichtsmassnahmen von jedem Client ein Mal ausgeführt wurde, was dazu führte, dass mehrere Zusammenfassungen generiert wurden und probiert wurde, den FrameworkServer mehrere Male herunterzufahren. Der Versuch den FrameworkServer mehrmals herunterzufahren war natürlich der Grund für die Ex\-cep\-tions, da dem zweiten Client ein\-fach der Ver\-bin\-dungs\-part\-ner weggerissen wurde.\newline
 Der Grund des Fehlverhaltens lag in der nicht funktionierenden Barriere "checkAllShutedDown()". Nachdem der Methodenkopf durch snychronized erweitert wurde, funktionierte das Framework wieder problemlos:
 \begin{lstlisting}[language=java, breaklines=true]
 synchronized private void stopClient(String clientIp)
 \end{lstlisting}
-Anscheinend sind die Clients bei der Cache-Implementation immer zum fast gleichen Zeit\-punkt fer\-tig, was dazu führte, dass der Sta\-tus "ShutedDown.DOWN" nur unzuverlässig gesetzt wurde. Das Fehlerszenario lief wie folgt ab:
+Anscheinend sind die Clients bei der Cache- Implementation immer zum fast gleichen Zeit\-punkt fer\-tig, was dazu führte, dass der Sta\-tus "ShutedDown.DOWN" nur un\-zu\-ver\-läs\-sig gesetzt wurde. Das Fehlerszenario lief wie folgt ab:
 \begin{itemize}
 \item Thread1 betritt die "stopClient(String clientIp)"-Methode und setzt seinen Status auf DOWN
 \item Kurz nachdem Thread1 seinen Status gesetzt hat, wird im die Res\-sour\-ce entzogen und Thread2 kommt zum Zug
@@ -373,7 +373,7 @@ Die Grundidee zu Beginn des Projekts war, dass alle Konfigurationswerte einzeln 
 In der konkreten Implementation der Methode "initialize(Scenario scenario, Configuration configuration)" werden mehrer Aufgaben erledigt:
 \begin{enumerate}
 \item Aus dem Configuration Objekt wird die Server IP, der RMI Port und der Name unter dem der Server registriert ist ausgelesen. Aus diesen Information wird eine neue RMI Verbindung zum Server erzeugt.
-\item Die Instanziierung des konkreten ClientSystemUnderTest übernimmt eine einzlne Klasse, welche als Factory implementiert ist. Der Factory wird nur der "fully qualified name", welcher im Configuration Objekt gespeichert ist, übergeben. Die Factory selbst instanziiert den gewünschten ClientSystemUnderTest via Reflection und re\-turniert dieses.
+\item Die Instanziierung des konkreten ClientSystemUnderTest übernimmt eine einzlne Klasse, welche als Factory implementiert ist. Der Factory wird nur der "fully qualified name", welcher im Configuration Objekt gespeichert ist, übergeben. Die Factory selbst instanziiert den ge\-wünschten Client\-System\-Under\-Test via Re\-flec\-ti\-on und re\-turniert dieses.
 \item Auf dem ClientSystemUnderTest wird nun ein neues Socket, welches zum ServerSystemUnderTest zeigt, gesetzt.
 \item Ein neuer TestClient wird erzeugt und das aktuelle ClientSystemUnderTest Objekt wird im Konstruktor mitgegeben. Der TestClient ist die Schnittstelle zwischen dem ClientController und dem ClientSystemUnderTest.
 \item Nun wird dem TestClient das Scenario übergeben und der TestClient initialisiert
@@ -385,7 +385,7 @@ In der konkreten Implementation der Methode "initialize(Scenario scenario, Confi
 Der Server startet den Testdurchlauf parallel auf allen ClientController über die Methode "startTest()". Diese ruft auf dem TestClient "runScenario()" auf, eine detailierte Erklärung was in dieser Methode passiert, ist im Kapitel "Test Client" zu finden. Sind alle Aktionen des gegeben Szenarios abgearbeitet, wird das gesamte Szenario mit den enthaltenen Messresultaten über die Methode "setResults(Scenario scenario, String IP)" zurück an den Server geschickt.
 
 \subsubsection{Herunterfahren des Clients}
-Die Methode "shutdown()" be\-endet den TestframeworkClient und das ClientSystemUnderTest. Die shutdown() Methode besteht aus mehreren Teilschritten:
+Die Methode "shutdown()" be\-endet den Test\-framework\-Client und das Client\-System\-Under\-Test. Die shutdown() Methode besteht aus mehreren Teilschritten:
 \begin{enumerate}
 \item Die Verbindung zwischen dem spezifischen Namen und dem damit verbundenen ClientController Remoteobjekt wird im Name Service von Java gelöscht.
 \item Das ClientController Objekt wird von der RMI Run\-time entfernt, da\-durch sind keine RMI Aufrufe mehr möglich.
@@ -409,7 +409,7 @@ new Thread() {
 	}.start();
 }
 \end{lstlisting}
-Die Beendigung des ClientControllers wird in einem seperaten Thread ausgeführt, sodass der Main-Thread noch ge\-nü\-gend Zeit hat, alle of\-fe\-nen Verbindungen ordnungsgemäss zu schliessen. Der shutdown Thread beendet den ClientController nach der mittels "delay" mit\-ge\-ge\-be\-nen Zeit\-span\-ne mit System.exit().   
+Die Beendigung des ClientControllers wird in einem seperaten Thread ausgeführt, so\-dass der Main- Thread noch ge\-nü\-gend Zeit hat, alle of\-fe\-nen Ver\-bin\-dun<-gen ord\-nungs\-gemäss zu schliessen. Der shutdown Thread beendet den ClientController nach der mittels "delay" mit\-ge\-ge\-be\-nen Zeit\-span\-ne mit System.exit().   
 
 \subsection{Test Client}
 \label{sec:testclient}
@@ -434,7 +434,7 @@ public interface ClientSystemUnderTest {
 \subsubsection{Ablauf}
 \label{sec:ablauf}
 \begin{itemize}
-\item Der ClientController setzt die Socket Adresse des Server in das ClientSystemUnderTest. Die nötigen Imformationen sind ebenfalls im Configuration Objekt gespeichert.
+\item Der ClientController setzt die Socket Adresse des Server in das Client\-System\-Under\-Test. Die nötigen Imformationen sind ebenfalls im Configuration Objekt gespeichert.
 \item Im Konstruktor des TestClients wird der AccountService, des über\-gebenen ClientSystemUnderTest über die Meth\-ode "getAccountService()" geladen. 
 \item Während der Initialisierungs- Phase des ClientController ruft dieser ebenfalls die "init()" Methode des TestClients auf, dadurch wird eine Liste aller Accounts Objekte aus dem AccountService in den TestClient geladen.
 \item Startet der Server nun den Testlauf wird endlos durch die Liste der Accounts interiert bis alle Aktionen des gesetzten Szenarios abgearbeitet sind.
@@ -501,7 +501,7 @@ public void execute(Account account) {
 	}
 }
 \end{lstlisting}
-Im laufe der Realisierung stellte sich heraus das zwischen dem "getBalance()" und dem "setBalance()" Aufruf eine minimal definierbare Zeitdauer gewartet werden können muss. Diese Warteperiode ist nötig, damit sich leichter ein Konflikt erzeugen lässt und so gezeigt werden kann, dass der Fehler serverseitig zu keinem Lost-Updates führt.
+Im Laufe der Rea\-li\-sie\-rung stellte sich her\-aus das zwi\-schen dem "get\-B\-alan\-ce()" und dem "set\-Ba\-lan\-ce()" Auf\-ruf eine mi\-ni\-mal de\-fi\-nier\-ba\-re Zeit\-dauer ge\-wartet werden können muss. Diese Warteperiode ist nötig, damit sich leichter ein Konflikt erzeugen lässt und so gezeigt werden kann, dass der Fehler serverseitig zu keinem Lost-Updates führt.
 \newline
 Tritt serverseitig ein Concurrency Fehler auf, wird eine RuntimeExeption zurück an den Client geworfen. Dieser Fehler führt dazu, dass die Aktion nochmals neu gestartet wird. Die Aktion wird solange wiederholt bis diese erfolgreich aus der While-Schleife kommt. Die Verzögerung zwischen dem Lesen und Schreiben, welche über die Methode "sleep()" realisiert ist, führt nur beim ersten Versuch der IncrementAction zu einer zeitlichen Verzögerung.
 

@@ -46,7 +46,7 @@ public class TestCaseFactory
 	    Account newAccount = null;
 	    Scenario newScenario = null;
 		try {
-			stax = inputFactory.createXMLStreamReader(new StreamSource(new File(testCaseFileName)));
+			stax = inputFactory.createXMLStreamReader(new StreamSource(new File("template/" + testCaseFileName)));
 		      while(stax.hasNext()) 
 		      {
 		    	  stax.next();

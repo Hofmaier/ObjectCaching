@@ -9,3 +9,6 @@
 *.*~
 testFrameworkServer/initFile.conf
 dist/*
+*.bbl
+*.blg
+*.lof

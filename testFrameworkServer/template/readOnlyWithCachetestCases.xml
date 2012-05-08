@@ -6,13 +6,7 @@
 		<Account balance="1"></Account>
 		<Scenario id="1">
 			<ActionSequence>
-				<Increment count="5" delay="0" factor="1.1"></Increment>
-
-			</ActionSequence>
-		</Scenario>
-		<Scenario id="2">
-			<ActionSequence>
-				<Increment count="2" delay="500" factor="1.1"></Increment>
+				<Read count="250"></Read>
 			</ActionSequence>
 		</Scenario>
 	</TestCase>

@@ -116,9 +116,9 @@
 	<target name="copyConfig" depends="jar">
 		<copy file="testFrameworkClient/logger.config" tofile="${dist.client.dir}/logger.config" />
 		<copy file="testFrameworkServer/initFile.conf" tofile="${dist.server.dir}/initFile.conf" />
-		<copy file="testFrameworkServer/testCases.xml" tofile="${dist.server.dir}/testCases.xml" />
-		<copy todir="${dist.server.dir}">
-			<fileset dir="testFrameworkServer" includes="*testCases.xml" />
+		<copy file="testFrameworkServer/template/testCases.xml" tofile="${dist.server.dir}/template/testCases.xml" />
+		<copy todir="${dist.server.dir}/template">
+			<fileset dir="testFrameworkServer/template" includes="*testCases.xml" />
 		</copy>
 	</target>
 

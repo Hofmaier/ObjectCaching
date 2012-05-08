@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<TestRun>
+	<TestCase ClientSystemUnderTest="ch.hsr.objectCaching.rmiOnlyClient.RMIOnlyClientSystem"
+		ServerSystemUnderTest="ch.hsr.objectCaching.rmiOnlyServer.RMIOnlyServerSystem">
+		<Account balance="1"></Account>
+		<Scenario id="1">
+			<ActionSequence>
+				<Read count="250"></Read>
+			</ActionSequence>
+		</Scenario>
+	</TestCase>
+</TestRun>

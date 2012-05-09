@@ -1,9 +1,68 @@
 \chapter{RMI mit Concorrency Control}
 
+\section{Remote Method Invocation}
+\label{sec:remote-meth-invoc}
+
 Um zu zeigen, welche Auswirkungen Objectcaching auf ein verteiltes
 System hat, wurde ein Vergleichssystem ohne Cache geschaffen. Das
-RMIonly System ist eine Middleware. Sie bietet ein Programmiermodel
+RMIonly System ist eine Middleware. Die Middleware soll es
+ermöglichen, dass Objete in unterschiedlichen Prozessen miteinander
+
+
+kommunizieren können. Clientsysteme können mit Objekte arbeiten, die
+nicht in der selben Virtual Machine leben, sondern auf einem Server. Sie bietet ein Programmiermodel
 und macht den Nachrichtenaustausch zwischen den Prozessen transparent.
+
+
+\section{Concurrency control}
+\label{sec:concurrency-control}
+Werden die Objekte auf dem Server von mehreren Clients verändert, kann
+es zum sogenannten Lost Update-Problem kommen. Angenommen zwei
+Clients, Client $T$ und Client $U$, wollen den Kontostand von Konto
+$A$ um 200 erhöhen. Wenn der Kontostand vor der Änderung 1000 beträgt,
+muss der Kontostand nach Abschluss der beiden Transaktionen 1400
+betragen. Konto $A$ wird im System mit einem Account-Objekt
+repräsentiert. Account bietet folgendes Interface.
+
+\lstset{language=Java}
+\begin{lstlisting}
+interface Account{
+  int getBalance();
+  void setBalance(double balance);
+}
+\end{lstlisting}
+
+Möchte man den Kontostand um 200 erhöhen, liest man mit \newline
+\verb|getBalance()| zuerst den akutellen Kontostand und addiert zu
+diesem 200 dazu und setzt den neuen Kontostand mit
+\verb|setBalance()|. Beide Operationen kann man zu einer Transaktion
+zusammenfassen. Solange die Transaktionen sequenziel ablaufen, bleibt die
+Konsistenz erhalten. Laufen die Transaktionen auf dem Server
+gleichzeitig ab, können Inkonsistenzen auftreten. Lesen Client $T$ und
+Client $U$ den Kontostand nacheinander und addieren zum gelesenen Wert
+200 um das Resultat mit \verb|setBalance()| zu speichern, beträgt der
+Kontostand nach Abschluss beider Transaktionen 1200 statt 1400. Der
+Ablauf ist wie folgt.
+
+
+\begin{tabular}{l l}
+  Client $T$ & Client $U$ \\
+balance = b.getBalance(); &  \\
+ & balance=b.getBalance();  \\
+b.setBalance(balance + 200) & \\
+& b.setBalance(balance + 200);  \\
+\end{tabular}
+
+\subsection{Optimistic Concurrency}
+\label{sec:optim-conc}
+
+Das System soll Lost-Updates verhindern. Es setzt dafür das Verfahren
+Optimistic Concurrency ein \cite{wiki:optimistic-concurrency}. Clients
+können jederzeit \verb|setBalance()| aufrufen. Hat der Datensatz seit
+dem letzen Lesezugriff dieses Clients geändert, wird die Methode
+abgebrochen und der Client wird benachrichtigt. Er muss die Daten
+selbständig mit \verb|getBalance()| aktualisieren und kann es dann
+nochmals propieren.
 
 \section{Implementierung des RMI Systems}
 \label{sec:impl-des-eigen}
@@ -90,8 +149,6 @@ initialisiert. Das Framework übergibt dem Clienthandler die Input- und OutputSt
 
 \section{Concurrency Control Implementierung }
 \label{sec:conc-contr-impl}
-
-
 
 \subsection{Konzept}
 \label{sec:konzept}

@@ -52,7 +52,8 @@ Dieser TestCase sieht folgendermassen aus:
 
 \subsubsection{Szenariobeschreibung}
 Bei diesem Testcase führen alle Clients die gleichen Operationen aus. Alle Clients lesen das Objekt auf dem Server genau 250 Mal. Das Account-Objekt wird mit dem Wert "1" initialisiert, welcher bis zum Schluss unverändert bleiben wird. \newline
-Zu erwarten ist ein enormer Geschwindigkeitsvorteil des Cache-Systems. Da bei diesem Testcase keine Schreiboperationen getätigt werden, wird ein Update der Clients nie nötig sein. Dadurch muss der Cache nur beim ersten Lesezugriff aktualisiert werden und die weiteren Lesezugriffe können lokal auf dem Rechner abgewickelt werden. Daher scheint es nur logisch, dass das Cache-System um einiges schneller ist.
+Zu erwarten ist ein enormer Geschwindigkeitsvorteil des Cache-Systems. Da bei diesem Testcase keine Schreiboperationen getätigt werden, wird ein Update der Clients nie nötig sein. Dadurch muss der Cache nur beim ersten Lesezugriff aktualisiert werden und die weiteren Lesezugriffe können lokal auf dem Rechner abgewickelt werden. Daher scheint es nur logisch, dass das Cache-System um einiges schneller ist. \newline
+Weiter soll aufgezeigt werden, dass das Cache-System zumindest bei nur Lesezugriffen um einiges besser skaliert, als das System ohne Cache. Es wird also erwartet, dass beim Cache-System die Lesezugriffe gleich schnell bleiben, egal wieviele Clients beim Testdurchlau involviert sind. Beim System ohne Cache jedoch, wird eine lineare Verschlechterung der Zugriffszit erwartet.
 
 \subsubsection{Ergebnisse RMI-Only System}
 

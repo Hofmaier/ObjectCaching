@@ -43,9 +43,11 @@ public class Server implements ServerInterface
 	private ResultGenerator resultGenerator;
 	private ArrayList<String> summaries;
 	private HashMap<String, Scenario> scenarioPerClient;
+	private String numberOfRun;
 	
-	public Server(String testCaseFileName)
+	public Server(String testCaseFileName, String numberOfRun)
 	{
+		this.numberOfRun = numberOfRun;
 		this.testCaseFileName = testCaseFileName;
 		methodCallLogger = new MethodCallLogger("textLog.txt");
 		logger = Logger.getLogger("TestFrameWorkServer");
@@ -183,7 +185,7 @@ public class Server implements ServerInterface
 	public void setResults(Scenario scenario, String clientIp) 
 	{
 		logger.info("Results from scenario " + scenario.getId() + " setted by " + clientIp);
-		ReportGenerator report = new ReportGenerator(scenario, clientIp);
+		ReportGenerator report = new ReportGenerator(scenario, clientIp, numberOfRun);
 		summaries.add(report.getSummary());
 		stopClient(clientIp);
 	}
@@ -276,14 +278,23 @@ public class Server implements ServerInterface
 	{
 		if(args.length == 0)
 		{
-			Server myServer = new Server("testCases.xml");
+			Server myServer = new Server("testCases.xml", "1");
 			myServer.startTestCase();
 		}
 		else
 		{
 			System.out.println("customized testCase");
-			Server myServer = new Server(args[0]);
-			myServer.startTestCase();
+			if(args.length == 2)
+			{
+				Server myServer = new Server(args[0], args[1]);
+				myServer.startTestCase();
+			}
+			else
+			{
+
+				Server myServer = new Server(args[0], "1");
+				myServer.startTestCase();
+			}
 		}	
 	}
 }

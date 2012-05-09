@@ -9,3 +9,12 @@
 *.*~
 testFrameworkServer/initFile.conf
 dist/*
+*.bbl
+*.blg
+*.lof
+*/client.log.1
+*/Client_*.txt
+*/textLog.txt
+*/textLog.txt.1
+*/textLog.txt.1.lck
+*.toc

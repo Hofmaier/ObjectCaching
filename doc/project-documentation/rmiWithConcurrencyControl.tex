@@ -1,16 +1,160 @@
-\chapter{RMI with Concorrency Control}
+\chapter{RMI mit Concorrency Control}
+
+\section{Remote Method Invocation}
+\label{sec:remote-meth-invoc}
+
+Um zu zeigen, welche Auswirkungen Objectcaching auf ein verteiltes
+System hat, wurde ein Vergleichssystem ohne Cache geschaffen. Das
+RMIonly System ist eine Middleware. Die Middleware soll es
+ermöglichen, dass Objete in unterschiedlichen Prozessen miteinander
+
+
+kommunizieren können. Clientsysteme können mit Objekte arbeiten, die
+nicht in der selben Virtual Machine leben, sondern auf einem Server. Sie bietet ein Programmiermodel
+und macht den Nachrichtenaustausch zwischen den Prozessen transparent.
+
+
+\section{Concurrency control}
+\label{sec:concurrency-control}
+Werden die Objekte auf dem Server von mehreren Clients verändert, kann
+es zum sogenannten Lost Update-Problem kommen. Angenommen zwei
+Clients, Client $T$ und Client $U$, wollen den Kontostand von Konto
+$A$ um 200 erhöhen. Wenn der Kontostand vor der Änderung 1000 beträgt,
+muss der Kontostand nach Abschluss der beiden Transaktionen 1400
+betragen. Konto $A$ wird im System mit einem Account-Objekt
+repräsentiert. Account bietet folgendes Interface.
+
+\lstset{language=Java}
+\begin{lstlisting}
+interface Account{
+  int getBalance();
+  void setBalance(double balance);
+}
+\end{lstlisting}
+
+Möchte man den Kontostand um 200 erhöhen, liest man mit \newline
+\verb|getBalance()| zuerst den akutellen Kontostand und addiert zu
+diesem 200 dazu und setzt den neuen Kontostand mit
+\verb|setBalance()|. Beide Operationen kann man zu einer Transaktion
+zusammenfassen. Solange die Transaktionen sequenziel ablaufen, bleibt die
+Konsistenz erhalten. Laufen die Transaktionen auf dem Server
+gleichzeitig ab, können Inkonsistenzen auftreten. Lesen Client $T$ und
+Client $U$ den Kontostand nacheinander und addieren zum gelesenen Wert
+200 um das Resultat mit \verb|setBalance()| zu speichern, beträgt der
+Kontostand nach Abschluss beider Transaktionen 1200 statt 1400. Der
+Ablauf ist wie folgt.
+
+
+\begin{tabular}{l l}
+  Client $T$ & Client $U$ \\
+balance = b.getBalance(); &  \\
+ & balance=b.getBalance();  \\
+b.setBalance(balance + 200) & \\
+& b.setBalance(balance + 200);  \\
+\end{tabular}
+
+\subsection{Optimistic Concurrency}
+\label{sec:optim-conc}
+
+Das System soll Lost-Updates verhindern. Es setzt dafür das Verfahren
+Optimistic Concurrency ein \cite{wiki:optimistic-concurrency}. Clients
+können jederzeit \verb|setBalance()| aufrufen. Hat der Datensatz seit
+dem letzen Lesezugriff dieses Clients geändert, wird die Methode
+abgebrochen und der Client wird benachrichtigt. Er muss die Daten
+selbständig mit \verb|getBalance()| aktualisieren und kann es dann
+nochmals propieren.
+
+\section{Implementierung des RMI Systems}
+\label{sec:impl-des-eigen}
+
+Die RMIonly System nutzt ein ein Request-Reply Protocol
+\cite{coulouris88}.
+
+\subsection{Clientimplementation}
+\label{sec:clientimplementation}
+
+Die Clients arbeiten mit dem Interface Account. Dieses Interface wird
+von der Klasse AccountStub implementiert. Der Stub macht aus den
+Methodenaufrufen
+\verb|getBalance()|und \verb|setBalance()| ein Objekt des Typs
+MethodCall. Methodcall ist ein Data Transfer Object. Es enthält
+Informationen darüber, welche Methoden aufgerufen werden soll, auf
+welchem Objekt die Methoden aufgerufen werden soll und mit welchen
+Argumenten die Methode aufrufen wird. Nachdem der Methodenauruf dem
+Netzwerkstream übergeben wurde, wartet der Client bis er eine Antwort
+auf dem selben Stream erhält. Die Antwort wird mit einem
+ReturnValue-Objekt übertragen.
+
+Objekte der Klasse MethodCall und ReturnValue müssen serialisiert
+da\-mit sie über einen TCP Stream zwischen Client und Server übertragen
+werden können. Die Java Platform bietet dafür die Java Serialization
+API an. Objekte die serialisiert werden mit dem Serializable Interface
+markiert und mit einem ObjectOutputStream-Objekt serialisiert. Zu
+serialisierende Objekte können einfach der Methode
+\verb|writeObject(Object object)| übergeben werden.
+
+Ruft der Client eine Methode auf einem Account-Objekt auf, muss er dem
+Server mitteilen, auf welchem Objekt die Methode aufgerufen werden
+soll. Dafür teilt er dem Server die Objekt-ID im MethodCall-Objekt
+mit. Diese Objekt-ID müssen in den Stubs auf Clientseite bei
+Methodenaufruf bekannt sein und sie müssen mit den Objekt-ID's auf dem
+Server übereinstimmen. Der Client kann Account-Objekte beim Server
+anfordern. Das Interface AccountService bietet dafür die Methode
+\verb|getAllAccounts()| an. AccountServiceStub
+sendet bei Aufruf von \verb|getAllAccounts()|
+einen entsprechenden MethodCall an den Server. Dieser MethodCall
+enthält keine Objekt-ID. Er returniert immer alle Account-Objekte des
+Servers unabhängig davon welches AccountService-Objekt die Methode
+aufgerufen hat. Das ReturnValue des Servers enthält eine ArrayList von
+Objekt-ID's. Aus diesen ID's werden die AccountStubs auf dem Client generiert.
+
+\subsection{Serverimplementation}
+\label{sec:serverimplementation}
+
+Der Server hört akzeptiert eingehende TCP-Verbindungen und liest aus
+dem Stream MethodCall-Objekte, sobald welche vom Client gesendet
+werden. Der TCP-Stream wird erst geschlossen, wenn der Client ein EOF
+sendet.
+
+Für jede Klasse, die RMI-Methoden anbietet, hat der Server ein
+zuge\-hö\-ri\-ges Skeletonobjekt. Für die Methodenaufrufe
+der Klasse Account ist ein Objekt vom Typ
+AccountSkeleton zuständig. Das Skeletonobjekt hat eine HashMap. Die
+HashMap enthält alle Account-Objekte des Systems. Die Objekt-ID's
+werden als Key's der HashMap eingesetzt. Der AccountSkeleton ist damit
+in der Lage ein MethodCall-Objekt, das ein Client versendet hat, an
+das richtige Objekt weiterzuleiten. 
+
+Die Skeletonklasse setzt Java Reflection ein um Methoden auf den
+Objekten aufzurufen. Das MethodCall Objekt enthält ein
+Method-Objekt. Method stellt eine Methode \verb|Object invoke(Object obj, Object[] args)|\- zur\- Ver\-füg\-ung. Das Objekt auf dem die Methode
+ausgeführt hat, beschafft sich der Skeleton aus der HashMap. Die
+Argumente werden im MethodCall Objekt übermittelt. Der Rückgabewert
+wird in ein ReturnValue-Objekt gepackt und an den Client zurückgesendet.
+
+\subsubsection{Schnittstelle zum Framework}
+\label{sec:schn-zum-fram}
+
+Für jeden Client muss der Server ein Streamobjekt erstellen. Die
+Method\-Call-Objekte aus dem Streamobjekt müssen an das selbe
+AccountSkeleton-Objekt weitergeleitet werden. Streamobjekte speichern
+und Methodenauf\-rufe an das richtige Skeleton weiterzuleiten ist
+Aufgabe der Clienthandler. Damit diese Clienthandler-Objekte mit den
+richtigen Skeleton-Objekte initialisiert werden, bietet das System
+eine zentrale ServerSystem-Klasse. Das Framework erzeugt eine Instanz
+der ServerSystem-Klasse. Wenn sich Client mit dem Server verbindet,
+fordert das Framework von diese Serversystem\-instanz einen
+Clienthandler an. Dieser wird mit den richtigen SkeletonObjekte
+initialisiert. Das Framework übergibt dem Clienthandler die Input- und OutputStreamobjekte.
 
 \section{Concurrency Control Implementierung }
 \label{sec:conc-contr-impl}
-
-
 
 \subsection{Konzept}
 \label{sec:konzept}
 
 Ziel des Konzept, ist das  
 Der Server verwaltet eine HashMap H1. H1 hat verwendet als Key/Value Pair Object/Version. 
-
 
 
 

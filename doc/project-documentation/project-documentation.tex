@@ -3,6 +3,7 @@
 \usepackage[pdftex]{graphicx}
 \usepackage{listings}
 \usepackage{float}
+\usepackage{listings}
 
 \title{Object Caching}
 \date{\today}
@@ -11,13 +12,18 @@
 \begin{document}
 \maketitle
 
-\include{glossar}
+\tableofcontents
+
 \include{rmiWithConcurrencyControl}
-\include{object-caching}
+\include{object-caching} 
 \include{testFramework}
 \include{MessErgebnisse}
 \include{appendix}
 \listoffigures
+
+\bibliographystyle{plain}
+
+\bibliography{bibliography}
 
 \end{document}
 

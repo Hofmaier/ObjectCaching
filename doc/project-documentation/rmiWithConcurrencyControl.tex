@@ -150,11 +150,28 @@ initialisiert. Das Framework übergibt dem Clienthandler die Input- und OutputSt
 \section{Concurrency Control Implementierung }
 \label{sec:conc-contr-impl}
 
-\subsection{Konzept}
-\label{sec:konzept}
+Das System soll Lost-Updates verhindern, indem es bei Schreizugriffen
+feststellt, ob die Daten zwischenzeitlich verändert wurden. Dazu
+versioniert der Server die Objekte, deren Methoden auf entfernten
+Clients aufgerufen werden können. Die Versionen werden in der HashMap
+$W$ gespeichert. Die HashMap $W$ verwendet als Key die ID der Objekte
+und als Value die Version. Bei jedem Schreibzugriff, das heisst bei
+einem \verb|setBalance()|, der ohne Konflikt ausgeführt wird, wird die
+Version des Objektes inkrementiert. Zusätzlich merkt sich der Server
+für jeden Client und für jedes Objekt, auf welcher Version des
+Objektes ein Lesezugriff (\verb|getBalance()| stattgefunden hat. Dafür
+wird eine zweite HashMap $R$ verwendet. In der HashMap $R$ wird als Key
+ein String verwendet, der sich aus der IP-Adresse und der
+Objekt-ID des Methodenaufrufs zusammensetzt. Als Value speichert die HashMap $R$ die Version ab.
+Ruft ein Client
+\verb|getBalance()| auf, holt der Server die aktuelle Version aus dem
+der HashMap $W$ und speichert sie in mit der entsprechenden IP und
+Objekt-ID in der HashMap $R$ ab.
 
-Ziel des Konzept, ist das  
-Der Server verwaltet eine HashMap H1. H1 hat verwendet als Key/Value Pair Object/Version. 
-
-
-
+Mit den beiden HashMaps $W$ und $R$, weiss der Server welches die
+aktuellste Version eines Objektes und mit welcher Version jeder Client
+arbeitet. Ruft ein Client \verb|setBalance()| prüft der Server, ob die
+Version des Clients aus der HashMap $R$ tiefer ist als die aktuelle
+Version aus der HashMap $W$. Ist dies der Fall wird der Methodenaufruf
+abgebrochen und der Client erhält eine Nachricht, dass die Methode
+nicht ausgeführt werden konnte.

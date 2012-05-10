@@ -448,6 +448,18 @@ public interface ClientSystemUnderTest {
 \item Bei einem Shutdown durch den Server ist der TestClient ebenfalls für die ord\-nungs\-ge\-mä\-sse Be\-en\-di\-gung des ClientSystemUnderTest zu\-stän\-dig.
 \end{itemize}
 
+\subsubsection{Concurrency im TestClient}
+\label{sec:concurrencyTestClient}
+Während der ersten Testmessungen mit den Cache- System zeige sich folgendes Problem. Der letzte TestClient, der sich beim Server als bereit meldet, benötigte für die ersten Aktionen im Durchschnitt etwa 40 Milisekunden länger als die restlichen Clients. Durch die Analyse des Codes konnte folgender Ablauf rekonstruiert werden:
+\begin{enumerate}
+\item Der letzte Client meldet seine "setReady()" Status dem Server. Dabei besteht der Thread auf dem Client weiter, bis der "setReady()" Aufruf auf dem Server zurückkehrt.
+\item Auf dem Server wird beim Aufruf der "setReady()" Methode ein neuer Thread vom RMI Daemon erzeugt. Dieser Thread prüft in der Methode, ob alle Clients nun sind. Diese Bedingung trifft nun ein, daher wird auf jedem Client die "startTest()" Methode aufgerufen und die Messung beginnt.
+\item Während dessen wartet der Client\-Controller Thread immer noch auf die Rückkehr des "setReady()" Aufrufs, während auf allen Clients zur gleichen Zeit die "startTest()" Methode aufgerufen wird, dadurch existieren beim letzten Client, der sich beim Server meldet, kurz\-zeitig zwei Threads. Neben des "set\-Ready()" Thread läuft der "start\-Test()" Th\-read eben\-falls und be\-ginnt mit der Ab\-ar\-bei\-tung des Sze\-nar\-ios. Kehrt nun der "set\-Ready()" Th\-read zu\-rück, be\-endet sich dieser Th\-read. Die CPU- Res\-sour\-cen werden da\-rauf\-hin dem "startTest()" Thread in der Anfangs\-phase der Aktion weg\-ge\-nommen und für die Be\-endi\-gung des "setReady()" Threads benötigt. Dies führt nun zu einer Verlängerung der Ausführungsdauer der Aktion.
+\end{enumerate}
+Die Lösung dieses Problem lag in einer Wartephase vor dem eigentlichen Abarbeiten des Szenarios. Diese Pause wurde über Thread.sleep() umgesetzt und wird vor der eingentliche Messung gemacht. Dadurch haben alle ClientController Zeit, den "setReady()" Thread zu beenden, ohne den "startTest()" Thread zu beeinträchtigen.
+
+
+
 \subsection{Action}
 \label{sec:action}
 Ein Szenario beinhaltet eine Menge von Aktionen, welche auf ein Account Objekt ausgeführt werden können. Für eine einfache Erweiterbarkeit von neuen Aktionen, ist hierfür das Command-Pattern benutzt worden. Alle konkreten Implementierung einer Aktion müssen von der abstrakte Klasse Action ableiten. Im Konstruktor dieser abstrakten Klasse wird ein neues Result Objekt(siehe Kapitel Result) instanziert. Dieses Objekt dient als Datenkontainer für alle Zeitmessungen die während dieser Aktion gesammelt werden sollen. Desweiteren deklariert Action drei abstrakte Methoden die von Subklassen implementiert werden müssen.

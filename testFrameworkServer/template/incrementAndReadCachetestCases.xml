@@ -11,37 +11,37 @@
 		</Scenario>
 		<Scenario id="2">
 			<ActionSequence>
-				<Read count="1000"></Read>
+				<Read count="1000000"></Read>
 			</ActionSequence>
 		</Scenario>
 		<Scenario id="3">
 			<ActionSequence>
-				<Read count="1000"></Read>
+				<Read count="1000000"></Read>
 			</ActionSequence>
 		</Scenario>
 		<Scenario id="4">
 			<ActionSequence>
-				<Read count="1000"></Read>
+				<Read count="1000000"></Read>
 			</ActionSequence>
 		</Scenario>
 		<Scenario id="5">
 			<ActionSequence>
-				<Read count="1000"></Read>
+				<Read count="1000000"></Read>
 			</ActionSequence>
 		</Scenario>
 		<Scenario id="6">
 			<ActionSequence>
-				<Read count="1000"></Read>
+				<Read count="1000000"></Read>
 			</ActionSequence>
 		</Scenario>
 		<Scenario id="7">
 			<ActionSequence>
-				<Read count="1000"></Read>
+				<Read count="1000000"></Read>
 			</ActionSequence>
 		</Scenario>
 		<Scenario id="8">
 			<ActionSequence>
-				<Read count="1000"></Read>
+				<Read count="1000000"></Read>
 			</ActionSequence>
 		</Scenario>
 	</TestCase>

@@ -79,7 +79,7 @@ function func_startServer
 {
   cd ${serverJarPath}
   echo "STARTUPSCRIPT: Server started"
-  java -jar ${serverJar} $1
+  java -jar ${serverJar} $1 $2
   cd ${startFolder}
   rm ${clientTemp}
 }
@@ -97,18 +97,24 @@ func_build
 ls ${serverJarPath}/template | grep $1 > /dev/null 2>&1
 if [[ $? -eq 0 || "$1" = "" ]]
 then
-	func_create_CLient_List
-	sleep 1
-	func_get_CLient_RMI_Port
-	sleep 1
-	func_get_CLient_RMI_Name
-	sleep 1
-	func_rm
-	sleep 2
-	func_copy
-	func_startClient
-	sleep 4
-	func_startServer $1
+	counter=1
+	while [ ${counter} -lt 4 ]
+	do
+		func_create_CLient_List
+		sleep 1
+		func_get_CLient_RMI_Port
+		sleep 1
+		func_get_CLient_RMI_Name
+		sleep 1
+		func_rm
+		sleep 2
+		func_copy
+		func_startClient
+		sleep 4
+		func_startServer $1 ${counter}
+		sleep 10
+		counter=$( echo $((${counter}+1)) )
+	done
 else
 	echo "File $1 does not exist! Aborting..."
 fi

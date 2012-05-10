@@ -281,7 +281,14 @@ Total setBalance calls: 2, avg. execution time 79.9767365
 Total Conflict: 0 / Gesamt Dauer: 282.311963 ms / durch. Dauer pro Operation: 141.1559815
 \end{lstlisting}
 
-Die genaue Messerwerte, mit Durchschnittswerten und Vergleiche zwischen verschiedenen Systemen sind am Schluss dieser Arbeit zu finden.
+Die genaue Messerwerte, mit Durch\-schnitts\-wer\-ten und Ver\-gleiche zwischen den verschiedenen Systemen sind am Schluss dieser Arbeit zu finden. \newline
+Während der Entwicklung des Frameworks und der verschiedenen Systeme, schien die Ausgabe der Testergebnisse in eine Textdatei eine gute Idee zu sein. Während den Messungen des Systems wurde aber bemerkt, dass dies eine äusserst Zeitraubende und mühsame Arbeit nach sich zieht: Für einen Testcase mit acht Clients, bei welchem der Messgenauigkeit zu liebe drei Durchläufe getätigt werden, fallen insgesamt 24 Textdateien an. Um einen Mittelwert der Ergebnisse zu bekommen, müssen alle Textdateien geöffnet werden, die Mittelwerte müssen berechnet werden und in einer weiteren Datei abgelegt werden. \newline
+Dieser Umstand wurde erst am Ende der Abrbeit bemerkt, weshalb auf eine aufwändie Lösung verzichtet wurde. Mögliche Lösungsansätze für dieses Problem:
+\begin{itemize}
+\item Die Ergebnisse werden in eine Datenbank geschrieben
+\item Die Ausgabe erfolgt in ein XML-File
+\end{itemize}
+Die Ausgabe der Ergebnisse in eine Datenbank wäre wohl die sauberste Lösung, doch auch mit sehr viel Aufwand verbunden. Ein XML-File wäre sicher einfach zu handhaben, als die Textdateien und hätte schlussendlich weniger Aufwand für die Messungen bedeutet.
 
 \subsubsection{Result Generator}
 \label{sec:resultGenerator}

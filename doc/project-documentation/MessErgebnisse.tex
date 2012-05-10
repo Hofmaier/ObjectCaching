@@ -1,7 +1,14 @@
 \chapter{Messergebnisse}
 
+Dieses Kapitel be\-han\-delt die Mess\-er\-geb\-nis\-se, welche mit dem zu\-vor be\-schrie\-be\-nen System erzielt wurden. Dabei wird von verschiedenen Sze\-narien aus\-ge\-gang\-en, welche die jeweiligen Vor- und Nach\-teile der zwei Sy\-stem\-en zum Ausdruck bringen sollen. 
+
+\section{Laborumgebung}
+
+Alle Messergebnisse stammen aus einer La\-bor\-um\-gebung, mit fol\-gen\-den Ei\-gen\-schaf\-ten:
+
 Dieses Kapitel be\-handelt die Mes\-ser\-ge\-bis\-se, welche mit dem zuvor be\-schrie\-benen System erzielt wurden. Dabei wird von verschiedenen Szenarien ausgegangen, welche die jeweiligen Vor- und Nachteile der zwei Systemen zum Ausdruck bringen sollen. \newline
 Alle Mes\-ser\-ge\-bnis\-se stam\-men aus einer Labor\-umgebung, mit folgenden Ei\-gen\-schaf\-ten:
+
 \begin{itemize}
 \item Alle Testrechner, Server wie Client, besitzen folgende Hardware:
 \begin{itemize}
@@ -15,51 +22,41 @@ Alle Mes\-ser\-ge\-bnis\-se stam\-men aus einer Labor\-umgebung, mit folgenden E
 \item Auf beiden Clients: Fedora Linux, Release 16
 \end{itemize}
 \item Die Netzwerkinfrastruktur im Laborraum ist kaum belastet, daher nur durch den gebräuchlichen Leerlaufverkehr(STP, ARP usw.)
-\item Die Hardware-Ressourcen der Rechner, auf welchen die Applikation getestet wird, sind ausschliesslich nur durch die Applikation belegt und durch einzelne übliche Prozesse vom  Betriebsystem.
+\item Die Hardware-Ressourcen der Rechner, auf welchen die Applikation getestet wird, sind ausschliesslich nur durch die Applikation belegt und durch einzelne, übliche Prozesse vom  Betriebsystem.
 \end{itemize}
 
-\section{Zwei schreibende Clients}
+\section{Testvorgaben}
+Die in dieser Arbeit ausgewiesenen Zahlen wurden alle in der Laborumgebung gemessen. Dabei wurde für jeden TestCase die Anzahl der Clients schrittweise von zwei bis acht Clients erhöht. Jeder Testlauf mit der gleichen Anzahl Clients, wurde drei Mal durchgeführt, um einen exakten Mittelwert der Ergebnisse ausweisen zu können. Drei Testdurchläufe pro Scenario und Clientanzahl wurden aufgrund der sehr nahe liegenden Ergbnisse der Testdurchläufe als genügen eingestuft. Wären die einzelnen Ergebnisse der Durchläufe extrem unterschiedlich, hätten fünf oder mehr Durchläufe stattfinden müssen.
 
+\section{Testergebnisse}
+In den folgenden Kapiteln werden die getesteten Scenarios und deren Ergebnisse gezeigt. 
+
+\subsection{Nur lesende Clients}
+\subsubsection{Szenario Code}
 Dieser TestCase sieht folgendermassen aus:
 \begin{lstlisting}[breaklines=true]
 <?xml version='1.0' encoding='UTF-8'?>
 <TestRun>
-	<TestCase SystemUnderTest="ch.hsr.objectCaching.rmiOnlyClient.RMIonlyClientSystem" ServerSystemUnderTest="ch.hsr.objectCaching.rmiOnlyServer.RMIOnlyServerSystem">
+	<TestCase
+		ClientSystemUnderTest="ch.hsr.objectCaching.rmiWithCacheClient.RMIwithCacheClientSystem"
+		ServerSystemUnderTest="ch.hsr.objectCaching.rmiWithCacheServer.RMIWithCacheServerSystem">
 		<Account balance="1"></Account>
 		<Scenario id="1">
 			<ActionSequence>
-
-				<Increment count ="1000" delay="0" factor="1.1"></Increment>
-
-			</ActionSequence>
-		</Scenario>
-		<Scenario id="2">
-			<ActionSequence>
-
-				<Increment count ="1000" delay="0" factor="1.1"></Increment>
-
+				<Read count="250"></Read>
 			</ActionSequence>
 		</Scenario>
 	</TestCase>
 </TestRun>
 \end{lstlisting}
 
-Beide Clients erhöhen den "Balance"-Wert auf dem Objekt genau je 1000 Mal um 1.1. Sie führen die Operationen ohne eine Verzögerung zwischen der Lese- und der Schreiboperation aus.
+\subsubsection{Szenariobeschreibung}
+Bei diesem Testcase führen alle Clients die gleichen Operationen aus. Alle Clients lesen das Objekt auf dem Server genau 250 Mal. Das Account-Objekt wird mit dem Wert "1" initialisiert, welcher bis zum Schluss unverändert bleiben wird. \newline
+Zu erwarten ist ein enormer Geschwindigkeitsvorteil des Cache-Systems. Da bei diesem Testcase keine Schreiboperationen getätigt werden, wird ein Update der Clients nie nötig sein. Dadurch muss der Cache nur beim ersten Lesezugriff aktualisiert werden und die weiteren Lesezugriffe können lokal auf dem Rechner abgewickelt werden. Daher scheint es nur logisch, dass das Cache-System um einiges schneller ist. \newline
+Weiter soll aufgezeigt werden, dass das Cache-System zumindest bei nur Lesezugriffen um einiges besser skaliert, als das System ohne Cache. Es wird also erwartet, dass beim Cache-System die Lesezugriffe gleich schnell bleiben, egal wieviele Clients beim Testdurchlau involviert sind. Beim System ohne Cache jedoch, wird eine lineare Verschlechterung der Zugriffszit erwartet.
 
-\section{Prognose vor der Messung}
+\subsubsection{Ergebnisse RMI-Only System}
 
-Erwartungsgemäss sollten bei diesem Testfall beide Systeme in etwa gleich schnell sein. Der Cache wird sich, wenn überhaupt nur minimal bemerkbar machen. Der Cache verschnellert zwar den Lesezugriff, also steigert er die Performance bei rund 2000 Operationen, er muss aber auch dementsprechend oft durch den Server auf den neusten Stand gebracht werden. Es ist zu erwarten, dass sich der Performancezuwachs und die Einbussen die Wage halten.
+\subsubsection{Ergebnisse RMI-Only mit Cache System}
 
-\subsection{RMI-Only System}
 
-\subsection{RMI-Only mit Cache System}
-
-\subsection{Fazit}
-
-\section{Ein lesender, ein schreibender Client}
-
-\subsection{RMI-Only System}
-
-\subsection{RMI-Only mit Cache System}
-
-\subsection{Fazit}

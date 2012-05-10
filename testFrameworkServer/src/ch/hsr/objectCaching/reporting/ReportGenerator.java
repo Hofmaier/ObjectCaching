@@ -26,15 +26,17 @@ public class ReportGenerator {
 	private String summary;
 	private int actionNumber;
 	private BufferedWriter out;
+	private String numberOfRun;
 
-	public ReportGenerator(Scenario scenario, String clientIp) {
+	public ReportGenerator(Scenario scenario, String clientIp, String numberOfRun) {
+		this.numberOfRun = numberOfRun;
 		this.scenario = scenario;
 		this.clientIp = clientIp;
 		NEWLINE = System.getProperty("line.separator");
 		PARAMETER_SEPARATOR = ";";
 
 		try {
-			out = new BufferedWriter(new FileWriter("Client_" + clientIp + ".txt"));
+			out = new BufferedWriter(new FileWriter("Client_" + clientIp + "_" + numberOfRun +".txt"));
 		} catch (IOException e) {
 			System.out.println("IOException in ReportGenerator");
 		}

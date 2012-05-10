@@ -2,19 +2,19 @@
 
 \label{sec:object-caching}
 
-\subsection{Replica Placement}
+\section{Replica Placement}
 \label{sec:replica-management}
 
 Ziel des Object Caching ist es die Zugriffszeit auf Objekte für Client zu verringern. Deshalb macht es Sinn, dass Repliken vom Client initiiert werden. Die Alternative wäre dass der Server die Repliken initiiert. Werden die Replikas vom Client initiiert spricht man von Client Caches. Client Caches verbessern die Zugriffszeit der Clients auf die Daten.
 
 In unserem RMIwithObjectCaching-System besitzt jeder Client einen lokalen Cache auf derselben Maschine. Der Cache ist nicht in der Grösse limitiert, da die Testcases keine Szenarien mit vielen Objekten vorsehen.
 
-\subsection{Update Distribution}
+\section{Update Distribution}
 \label{sec:update-distribution}
 
 Werden Kopien von Objekten in einem lokalen Cache angelegt, müssen diese Kopien aktualisiert werden. Um dies zu realisieren gibt es mehrere Möglich\-keiten.
 
-\subsubsection{Invalidation versus Data Transfer}
+\subsection{Invalidation versus Data Transfer}
 \label{sec:inval-vers-data}
 
 \begin{description}
@@ -22,7 +22,9 @@ Werden Kopien von Objekten in einem lokalen Cache angelegt, müssen diese Kopien
 \item[Transfer Data] Der zweite Ansatz ist bei jedem Update die kompletten Daten eines Objektes an die lokalen Caches zu versenden. In diesem Fall kann der Client immer aus dem lokalen Cache lesen. Dieser Ansatz macht Sinn bei einem hohen read-to-write Verhältnis.
 \end{description}
 
-\subsubsection{Pull versus Push}
+Unser System verwendet Transfer Data Ansatz.
+
+\subsection{Pull versus Push}
 \label{sec:pull-versus-push}
 
 Die Verantwortung, der Cache Aktualisierung kann entweder beim Server oder beim Client liegen. Man unterscheided zwischen push-based und pull-based Protokollen.
@@ -34,10 +36,47 @@ Die Verantwortung, der Cache Aktualisierung kann entweder beim Server oder beim 
 
 In unsererem Cache werden Aktualisierungen durch push-based updated realisiert, da wir die Zugriffzeit für die Clients erhöhen wollen und sich die Anzahl der Clients in Grenzen hält. Der Server kann sich merken, welcher Cache welche Objekte enthält.
 
-In unserem System sind alle Objekte zentral auf dem Server abgespeichert. Das Objekt auf dem Server ist das Referenzobjekt. Alle Clients sollen die Updateoperationen in der Reihenfolge sehen, wie sie beim Server eintreffen. Ist jedem Objekt eine Maschine für die Koordination zugeordnet, nennt man das Protokol primary-based. Die Maschine, die das Objekt verwaltet nennt man primary. Ist der primary eine fixer Server werden alle Updateoperationen remote an diesen Server gesendet. In diesem Fall spricht man von Remote-Write Protocol. Die Concurrency Control bleibt dabei die selbe. Der inkrementiert die Version für jedes Objekt nachdem er die die Update Methode ausgeführt hat. Erhält vor dem Update Call einen Updates des Clients wird eine Exception geworfen.
+\section{Konsistenzprotokoll}
+\label{sec:konsistenzprotokoll}
 
-\subsection{Implementierung Object Konsistenz Protokol}
+In unserem System sind alle Objekte zentral auf dem Server abgespeichert. Das Objekt auf dem Server ist das Referenzobjekt. Alle Clients sollen die Updateoperationen in der Reihenfolge sehen, wie sie beim Server eintreffen. Ist jedem Objekt eine Maschine für die Koordination zugeordnet, nennt man das Protokol primary-based. Die Maschine, die das Objekt verwaltet nennt man primary. Ist der primary eine fixer Server werden alle Updateoperationen remote an diesen Server gesendet. In diesem Fall spricht man von Remote-Write Protocol. Die Concurrency Control bleibt dabei die selbe. Der Server inkrementiert die Version für jedes Objekt nachdem er die die Update Methode ausgeführt hat. Erhält vor dem Update Call einen Updates des Clients wird eine Exception geworfen.
+
+\section{Implementierung des Object-Caching}
 \label{sec:impl-object-kons}
+
+\subsection{Implementierung des Replica Placement}
+\label{sec:impl-des-repl-1}
+
+Ruft ein Client eine Methode auf einem Objekt auf, überprüft das System zuerst, ob das Objekt bereits im lokalen Cache vorhanden ist. Der Cache hat eine HashMap $C$, die als Keys Objekt-IDs und als Values Objekte enthält. Ist ein Objekt nicht in dieser HashMap vorhanden, wird eine \verb+ObjectRequest+-Message an den Server gesendet. Der Server antwortet, indem er das gewünschte Objekt serialisiert an den Client zurücksendet. Der Client legt es in der HashMap $C$ ab. 
+
+\subsection{Implementierung Update Distribution}
+\label{sec:impl-update-distr}
+
+Methoden mit Seiteneffekten werden direkt an den Server gesendet. Der Server merkt sich bei einem \verb|ObjectRequest|, an welche Client er das Objekt gesendet hat. Er führt für jede Objekt-ID eine \verb|ArrayList| die alle Clients enthält, die das Objekt bereits angefordert haben. Wird auf einem Objekt ein Methode mit Seiteneffekt ausgeführt, sendet der Server allen Clients in der Liste eine \verb|ObjectUpdate|-Message.
+
+\subsubsection{Implementierung des Nachrichtenaustausch}
+\label{sec:impl-des-nachr}
+
+Augrund der \verb|ObjectUpdate|-Nachrichten muss der Client in der Lage sein, eine Nachricht zu empfangen, ohne dass er explizit darauf wartet. Im RMI-only System schreibt ein Client die Nachricht für einen Methodenaufruf in den Stream zum Server und wartet anschliessen auf die Antwort. Das ist möglich, weil das nächste Objekt, das der Client aus dem Stream zum Server ausliest, ist immer die Antwort.
+
+Im Object-Caching System muss der Client in der Lage sein, Object\-Update\--Messages zu empfangen und zu verarbeiten ohne, dass er weiss, wann er ein \verb|ObjectUpdate| über den Stream gesendet wird. Damit eintreffende Nach\-richten im Client nicht von der ausgehenden Nachricht abhängig ist, wird der Nach\-richt\-enaustausch im System in der Klasse \verb|MessageManager| gekapselt. \newline \verb|MessageManager| bietet folgende Methoden an.
+
+\begin{description}
+\item[sendMessageCall] Diese Methode nimmt alle Nachrichten entgegen, die an den Client gesendet werden sollen. Die Methode platziert alle Nachrichten in einer \verb|BlockingQueue| 
+\item[receiveReturnValue] Hat ein Client eine Nachricht für einen Methodenaufruf an den Server gesendet, liefert diese Methode die darauffolgende ReturnValue-Nachricht. Da der \verb+MessageManager+ nur von einem Client benutzt wird, kann sich ein Client darauf verlassen, dass die ReturnValue-Nachricht zum vorhergehenden MethodCall-Nach\-richt \-passt.  Die Methode blockiert bis ein ReturnValue empfangen wird.
+\item[receiveObject] Antwortnachrichten für einen ObjectRequest können über diese Methode entgegengenommen werden. 
+\item[receiveUpdate] Die Methode blockiert bis eine ObjectUpdate-Nachricht vom Server eintrifft. Wird eine ObjectUpdate-Nachricht empfangen, liefert die Methode ein ObjectUpdate-Objekt als Rückgabewert.
+\end{description}
+
+Für ausgehende Nachrichten enthält der \verb|MessageManager| eine BlockingQueue. Bei Aufruf von sendMessageCall wird die zu sendende Nachricht in der Queue platziert. Ein Thread ist nur dafür zuständig Nachrichten aus dieser Queue zu nehmen und in den Stream zum Server zu schreiben.
+
+
+Für eintreffende Nachrichten hat der Server mehrere BlockingQueues. Für jede der Nachrichtentypen ObjectRequestResponse, ReturnValue und ObjectUpdate gibt es eine BlockingQueue. Trifft eine Nachricht beim Client ein, muss sie einfach in die richtige Queue geschoben werden. Ein Client holt sie mit der entsprechenden receive-Methode wieder raus. Ein Thread ist dafür zuständig eintreffende Nachrichten aus dem Stream zu lesen und der richtigen Queue hinzuzufügen. 
+
+Der Cache enthält ein Thread, der in einer Endlosschleife receiveUpdate aufruft. Diese Methode blockiert die meiste Zeit, da nicht andauernd Updates empfangen werden. Kommt eine ObjectUpdate-Nachricht rein, wird sie im MessageManager in der BlockingQueue für ObjectUpdates hinzugefügt. Der receiveUpdate-Methodenaufruf kommt zurück und aktualisiert den Cache.
+
+\subsection{Beispielablaufszenario}
+\label{sec:beisp}
 
 Der Prozess Kontostand erhöhen läuft wie folgt ab.
 

@@ -30,6 +30,11 @@ public class TestClient {
 
 	public void runScenario() {
 		logger.info("Starting the test with the scenario " + scenario.getId());
+		try {
+			Thread.sleep(2000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 		for (Action action : scenario.getActionList()) {
 			Account acc = getNextAccount();
 			action.execute(acc);

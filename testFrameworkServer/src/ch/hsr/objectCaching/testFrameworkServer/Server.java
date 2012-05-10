@@ -130,7 +130,6 @@ public class Server implements ServerInterface
 	@Override
 	public void setReady(String ip) 
 	{
-		logger.info("Setted ready with: " + ip);
 		Client temp;
 		if((temp = clientList.getClientByIp(ip)) != null)
 		{
@@ -138,23 +137,22 @@ public class Server implements ServerInterface
 		}
 		if(checkAllReady())
 		{
-			start();
+			for(int i = 0; i < clientList.size(); i++)
+			{
+				ClientStart clientStart = new ClientStart(clientList.getClient(i));
+				new Thread(clientStart).start();
+			}
+			
 		}
+		logger.info("Setted ready with: " + ip);
+		
 	}
+	
+	
 	
 	public int getSocketPort()
 	{
 		return configuration.getServerSocketPort();
-	}
-	
-	private void start()
-	{
-		logger.info("Method start() invoked");
-		for(int i = 0; i < clientList.size(); i++)
-		{
-			ClientStart clientStart = new ClientStart(clientList.getClient(i));
-			new Thread(clientStart).start();
-		}
 	}
 	
 	private boolean checkAllReady()
@@ -291,7 +289,6 @@ public class Server implements ServerInterface
 			}
 			else
 			{
-
 				Server myServer = new Server(args[0], "1");
 				myServer.startTestCase();
 			}

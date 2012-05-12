@@ -444,12 +444,12 @@ public interface ClientSystemUnderTest {
 \label{sec:concurrencyTestClient}
 Während den ersten Testmessungen mit den Cache- System zeige sich folgendes Problem. Der letzte TestClient, der sich beim Server als bereit meldet, benötigte für die ersten Aktionen im Durchschnitt etwa 40 Milisekunden länger als die restlichen Clients. Durch die Analyse des Codes konnte das Problem lokalisiert werden. Die folgenden Schritte zeigen die Ursache des Problems auf:
 \begin{enumerate}
-\item Der letzte Client meldet sich über die Methode setReady beim Server als bereit. 
-\item Beim Aufruf der "setReady()" Methode auf dem Server wird nun geprüft, ob alle Clients bereit sind. Haben sich alle Clients als bereit für den Testlauf gemeldet, startet der Server auf jedem Client den Testlauf über die Methode "startTest()".
+\item Der letzte Client meldet sich über die Methode setReady() beim Server als bereit. 
+\item Beim Aufruf der "setReady()" Methode auf dem Server wird nun ge\-prüft, ob alle Clients bereit sind. Haben sich zuvor alle Clients als bereit für den Test\-lauf ge\-meldet, startet der Server auf jedem Client den Testlauf über die Methode "startTest()".
 \item Zu diesem Zeitpunkt wartet der setReady Thread des letzten Clients immer noch auf die Rückkehr des Aufrufs.
-\item Gleichzeit wird auf dem letzten Client ebenfalls die startTest() Methode aufgerufen. Dadurch bestehen beim letzten Client der sich beim Server gemeldet hat kurzzeit zwei Threads.
-\item Ist die Methode setReady() erfolgreich durchlaufen, kehrt der Aufruf zum Client zurück daraufhin beendet der Thread auf dem Client, welcher die setReady() Methode gestartet hat.
-\item Gleichzeitig hat der startTest() Thread bereits begonnen mit dem abarbeiten des Szenarios. Da nun der Thread vom setReady() beendet wird, wird dem Szenario Thread die CPU-Ressource weggenommen. Dies führt nun zu einer Verlängerung der Ausführungsdauer der Aktion.
+\item Gleich\-zeit wird auf dem letzten Client die startTest() Methode auf\-gerufen. Da\-durch ent\-stehen beim letzten Client der sich beim Server gemeldet hat kurz\-zeit zwei Threads.
+\item Ist die Methode setReady() erfolg\-reich durch\-laufen, kehrt der Auf\-ruf zum letzten Client zu\-rück, da\-rauf\-hin be\-endet der Thread auf dem Client, welcher die setReady() Methode ge\-startet hat.
+\item Gleichzeitig hat der startTest() Thread bereits begonnen mit dem abarbeiten des Szenarios. Da nun der Thread vom setReady() beendet wird, wird dem Szenario Thread die CPU-Ressource weggenommen. Dies führt nun zu einer Verlängerung der Ausführungsdauer der ersten Aktionen.
 \end{enumerate}
 Die Lösung dieses Problem lag in einer Wartephase vor dem eigentlichen Abarbeiten des Szenarios. Diese Pause wurde über Thread.sleep() umgesetzt und wird vor der eingentliche Messung gemacht. Dadurch haben alle ClientController Zeit, den "setReady()" Thread zu beenden, ohne den "startTest()" Thread zu beeinträchtigen.
 

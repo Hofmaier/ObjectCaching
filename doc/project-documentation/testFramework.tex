@@ -16,14 +16,6 @@ Die mit den Messwerten ausgefüllten Szenarien werden an den Server zurück\-ges
 
 Um möglichst genaue Messdaten zu erlangen, wird das ganze System nach einem Testlauf beendet. Eine Aneinanderreihung von verschiedenen Test\-läufen würde die Messdaten aufgrund der JavaVirtualMachine be\-ein\-träch\-ti\-gen. Es besteht die Möglichkeit, dass für einen zweiten Testlauf weniger Speicher zur Verfügung steht, weil der Speicher immer noch mit Objekten des ersten Testlaufs besetzt ist. Da dies nicht mit Sicherheit überprüft werden kann, daher es kann nicht gewährleistet werden, dass die Grundvoraussetzungen für beide Testläufe gleich sind, wurde auf eine Aneinanderreihung von Testläufen verzichtet.
 
-\section{Open Points (TODO's)}
-\begin{itemize}	
-\item Netzwerk Traffic der im Zimmer Auftritt kann nicht kontrolliert werden. Messungen daher nicht verlässlich, man bäuchte ein eigenes Netz.
-\item JVM Profiler: Beweis für die Zombie Objekte in der JVM, soll das gemacht werden?
-\item Exception Handling
-\end{itemize}
-
-
 \section{Der Frameworkserver}
 \label{sec:test-FW Server}
 \subsection{Das Startup-Script}
@@ -450,11 +442,14 @@ public interface ClientSystemUnderTest {
 
 \subsubsection{Concurrency im TestClient}
 \label{sec:concurrencyTestClient}
-Während der ersten Testmessungen mit den Cache- System zeige sich folgendes Problem. Der letzte TestClient, der sich beim Server als bereit meldet, benötigte für die ersten Aktionen im Durchschnitt etwa 40 Milisekunden länger als die restlichen Clients. Durch die Analyse des Codes konnte folgender Ablauf rekonstruiert werden:
+Während den ersten Testmessungen mit den Cache- System zeige sich folgendes Problem. Der letzte TestClient, der sich beim Server als bereit meldet, benötigte für die ersten Aktionen im Durchschnitt etwa 40 Milisekunden länger als die restlichen Clients. Durch die Analyse des Codes konnte das Problem lokalisiert werden. Die folgenden Schritte zeigen die Ursache des Problems auf:
 \begin{enumerate}
-\item Der letzte Client meldet seine "setReady()" Status dem Server. Dabei besteht der Thread auf dem Client weiter, bis der "setReady()" Aufruf auf dem Server zurückkehrt.
-\item Auf dem Server wird beim Aufruf der "setReady()" Methode ein neuer Thread vom RMI Daemon erzeugt. Dieser Thread prüft in der Methode, ob alle Clients nun sind. Diese Bedingung trifft nun ein, daher wird auf jedem Client die "startTest()" Methode aufgerufen und die Messung beginnt.
-\item Während dessen wartet der Client\-Controller Thread immer noch auf die Rückkehr des "setReady()" Aufrufs, während auf allen Clients zur gleichen Zeit die "startTest()" Methode aufgerufen wird, dadurch existieren beim letzten Client, der sich beim Server meldet, kurz\-zeitig zwei Threads. Neben des "set\-Ready()" Thread läuft der "start\-Test()" Th\-read eben\-falls und be\-ginnt mit der Ab\-ar\-bei\-tung des Sze\-nar\-ios. Kehrt nun der "set\-Ready()" Th\-read zu\-rück, be\-endet sich dieser Th\-read. Die CPU- Res\-sour\-cen werden da\-rauf\-hin dem "startTest()" Thread in der Anfangs\-phase der Aktion weg\-ge\-nommen und für die Be\-endi\-gung des "setReady()" Threads benötigt. Dies führt nun zu einer Verlängerung der Ausführungsdauer der Aktion.
+\item Der letzte Client meldet sich über die Methode setReady beim Server als bereit. 
+\item Beim Aufruf der "setReady()" Methode auf dem Server wird nun geprüft, ob alle Clients bereit sind. Haben sich alle Clients als bereit für den Testlauf gemeldet, startet der Server auf jedem Client den Testlauf über die Methode "startTest()".
+\item Zu diesem Zeitpunkt wartet der setReady Thread des letzten Clients immer noch auf die Rückkehr des Aufrufs.
+\item Gleichzeit wird auf dem letzten Client ebenfalls die startTest() Methode aufgerufen. Dadurch bestehen beim letzten Client der sich beim Server gemeldet hat kurzzeit zwei Threads.
+\item Ist die Methode setReady() erfolgreich durchlaufen, kehrt der Aufruf zum Client zurück daraufhin beendet der Thread auf dem Client, welcher die setReady() Methode gestartet hat.
+\item Gleichzeitig hat der startTest() Thread bereits begonnen mit dem abarbeiten des Szenarios. Da nun der Thread vom setReady() beendet wird, wird dem Szenario Thread die CPU-Ressource weggenommen. Dies führt nun zu einer Verlängerung der Ausführungsdauer der Aktion.
 \end{enumerate}
 Die Lösung dieses Problem lag in einer Wartephase vor dem eigentlichen Abarbeiten des Szenarios. Diese Pause wurde über Thread.sleep() umgesetzt und wird vor der eingentliche Messung gemacht. Dadurch haben alle ClientController Zeit, den "setReady()" Thread zu beenden, ohne den "startTest()" Thread zu beeinträchtigen.
 

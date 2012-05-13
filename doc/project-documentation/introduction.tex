@@ -6,4 +6,6 @@ Führen mehere Clients Methoden auf diesen Objekte auf dem Server aus, kann es z
 
  Ein weiteres Ziel dieses RMI-Systems ist die Verbesserung der Performance durch Replikation der Objekte beim Client. Objekte sollen näher beim Prozess, der darauf zugreift platziert werden, um die Zugriffszeit zu verkürzen.
 
-Mit der Replikation von Objekten entstehen neue Probleme. Gibt es mehrere Kopien von Objekten müssen Änderungen an einer Kopie an die anderen Kopien weitergegeben werden.
+Mit der Replikation von Objekten entstehen neue Probleme. Gibt es mehrere Kopien von Objekten müssen Änderungen an einer Kopie an die anderen Kopien weitergegeben werden. Dieser Aktualisierungsprozess kann die Performance wiederum mindern, da ein Server oft damit beschäftigt ist, Kopien zu aktualisieren.
+
+Ein weiteres Problem im Zusammenhang mit Objektcaching, ist dass das System mehr Netzwerkbandbreite benötigt, da es mehr Nachrichten versendet, um die Kopien aktuell zu halten.

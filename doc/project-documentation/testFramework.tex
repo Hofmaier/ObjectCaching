@@ -366,7 +366,7 @@ public void initialize(Scenario scenario, Configuration configuration) throws Re
 public void startTest() throws RemoteException;
 public void shutdown() throws RemoteException;
 \end{lstlisting}
-Die Grundidee zu Beginn des Projekts war, dass alle Konfigurationswerte einzeln als Parameter an den ClientController übergeben werden. Es stellte sich jedoch schon nach kurzer Zeit heraus, dass eine Kappselung der benötigen Parameter in einem seperaten Objekt eine wesentlich bessere Lösung darstellt. Dieses neue Datatransfer Objekt, beinhaltet sowohl alle nötigen Informationen für die Konfiguration des ClientSystemUnderTest als auch die des ClientControllers.
+Die Grundidee zu Beginn des Projekts war, dass alle Konfigurationswerte einzeln als Parameter an den ClientController übergeben werden. Es stellte sich je\-doch schon nach kurzer Zeit her\-aus, dass eine Kap\-pse\-lung der be\-nötigen Para\-meter in einem seperaten Objekt eine wesentlich bessere Lösung darstellt. Dieses neue Datatransfer Objekt, beinhaltet sowohl alle nötigen Informationen für die Konfiguration des ClientSystemUnderTest als auch die des ClientControllers.
 
 \subsubsection{Initialize des ClientControllers}
 In der konkreten Implementation der Methode "initialize(Scenario scenario, Configuration configuration)" werden mehrer Aufgaben erledigt:
@@ -376,8 +376,8 @@ In der konkreten Implementation der Methode "initialize(Scenario scenario, Confi
 \item Auf dem ClientSystemUnderTest Objekt wird nun ein neues Socket, welches zum ServerSystemUnderTest zeigt, gesetzt.
 \item Ein neues Objekt vom Typ TestClient wird erzeugt und das aktuelle ClientSystemUnderTest Objekt wird im Konstruktor mitgegeben. Der TestClient ist die Schnittstelle zwischen dem ClientController und dem ClientSystemUnderTest.
 \item Nun wird das Szenario, welches als Parameter übergeben wurde, auf dem TestClient Objekt gesetzt. 
-\item Daraufhin wird auf dem TestClient Objekt die "init()" Methode aufgerufen, in welcher sich der TestClient alle verfügbaren Account Objekte vom Server lädt.
-\item Auf dem Testframework Server wird die Methode "setReady()" aufgerufen, dieser Methodenaufruf teilt den Server mit das die Konfiguration des ClientControllers und des ClientSystemUnderTest erfolgreich war.
+\item Daraufhin wird auf dem Test\-Client Objekt die "init()" Methode auf\-ge\-rufen, in welcher sich der TestClient alle verfügbaren Account Objekte vom Server lädt.
+\item Auf dem Testframework Server wird die Me\-tho\-de "setReady()" auf\-ge\-rufen, dieser Methoden\-aufruf teilt den Server mit das die Konfiguration des ClientControllers und des ClientSystemUnderTest erfolgreich war.
 \item Im Anschluss wartet der der ClientController, bis der TestFramework Server den Testlauf startet.
 \end{enumerate}
 
@@ -435,7 +435,7 @@ Die Beendigung des ClientControllers wird in einem seperaten Thread ausgeführt,
 \caption{start Tests}
 \end{figure}
 
-Die TestClient Klasse ist die Schnittstelle zwischen dem ClientController und dem ClientSystemUnderTest. Das Interface ClientSystemUnderTest ist die  Schnittstelle die alle ClientSystemUnderTest Clients implementieren müssen, so lassen sich alle Varianten von ClientSystemUnderTest über diesen TestClient testen. Desweiteren kann auf dem TestClient das Szenario gesetzt werden, welches der TestClient beim Aufruf von "runScenario()" durch den ClientController abarbeitet.
+Die TestClient Klasse ist die Schnittstelle zwischen dem ClientController und dem ClientSystemUnderTest. Alle Clientvarianten die getestet werden sollen, müssen das Interface ClientSystemUnderTest implementieren, so lassen sich alle Varianten von ClientSystemUnderTest einheitlich mit einer TestClient Klasse testen. Desweiteren kann auf dem TestClient das Szenario gesetzt werden, welches der TestClient beim Aufruf von "runScenario()" durch den ClientController abarbeitet.
 
 Das ClientSystemUnderTest Interface ist wie folgt definiert:
 \begin{lstlisting}[language=java, breaklines=true] 	
@@ -448,11 +448,11 @@ public interface ClientSystemUnderTest {
 \subsubsection{Ablauf}
 \label{sec:ablauf}
 \begin{itemize}
-\item Der ClientController setzt die Socket Adresse des Server in das Client\-System\-Under\-Test. Die nötigen Imformationen sind ebenfalls im Configuration Objekt gespeichert.
+\item Der ClientController setzt die Socket Adresse des Server in das Client\-System\-Under\-Test. Die nötigen Imformationen sind im Configuration Objekt gespeichert.
 \item Im Konstruktor des TestClients wird der AccountService, des über\-gebenen ClientSystemUnderTest über die Meth\-ode "getAccountService()" geladen. 
-\item Während der Initialisierungs- Phase des ClientController ruft dieser ebenfalls die "init()" Methode des TestClients auf, dadurch wird eine Liste aller Accounts Objekte aus dem AccountService in den TestClient geladen.
+\item Während der Initialisierungs- Phase des ClientController ruft dieser ebenfalls die "init()" Methode des TestClients auf, in dieser Methode wird eine Liste aller verfügbaren Accounts Objekte aus dem AccountService in den TestClient geladen.
 \item Startet der Server nun den Testlauf wird endlos durch die Liste der Accounts interiert bis alle Aktionen des gesetzten Szenarios abgearbeitet sind.
-\item Bei einem Shutdown durch den Server ist der TestClient ebenfalls für die ord\-nungs\-ge\-mä\-sse Be\-en\-di\-gung des ClientSystemUnderTest zu\-stän\-dig.
+\item Bei einem Shutdown durch den Testframework Server ist der TestClient ebenfalls für die ord\-nungs\-ge\-mä\-sse Be\-en\-di\-gung des ClientSystemUnderTest zu\-stän\-dig.
 \end{itemize}
 
 \subsubsection{Concurrency im TestClient}
@@ -481,8 +481,8 @@ public abstract void execute(Account account);
 
 \begin{itemize}
 \item Für eine detailierte Auswertung muss der Typ der Aktion zugänglich gemacht werden, dies ist über die Methode "getActionTyp()" möglich.
-\item Eine Aktion besteht aus einer Abfolge von "getBalance()" und "setBalance(double value)" Aufrufen. Jenach Aktion können mehrer Methodenaufrufe auf das Account Objekt nötig sein um die Aktion erfolgreich auszuführen. Um im Reporting festzustellen ob die ganze Aktion beim ersten Versuch erfolgreich war, muss die minimale Anzahl von TimeRecords, die für den Erfolg der Aktion nötig sind, über die Methode "getMinimalNumberOfTimeRecords()" zugänglich gemacht werden. So lassen sich Konflikte, die bei der Ausführung dieser Aktion auftreten, im Reporting feststellen.
-\item Die Methode "execute(Account account)" beinhaltet die eigentliche Aktion die auf dem Account-Objekt ausgeführt werden soll.
+\item Eine Aktion besteht aus einer Abfolge von "getBalance()" und "setBalance(double value)" Aufrufen. Jenach Aktion können mehrer Methodenaufrufe auf das Account Objekt nötig sein um die Aktion erfolgreich auszuführen. Um im Reporting festzustellen, ob die Aktion beim ersten Versuch erfolgreich war, muss die minimale Anzahl von TimeRecords, in der Aktion gespeichert werden. Über die Methode "getMinimalNumberOfTimeRecords()" lässt sich diese Zahl auslesen. So lassen sich Konflikte, die bei der Ausführung dieser Aktion auftreten, im Reporting feststellen.
+\item Die Methode "execute(Account account)" beinhaltet die eigentlichen Methodenaufrufe, die auf dem Account-Objekt ausgeführt werden soll. Das Account Objekt wird von TestClient an die Methode übergeben.
 \end{itemize} 
 
 \subsection{ActionTyp}
@@ -532,10 +532,7 @@ public void execute(Account account) {
 \end{lstlisting}
 Im Laufe der Rea\-li\-sie\-rung stellte sich her\-aus das zwi\-schen dem "get\-B\-alan\-ce()" und dem "set\-Ba\-lan\-ce()" Auf\-ruf eine mi\-ni\-mal de\-fi\-nier\-ba\-re Zeit\-dauer ge\-wartet werden können muss. Diese Warteperiode ist nötig, damit sich leichter ein Konflikt erzeugen lässt und so gezeigt werden kann, dass der Fehler serverseitig zu keinem Lost-Updates führt.
 \newline
-Tritt serverseitig ein Concurrency Fehler auf, wird eine RuntimeExeption zurück an den Client geworfen. Dieser Fehler führt dazu, dass die Aktion nochmals neu gestartet wird. Die Aktion wird solange wiederholt bis diese erfolgreich aus der While-Schleife kommt. Die Verzögerung zwischen dem Lesen und Schreiben, welche über die Methode "sleep()" realisiert ist, führt nur beim ersten Versuch der IncrementAction zu einer zeitlichen Verzögerung.
-
-
-Dies veranlasst die Aktion dazu, dass sie mit der kom\-p\-le\-te Aktion noch\-mals neu beginnt, mit dem Unterschied, das diesmal keine Verzögerung zwischen getBalance() und setBalance() benutzt wird. Dies wird über den Wert numberOfTry geprüft, ist dieser grösser als eins wird die Verzögerung nicht nochmals ausgeführt.
+Tritt serverseitig ein Concurrency Fehler auf, wird eine RuntimeExeption zurück an den Client geworfen. Dieser Fehler veranlasst, dass die Aktion nochmals neu gestartet wird. Die Aktion wird solange wiederholt bis diese erfolgreich aus der While-Schleife kommt. Die Verzögerung zwischen dem Lesen und Schreiben, welche über die Methode "sleep()" realisiert ist, führt nur beim ersten Druchlauf der IncrementAction zu einer zeitlichen Verzögerung.
 
 \subsection{WriteAction}
 \label{sec:writeAction}
@@ -551,13 +548,13 @@ Für die möglichst genaue Zeitmessung einer Aktion wird die von Java bereitgest
 
 \subsection{TimeRecord}
 \label{sec:timeRecord}
-Der TimeRecordtyp ist als reines Data Tranfer Object implementiert worden. Es beinhaltet die Startzeit sowie die Stopzeit genau eines Methoden Aufrufs. Für eine genaue Auswertung einer Aktion sind noch weitere Daten nötig. Daher besitzt dieser Typ zwei weitere Felder. Der BasicActiontyp beinhaltet Informationen für welche Account Methode, also getBalance oder setBalance, dieser Record gilt und in dem ActionResult kann die Information über den Erfolg der BasicAction gespeichert werden. Dadurch lassen sich zusammengesetzte Aktionen, welche aus getBalance() und setBalance() zusammengesetzt sind einfach unterteilen.
+Der TimeRecordtyp ist als reines Data Tranfer Object implementiert worden. Es beinhaltet die Startzeit sowie die Stopzeit genau eines Methoden Aufrufs. Für eine genaue Auswertung einer Aktion sind noch weitere Daten nötig. Daher besitzt dieser Typ zwei weitere Felder. Der BasicActiontyp beinhaltet Informationen für welche Account Methode, also getBalance oder setBalance, dieser Record gilt und in dem ActionResult kann die Information über den Erfolg der BasicAction gespeichert werden. Dadurch lassen sich zusammengesetzte Aktionen, welche aus getBalance() und setBalance() zusammengesetzt sind einfach unterteilen. Ein weiterer Vorteil liegt in Möglichkeit ein Szenario bis die einzelnen Methoden Aufrufe einer Aktion zu analysieren. 
 
 \subsection{BasicAction}
 \label{sec:BasicAction}
-Damit eine genaue Analyse der Aktionen ge\-macht werden kann, ist es nö\-tig, dass zwi\-schen "get\-Ba\-lan\-ce()" und "set\-Ba\-lan\-ce()" un\-ter\-schieden wer\-den kann. Eine Aktion kann aus mehreren Methoden\-auf\-rufen bestehen, daher muss bei einer Zeitmessung die Art(setter / getter) angegeben werden können. Da jedoch eine Aktion aus einer Abfolge von Reads und Writes bestehen kann, ist es nötig, dass diese Information gespeichert wird. Im TimeRecord lässt sich daher die BasicAction speichern.
+Damit eine genaue Analyse der Aktionen ge\-macht werden kann, ist es nö\-tig, dass zwi\-schen "get\-Ba\-lan\-ce()" und "set\-Ba\-lan\-ce()" un\-ter\-schieden wer\-den kann. Eine Aktion kann aus einer Abfolge von Methoden\-auf\-rufen bestehen, daher muss bei jeder Zeitmessung angegeben werden können, ob es sich um eine setter oder getter Methode handelt, diese Information lässt sich daher ebenfalls im TimeRecord speichern.
 
 \subsection{ActionResult}
 \label{sec:ActionResult}
-Den Erfolg eines getBalance() oder setBalance() Aufrufs lässt sich ebenfalls im TimeRecord speichern. Um eine Statistik über die Fehlerrate beider Methodenaufrufe zu bekommen, war es daher nötig, dass beim stoppen einer Messung, der eine BasicAction zugrunde liegt den Erfolgstatus gespeichert werden kann. Damit lässt sich ein Szenario auf die zwei Grundoperation setBalance() und getBalance() herunterbrechen. Dies ermöglicht es die Auswertung bis auf diese zwei Methoden hinab zu analyisieren und auszuwerten.
+Den Erfolg eines getBalance() oder setBalance() Aufrufs lässt sich ebenfalls im TimeRecord speichern. Um eine Statistik über die Fehlerrate beider Methodenaufrufe zu bekommen, war es nötig, dass beim stoppen einer Messung der Erfolgstatus gespeichert werden kann.
 

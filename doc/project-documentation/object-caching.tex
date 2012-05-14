@@ -7,7 +7,9 @@
 
 Ziel des Object Caching ist es die Zugriffszeit auf Objekte für Client zu verringern. Deshalb macht es Sinn, dass Repliken vom Client initiiert werden. Die Alternative wäre dass der Server die Repliken initiiert. Werden die Replikas vom Client initiiert spricht man von Client Caches. Client Caches verbessern die Zugriffszeit der Clients auf die Daten.
 
-In unserem RMIwithObjectCaching-System besitzt jeder Client einen lokalen Cache auf derselben Maschine. Der Cache ist nicht in der Grösse limitiert, da die Testcases keine Szenarien mit vielen Objekten vorsehen.
+In unserem RMIwithObjectCaching-System besitzt jeder Client einen lokalen Cache auf derselben Maschine. Der Cache ist nicht in der Grösse limitiert, da die Testcases keine Szenarien mit vielen Objekten 
+
+Durch das Caching solllen Lesezugriffe schneller ausgeführt werden, da der Aufruf nicht über einen Socket geschickt werden muss, sondern im RAM bleibt, falls das Object im Cache vorhanden ist.
 
 \section{Update Distribution}
 \label{sec:update-distribution}
@@ -94,8 +96,13 @@ Der Prozess Kontostand erhöhen läuft wie folgt ab.
 \item [setBalance] Das Object muss im Cache invalidiert werden. Mit ConcurrencyControl kann überprüft werden, ob mit einer alten Version gearbeitet wurde.
 \end{description}
 
+\subsection{Implementierung der Concurrency Control}
+\label{sec:impl-der-conc}
+
 \subsubsection{Mögliche Aufrufszenarien}
 \label{sec:mogl-aufr}
+
+Im Unterschied zum RMI-only System erreichen die getBalance() Methodenaufrufen den Server nicht immer. Um Lost Updates zu verhindern reichts es nicht aus, die Objektversionen, die von den Clients verwendet werden, bei jedem getBalance(), der zum Server kommt zu aktualisieren. Der Server erhält im Object-Caching-System keinen getBalance() Aufruf. Die folgenden Szenarien sollen die mögliche Probleme aufzeigen.
 
 Im ersten Szenario treten keine Konsistenzprobleme auf. Laufen die Methodenaufrufe in dieser Reihenfolge ab, benötigt das System keine Concurrency Control.
 \begin{enumerate}
@@ -143,15 +150,10 @@ Bei allen Fällen kann Inkonsistenz festgestellt werden, indem sich der Server u
 
 Um Inkonsistenz bei diesem Szenario zu erkennen und zu verhindern, muss die Nachricht die den \verb|setBalance()| Methodenaufruf enthält, die Versionnummer des Clients, der die Methode aufruft, mitsenden. Ist diese Versionnummer tiefer als die aktuelle Versionnummer des Objektes wird eine Exception geworfen. Damit die Versionnummern auf Server und auf Client immer synchron sind muss bei einem ObjectRequest die aktuelle Versionnummer an den Client gesendet werden. Bei einem Update wird die Nummer einfach inkrementiert.
 
-\subsubsection{Erwartetet Vorteile}
-\label{sec:erwartetet-vorteile}
 
-\begin{itemize}
-\item \verb+getBalance()+-Aufrufe werden schneller ausgeführt, da der Aufruf nicht über einen Socket geschickt werden muss, sondern im RAM bleibt, falls das Object im Cache vorhanden ist.
-\item Bei \verb+setBalance()+ werden mögliche Inkonsistenzen bereits beim Client festgestellt. Der User erhält schneller Feedback und der Server wird weniger durch Concurrency Control belastet.
-\end{itemize}
+Bei \verb+setBalance()+ werden mögliche Inkonsistenzen bereits beim Client festgestellt. Der User erhält schneller Feedback und der Server wird weniger durch Concurrency Control belastet.
 
-\subsubsection{Domain Klassen des Client}
+\section{Domain Klassen des Client}
 \label{sec:domain-klassen}
 
 \begin{description}

@@ -327,13 +327,13 @@ Die Notwendigkeit zur Im\-pl\-emen\-tie\-rung eines Log\-gers wurde erst wäh\-r
 
 \section{Testframework Client}
 \label{sec:test-FW Client}
-Dieses Kapi\-tel beschreibt die Aufgaben der TestframeworkClient- Komponenten und deren Umsetzung. Der Testframework Client besitzt zwei Hauptaufgaben:
+Dieses Kapi\-tel beschreibt die Aufgaben des Testframework Client sowie die Umsetzung der einzelne Komponenten. Der Testframework Client besitzt zwei Hauptaufgaben:
 \begin{itemize}
-\item Erzeugen und konfigurieren des benötigten ClientSystemUnderTest
-\item Abarbeitung des durch den FrameWorkServer zur Verfügung gestellten Szenarios auf dem ClientSystemUnderTest und Zeitmessungen für die einzelnen Aktionen
+\item Erzeugen und konfigurieren des benötigten ClientSystemUnderTest anhand von Parametern die vom Server kommen
+\item Abarbeitung des durch den Framework Server zur Verfügung gestellten Szenarios auf dem zu testenden System sowie die Zeitmessungen der einzelnen Aktionen
 \end{itemize}
 
-Die Umsetzung des Testframeworks wurde über das bewährte Client / Server Konzept realisiert, was zu einer schlanke Lösung auf Seiten des Clients führt. Der FrameworkClient und das ClientSystemUnderTest lassen sich dank die\-sem Konzept direkt vom FrameworkServer aus konfigurieren und steuern. Ein weiterer Vorteil liegt darin das sich neue Anforderungen jederzeit leicht umsetzen lassen.
+Die Umsetzung des Testframeworks wurde über das bewährte Client / Server Konzept realisiert, was zu einer schlanke Lösung auf Seiten des Clients führt. Der FrameworkClient und das ClientSystemUnderTest lassen sich dank die\-sem Konzept komplett vom Framework Server aus konfigurieren und steuern. Ein weiterer Vorteil dieses Designs, liegt darin das sich neue Anforderungen jederzeit leicht umsetzen lassen.
 
 
 \subsection{ClientController}
@@ -349,66 +349,81 @@ Die Umsetzung des Testframeworks wurde über das bewährte Client / Server Konze
  
 Beim Start der client.jar Datei kann das Startup-Skript zwei Argumente mitgeben:
 \begin{enumerate}
-\item Binding Namen
-\item Optional: ein RMI-Port
+\item Pflicht Argument: Binding Namen
+\item Optionales Argument: spezifischer RMI-Port
 \end{enumerate}
-Die Kommunikation zwischen dem Testframework Client und dem Server ist über Java RMI realisiert. Der Startvorgang sieht wie folgt aus:
-\begin{itemize}
-\item Es wird ein neues ClientController Objekt instanziiert. Der ClientController implementiert das Client Interface, welches von Remote ableitet.
-\item Daraufhin wird aus dem neue ClientController Objekte ein Remoteobjekt erzeugt.
-\item Der lokale Name Service wird auf dem optionalen Port gestartet, ist kein Port spezifiziert wird der Defaultport 1099 verwendet.
-\item Das ClientController Remoteobjekt lässt sich nun in dem Java Name Service unter dem Binding Name veröffentlichen. Nun kann der Server eine ClientController Stub lokalisieren und somit den ClientController über RMI steuern.
-\end{itemize}
+Die Kommunikation zwischen dem Testframework Client und dem Testframework Server ist über das in Java bereits vorhandene RMI realisiert. Der Startvorgang eines Clients sieht wie folgt aus:
+\begin{enumerate}
+\item Es wird ein neues ClientController Objekt instanziiert. Der ClientController implementiert das Client Interface, welches mit Remote markiert ist.
+\item Aus dem instanziierten ClientController Objekte wird ein Remoteobjekt generiert.
+\item Der lokale Name Service wird auf dem spezifizierten Port gestartet, ist kein Port als Argument mitgegeben worden, wird der Defaultport 1099 verwendet.
+\item Das ClientController Remoteobjekt lässt sich nun in dem Java Name Service unter dem angegeben Binding Name veröffentlichen. Der Server ist jetzt in der Lage ein ClientController Stub über die IP Adresse und den Binding Name zu lokalisieren.
+\end{enumerate}
 
-Über folgendes Remote Interface wird der ClientController konfiguriert und gesteuert:
+Über folgendes Client Interface wird der ClientController konfiguriert und gesteuert:
 \begin{lstlisting}[language=java, breaklines=true] 	
 public void initialize(Scenario scenario, Configuration configuration) throws RemoteException;
 public void startTest() throws RemoteException;
 public void shutdown() throws RemoteException;
 \end{lstlisting}
-Die Grundidee zu Beginn des Projekts war, dass alle Konfigurationswerte einzeln als Parameter an den ClientController übergeben werden. Es stellte sich jedoch schnell heraus, dass eine Kappselung der benötigen Parameter in einem seperaten Objekt eine wesentlich bessere Lösung darstellt. Dieses neue Datatransfer Object, beinhaltet sowohl alle nötigen Parameter für die Konfiguration des ClientSystemUnderTest sowie des ClientControllers. Der Name des ClientSystemUnderTest, sowie die Informationen für den erfolgreichen Aufbau eines RMI Kommunikationkanals zwischen dem Testframework Client und dem Testframework Server, sind in diesem Objekt hinterlegt.
+Die Grundidee zu Beginn des Projekts war, dass alle Konfigurationswerte einzeln als Parameter an den ClientController übergeben werden. Es stellte sich jedoch schon nach kurzer Zeit heraus, dass eine Kappselung der benötigen Parameter in einem seperaten Objekt eine wesentlich bessere Lösung darstellt. Dieses neue Datatransfer Objekt, beinhaltet sowohl alle nötigen Informationen für die Konfiguration des ClientSystemUnderTest als auch die des ClientControllers.
 
 \subsubsection{Initialize des ClientControllers}
 In der konkreten Implementation der Methode "initialize(Scenario scenario, Configuration configuration)" werden mehrer Aufgaben erledigt:
 \begin{enumerate}
-\item Aus dem Configuration Objekt wird die Server IP, der RMI Port und der Name unter dem der Server registriert ist ausgelesen. Aus diesen Information wird eine neue RMI Verbindung zum Server erzeugt.
-\item Die Instanziierung des konkreten ClientSystemUnderTest übernimmt eine einzlne Klasse, welche als Factory implementiert ist. Der Factory wird nur der "fully qualified name", welcher im Configuration Objekt gespeichert ist, übergeben. Die Factory selbst instanziiert den ge\-wünschten Client\-System\-Under\-Test via Re\-flec\-ti\-on und re\-turniert dieses.
-\item Auf dem ClientSystemUnderTest wird nun ein neues Socket, welches zum ServerSystemUnderTest zeigt, gesetzt.
-\item Ein neuer TestClient wird erzeugt und das aktuelle ClientSystemUnderTest Objekt wird im Konstruktor mitgegeben. Der TestClient ist die Schnittstelle zwischen dem ClientController und dem ClientSystemUnderTest.
-\item Nun wird dem TestClient das Scenario übergeben und der TestClient initialisiert
-\item Der TestframeworkServer wird über die erfolgreiche Konfiguration, des ClientControllers und des ClientSystemUnderTest informiert. Über die zu Beginn erzeugte RMI Verbindung wird nun "setReady()" auf dem Server aufgerufen.
-\item Der ClientController wartet, bis der Server den Test startet.
+\item Aus dem Configuration Objekt wird die Server IP, der RMI Port und der Name unter dem der Framework Server registriert ist ausgelesen. Aus diesen Information wird eine neue RMI Verbindung zum Framework Server erzeugt.
+\item Die Instanziierung des konkreten ClientSystemUnderTest übernimmt eine einzlne Klasse, welche als Factory implementiert ist. Der Factory wird nur der "fully qualified name", welcher im Configuration Objekt gespeichert ist, übergeben. Die Factory selbst instanziiert den ge\-wünschten Client\-System\-Under\-Test via Re\-flec\-ti\-on und re\-turniert das erzeugte Objekt.
+\item Auf dem ClientSystemUnderTest Objekt wird nun ein neues Socket, welches zum ServerSystemUnderTest zeigt, gesetzt.
+\item Ein neues Objekt vom Typ TestClient wird erzeugt und das aktuelle ClientSystemUnderTest Objekt wird im Konstruktor mitgegeben. Der TestClient ist die Schnittstelle zwischen dem ClientController und dem ClientSystemUnderTest.
+\item Nun wird das Szenario, welches als Parameter übergeben wurde, auf dem TestClient Objekt gesetzt. 
+\item Daraufhin wird auf dem TestClient Objekt die "init()" Methode aufgerufen, in welcher sich der TestClient alle verfügbaren Account Objekte vom Server lädt.
+\item Auf dem Testframework Server wird die Methode "setReady()" aufgerufen, dieser Methodenaufruf teilt den Server mit das die Konfiguration des ClientControllers und des ClientSystemUnderTest erfolgreich war.
+\item Im Anschluss wartet der der ClientController, bis der TestFramework Server den Testlauf startet.
 \end{enumerate}
 
 \subsubsection{Start eines Testlaufs}
-Der Server startet den Testdurchlauf parallel auf allen ClientController über die Methode "startTest()". Diese ruft auf dem TestClient "runScenario()" auf, eine detailierte Erklärung was in dieser Methode passiert, ist im Kapitel "Test Client" zu finden. Sind alle Aktionen des gegeben Szenarios abgearbeitet, wird das gesamte Szenario mit den enthaltenen Messresultaten über die Methode "setResults(Scenario scenario, String IP)" zurück an den Server geschickt.
+Der Server startet den Testdurchlauf parallel auf allen ClientController über die Methode "startTest()". Diese ruft auf dem TestClient "runScenario()" auf, eine detailierte Erklärung was in dieser Methode passiert, ist im Kapitel "Test Client" zu finden. Sind alle Aktionen des gegeben Szenarios abgearbeitet, wird das gesamte Szenario mit den gesammelten Messresultaten über die Methode "setResults(Scenario scenario, String IP)" zurück an den Server geschickt.
 
-\subsubsection{Herunterfahren des Clients}
+\subsubsection{Herunterfahren des ClientController}
 Die Methode "shutdown()" be\-endet den Test\-framework\-Client und das Client\-System\-Under\-Test. Die shutdown() Methode besteht aus mehreren Teilschritten:
 \begin{enumerate}
-\item Die Verbindung zwischen dem spezifischen Namen und dem damit verbundenen ClientController Remoteobjekt wird im Name Service von Java gelöscht.
+\item Das ClientSystemUnderTest wird heruntergefahren.
+\item Die Verbindung zwischen dem spezifizierten Binding Namen und dem damit verbundenen ClientController Remoteobjekt wird im Name Service von Java gelöscht.
 \item Das ClientController Objekt wird von der RMI Run\-time entfernt, da\-durch sind keine RMI Aufrufe mehr möglich.
 \item Der ClientController beendet sich selbst
 \end{enumerate}
 
 
-Beim Testen der shutdown()-Funktionalität konnte festgestellt werden, dass bei der Umsetzung wie oben beschrieben, der Server immer eine Exception bekommt. Es stellte sich heraus, dass das sofortige Herunterfahren des ClientControllers nach dem Unbinding und dem Unexport dem Server keine Zeit lässt, seine RMI Verbindung zum ClientController korrekt zu schliessen. Die Lösung dieses Problems lag, in einem verzögerten Herunterfahren des ClientControllers. Folgender Codeausschnitt zeigt die Lösung des Problems.
+Beim Testen der shutdown()-Funktionalität konnte festgestellt werden, dass bei der Umsetzung wie oben beschrieben, der Server immer eine Exception bekommt. Es stellte sich heraus, dass das sofortige Herunterfahren des ClientControllers nach dem Unbinding und dem Unexport des ClientController Objekts dem Server keine Zeit lässt, seine RMI Verbindung zum ClientController korrekt zu schliessen. Die Lösung des Problems lag, in einer Pause zwischen dem Unexport und dem Beenden des ClientControllers. Die Dauer der Verzögerung von zwei Sekunden stellte sich als ausreichen heraus. Folgender Codeausschnitt zeigt die Lösung des Problems.
 \begin{lstlisting}[language=java, breaklines=true]
-private void closeClientController(final long delay) {
-new Thread() {
-	@Override
-	public void run() {
-		logger.info("ClientController is shutting down");
+private void shutdownClientController() throws RemoteException {
 		try {
-			sleep(delay);
-		} catch (InterruptedException e) {
+			Naming.unbind("rmi://localhost:" + ClientRmiPort + "/Client");
+		} catch (MalformedURLException e1) {
+			throw new RemoteException("Malformed URL has occurred in ClientController", e1);
+		} catch (NotBoundException e1) {
+			throw new RemoteException("Unbinding the ClientController failed", e1);
 		}
-		System.exit(0);
-		}
-	}.start();
+		UnicastRemoteObject.unexportObject(this, true);
+		closeClientController(2000);
+	}
+
+	private void closeClientController(final long delay) {
+		new Thread() {
+			@Override
+			public void run() {
+				logger.info("ClientController is shutting down");
+				try {
+					sleep(delay);
+				} catch (InterruptedException e) {
+				}
+				System.exit(0);
+			}
+		}.start();
+	}
 }
 \end{lstlisting}
-Die Beendigung des ClientControllers wird in einem seperaten Thread ausgeführt, so\-dass der Main- Thread noch ge\-nü\-gend Zeit hat, alle of\-fe\-nen Ver\-bin\-dun<-gen ord\-nungs\-gemäss zu schliessen. Der shutdown Thread beendet den ClientController nach der mittels "delay" mit\-ge\-ge\-be\-nen Zeit\-span\-ne mit System.exit().   
+Die Beendigung des ClientControllers wird in einem seperaten Thread ausgeführt, so\-dass der Main- Thread noch ge\-nü\-gend Zeit hat, alle of\-fe\-nen Ver\-bin\-dun<-gen ord\-nungs\-gemäss zu schliessen. Der Shutdown Thread beendet den ClientController nach der definierten Dauer mit System.exit().   
 
 \subsection{Test Client}
 \label{sec:testclient}

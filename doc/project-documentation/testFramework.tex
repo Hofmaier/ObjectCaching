@@ -333,19 +333,18 @@ Dieses Kapi\-tel beschreibt die Aufgaben des Testframework Client sowie die Umse
 \item Abarbeitung des durch den Framework Server zur Verfügung gestellten Szenarios auf dem zu testenden System sowie die Zeitmessungen der einzelnen Aktionen
 \end{itemize}
 
+\begin{figure}[H]
+\begin{center}
+\includegraphics[scale=0.5]{image_testFramework/Server_Client_Communication.png}
+\end{center}
+\caption{Server Client Communication}
+\end{figure}
+
 Die Umsetzung des Testframeworks wurde über das bewährte Client / Server Konzept realisiert, was zu einer schlanke Lösung auf Seiten des Clients führt. Der FrameworkClient und das ClientSystemUnderTest lassen sich dank die\-sem Konzept komplett vom Framework Server aus konfigurieren und steuern. Ein weiterer Vorteil dieses Designs, liegt darin das sich neue Anforderungen jederzeit leicht umsetzen lassen.
 
 
 \subsection{ClientController}
 \label{sec:clientController}
-
-
-\begin{figure}
-\begin{center}
-\includegraphics[scale=0.2]{image_testFramework/TestFWServerClientSeq.png}
-\end{center}
-\caption{Server Client Communication}
-\end{figure}
  
 Beim Start der client.jar Datei kann das Startup-Skript zwei Argumente mitgeben:
 \begin{enumerate}

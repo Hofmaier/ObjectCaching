@@ -2,6 +2,8 @@
 
 \label{sec:object-caching}
 
+In einem zweiten Schritt haben wir ein RMI-System entwickelt, das Objekte bei den Clients lokal speichert. Lesezugriffe können vom Cache verarbeitet werden. Schreibzugriffe werden an den Server gesendet. Bei der Erstellung des Konzept mussten Designentscheide in den Bereichen Replica Placement, Update Distribution und Konsistenzprotokoll getroffen werden.
+
 \section{Replica Placement}
 \label{sec:replica-management}
 
@@ -41,7 +43,19 @@ In unsererem Cache werden Aktualisierungen durch push-based updated realisiert, 
 \section{Konsistenzprotokoll}
 \label{sec:konsistenzprotokoll}
 
-In unserem System sind alle Objekte zentral auf dem Server abgespeichert. Das Objekt auf dem Server ist das Referenzobjekt. Alle Clients sollen die Updateoperationen in der Reihenfolge sehen, wie sie beim Server eintreffen. Ist jedem Objekt eine Maschine für die Koordination zugeordnet, nennt man das Protokol primary-based. Die Maschine, die das Objekt verwaltet nennt man primary. Ist der primary eine fixer Server werden alle Updateoperationen remote an diesen Server gesendet. In diesem Fall spricht man von Remote-Write Protocol. Die Concurrency Control bleibt dabei die selbe. Der Server inkrementiert die Version für jedes Objekt nachdem er die die Update Methode ausgeführt hat. Erhält vor dem Update Call einen Updates des Clients wird eine Exception geworfen.
+\subsection{Konsistenzmodel}
+\label{sec:konsistenzmodel}
+
+Ein Konsistenzmodel beschreibt unter anderem in welcher Reihenfolge unterschiedliche Prozesse, die auf die selben Objekte in einem verteilten System zugreifen, die Operationen, die auf den Objekte ausgeführt wurden sehen. Das Konsistenzprotokoll implementiert das Konsistenzmodel.
+
+Sequenzielle Konsistenz ist ein Konsistenzmodel. Es definiert, dass alle Prozesse in einem verteilten System die selbe Reihenfolge der Operationen auf einem Objekt sehen \cite{tanenbaum07}.  Das Konsistenzprotokoll des Objectcaching-Systems implementiert sequenzielle Konsistenz.
+
+\subsection{Primary-Based Protokol}
+\label{sec:prim-based-prot}
+
+In unserem System sind alle Objekte zentral auf dem Server abgespeichert. Das Objekt auf dem Server ist das Referenzobjekt. Alle Clients sollen die Schreiboperationen in der Reihenfolge sehen, wie sie beim Server eintreffen. Damit sehen alle Clients die selbe Updatereihenfolge und die Anforderung für die sequenzielle Konsistenz ist damit erfüllt. 
+
+Ist jedem Objekt eine Maschine für die Koordination zugeordnet, nennt man das Protokol primary-based\cite{tanenbaum07}. Die Maschine, die das Objekt verwaltet nennt man primary. Ist der primary eine fixer Server werden alle Schreiboperationen an diesen Server gesendet. In diesem Fall spricht man von Remote-Write Protocol.
 
 \section{Implementierung des Object-Caching}
 \label{sec:impl-object-kons}
@@ -99,10 +113,12 @@ Der Prozess Kontostand erhöhen läuft wie folgt ab.
 \subsection{Implementierung der Concurrency Control}
 \label{sec:impl-der-conc}
 
+Im Unterschied zum RMI-only System erreichen die getBalance() Methodenaufrufen den Server nicht immer. Um Lost Updates zu verhindern reicht es nicht aus, die Objektversionen, die von den Clients verwendet werden, bei jedem getBalance(), der zum Server kommt zu aktualisieren. Der Server erhält im Object-Caching-System keinen getBalance() Aufruf. Deshalb kann er nicht mehr wie im RMI-only-System die Clientversion bei einem getBalance() aktualisieren. Eine erster Lösungsansatz ist, alle Clientversionen im Server statt bei einem getBalance(), nachdem eine Updatenachricht versendet wurde, die Clientversion zu inkrementieren. Denn wenn die Updatenachricht im Client ankommt und korrekt verarbeitet wird, kann der Server davon ausgehen, dass der Client mit der aktualisierten Version arbeitet.
+
 \subsubsection{Mögliche Aufrufszenarien}
 \label{sec:mogl-aufr}
 
-Im Unterschied zum RMI-only System erreichen die getBalance() Methodenaufrufen den Server nicht immer. Um Lost Updates zu verhindern reichts es nicht aus, die Objektversionen, die von den Clients verwendet werden, bei jedem getBalance(), der zum Server kommt zu aktualisieren. Der Server erhält im Object-Caching-System keinen getBalance() Aufruf. Die folgenden Szenarien sollen die mögliche Probleme aufzeigen.
+ Die folgenden Szenarien sollen die mögliche Probleme aufzeigen.
 
 Im ersten Szenario treten keine Konsistenzprobleme auf. Laufen die Methodenaufrufe in dieser Reihenfolge ab, benötigt das System keine Concurrency Control.
 \begin{enumerate}
@@ -149,6 +165,8 @@ Bei allen Fällen kann Inkonsistenz festgestellt werden, indem sich der Server u
 \includegraphics[scale=0.3]{images_objectcaching/conflictCross}
 
 Um Inkonsistenz bei diesem Szenario zu erkennen und zu verhindern, muss die Nachricht die den \verb|setBalance()| Methodenaufruf enthält, die Versionnummer des Clients, der die Methode aufruft, mitsenden. Ist diese Versionnummer tiefer als die aktuelle Versionnummer des Objektes wird eine Exception geworfen. Damit die Versionnummern auf Server und auf Client immer synchron sind muss bei einem ObjectRequest die aktuelle Versionnummer an den Client gesendet werden. Bei einem Update wird die Nummer einfach inkrementiert.
+
+Alternative zu der Lösung mit der Versionsnummer, die bei einem Methodenaufruf mitgesendet wird, könnte der Server auch eine Bestätigung des Client, dass er das Update erhalten hat, abwarten und erst nach dieser Bestätigung die Version des entsprechende Client aktualisieren.
 
 
 Bei \verb+setBalance()+ werden mögliche Inkonsistenzen bereits beim Client festgestellt. Der User erhält schneller Feedback und der Server wird weniger durch Concurrency Control belastet.

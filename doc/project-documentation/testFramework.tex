@@ -430,9 +430,9 @@ Die Beendigung des ClientControllers wird in einem seperaten Thread ausgeführt,
 
 \begin{figure}[H]
 \begin{center}
-\includegraphics[scale=0.3]{image_testFramework/startTest.png}
+\includegraphics[scale=0.4]{image_testFramework/startTest.png}
 \end{center}
-\caption{start Tests}
+\caption{Start eines Testlauf durch den Testframework Server}
 \end{figure}
 
 Die TestClient Klasse ist die Schnittstelle zwischen dem ClientController und dem ClientSystemUnderTest. Alle Clientvarianten die getestet werden sollen, müssen das Interface ClientSystemUnderTest implementieren, so lassen sich alle Varianten von ClientSystemUnderTest einheitlich mit einer TestClient Klasse testen. Desweiteren kann auf dem TestClient das Szenario gesetzt werden, welches der TestClient beim Aufruf von \verb+runScenario()+ durch den ClientController abarbeitet.
@@ -447,13 +447,13 @@ public interface ClientSystemUnderTest {
 \end{lstlisting}
 \subsubsection{Ablauf}
 \label{sec:ablauf}
-\begin{itemize}
+\begin{enumerate}
 \item Der ClientController setzt die Socket Adresse des Server in das Client\-System\-Under\-Test. Die nötigen Imformationen sind im Configuration Objekt gespeichert.
 \item Im Kon\-struk\-tor des Test\-Clients wird der Account\-Ser\-vice, des über\-ge\-be\-nen Client\-System\-Under\-Test über die Meth\-ode \texttt{get\allowbreak Account\allowbreak Ser\allowbreak vice()} ge\-la\-den. 
 \item Während der Initialisierungs- Phase des ClientController ruft dieser ebenfalls die \verb+init()+ Methode des TestClients auf, in dieser Methode wird eine Liste aller verfügbaren Accounts Objekte aus dem AccountService in den TestClient geladen.
 \item Startet der Server nun den Testlauf wird endlos durch die Liste der Accounts interiert bis alle Aktionen des gesetzten Szenarios abgearbeitet sind.
 \item Bei einem Shutdown durch den Testframework Server ist der TestClient ebenfalls für die ord\-nungs\-ge\-mä\-sse Be\-en\-di\-gung des ClientSystemUnderTest zu\-stän\-dig.
-\end{itemize}
+\end{enumerate}
 
 \subsubsection{Concurrency im TestClient}
 \label{sec:concurrencyTestClient}

@@ -26,7 +26,7 @@ Alle Mes\-ser\-ge\-bnis\-se stam\-men aus einer Labor\-umgebung, mit folgenden E
 \end{itemize}
 
 \section{Testvorgaben}
-Die in dieser Arbeit ausgewiesenen Zahlen wurden alle in der Laborumgebung gemessen. Dabei wurde für jeden TestCase die Anzahl der Clients schrittweise von zwei bis acht Clients erhöht. Jeder Testlauf mit der gleichen Anzahl Clients, wurde drei Mal durchgeführt, um einen exakten Mittelwert der Ergebnisse ausweisen zu können. Drei Testdurchläufe pro Scenario und Clientanzahl wurden aufgrund der sehr nahe liegenden Ergbnisse der Testdurchläufe als genügen eingestuft. Wären die einzelnen Ergebnisse der Durchläufe extrem unterschiedlich, hätten fünf oder mehr Durchläufe stattfinden müssen.
+Die in dieser Arbeit ausgewiesenen Zahlen wurden alle in der Laborumgebung gemessen. Dabei wurde für jeden TestCase die Anzahl der Clients schrittweise von zwei bis acht Clients erhöht. Jeder Testlauf mit der gleichen Anzahl Clients, wurde drei Mal durchgeführt, um einen exakten Mittelwert der Ergebnisse ausweisen zu können. Drei Testdurchläufe pro Scenario und Clientanzahl wurden aufgrund der sehr nahe liegenden Ergbnisse der Testdurchläufe als genügend eingestuft. Wären die einzelnen Ergebnisse der Durchläufe extrem unterschiedlich, hätten fünf oder mehr Durchläufe stattfinden müssen.
 
 \section{Testergebnisse}
 In den folgenden Kapiteln werden die getesteten Scenarios und deren Ergebnisse gezeigt. 
@@ -57,6 +57,150 @@ Weiter soll aufgezeigt werden, dass das Cache-System zumindest bei nur Lesezugri
 
 \subsubsection{Ergebnisse RMI-Only System}
 
+Die folgende Tabelle stellt die Messergebnisse des RMI-Only-System dar: 
+
+\begin{tabular*}{20pt}[]{l l l l l l l}
+Legende&2Clients&3Clients&4Clients&5Clients&6Clients\\
+\cline{1-6}
+setBalance&0&0&0&0&0\\
+getBalance&86.182&89.502273&91.313&94.490998&98.381525\\
+Konfliktanzahl&0&0&0&0&0\\
+TotalTime(with Delays)&21546.54&22376.494&22829.21&23623.678&24596.331\\
+PureOperationTime&21545.686&22375.568&22828.264&23622.749&24595.381\\
+\end{tabular*}
+\newline
+\newline
+\begin{tabular*}{20pt}[]{l l l}
+Legende&7Clients&8Clients\\
+\cline{1-3}
+setBalance&0&0\\
+getBalance&105.14788&120.2947\\
+Konfliktanzahl&0&0\\
+TotalTime(with Delays)&26287.93&30074.669\\
+Pure Operation Time&26286.969&30073.691\\
+\end{tabular*}
+
+Diese Zahlen sind Durchschnittswerte von drei Messungen. Die genauen Messdaten können im Anhang gefunden werden. Die folgende Grafik zeigt den Verlauf des Zeitaufwandes mit einer steigenden Anzahl Clients von zwei bis acht Clients:
+\begin{figure}[H]
+\begin{center}
+\includegraphics[scale=0.6]{images_MessErgebnisse/getBalance_RMI.png}
+\end{center}
+\end{figure}
+Es wird schnell ersichtlich, dass das System mit einer steigenden Anzahl Clients langsamer wird. Dies erscheint durchaus logisch, da jeder getBalance-Aufruf an den Server gesendet wird. Wird der Server nun von mehreren Clients angefragt, verschlechtern sich auch dessen Antwortzeiten, was eine verlangsamung des Aufrufs zur Folge hat.
+
 \subsubsection{Ergebnisse RMI-Only mit Cache System}
 
+In der folgenden Tabelle werden die Messdaten des Cache-Systems dargestellt:
+\begin{tabular*}{20pt}[]{l l l l l l l}
+Legende&2Clients&3Clients&4Clients&5Clients&6Clients\\
+\cline{1-6}
+setBalance&0&0&0&0&0\\
+getBalance&0.2889&0.2874&0.2852&0.2984&0.3011\\
+Konfliktanzahl&0&0&0&0&0\\
+TotalTime(with Delays)&73.0871&72.5819&72.0394&75.4229&76.0142\\
+PureOperationTime&72.2497&71.8551&71.3044&74.6033&75.2893\\
+\end{tabular*}
+\newline
+\newline
+\begin{tabular*}{20pt}[]{l l l}
+Legende&7Clients&8Clients\\
+\cline{1-3}
+setBalance&0&0\\
+getBalance&0.3201&0.2810\\
+Konfliktanzahl&0&0\\
+TotalTime(with Delays)&80.8389&71.0016\\
+Pure Operation Time&80.0410&70.2629\\
+\end{tabular*}
+
+Diese Zahlen sind wiederum Durchschnittswerte.  In der folgenden Grafik werden die durchschnittlichen Zeiten der \texttt{getBalance()}-Methode in Abhängigkeit der Anzahl Clients ausgegeben:
+
+\begin{figure}[H]
+\begin{center}
+\includegraphics[scale=0.6]{images_MessErgebnisse/getBalance_03ms.png}
+\end{center}
+\end{figure}
+
+Damit die Grafik einen Sinn ergibt, mussten die Zeiten auf der Y-Achse angepasst werden. Hätte man die Skala aus dem RMI-Only-System übernommen, wäre auf der Grafik nur eine Linie ersichtlich. Es muss dennoch bemerkt werden, dass bei dieser Grafik die Skala auf der Y-Achse extrem klein ist und Messunterschiede, wenn auch nur Minimale, in dieser Grafik stark zum tragen kommen. Ein Vergleich mit der vorhergehenden Grafik des RMI-Only-Systems ist also mit Vorsicht zu geniessen.
+\newline Aus der Grafik wird ersichtlich, dass bei nur lesenden Zugriffen das System perfekt skaliert. Die Werte betragen circa alle, egal wieviele Clients beteiligt sind, 0.3ms. Anzunehmen ist, dass noch viele weitere Clients dazugeschaltet werden könnten, ohne dass die Zugriffszeit markant zunehmen würde.
+
+
+\subsubsection{Interpretation}
+
+Vergleicht man die Messergebnisse der zwei Systeme miteinander, fallen zwei Merkmale auf:
+\begin{itemize}
+\item Jeder einzelne getBalance-Aufruf dauert beim RMI-Only-System extrem viel länger
+\item Das Cache-System skaliert viel besser als das RMI-Only-System
+\end{itemize}
+
+Da jeder getBalance-Aufruf zum Server, das heisst über das Netzwerk, übertragen werden muss, ist es logisch, dass das System im Durchschnitt viel langsamer ist. Beim Cache-System wird nur der erste Aufruf zum Server übertragen, alle folgenden Aufrufe werden lokal aus dem Cache beantwortet. Dies erklärt den enormen Geschwindigkeitsvorteil des Cache-Systems bei jedem einzelnen Aufruf. \newline
+Weiter skaliert das Cache-System bei diesem Testcase um einiges besser, nämlich fast gar nicht. Dadurch, dass bei steigender Anzahl Clients auch immer mehr Clients ein Update erhalten müssten, hätte man auch eine leichte Steigung der Messwerte beim Cache-System erwarten können. Da die Werte aber so klein sind und die Messmethode mit der in Java implementierten Funktion \texttt{nanoTime()} gemacht wurde, können kleine Ungenauigkeiten in diesem Bereich nicht ganz ausgeschlossen werden. Es kann also durchaus sein, dass das Cache-System bei einer steigenden Anzahl Clients eine linear, leicht ansteigende Gerade zeigen würde, dies aber durch die Ungenauigkeiten beim Messen nicht genau abgebildet wird. Es bleibt auf jeden Fall zu beachten, dass das Cache-System wunderbar skaliert und man den Testcase mit einer vielzahl der Clients durchführen könnte, ohne grosse Geschwindigkeitseinbussen in Kauf nehmen zu müssen. \newline
+Auf der anderen Seite skaliert das RMI-Only-System weitaus schlechter. Bei der Erhöhung der Clients von vier bis acht, als rund eine Verdopplung der CLients, wächst die durchschnittliche Zeit zum Ausführen der getBalance-Methode um etwa 30ms. Dies entspricht einem Drittel der Zeit, welche ein \texttt{getBalance()}-Aufruf bei vier Clients benötigt. Würde man die Anzahl Clients noch verdoppeln oder sogar verdreifachen, würde die benötigte Zeit zum Ausführen der \texttt{getBalance()}-Methode wohl bald eine Schmerzgrenze der Wartezeiten durchbrechen.
+
+
+\subsection{Ein schreibender, mehrere lesende Clients}
+\subsubsection{Szenario Code}
+Das Szenario ist wie folgt aufgebaut:
+\begin{lstlisting}
+<?xml version='1.0' encoding='UTF-8'?>
+<TestRun>
+	<TestCase
+		ClientSystemUnderTest="ch.hsr.objectCaching.rmiWithCacheClient.RMIwithCacheClientSystem"
+		ServerSystemUnderTest="ch.hsr.objectCaching.rmiWithCacheServer.RMIWithCacheServerSystem">
+		<Account balance="1"></Account>
+		<Scenario id="1">
+			<ActionSequence>
+				<Increment count="500" delay="0" factor="1.1"></Increment>
+			</ActionSequence>
+		</Scenario>
+		<Scenario id="2">
+			<ActionSequence>
+				<Read count="500000"></Read>
+			</ActionSequence>
+		</Scenario>
+		<Scenario id="3">
+			<ActionSequence>
+				<Read count="500000"></Read>
+			</ActionSequence>
+		</Scenario>
+		<Scenario id="4">
+			<ActionSequence>
+				<Read count="500000"></Read>
+			</ActionSequence>
+		</Scenario>
+	</TestCase>
+</TestRun>
+\end{lstlisting}
+\subsubsection{Szenariobeschreibung}
+\subsubsection{Ergebnisse RMI-Only System}
+\subsubsection{Ergebnisse RMI-Only mit Cache System}
+\subsubsection{Interpretation}
+
+
+\subsection{Nur schreibende Clients}
+\subsubsection{Szenario Code}
+Der XML-Code, welcher dieses Szenario beschreibt, ist hier zu sehen:
+\begin{lstlisting}
+<?xml version='1.0' encoding='UTF-8'?>
+<TestRun>
+	<TestCase
+		ClientSystemUnderTest="ch.hsr.objectCaching.rmiWithCacheClient.RMIwithCacheClientSystem"
+		ServerSystemUnderTest="ch.hsr.objectCaching.rmiWithCacheServer.RMIWithCacheServerSystem">
+		<Account balance="1"></Account>
+		<Scenario id="1">
+			<ActionSequence>
+				<Increment count="1000" delay="0" factor="1.1"></Increment>
+			</ActionSequence>
+		</Scenario>
+	</TestCase>
+</TestRun>
+\end{lstlisting}
+\subsubsection{Szenariobeschreibung}
+In diesem Testcase führt jeder Client 1000 Mal ein Increment auf den Balance-Wert aus. Ein Increment bedeutet den Wert zu lesen und ihn dann mit einem Faktor multipliziert wieder zu schreiben. \newline
+Ziel dieses Szenarios war zu zeigen, wie sich die zwei Systeme bei permanentem Schreibzugriff verhalten. Dieses Szenario stellt eine enorme Belastung für den Server dar, da er mit Anfragen geradezu bombadiert wird. Durch die vielen Anfragen wird das System auch eine längere Zeit arbeiten müssen und so zum Vorschein bringen, ob es stabil und über längere Zeit stabil und sicher läuft. \newline
+Bei steigender Anzahl Clients, wird es auch mehr Schreibzugriffe auf den Server geben. Diest führt zu mehr Netzwerkverkehr und vor allem zu mehr Last auf dem Server, welcher alle Anfragen beantworten muss. Aus diesen Gründen wird erwartet, dass beide Systeme mit steigender Anzahl Clients eine steigende Antwortzeit ausweisen werden. Durch die schnelleren Lesezugriffe des Cache-Systems, wird aber eben dieses System insgesamt schneller arbeiten und auch besser skalieren, da es zu weniger Konflikten kommen wird.
+
+
+\subsubsection{Ergebnisse RMI-Only System}
+\subsubsection{Ergebnisse RMI-Only mit Cache System}
+\subsubsection{Interpretation}
 

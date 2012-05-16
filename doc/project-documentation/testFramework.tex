@@ -29,7 +29,7 @@ Das  Startup-Script ist ein Shell-Script in der Bash-Sprache geschrieben. Das Sc
 \item Der Frameworkserver wird gestartet
 \end{enumerate}
 Sind diese Schritte abgeschlossen, beendet das Startupscript und die weitere Ausführung des Testlaufs wird durch den Frameworkserver orchestriert.
-Beim Starten des Scripts wird der Name der Datei mitgegeben, in welcher der genaue Testlauf definiert ist. Wird kein Argument mitgegeben, läuft der Standardtestlauf ab, welcher in der Datei "testCases.xml" beschrieben ist.
+Beim Starten des Scripts wird der Name der Datei mitgegeben, in welcher der genaue Testlauf definiert ist. Wird kein Argument mitgegeben, läuft der Standardtestlauf ab, welcher in der Datei "testCases.xml" beschrieben ist.\newline
 Probleme beim Schreiben des Scripts waren selten. Ein Problem, welches gelöst werden musste war der Umstand, dass das Script nach dem Starten eines Clients nicht mehr weiterlief, sondern einfach wartete. Dies war bei folgende Zeile der Fall:
 \begin{lstlisting}[breaklines=true]
  ssh student@${i} "java -jar ${remotePath}/${clientJar}"
@@ -47,7 +47,7 @@ Die Kommunikation des Frameworkservers mit den Frameworkclients ist in folgendem
 
 \begin{figure}[H]
 \begin{center}
-\includegraphics[scale=0.3]{image_testFramework/TestFWInit.png}
+\includegraphics[scale=0.6]{image_testFramework/TestFWInit.png}
 \end{center}
 \caption{Testframework Init}
 \end{figure}
@@ -55,12 +55,12 @@ Die Kommunikation des Frameworkservers mit den Frameworkclients ist in folgendem
 Die im Diagramm dargestellten Operationen lassen sich wie folgt erklären:
 
 \begin{itemize}
-\item Die Methode generateTestCase() ruft eine Factory auf, welche aus einer XML-Datei einen Testcase generiert. Diese Factory wird unter dem Ka\-pi\-tel Testcase-Factory genauer be\-schrie\-ben.
+\item Die Methode \texttt{generateTestCase()} ruft eine Factory auf, welche aus einer XML-Datei einen Testcase generiert. Diese Factory wird unter dem Ka\-pi\-tel Testcase-Factory genauer be\-schrie\-ben.
 \item Alle Konfigurationsparameter welche der Server braucht, sind in einer Konfigurations\-datei ab\-ge\-legt. Durch eine Configurationfactory wird durch mit Hilfe der Konfig\-urationsdatei ein Configuration- Objekt er\-zeugt. Unter dem Kapi\-tel "Configuration-Factory" wird dies näher beschrieben.
 \item Nachdem die Konfigurationsparameter ausgelesen wurden, kann der Dis\-patcher in einem seper\-aten Thread ge\-startet werden. Weitere Aus\-füh\-run\-gen sind unter dem Kapitel "Der Dispatcher" zu finden.
-\item Bei der Initialisierung der Clients, wird diesen je ein Scenario und ein Configuration-Objekt gesendet. Das Configuration-Objekt umfasst alle für den Client wichtigen Konfigurationsparameter, wie etwa die Ports, unter welchen der Server seine Dienste zur Verfügung stellt. Was ein Scenario genau ist wird unter dem "Kapitel Testcase-Factory" genauer beschrieben.
+\item Bei der Initialisierung der Clients, wird diesen je ein Szenario und ein Configuration-Objekt gesendet. Das Configuration-Objekt umfasst alle für den Client wichtigen Konfigurationsparameter, wie etwa die Ports, unter welchen der Server seine Dienste zur Verfügung stellt. Was ein Szenario genau ist, wird unter dem "Kapitel Testcase-Factory" genauer beschrieben.
 \item Pro Client hat der Server beim Auslesen der Konfigurationsdatei ein Client-Objekt instanziert. Dies wurde voral\-lem zur Kon\-trol\-le der Cli\-ents durch den Server so implementiert. Darauf wird im Kapitel "ClientObjekt" eingegangen.
-\item Nachdem alle Clients "setReady()" aufgerufen haben, ruft der Server "start()" auf allen Clients auf. Dieser Vorgang wird unter dem Punkt "die Start-Methode" genauer erläutert.
+\item Nachdem alle Clients \texttt{setReady()} aufgerufen haben, ruft der Server \texttt{start()} auf allen Clients auf. Dieser Vorgang wird unter dem Kapitel die Start-Methode genauer erläutert.
 \end{itemize}
 
 \subsubsection{Testcase-Factory}
@@ -112,7 +112,7 @@ Pro Client, welcher hier definiert ist, wird ein Client-Objekt instanziert, was 
 \subsubsection{ClientObjekt}
 \label{sec:ClientObjekt}
 
-Das Clientobjekt besitzt unter anderem ein Datenfeld, welches genau zwei Zustände annehmen kann: Ready und NotReady. Führt der Frameworkclient die Methode "setReady()" auf dem Server aus, wird der Status auf dem jeweiligen Objekt auf Ready gesetzt. Folgend die Implementation der setReady-Methode:
+Das Clientobjekt besitzt unter anderem ein Datenfeld, welches genau zwei Zustände annehmen kann: Ready und NotReady. Führt der Frameworkclient die Methode \texttt{setReady()} auf dem Server aus, wird der Status auf dem jeweiligen Objekt auf Ready gesetzt. Folgend die Implementation der setReady-Methode:
 \begin{lstlisting}[language=Java, breaklines=true]
 public void setReady(String ip) 
 {
@@ -129,13 +129,13 @@ public void setReady(String ip)
 }
 \end{lstlisting}
 
-Interessant an dieser Methode ist die Funktion der "checkAllReady"-Methode. Dieser Mecha\-nismus ist nicht nur dazu da, um alle Clients mög\-lichst gleichzeitig zu starten, sondern auch, um die Threads zu steuern. Die Methode setReady() wird durch mehrere verschiedene Threads aufgerufen, von jedem Client genau ein Mal. Durch die Implementation von checkAllReady() wird aber nur der letzte Thread, welcher setReady() aufruft, weiterleben und start() ausführen können. Somit ist garantiert, dass auch danach nur ein Thread aktiv ist und keine Seiteneffekte entstehen können.\newline
+Interessant an dieser Methode ist die Funktion der \texttt{checkAllReady}-Methode. Dieser Mecha\-nismus ist nicht nur dazu da, um alle Clients mög\-lichst gleichzeitig zu starten, sondern auch, um die Threads zu steuern. Die Methode \texttt{setReady()} wird durch mehrere verschiedene Threads aufgerufen, von jedem Client genau ein Mal. Durch die Implementation von \texttt{checkAllReady()} wird aber nur der letzte Thread, welcher \texttt{setReady()} aufruft, weiterleben und \texttt{start()} ausführen können. Somit ist garantiert, dass auch danach nur ein Thread aktiv ist und keine Seiteneffekte entstehen können.\newline
 Die Implementation dieser Logik war nicht schwer, doch das Bewusstsein für die Problematik mit mehreren Threads muss ständig vorhanden sein. Die Einflüsse der parallelen Programmierung stellten ohnehin einen spannenden Aspekt dieser Arbeit dar. 
 
 \subsubsection{Die Start-Methode}
 \label{sec:startMethode}
 
-Die Methode "start()", gibt dem Client an, mit der Abarbeitung des Szenarios zu beginnen. Die erste Implementation dieser Methode sah wie folgt aus:
+Die Methode \texttt{start()} gibt dem Client an, mit der Abarbeitung des Szenarios zu beginnen. Die erste Implementation dieser Methode sah wie folgt aus:
 \begin{lstlisting}[language=java, breaklines=true]
 private void start()
 {
@@ -147,7 +147,7 @@ private void start()
 }
 \end{lstlisting}
 
-Nach einigen Testdurchläufen konnte festgestellt werden, dass die Clients ihre Szenarien nur sequentiell abarbeiteten und die Operationen auf dem Server nicht gleichzeitig geschehen. Schuld an diesem Umstand war obige Implementation der "start"-Methode. Der Server-Thread, welcher "startTest()" auf dem Client aufrief, wartete solange, bis die Methode zurückkehrte. Da die Methode natürlich erst nach der Beendigung des Szenarios zurückkehrt, konnte nur immer genau ein Client zu einem gewissen zeitpunkt aktiv sein.\newline
+Nach einigen Testdurchläufen konnte festgestellt werden, dass die Clients ihre Szenarien nur sequentiell abarbeiteten und die Operationen auf dem Server nicht gleichzeitig geschehen. Schuld an diesem Umstand war obige Implementation der \texttt{start}-Methode. Der Server-Thread, welcher \texttt{startTest()} auf dem Client aufrief, wartete solange, bis die Methode zurückkehrte. Da die Methode natürlich erst nach der Beendigung des Szenarios zurückkehrt, konnte nur immer genau ein Client zu einem gewissen zeitpunkt aktiv sein.\newline
 Die jetzige Implementation und somit die Lösung des Problems sieht wie folgt aus:
 \begin{lstlisting}[language=java, breaklines=true]
 private void start()
@@ -171,7 +171,7 @@ public void run() {
 }
 \end{lstlisting}
 
-Mit dieser Implementation wird der Methodenaufruf "start()" nun von einem seperaten Thread ausgeführt. Dies führt dazu, dass die Clients nun zeitlich parallel gestartet werden und nicht nacheinander. Da die einzelnen Threads nach Beendigung der "run()"-Methode sterben, ist die Art der Implementation unbedenklich bezüglich Seiteneffekte oder "zombie-Threads".
+Mit dieser Implementation wird der Methodenaufruf "start()" nun von einem seperaten Thread ausgeführt. Dies führt dazu, dass die Clients nun zeitlich parallel gestartet werden und nicht nacheinander. Da die einzelnen Threads nach Beendigung der \texttt{run()}-Methode sterben, ist die Art der Implementation unbedenklich bezüglich Seiteneffekte oder "zombie-Threads".
 
 \subsubsection{Der Dispatcher}
 \label{sec:dispatcher}
@@ -185,7 +185,7 @@ Logischerweise läuft der Dispatcher wiederum in einem seperaten Thread.
 Nach Beendigung eines Testlaufs, muss der Server mehrere Arbeiten erledigen. Nachfolgend werden die wichtigsten Aufgaben, welche der Server nach einem Testlauf erledigen muss, aufgeführt:
 
 
-\begin{figure}
+\begin{figure}[H]
 \begin{center}
 \includegraphics[scale=0.2]{image_testFramework/BeendeTestlauf.png}
 \end{center}
@@ -194,15 +194,15 @@ Nach Beendigung eines Testlaufs, muss der Server mehrere Arbeiten erledigen. Nac
 
 Die im Diagramm ersichtlichen Operationen können folgender\-massen er\-läu\-tert werden:
 \begin{itemize}
-\item Die Methode "setResults(Scenario)" wird vom Client auf dem Server auf\-ge\-rufen. Durch den Aufruf dieser Methode weiss der Server, dass der aufrufende Client sein Szenario durchgespielt hat. Weiter wird mit dem Aufruf der Methode wiederum ein Thread durch den RMI-Daemon gestartet, welcher die weiter folgenden Methoden anstösst.
-\item Aus der "setResults(Scenario)"- Methode wird di\-rekt "stopClient()" auf\-ge\-rufen. Was diese Methode genau macht, wird im Kapitel "Stoppen eines Clients" genau beschrieben.
-\item Die Methode "shutDown()" wird auf dem Client aufgerufen. Der Client trennt daraufhin die RMI-Verbindung zum Server und schaltet sich selber ab. Nähere Informationen zum Abschaltungsprozess eines Clients kann unter dem Kapitel "Testframework Client" nachgelesen werden.
-\item Die Methode "printSummary()" verwertet die Ergebnisse, welche die Clients in ihrem Szenario gespeichert und wieder übertragen haben. Mehr Informationen dazu im Kapitel "Report Generator". Weiter wird auf der Console ausgegeben, ob es "Lost-Update"-Probleme gegeben hat oder nicht. Mehr zu diesem Thema unter "Result Generator".
+\item Die Methode \texttt{setResults(Scenario)} wird vom Client auf dem Server auf\-ge\-rufen. Durch den Aufruf dieser Methode weiss der Server, dass der aufrufende Client sein Szenario durchgespielt hat. Weiter wird mit dem Aufruf der Methode wiederum ein Thread durch den RMI-Daemon gestartet, welcher die weiter folgenden Methoden anstösst.
+\item Aus der \texttt{setResults(Scenario)}- Methode wird di\-rekt "stopClient()" auf\-ge\-rufen. Was diese Methode genau macht, wird im Kapitel "Stoppen eines Clients" genau beschrieben.
+\item Die Methode \texttt{shutDown()} wird auf dem Client aufgerufen. Der Client trennt daraufhin die RMI-Verbindung zum Server und schaltet sich selber ab. Nähere Informationen zum Abschaltungsprozess eines Clients kann unter dem Kapitel "Testframework Client" nachgelesen werden.
+\item Die Methode \texttt{printSummary()} verwertet die Ergebnisse, welche die Clients in ihrem Szenario gespeichert und wieder übertragen haben. Mehr Informationen dazu im Kapitel "Report Generator". Weiter wird auf der Console ausgegeben, ob es "Lost-Update"-Probleme gegeben hat oder nicht. Mehr zu diesem Thema unter "Result Generator".
 \end{itemize}
 
 \subsubsection{Stoppen eines Clients}
 \label{sec:stopClient}
-Ruft ein Client die Methode "setResults(Scenario)" auf dem Server auf, wird Serverintern der Status des Clients auf "Down" gesetzt. Da die Methode "stopClient()" wiederum pro Client genau ein Mal aufgerufen wird, entsteht wieder das Problem, dass mehrere Threads am Leben sind. Um dies ab einem gewissen Punkt zu verhindern, wurde ähnlich zur "setReady()"-Methode, folgende Implementation gewählt:
+Ruft ein Client die Methode \texttt{setResults(Scenario)} auf dem Server auf, wird Serverintern der Status des Clients auf "Down" gesetzt. Da die Methode \texttt{stopClient()} wiederum pro Client genau ein Mal aufgerufen wird, entsteht wieder das Problem, dass mehrere Threads am Leben sind. Um dies ab einem gewissen Punkt zu verhindern, wurde ähnlich zur \texttt{setReady()}-Methode, folgende Implementation gewählt:
 \begin{lstlisting}[language=java, breaklines=true]
 private void stopClient(String clientIp)
 {
@@ -225,26 +225,28 @@ private void stopClient(String clientIp)
 }
 \end{lstlisting}
 
-Durch die Prüfung "checkAllShutedDown()", wird nur der letzte aller Threads weiterleben. Somit wird auch nur ein Thread fähig sein die Methode "printSummary()" auszuführen, während die anderen Threads die Methode zu Ende abarbeiten und am Ende der Methode sterben. Durch diese Implementation wird sichergestellt, dass nur ein Thread weiterlebt und keine "Zombi-Prozesse" mehr vorhanden sind.\newline
-Weiter wird beim Abarbeiten dieser Methode die Methode "shutdown()" auf dem Client aufgerufen. Nach diesem Aufruf fährt sich der Client herunter und kappt alle akiven Verbindungen zum Server. Weitere Informationen zum Shutdown-Prozess des Clients sind unter der Kapitel des Frameworkclients ersichtlich.\newline
-Oben genannte Implementation der "stopClient(String clientIP)"-Methode hat lange funktioniert. Während des Entwicklungsprozesses der RMI-Only Lösung lief das Framework mit der erwähnten Methode ohne Probleme. Bei den ersten Testläufen der RMI-Cache Lösung wurden beim Herunterfahren der Umgebung allerdings Exceptions generiert. Da die Fehlersuche bei Software mit einer vielzahl von Threads sehr langwierig ist, dauerte die Analyse des Fehlers relativ lange.\newline Schlussendlich wurde bemerkt, dass die Methode "printSummary()" trotz aller Vorsichtsmassnahmen von jedem Client ein Mal ausgeführt wurde, was dazu führte, dass mehrere Zusammenfassungen generiert wurden und probiert wurde, den FrameworkServer mehrere Male herunterzufahren. Der Versuch den FrameworkServer mehrmals herunterzufahren war natürlich der Grund für die Ex\-cep\-tions, da dem zweiten Client ein\-fach der Ver\-bin\-dungs\-part\-ner weggerissen wurde.\newline
-Der Grund des Fehlverhaltens lag in der nicht funktionierenden Barriere "checkAllShutedDown()". Nachdem der Methodenkopf durch snychronized erweitert wurde, funktionierte das Framework wieder problemlos:
+Durch die Prüfung \texttt{checkAllShutedDown()}, wird nur der letzte aller Threads weiterleben. Somit wird auch nur ein Thread fähig sein die Methode \texttt{printSummary()} auszuführen, während die anderen Threads die Methode zu Ende abarbeiten und am Ende der Methode sterben. Durch diese Implementation wird sichergestellt, dass nur ein Thread weiterlebt und keine "Zombi-Prozesse" mehr vorhanden sind.\newline
+Weiter wird beim Abarbeiten dieser Methode die Methode \texttt{shutdown()} auf dem Client aufgerufen. Nach diesem Aufruf fährt sich der Client herunter und kappt alle akiven Verbindungen zum Server. Weitere Informationen zum Shutdown-Prozess des Clients sind unter der Kapitel des Frameworkclients ersichtlich.\newline
+Oben genannte Implementation der \texttt{stopClient(String clientIP)}-Methode hat lange funktioniert. Während des Entwicklungsprozesses der RMI-Only Lösung lief das Framework mit der erwähnten Methode ohne Probleme. Bei den ersten Testläufen der RMI-Cache Lösung wurden beim Herunterfahren der Umgebung allerdings Exceptions generiert. Da die Fehlersuche bei Software mit einer vielzahl von Threads sehr langwierig ist, dauerte die Analyse des Fehlers relativ lange.\newline 
+Schlussendlich wurde bemerkt, dass die Methode \texttt{printSummary()} trotz aller Vorsichtsmassnahmen von jedem Client ein Mal ausgeführt wurde, was dazu führte, dass mehrere Zusammenfassungen generiert wurden und probiert wurde, den FrameworkServer mehrere Male herunterzufahren. Der Versuch den FrameworkServer mehrmals herunterzufahren war natürlich der Grund für die Ex\-cep\-tions, da dem zweiten Client ein\-fach der Ver\-bin\-dungs\-part\-ner weggerissen wurde.\newline
+Der Grund des Fehlverhaltens lag in der nicht funktionierenden Barriere \texttt{checkAllShutedDown()}. Nachdem der Methodenkopf durch snychronized erweitert wurde, funktionierte das Framework wieder problemlos:
 \begin{lstlisting}[language=java, breaklines=true]
 synchronized private void stopClient(String clientIp)
 \end{lstlisting}
-Anscheinend sind die Clients bei der Cache- Implementation immer zum fast gleichen Zeit\-punkt fer\-tig, was dazu führte, dass der Sta\-tus "ShutedDown.DOWN" nur un\-zu\-ver\-läs\-sig gesetzt wurde. Das Fehlerszenario lief wie folgt ab:
+Anscheinend sind die Clients bei der Cache- Implementation immer zum fast gleichen Zeit\-punkt fer\-tig, was dazu führte, dass der Sta\-tus "ShutedDown.DOWN" nur un\-zu\-ver\-läs\-sig gesetzt wurde.\newline
+Das Fehlerszenario lief wie folgt ab:
 \begin{itemize}
-\item Thread1 betritt die "stopClient(String clientIp)"-Methode und setzt seinen Status auf DOWN
+\item Thread1 betritt die \texttt{stopClient(String clientIp)}-Methode und setzt seinen Status auf DOWN
 \item Kurz nachdem Thread1 seinen Status gesetzt hat, wird im die Res\-sour\-ce entzogen und Thread2 kommt zum Zug
 \item Thread2 betritt nun seinerseits die Methode und setzt seinen Status ebenfalls auf DOWN
-\item Da nun alle Threads auf DOWN sind, wird die Barriere nicht mehr funktionieren und mehrere Threads führen "printSummary()" aus
+\item Da nun alle Threads auf DOWN sind, wird die Barriere nicht mehr funktionieren und mehrere Threads führen \texttt{printSummary()} aus
 \end{itemize}
-Dadurch, dass die Methode nun synchronized ist, ist gewährleistet, dass sich nur ein Thread in der Methode aufhalten kann. Das wiederum bedeutet, dass die Barriere "checkAllShutedDown()" nun wieder funktioniert, da die Stati der Threads wieder zuverlässig gesetzt werden.
+Dadurch, dass die Methode nun synchronized ist, ist gewährleistet, dass sich nur ein Thread in der Methode aufhalten kann. Das wiederum bedeutet, dass die Barriere \texttt{checkAllShutedDown()} nun wieder funktioniert, da die Stati der Threads wieder zuverlässig gesetzt werden.
 
 \subsubsection{Report Generator}
 \label{sec:reportGenerator}
 
-Wir die Methode "printSummary" aufgerufen, wird ein ReportGenerator instanziert, welche die Daten der Clients ausliest und in eine Textdatei schreibt. Folgende Werte wurden durch die Clients erfasst:
+Wir die Methode \texttt{printSummary()} aufgerufen, wird ein ReportGenerator instanziert, welche die Daten der Clients ausliest und in eine Textdatei schreibt. Folgende Werte wurden durch die Clients erfasst:
 \begin{itemize}
 \item Zeit, welche benötigt wurde um die entsprechende Action durch\-zu\-führen
 \item Protokollierung, ob bei der Durchführung ein Konflikt generiert wurde oder nicht
@@ -275,7 +277,7 @@ Total Conflict: 0 / Gesamt Dauer: 282.311963 ms / durch. Dauer pro Operation: 14
 
 Die genaue Messerwerte, mit Durch\-schnitts\-wer\-ten und Ver\-gleiche zwischen den verschiedenen Systemen sind am Schluss dieser Arbeit zu finden. \newline
 Während der Entwicklung des Frameworks und der verschiedenen Systeme, schien die Ausgabe der Testergebnisse in eine Textdatei eine gute Idee zu sein. Während den Messungen des Systems wurde aber bemerkt, dass dies eine äusserst Zeitraubende und mühsame Arbeit nach sich zieht: Für einen Testcase mit acht Clients, bei welchem der Messgenauigkeit zu liebe drei Durchläufe getätigt werden, fallen insgesamt 24 Textdateien an. Um einen Mittelwert der Ergebnisse zu bekommen, müssen alle Textdateien geöffnet werden, die Mittelwerte müssen berechnet werden und in einer weiteren Datei abgelegt werden. \newline
-Dieser Umstand wurde erst am Ende der Abrbeit bemerkt, weshalb auf eine aufwändie Lösung verzichtet wurde. Mögliche Lösungsansätze für dieses Problem:
+Dieser Umstand wurde erst am Ende der Arbeit bemerkt, weshalb auf eine aufwändige Lösung verzichtet wurde. Mögliche Lösungsansätze für dieses Problem:
 \begin{itemize}
 \item Die Ergebnisse werden in eine Datenbank geschrieben
 \item Die Ausgabe erfolgt in ein XML-File
@@ -296,7 +298,7 @@ INFO: No Lost-Updates!
 
 \subsubsection{Logger}
 \label{sec:logger}
-Wie in dem Konsolenauszug unter "Result Generator" gesehen werden kann, wurde ein Logger eingebaut, welcher alle Methodenaufrufe protokoliert. Der Logger schreibt die Ereignisse erstens auf die Konsole und zweitens schreibt er alle Informaionen zu einem Methodenaufruf in eine Datei. Diese Logdatei ist sehr Informationsreich:
+Wie in dem Konsolenauszug unter "Result Generator" gesehen werden kann, wurde ein Logger eingebaut, welcher alle Methodenaufrufe protokoliert. Der Logger schreibt die Ereignisse erstens auf die Konsole und zweitens schreibt er alle Informationen zu einem Methodenaufruf in eine Datei. Diese Logdatei ist sehr Informationsreich:
 
 \begin{lstlisting}[language=XML, breaklines=true]
 <record>
@@ -469,7 +471,7 @@ Die Lösung dieses Problem lag in einer Wartephase vor dem eigentlichen Abarbeit
 
 
 
-\subsection{Action}
+\section{Action}
 \label{sec:action}
 Ein Szenario beinhaltet eine Menge von Aktionen, welche auf ein Account Objekt ausgeführt werden können. Für eine einfache Erweiterbarkeit von neuen Aktionen, ist hierfür das Command-Pattern benutzt worden. Alle konkreten Implementierung einer Aktion müssen von der abstrakte Klasse Action ableiten. Im Konstruktor dieser abstrakten Klasse wird ein neues Result Objekt(siehe Kapitel Result) instanziert. Dieses Objekt dient als Datenkontainer für alle Zeitmessungen die während dieser Aktion gesammelt werden sollen. Desweiteren deklariert Action drei abstrakte Methoden die von Subklassen implementiert werden müssen.
 \begin{lstlisting}[language=java, breaklines=true] 	
@@ -492,17 +494,16 @@ Der ActionTyp wird zur Indentifizierung der Aktion benutzt und ist als Enum real
 \item \verb+WriteAction+
 \item \verb+IncrementAction+
 \end{itemize}
-Die Werte dieses Enums werden zur Erkennung des Aktiontyps genutzt und wird bei der Report Generierung verwendet.
+Die Werte dieses Enums werden zur Erkennung des Aktiontyps genutzt und wird bei der Report Generierung verwendet um die einzelnen Aktionen zu unterscheiden.
 
  
 \subsection{Increment Action}
 \label{sec:incrementAction}
-Die Aktion Kontostand-Erhöhen (IncrementAction) ist die Kernaktion für alle Szenarien. 
-Sie besteht aus drei Teilschritten:
+Die Aktion \verb+IncrementAction+ ist die Kernaktion für alle Szenarien. Sie besteht aus drei Teilschritten:
 \begin{itemize}
 \item Aktuellen Kontostand über die Methode \verb+getBalance()+ aus dem Account holen und zwischenspeichern
 \item Den temporären Kontostand mit dem gegeben Faktor multiplizieren
-\item Versuchen den neuen Wert via \verb+setBalance()+ Methode zurück in das Konto, welches auf dem Server liegt, zu schreiben. 
+\item Versuchen den neuen Wert via \verb+setBalance(balance)+ Methode zurück in das Konto, welches auf dem Server liegt, zu schreiben. 
 \end{itemize}
 
 \begin{lstlisting}[language=java, breaklines=true] 
@@ -529,9 +530,7 @@ public void execute(Account account) {
 	}
 }
 \end{lstlisting}
-Im Laufe der Rea\-li\-sie\-rung stellte sich her\-aus das zwi\-schen dem \verb+getBalance()+ und dem \verb+setBalance()+ Auf\-ruf eine mi\-ni\-mal de\-fi\-nier\-ba\-re Zeit\-dauer ge\-wartet werden können muss. Diese Warteperiode ist nötig, damit sich leichter ein Konflikt erzeugen lässt und so gezeigt werden kann, dass der Fehler serverseitig zu keinem Lost-Updates führt.
-\newline
-Tritt serverseitig ein Concurrency Fehler auf, wird eine RuntimeExeption zurück an den Client geworfen. Dieser Fehler veranlasst, dass die Aktion nochmals neu gestartet wird. Die Aktion wird solange wiederholt bis diese erfolgreich aus der While-Schleife kommt. Die Verzögerung zwischen dem Lesen und Schreiben, welche über die Methode \verb+sleep()+ realisiert ist, führt nur beim ersten Druchlauf der IncrementAction zu einer zeitlichen Verzögerung.
+Im Laufe der Rea\-li\-sie\-rung stellte sich her\-aus das zwi\-schen dem \verb+getBalance()+ und dem \verb+setBalance()+ Auf\-ruf eine mi\-ni\-mal de\-fi\-nier\-ba\-re Zeit\-dauer ge\-wartet werden können muss. Diese Warteperiode ist nötig, damit sich leichter ein Konflikt erzeugen lässt und so gezeigt werden kann, dass der Fehler serverseitig zu keinem Lost-Updates führt. Tritt serverseitig ein Concurrency Fehler auf, wird eine RuntimeExeption zurück an den Client geworfen. Dieser Fehler veranlasst, dass die Aktion nochmals neu gestartet wird. Die Aktion wird solange wiederholt bis diese erfolgreich aus der While-Schleife kommt. Die Verzögerung zwischen dem Lesen und Schreiben, welche über die Methode \verb+sleep()+ realisiert ist, führt nur beim ersten Druchlauf der IncrementAction zu einer zeitlichen Verzögerung.
 
 \subsection{WriteAction}
 \label{sec:writeAction}
@@ -539,9 +538,9 @@ Die WriteAction wurde nur zu Beginn der Realisierung benutzt und schreibt via \v
 
 \subsection{ReadAction}
 \label{sec:readAction}
-Die WriteAction wurde ebenfalls nur zu Beginn der Realisierung benutzt. Diese Aktion liest den aktuellen Kontostand eine Objekts und speichert diesen ab. Über \verb+getBalance()+ kann auf den Kontostand zugegriffen werden.
+Diese Aktion liest den aktuellen Kontostand eine Objekts und speichert diesen ab. Über \verb+getBalance()+ kann auf den Kontostand zugegriffen werden. Diese Aktion wurde für die Messungen benutzt.
 
-\subsection{Result}
+\section{Result}
 \label{sec:result}
 Für die möglichst genaue Zeitmessung einer Aktion wird die von Java bereitgestellte Methode \verb+System.nanoTime()+ genutzt. Die Klasse Result bietet eine \verb+startTimeMeasurement(BasicAction type)+ Methode die ein neues TimeRecord Objekt erzeugt und die momentane Zeit in dieses TimeRecord Objekt schreibt. Die Information, ob es sich bei dieser Messung um eine lesende oder schreibende Methode handelt wird über denn BasicAction Typ an den TimeRecord weiter gegeben. Diese ist nötig, damit bei der Auswertung genau analysiert werden kann, für welchen Methodeaufruf (\verb+getBalance()+ / \verb+setBalance()+) dieser TimeRecord erzeugt wurde. Über die Methode \verb+stopTimeMeasurement(ActionResult result)+ lässt sich die Zeitmessung beenden und der aktuelle TimeRecord wird in einer Liste gespeichert. Das Argument, welches in der \verb+stopTimeMeasurment()+ Methode übergeben wird beinhaltet die Information über den Erfolg der Aktion. So lassen sich auch Aktionen erzeugen die aus mehreren \verb+getBalance()+ oder \verb+setBalance()+ Aufrufe bestehen. Dies ist zum Beispiel in der IncrementAction der Fall.
 
@@ -555,5 +554,8 @@ Damit eine genaue Analyse der Aktionen ge\-macht werden kann, ist es nö\-tig, d
 
 \subsection{ActionResult}
 \label{sec:ActionResult}
-Den Erfolg eines \verb+getBalance()+ oder \verb+setBalance()+ Aufrufs lässt sich ebenfalls im TimeRecord speichern. Dies Hilft die Fehlerrate eines Methodenaufrufe zu ermitteln, daher ist es nötig, dass beim stoppen einer Messung der Erfolgstatus gespeichert wird. 
+Den Erfolg eines \verb+getBalance()+ oder \verb+setBalance()+ Aufrufs lässt sich ebenfalls im TimeRecord speichern. Dies Hilft die Fehlerrate eines Methodenaufrufe zu ermitteln, daher ist es nötig, dass beim stoppen einer Messung der Erfolgstatus gespeichert wird.
+
+
+
 

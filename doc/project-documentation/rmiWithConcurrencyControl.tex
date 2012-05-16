@@ -1,17 +1,20 @@
-\chapter{RMI mit Concorrency Control}
+\chapter{RMI mit Concurrency Control}
 
-\section{Remote Method Invocation}
-\label{sec:remote-meth-invoc}
+Führen mehere Clients Methoden auf diesen Objekte auf dem Server aus,
+kann es zu sogenannten Lost Update Fehlern kommen. Dieser Fehler  und eine Lösung wird im Abschnitt \ref{sec:concurrency-control}
+genauer beschrieben. 
 
-Um zu zeigen, welche Auswirkungen Objectcaching auf ein verteiltes
-System hat, wurde ein Vergleichssystem ohne Cache geschaffen. Das
-RMIonly System ist eine Middleware. Die Middleware soll es
-ermöglichen, dass Objete in unterschiedlichen Prozessen miteinander
+Um die Funktionalität der Lösung zu überprüfen, wurde ein
+vereinfachtes RMI System implementiert. Zusätzlich zur
+RMI-Funktionalität ent\-hält dies\-es System einen Mechanismus um das Lost
+Update Problem zu verhindern. Die Implementation des RMI Systems und
+die der Concurrency Control werden in den Abschnitten
+\ref{sec:impl-des-eigen} und \ref{sec:conc-contr-impl} erklärt.
 
-
-kommunizieren können. Clientsysteme können mit Objekte arbeiten, die
-nicht in der selben Virtual Machine leben, sondern auf einem Server. Sie bietet ein Programmiermodel
-und macht den Nachrichtenaustausch zwischen den Prozessen transparent.
+Die Dauer, die Methodenaufrufe in diesem RMI System benötigen, werden
+später mit einem zweiten RMI-System, welches Objectcaching einsetzt
+verglichen. Auf diese Weise wird ersichtlich, welchen
+Performancegewinn Objectcaching bringt.
 
 
 \section{Concurrency control}
@@ -42,22 +45,29 @@ gleichzeitig ab, können Inkonsistenzen auftreten. Lesen Client $T$ und
 Client $U$ den Kontostand nacheinander und addieren zum gelesenen Wert
 200 um das Resultat mit \verb|setBalance()| zu speichern, beträgt der
 Kontostand nach Abschluss beider Transaktionen 1200 statt 1400. Der
-Ablauf ist wie folgt.
+Ablauf, der zum Lost Update Fehler führt, wird in Abbildung
+\ref{fig:lostupdate} illustriert.
 
+\begin{figure}[h]
+  \centering
 
-\begin{tabular}{l l}
-  Client $T$ & Client $U$ \\
+\begin{tabular}{l | l}
+  \textbf{Client $T$} & \textbf{Client $U$} \\ \hline
 balance = b.getBalance(); &  \\
  & balance=b.getBalance();  \\
 b.setBalance(balance + 200) & \\
-& b.setBalance(balance + 200);  \\
+& b.setBalance(balance + 200);  \\ \hline
 \end{tabular}
+    
+  \caption{Das Lost Update Problem}
+  \label{fig:lostupdate}
+\end{figure}
 
 \subsection{Optimistic Concurrency}
 \label{sec:optim-conc}
 
-Das System soll Lost-Updates verhindern. Es setzt dafür das Verfahren
-Optimistic Concurrency ein \cite{wiki:optimistic-concurrency}. Clients
+Das System soll Lost-Updates verhindern, indem es das Verfahren
+Optimistic Concurrency \cite{wiki:optimistic-concurrency} einsetzt. Clients
 können jederzeit \verb|setBalance()| aufrufen. Hat der Datensatz seit
 dem letzen Lesezugriff dieses Clients geändert, wird die Methode
 abgebrochen und der Client wird benachrichtigt. Er muss die Daten
@@ -67,8 +77,11 @@ nochmals propieren.
 \section{Implementierung des RMI Systems}
 \label{sec:impl-des-eigen}
 
-Die RMIonly System nutzt ein ein Request-Reply Protocol
-\cite{coulouris88}.
+Das RMI-System wurde als Middleware implementiert. Die Middleware soll es
+ermöglichen, dass Objekte in unterschiedlichen Prozessen miteinander kommunizieren können. Clientsysteme können mit Objekte arbeiten, die\-
+nicht in der selben Virtual Machine leben, sondern auf einem Server. Sie bietet ein Programmiermodel
+und macht den Nachrichtenaustausch zwischen den Prozessen
+transparent. Die RMI-System nutzt ein ein Request-Reply Protocol \cite{coulouris88}.
 
 \subsection{Clientimplementation}
 \label{sec:clientimplementation}

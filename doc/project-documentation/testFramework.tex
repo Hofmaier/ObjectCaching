@@ -469,7 +469,7 @@ Die Lösung dieses Problem lag in einer Wartephase vor dem eigentlichen Abarbeit
 
 
 
-\subsection{Action}
+\section{Action}
 \label{sec:action}
 Ein Szenario beinhaltet eine Menge von Aktionen, welche auf ein Account Objekt ausgeführt werden können. Für eine einfache Erweiterbarkeit von neuen Aktionen, ist hierfür das Command-Pattern benutzt worden. Alle konkreten Implementierung einer Aktion müssen von der abstrakte Klasse Action ableiten. Im Konstruktor dieser abstrakten Klasse wird ein neues Result Objekt(siehe Kapitel Result) instanziert. Dieses Objekt dient als Datenkontainer für alle Zeitmessungen die während dieser Aktion gesammelt werden sollen. Desweiteren deklariert Action drei abstrakte Methoden die von Subklassen implementiert werden müssen.
 \begin{lstlisting}[language=java, breaklines=true] 	
@@ -492,17 +492,16 @@ Der ActionTyp wird zur Indentifizierung der Aktion benutzt und ist als Enum real
 \item \verb+WriteAction+
 \item \verb+IncrementAction+
 \end{itemize}
-Die Werte dieses Enums werden zur Erkennung des Aktiontyps genutzt und wird bei der Report Generierung verwendet.
+Die Werte dieses Enums werden zur Erkennung des Aktiontyps genutzt und wird bei der Report Generierung verwendet um die einzelnen Aktionen zu unterscheiden.
 
  
 \subsection{Increment Action}
 \label{sec:incrementAction}
-Die Aktion Kontostand-Erhöhen (IncrementAction) ist die Kernaktion für alle Szenarien. 
-Sie besteht aus drei Teilschritten:
+Die Aktion \verb+IncrementAction+ ist die Kernaktion für alle Szenarien. Sie besteht aus drei Teilschritten:
 \begin{itemize}
 \item Aktuellen Kontostand über die Methode \verb+getBalance()+ aus dem Account holen und zwischenspeichern
 \item Den temporären Kontostand mit dem gegeben Faktor multiplizieren
-\item Versuchen den neuen Wert via \verb+setBalance()+ Methode zurück in das Konto, welches auf dem Server liegt, zu schreiben. 
+\item Versuchen den neuen Wert via \verb+setBalance(balance)+ Methode zurück in das Konto, welches auf dem Server liegt, zu schreiben. 
 \end{itemize}
 
 \begin{lstlisting}[language=java, breaklines=true] 
@@ -529,9 +528,7 @@ public void execute(Account account) {
 	}
 }
 \end{lstlisting}
-Im Laufe der Rea\-li\-sie\-rung stellte sich her\-aus das zwi\-schen dem \verb+getBalance()+ und dem \verb+setBalance()+ Auf\-ruf eine mi\-ni\-mal de\-fi\-nier\-ba\-re Zeit\-dauer ge\-wartet werden können muss. Diese Warteperiode ist nötig, damit sich leichter ein Konflikt erzeugen lässt und so gezeigt werden kann, dass der Fehler serverseitig zu keinem Lost-Updates führt.
-\newline
-Tritt serverseitig ein Concurrency Fehler auf, wird eine RuntimeExeption zurück an den Client geworfen. Dieser Fehler veranlasst, dass die Aktion nochmals neu gestartet wird. Die Aktion wird solange wiederholt bis diese erfolgreich aus der While-Schleife kommt. Die Verzögerung zwischen dem Lesen und Schreiben, welche über die Methode \verb+sleep()+ realisiert ist, führt nur beim ersten Druchlauf der IncrementAction zu einer zeitlichen Verzögerung.
+Im Laufe der Rea\-li\-sie\-rung stellte sich her\-aus das zwi\-schen dem \verb+getBalance()+ und dem \verb+setBalance()+ Auf\-ruf eine mi\-ni\-mal de\-fi\-nier\-ba\-re Zeit\-dauer ge\-wartet werden können muss. Diese Warteperiode ist nötig, damit sich leichter ein Konflikt erzeugen lässt und so gezeigt werden kann, dass der Fehler serverseitig zu keinem Lost-Updates führt. Tritt serverseitig ein Concurrency Fehler auf, wird eine RuntimeExeption zurück an den Client geworfen. Dieser Fehler veranlasst, dass die Aktion nochmals neu gestartet wird. Die Aktion wird solange wiederholt bis diese erfolgreich aus der While-Schleife kommt. Die Verzögerung zwischen dem Lesen und Schreiben, welche über die Methode \verb+sleep()+ realisiert ist, führt nur beim ersten Druchlauf der IncrementAction zu einer zeitlichen Verzögerung.
 
 \subsection{WriteAction}
 \label{sec:writeAction}
@@ -539,9 +536,9 @@ Die WriteAction wurde nur zu Beginn der Realisierung benutzt und schreibt via \v
 
 \subsection{ReadAction}
 \label{sec:readAction}
-Die WriteAction wurde ebenfalls nur zu Beginn der Realisierung benutzt. Diese Aktion liest den aktuellen Kontostand eine Objekts und speichert diesen ab. Über \verb+getBalance()+ kann auf den Kontostand zugegriffen werden.
+Diese Aktion liest den aktuellen Kontostand eine Objekts und speichert diesen ab. Über \verb+getBalance()+ kann auf den Kontostand zugegriffen werden. Diese Aktion wurde für die Messungen benutzt.
 
-\subsection{Result}
+\section{Result}
 \label{sec:result}
 Für die möglichst genaue Zeitmessung einer Aktion wird die von Java bereitgestellte Methode \verb+System.nanoTime()+ genutzt. Die Klasse Result bietet eine \verb+startTimeMeasurement(BasicAction type)+ Methode die ein neues TimeRecord Objekt erzeugt und die momentane Zeit in dieses TimeRecord Objekt schreibt. Die Information, ob es sich bei dieser Messung um eine lesende oder schreibende Methode handelt wird über denn BasicAction Typ an den TimeRecord weiter gegeben. Diese ist nötig, damit bei der Auswertung genau analysiert werden kann, für welchen Methodeaufruf (\verb+getBalance()+ / \verb+setBalance()+) dieser TimeRecord erzeugt wurde. Über die Methode \verb+stopTimeMeasurement(ActionResult result)+ lässt sich die Zeitmessung beenden und der aktuelle TimeRecord wird in einer Liste gespeichert. Das Argument, welches in der \verb+stopTimeMeasurment()+ Methode übergeben wird beinhaltet die Information über den Erfolg der Aktion. So lassen sich auch Aktionen erzeugen die aus mehreren \verb+getBalance()+ oder \verb+setBalance()+ Aufrufe bestehen. Dies ist zum Beispiel in der IncrementAction der Fall.
 

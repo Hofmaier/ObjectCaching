@@ -1,9 +1,14 @@
 package ch.hsr.objectCaching.testFrameworkClient;
 
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.UnknownHostException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
@@ -11,6 +16,7 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
+import java.security.CodeSource;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
@@ -136,9 +142,7 @@ public class ClientController implements ClientInterface {
 	}
 
 	private void startController() {
-
 		loadLogggerConfig();
-
 		if (args.length == 1) {			
 			ClientRegistryName = args[0];
 			publishingClient(this, ClientRegistryName, DEFAULT_CLIENT_PORT);
@@ -152,15 +156,28 @@ public class ClientController implements ClientInterface {
 		}
 	}
 
-	private void loadLogggerConfig() {
+	private void loadLogggerConfig() {		    
 		try {
-			System.setProperty("java.util.logging.config.file", "logger.config");
-			LogManager.getLogManager().readConfiguration();
+			String loggerPath = getPathOfJar() +File.separator + "logger.config";
+			InputStream input = new BufferedInputStream(new FileInputStream(loggerPath));
+			LogManager.getLogManager().readConfiguration(input);
 		} catch (IOException e) {
 			System.out.println("Logger configuration file could not be read: " + e.getMessage());
 		}catch(SecurityException se){
 			System.out.println("Security exception occurred: " + se.getMessage());
 		}
+	}
+
+	private String getPathOfJar() {	
+		String jarDir = null;
+	    try {
+	    	CodeSource codeSource = ClientController.class.getProtectionDomain().getCodeSource();
+			File jarFile = new File(codeSource.getLocation().toURI().getPath());
+			jarDir = jarFile.getParentFile().getPath();
+		} catch (URISyntaxException e1) {
+			e1.printStackTrace();
+		}
+		return jarDir;
 	}
 
 	private void publishingClient(ClientController controller, String rmiName, int port) {

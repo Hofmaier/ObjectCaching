@@ -9,6 +9,6 @@ Implementation von RMI und enthält zusätzlich Mechanismen, die Lost
 Update Fehler verhindern. Der Prototyp soll unter anderem zeigen, ob
 das Konzept funktioniert. 
 
-Ein weiteres Ziel der Arbeit ist die Verbesserung der Performance in einer RMI Umgebung durch Replikation der Objekte beim Client. Objekte sollen näher beim Prozess, der darauf zugreift platziert werden, um die Zugriffszeit zu verkürzen.
+Ein weiteres Ziel der Arbeit ist die Verbesserung der Performance in einer RMI Umgebung durch Replikation der Objekte beim Client. Objekte sollen näher beim Prozess, der darauf zugreift platziert werden, um die Zugriffszeit zu verkürzen. Deshalb wurde in einem zweiten Schritt ein RMI-System entwickelt, das Objekte bei den Clients lokal speichert. Lesezugriffe können vom Cache verarbeitet werden.
 
 Mit der Replikation von Objekten entstehen neue Probleme. Gibt es mehrere Kopien von Objekten müssen Änderungen an einer Kopie an die anderen Kopien weitergegeben werden. Dieser Aktualisierungsprozess kann die Performance wiederum mindern, da ein Server oft damit beschäftigt ist, Kopien zu aktualisieren. Es wurde ein Konzept erstellt, wie ein Caching von Objekten in einem RMI-System realisiert werden kann. Um die Funktionalität zu testen und die Performance zu messen wurde das Konzept implementiert. 

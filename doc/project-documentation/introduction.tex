@@ -4,7 +4,7 @@ Die Idee ein RMI-System mit integriertem Client-Cache zu entwickeln, ist bei der
 
 Führen mehere Clients Methoden auf diesen Objekte auf dem Server aus, kann es zu Fehler kommen. Wollen zwei Clients dieselbe Information verändern, dann kann die Änderung des ersten Methodenaufrufs sofort durch die Änderung des zweiten Methodenaufrufs überschrieben werden. Ein Ziel des RMI-Systems dieser Arbeit ist es diese Art von Fehler zu verhindern.
 
- Ein weiteres Ziel dieses RMI-Systems ist die Verbesserung der Performance durch Replikation der Objekte beim Client. Objekte sollen näher beim Prozess, der darauf zugreift platziert werden, um die Zugriffszeit zu verkürzen.
+Ein weiteres Ziel dieses RMI-Systems ist die Verbesserung der Performance durch Replikation der Objekte beim Client. Objekte sollen näher beim Prozess, der darauf zugreift platziert werden, um die Zugriffszeit zu verkürzen.
 
 Mit der Replikation von Objekten entstehen neue Probleme. Gibt es mehrere Kopien von Objekten müssen Änderungen an einer Kopie an die anderen Kopien weitergegeben werden. Dieser Aktualisierungsprozess kann die Performance wiederum mindern, da ein Server oft damit beschäftigt ist, Kopien zu aktualisieren.
 

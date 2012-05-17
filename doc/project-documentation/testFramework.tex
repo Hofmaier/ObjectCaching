@@ -334,12 +334,12 @@ Dieses Kapi\-tel beschreibt die Aufgaben des Testframework Client sowie die Umse
 \item Erzeugen und konfigurieren des benötigten ClientSystemUnderTest anhand von Parametern die vom Server kommen
 \item Abarbeitung des durch den Framework Server zur Verfügung gestellten Szenarios auf dem zu testenden System sowie die Zeitmessungen der einzelnen Aktionen
 \end{itemize}
-
+Folgende Abbildung zeigt die wichtigsten Interaktionen zwischen dem Testframework Server und dem Client.
 \begin{figure}[H]
 \begin{center}
 \includegraphics[scale=0.5]{image_testFramework/Server_Client_Communication.png}
 \end{center}
-\caption{Server Client Communication}
+\caption{Server Client Kommunikation}
 \end{figure}
 
 Die Umsetzung des Testframeworks wurde über das bewährte Client / Server Konzept realisiert, was zu einer schlanke Lösung auf Seiten des Clients führt. Der FrameworkClient und das ClientSystemUnderTest lassen sich dank die\-sem Konzept komplett vom Framework Server aus konfigurieren und steuern. Ein weiterer Vorteil dieses Designs, liegt darin das sich neue Anforderungen jederzeit leicht umsetzen lassen.
@@ -383,7 +383,13 @@ In der konkreten Im\-p\-le\-men\-ta\-ti\-on der Me\-tho\-de \texttt{initialize(S
 \end{enumerate}
 
 \subsubsection{Start eines Testlaufs}
-Der Server startet den Testdurchlauf parallel auf allen ClientController über die Methode \verb+startTest()+. Diese ruft auf dem TestClient \verb+runScenario()+ auf, eine detailierte Erklärung was in dieser Methode passiert, ist im Kapitel "Test Client" zu finden. Sind alle Aktionen des gegeben Szenarios abgearbeitet, wird das gesamte Szenario mit den gesammelten Messresultaten über die Methode \verb+setResults(Scenario scenario, String IP)+ zurück an den Server geschickt.
+\begin{figure}[H]
+\begin{center}
+\includegraphics[scale=0.4]{image_testFramework/startTest.png}
+\end{center}
+\caption{Start eines Testlauf durch den Testframework Server}
+\end{figure}
+Das Sequenzdiagramm ist eine vereinfachte Darstellung des Testlaufs. Der Server startet den Testdurchlauf parallel auf allen ClientController über die Methode \verb+startTest()+. Diese ruft auf dem TestClient \verb+runScenario()+ auf, eine detailierte Erklärung was in dieser Methode passiert, ist im Kapitel "Test Client" zu finden. Sind alle Aktionen des gegeben Szenarios abgearbeitet, wird das gesamte Szenario mit den gesammelten Messresultaten über die Methode \verb+setResults(Scenario scenario, String IP)+ zurück an den Server geschickt.
 
 \subsubsection{Herunterfahren des ClientController}
 Die Methode \verb+shutdown()+ be\-endet den Test\-framework\-Client und das Client\-System\-Under\-Test. Die \verb+shutdown()+ Me\-tho\-de besteht aus mehreren Teil\-schritten:
@@ -428,14 +434,6 @@ Die Beendigung des ClientControllers wird in einem seperaten Thread ausgeführt,
 
 \subsection{Test Client}
 \label{sec:testclient}
-
-\begin{figure}[H]
-\begin{center}
-\includegraphics[scale=0.4]{image_testFramework/startTest.png}
-\end{center}
-\caption{Start eines Testlauf durch den Testframework Server}
-\end{figure}
-
 Die TestClient Klasse ist die Schnittstelle zwischen dem ClientController und dem ClientSystemUnderTest. Alle Clientvarianten die getestet werden sollen, müssen das Interface ClientSystemUnderTest implementieren, so lassen sich alle Varianten von ClientSystemUnderTest einheitlich mit einer TestClient Klasse testen. Desweiteren kann auf dem TestClient das Szenario gesetzt werden, welches der TestClient beim Aufruf von \verb+runScenario()+ durch den ClientController abarbeitet.
 
 Das ClientSystemUnderTest Interface ist wie folgt definiert:

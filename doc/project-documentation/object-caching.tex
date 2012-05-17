@@ -1,5 +1,4 @@
 \chapter{Object Caching}
-
 \label{sec:object-caching}
 
 In einem zweiten Schritt haben wir ein RMI-System entwickelt, das Objekte bei den Clients lokal speichert. Lesezugriffe können vom Cache verarbeitet werden. Schreibzugriffe werden an den Server gesendet. Bei der Erstellung des Konzept mussten Designentscheide in den Bereichen Replica Placement, Update Distribution und Konsistenzprotokoll getroffen werden.
@@ -53,7 +52,9 @@ Sequenzielle Konsistenz ist ein Konsistenzmodel. Es definiert, dass alle Prozess
 \subsection{Primary-Based Protokol}
 \label{sec:prim-based-prot}
 
-In unserem System sind alle Objekte zentral auf dem Server abgespeichert. Das Objekt auf dem Server ist das Referenzobjekt. Alle Clients sollen die Schreiboperationen in der Reihenfolge sehen, wie sie beim Server eintreffen. Damit sehen alle Clients die selbe Updatereihenfolge und die Anforderung für die sequenzielle Konsistenz ist damit erfüllt. 
+In unserem System sind alle Objekte zentral auf dem Server abgespeichert. Das Objekt auf dem Server ist das Referenzobjekt. Alle Schreiboperationen werden von den Clients an den Server gesendet. Die Reihenfolge der Schreiboperationen auf einem Objekt ist die Reihenfolge, wie sie beim Server eintreffen. Nachdem der Server eine Schreiboperation verarbeitet hat, sendet er ein Update an alle Clients, die das aktualisierte Objekt bei sich im Cache haben. Damit sehen alle Clients die selbe Updatereihenfolge und die Anforderung für die sequenzielle Konsistenz ist damit erfüllt. 
+
+Ein Problem im Zusammenhang mit dem primary-based Protokol, ist dass das System mehr Netzwerkbandbreite benötigt, da es mehr Nachrichten versendet, um die Kopien aktuell zu halten.
 
 Ist jedem Objekt eine Maschine für die Koordination zugeordnet, nennt man das Protokol primary-based\cite{tanenbaum07}. Die Maschine, die das Objekt verwaltet nennt man primary. Ist der primary eine fixer Server werden alle Schreiboperationen an diesen Server gesendet. In diesem Fall spricht man von Remote-Write Protocol.
 
@@ -63,7 +64,7 @@ Ist jedem Objekt eine Maschine für die Koordination zugeordnet, nennt man das P
 \subsection{Implementierung des Replica Placement}
 \label{sec:impl-des-repl-1}
 
-Ruft ein Client eine Methode auf einem Objekt auf, überprüft das System zuerst, ob das Objekt bereits im lokalen Cache vorhanden ist. Der Cache hat eine HashMap $C$, die als Keys Objekt-IDs und als Values Objekte enthält. Ist ein Objekt nicht in dieser HashMap vorhanden, wird eine \verb+ObjectRequest+-Message an den Server gesendet. Der Server antwortet, indem er das gewünschte Objekt serialisiert an den Client zurücksendet. Der Client legt es in der HashMap $C$ ab. 
+Ruft ein Client eine Methode auf einem Objekt auf, überprüft das System zuerst, ob das Objekt bereits im lokalen Cache vorhanden ist. Der Cache hat eine HashMap $C$, die als Keys Objekt-IDs und als Values Objekte enthält. Ist ein Objekt nicht in dieser HashMap vorhanden, wird eine \verb+ObjectRequest+-Message an den Server gesendet. Der Server antwortet, indem er das ge\-wünsch\-te Objekt serialisiert an den Client zurücksendet. Der Client legt es in der HashMap $C$ ab. 
 
 \subsection{Implementierung Update Distribution}
 \label{sec:impl-update-distr}

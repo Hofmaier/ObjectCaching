@@ -19,3 +19,6 @@ Ein weiteres Ziel der Arbeit ist die Verbesserung der Performance in einer RMI U
 
 Mit der Replikation von Objekten entstehen neue Probleme. Gibt es mehrere Kopien von Objekten müssen Änderungen an einer Kopie an die anderen Kopien weitergegeben werden. Dieser Aktualisierungsprozess kann die Performance wiederum mindern, da ein Server oft damit beschäftigt ist, Kopien zu aktualisieren. Es wurde ein Konzept erstellt, wie ein Caching von Objekten in einem RMI-System realisiert werden kann. Um die Funktionalität zu testen und die Performance zu messen wurde das Konzept implementiert. 
 
+Ein weiteres Ziel dieser Arbeit ist die Entwicklung eines Frameworks, welches die verschiedenen Implementationen testen kann. Dabei soll es möglich sein, neue Implementationen, ohne Änderungen am Code, direkt an das Framework anzuschliessen. 
+
+Das Framework kontrolliert und steuert das korrekte Starten der ganzen Testumgebung, das heisst das Deployment der Clientsoftware auf die Clients und das Starten der Clients sowie des Servers. Nach einem Testlauf, in welchem alle nötigen Zeiten gemessen wurden, fährt das Framework alle Clients und den Server hinunter und generiert einen Bericht, mit den Messergebnissen.

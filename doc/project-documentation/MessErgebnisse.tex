@@ -26,7 +26,7 @@ Alle Mes\-ser\-ge\-bnis\-se stam\-men aus einer Labor\-umgebung, mit folgenden E
 \end{itemize}
 
 \section{Testvorgaben}
-Die in dieser Arbeit ausgewiesenen Zahlen wurden alle in der Laborumgebung gemessen. Dabei wurde für jeden TestCase die Anzahl der Clients schrittweise von zwei bis acht Clients erhöht. Jeder Testlauf mit der gleichen Anzahl Clients, wurde drei Mal durchgeführt, um einen exakten Mittelwert der Ergebnisse ausweisen zu können. Drei Testdurchläufe pro Scenario und Clientanzahl wurden aufgrund der sehr nahe liegenden Ergbnisse der Testdurchläufe als genügend eingestuft. Wären die einzelnen Ergebnisse der Durchläufe extrem unterschiedlich, hätten fünf oder mehr Durchläufe stattfinden müssen.
+Die in dieser Arbeit ausgewiesenen Zahlen wurden alle in der La\-bor\-um\-gebung ge\-mes\-sen. Dabei wurde für jeden Test\-Case die An\-zahl der Clients schritt\-weise von zwei bis acht Clients erhöht. Jeder Test\-lauf mit der gleichen Anzahl Clients, wurde drei Mal durchgeführt, um einen exakten Mittel\-wert der Er\-geb\-nis\-se aus\-weisen zu können. Drei Test\-durchläufe pro Szenario und Clientanzahl wurden aufgrund der sehr nahen liegenden Er\-geb\-nis\-se der Testdurchläufe als genügend eingestuft. Wären die einzelnen Ergebnisse der Durchläufe extrem unterschiedlich, hätten fünf oder mehr Durchläufe stattfinden müssen.
 
 \section{Testergebnisse}
 In den folgenden Kapiteln werden die getesteten Scenarios und deren Ergebnisse gezeigt. 
@@ -84,7 +84,7 @@ TotalTime(with Delays)&24596.331&26287.93&30074.669\\
 Pure Operation Time&24595.381&26286.969&30073.691\\
 \end{tabular*} } \newline
 
-Diese Zahlen sind Durchschnittswerte von drei Messungen. Die genauen Messdaten können im Anhang gefunden werden. Die folgende Grafik zeigt den Verlauf des Zeitaufwandes mit einer steigenden Anzahl Clients von zwei bis acht Clients:
+Diese Zahlen sind Durch\-schnitt\-swer\-te von drei Messungen. Die genauen Mess\-daten können im Anhang gefunden werden. Die folgende Grafik zeigt den Verlauf des Zeit\-auf\-wandes mit einer steigenden Anzahl Clients von zwei bis acht Clients:
 \begin{figure}[H]
 \begin{center}
 \includegraphics[scale=0.6]{images_MessErgebnisse/getBalance_RMI.png}
@@ -94,7 +94,7 @@ Es wird schnell ersichtlich, dass das System mit einer steigenden Anzahl Clients
 
 \subsubsection{Ergebnisse RMI-Only mit Cache System}
 
-In der folgenden Tabelle werden die Messdaten des Cache-Systems dargestellt: \newline
+In der folgenden Tabelle werden die Messdaten des Cache-Systems dar\-ge\-stellt: \newline
 
 
 \resizebox{6cm}{!} {
@@ -102,10 +102,10 @@ In der folgenden Tabelle werden die Messdaten des Cache-Systems dargestellt: \ne
 Legende&2Clients&3Clients&4Clients&5Clients\\
 \cline{1-5}
 setBalance&0&0&0&0\\
-getBalance&0.2889&0.2874&0.2852&0.2984\\
+getBalance&0.288&0.287&0.285&0.298\\
 Konfliktanzahl&0&0&0&0\\
-TotalTime(with Delays)&73.0871&72.5819&72.0394&75.4229\\
-PureOperationTime&72.2497&71.8551&71.3044&74.6033\\
+TotalTime(with Delays)&73.087&72.581&72.039&75.422\\
+PureOperationTime&72.249&71.855&71.304&74.603\\
 \end{tabular*} }
 \newline
 \newline
@@ -115,13 +115,13 @@ PureOperationTime&72.2497&71.8551&71.3044&74.6033\\
 Legende&6Clients&7Clients&8Clients\\
 \cline{1-4}
 setBalance&0&0&0\\
-getBalance&0.3011&0.3201&0.2810\\
+getBalance&0.3011&0.3201&0.281\\
 Konfliktanzahl&0&0&0\\
-TotalTime(with Delays)&76.0142&80.8389&71.0016\\
-Pure Operation Time&75.2893&80.0410&70.2629\\
+TotalTime(with Delays)&76.014&80.838&71.001\\
+Pure Operation Time&75.289&80.041&70.262\\
 \end{tabular*} } \newline
 
-Diese Zahlen sind wiederum Durchschnittswerte.  In der folgenden Grafik werden die durchschnittlichen Zeiten der \texttt{getBalance()}-Methode in Abhängigkeit der Anzahl Clients ausgegeben:
+Diese Zahlen sind wiederum Durch\-schnitts\-wer\-te.  In der folgenden Grafik werden die durch\-schnitt\-li\-chen Zeiten der \texttt{getBalance()}-Methode in Abhängigkeit der Anzahl Clients aus\-ge\-geben:
 
 \begin{figure}[H]
 \begin{center}
@@ -129,8 +129,8 @@ Diese Zahlen sind wiederum Durchschnittswerte.  In der folgenden Grafik werden d
 \end{center}
 \end{figure}
 
-Damit die Grafik einen Sinn ergibt, mussten die Zeiten auf der Y-Achse angepasst werden. Hätte man die Skala aus dem RMI-Only-System übernommen, wäre auf der Grafik nur eine Linie ersichtlich. Es muss dennoch bemerkt werden, dass bei dieser Grafik die Skala auf der Y-Achse extrem klein ist und Messunterschiede, wenn auch nur Minimale, in dieser Grafik stark zum tragen kommen. Ein Vergleich mit der vorhergehenden Grafik des RMI-Only-Systems ist also mit Vorsicht zu geniessen.
-\newline Aus der Grafik wird ersichtlich, dass bei nur lesenden Zugriffen das System perfekt skaliert. Die Werte betragen circa alle, egal wieviele Clients beteiligt sind, 0.3ms. Anzunehmen ist, dass noch viele weitere Clients dazugeschaltet werden könnten, ohne dass die Zugriffszeit markant zunehmen würde.
+Damit die Grafik einen Sinn ergibt, mussten die Zeiten auf der Y-Achse an\-ge\-passt werden. Hätte man die Skala aus dem RMI-Only-System über\-nom\-men, wäre auf der Grafik nur eine Linie er\-sicht\-lich. Es muss dennoch bemerkt werden, dass bei dieser Grafik die Skala auf der Y-Achse extrem klein ist und Mess\-un\-ter\-schiede, wenn auch nur Mi\-ni\-male, in dieser Grafik stark zum tragen kommen. Ein Ver\-gleich mit der vor\-her\-gehenden Grafik des RMI-Only-Systems ist also mit Vorsicht zu geniessen.
+\newline Aus der Grafik wird ersichtlich, dass bei nur lesenden Zu\-griffen das System perfekt skaliert. Die Werte betragen circa alle, egal wieviele Clients beteiligt sind, 0.3ms. Anzunehmen ist, dass noch viele weitere Clients dazugeschaltet werden könnten, ohne dass die Zugriffszeit markant zunehmen würde.
 
 
 \subsubsection{Interpretation}
@@ -189,11 +189,11 @@ Die Messwerte des schreibenden CLientss mit dem RMI-Only System sehen wie folgt 
 \begin{tabular*}{6.5cm}[]{l l l l l l}
 Legende&2Clients&3Clients&4Clients&5Clients\\
 \cline{1-5}
-setBalance&79.8705&79.9517&79.8211&79.8587\\
-getBalance&80.1249&80.1400&80.1149&80.1421\\
+setBalance&79.870&79.951&79.821&79.858\\
+getBalance&80.124&80.140&80.114&80.142\\
 Konfliktanzahl&0&0&0&0\\
-TotalTime(with Delays)&80003.5573&80051.6692&79973.7976&80006.2888\\
-PureOperationTime&79997.7365&80045.9110&79968.0607&80000.4531\\
+TotalTime(with Delays)&80003.557&80051.669&79973.797&80006.288\\
+PureOperationTime&79997.736&80045.911&79968.060&80000.453\\
 \end{tabular*} }
 \newline
 \newline
@@ -202,11 +202,11 @@ PureOperationTime&79997.7365&80045.9110&79968.0607&80000.4531\\
 \begin{tabular*}{6.5cm}[]{l l l l}
 Legende&6Clients&7Clients&8Clients\\
 \cline{1-4}
-setBalance&79.9147&79.8760&80.0812\\
-getBalance&80.1332&80.1246&80.2016\\
+setBalance&79.914&79.876&80.081\\
+getBalance&80.133&80.124&80.201\\
 Konfliktanzahl&0&0&0\\
-TotalTime(with Delays)&80029.7826&80006.1374&80105.9440\\
-Pure Operation Time&80024.0096&80000.3550&80100.1449\\
+TotalTime(with Delays)&80029.782&80006.137&80105.944\\
+Pure Operation Time&80024.009&80000.355&80100.144\\
 \end{tabular*} } \newline
 
 Die Ergebnisse der \texttt{setBalance()}-Aurufe werden in dieser Abbildung grafisch dargestellt:
@@ -217,23 +217,23 @@ Die Ergebnisse der \texttt{setBalance()}-Aurufe werden in dieser Abbildung grafi
 \end{center}
 \end{figure}
 
-Erstaundlicherweise skaliert das RMI-Only-System sehr gut. Die Werte für einen schreibenden Zugriff bleiben in etwa immer gleich. Anscheinend wurde das System etwas unterschätzt, denn augenscheinlich hätte man noch weit mehr Rechner lesen lassen können, ohne dass man eine Verlangsamung registriert hätte.
+Erstaundlicherweise skaliert das RMI-Only-System sehr gut. Die Werte für einen sch\-rei\-ben\-den Zugriff bleiben in etwa immer gleich. Anscheinend wurde das System etwas unterschätzt, denn augen\-scheinlich hätte man noch weit mehr Rechner lesen lassen können, ohne dass man eine Verlangsamung registriert hätte.
 
 
 \subsubsection{Ergebnisse RMI-Only mit Cache System}
 
-Folgende Tabelle zeigt die Messergebnisse des schreibenden Clients mit dem Cache-System: \newline
+Folgende Tabelle zeigt die Messer\-gebnisse des schreibenden Clients mit dem Cache-System: \newline
 
 
 \resizebox{6cm}{!} {
 \begin{tabular*}{6.5cm}[]{l l l l l l}
 Legende&2Clients&3Clients&4Clients&5Clients\\
 \cline{1-5}
-setBalance&88.75211&88.7898&88.6036&88.6205\\
-getBalance&0.1837&0.1845&0.1855&0.1842\\
+setBalance&88.7521&88.789&88.603&88.620\\
+getBalance&0.1837&0.184&0.185&0.184\\
 Konfliktanzahl&0&0&0&0\\
-TotalTime(with Delays)&80144.6425&80149.5192&79982.6941&80025.9731\\
-PureOperationTime&80131.1769&80136.1886&79969.4380&80012.8222\\
+TotalTime(with Delays)&80144.642&80149.519&79982.694&80025.973\\
+PureOperationTime&80131.176&80136.188&79969.438&80012.822\\
 \end{tabular*} }
 \newline
 \newline
@@ -242,11 +242,11 @@ PureOperationTime&80131.1769&80136.1886&79969.4380&80012.8222\\
 \begin{tabular*}{6.5cm}[]{l l l l}
 Legende&6Clients&7Clients&8Clients\\
 \cline{1-4}
-setBalance&88.6558&88.7662&88.9202\\
-getBalance&0.1895&0.1803&0.1925\\
+setBalance&88.655&88.766&88.920\\
+getBalance&0.189&0.180&0.192\\
 Konfliktanzahl&0&0&0\\
-TotalTime(with Delays)&80003.7567&80093.1801&80244.8572\\
-Pure Operation Time&79990.5427&80081.5939&80231.3191\\
+TotalTime(with Delays)&80003.756&80093.180&80244.857\\
+Pure Operation Time&79990.542&80081.593&80231.319\\
 \end{tabular*} } \newline
 
 In der folgenden Grafik ist der Verlauf der Messwerte der \texttt{setBalance()}-Aufrufe des schreibenden Clients zu sehen:
@@ -256,13 +256,13 @@ In der folgenden Grafik ist der Verlauf der Messwerte der \texttt{setBalance()}-
 \end{center}
 \end{figure}
 
-Wieder Erwarten steigt die gemessene Zeit mit zunehmenden Clients beim \texttt{setBalance()}-Aufruf nicht an. Die gemessene Zeit bleibt circa immer gleich, was darauf schliessen lässt, dass das Cache-System prima skaliert. Es scheint, als könnte man noch einige Clients mehr lesen lassen,  ohne eine spürbare Verlangsamung in Kauf nehmen zu müssen.
+Wieder Erwarten steigt die gemessene Zeit mit zunehmenden Clients beim \texttt{setBalance()}-Aufruf nicht an. Die gemessene Zeit bleibt circa immer gleich, was darauf schliessen lässt, dass das Cache-System prima skaliert. Es scheint, als könnten noch einige Clients mehr "lesen", ohne eine spürbare Verlangsamung in Kauf nehmen zu müssen.
 
 \subsubsection{Interpretation}
 
-Dass das Cache-System bei diesem Testcase so gut skaliert war eigentlich zu erwarten. Mit einem leichten Anstieg der Messwerte wurde gerechnet, doch auch diese blieb ansich aus. Mit dem Problem der Zeitmessung in Java im Hinterkopf, kann man sagen, dass \texttt{setBalance()}-Aufrufe immer gleich schnell sind, egal, ob zwei oder acht Clients über den neuen Betrag des Balance-Wertes benachrichtigt werden müssen.\newline
-Erstaundlicherweise skaliert jedoch auch das RMI-Only-System sehr gut. Die Werte der \texttt{setBalance()}-Aufrufe sind im Durchschnitt sogar noch etwas tiefer als die Werte, welche mit dem Cache-System gemessen wurden. Natürlich sind die \texttt{getBalance()}-Werte um ein vielfaches höher als im verglichenen Cache-System, dies war jedoch aufgrund des im vorhergehenden Testcases gezeigten Mechanismuses zu erwarten.\newline
-Abschliessend lässt sich zu diesem Testcase sagen, dass weder das eine, noch das andere System abfällt. Beide arbeiten stabil und fehlerlos und wenn man nur die \texttt{setBalance()}-Werte betrachtet auch fast gleich schnell. Der Nachteil des RMI-Only-System bleibt wie erwähnt, die langsamen \texttt{getBalance()}-Aufrufe.
+Dass das Cache-System bei diesem Testcase so gut skaliert war eigentlich zu erwarten. Mit einem leichten Anstieg der Messwerte wurde gerechnet, doch auch dieser blieb ansich aus. Mit dem Problem der Zeitmessung in Java im Hinterkopf, kann man sagen, dass \texttt{setBalance()}-Aufrufe immer gleich schnell sind, egal, ob zwei oder acht Clients über den neuen Betrag des Balance-Wertes benachrichtigt werden müssen.\newline
+Erstaundlicherweise skaliert jedoch auch das RMI-Only-System sehr gut. Die Werte der \texttt{setBalance()}-Aufrufe sind im Durch\-schnitt sogar noch etwas tiefer als die Werte, welche mit dem Cache-System gemessen wurden. Natürlich sind die \texttt{getBalance()}-Werte um ein vielfaches höher als im verglichenen Cache-System, dies war jedoch aufgrund des im vorhergehenden Testcases gezeigten Mechanismuses zu erwarten.\newline
+Abschliessend lässt sich zu diesem Testcase sagen, dass weder das eine, noch das andere System abfällt. Beide arbeiten stabil und fehlerlos und wenn nur die \texttt{setBalance()}-Werte betrachtet werden, auch fast gleich schnell. Der Nachteil des RMI-Only-System bleibt wie erwähnt, die langsamen \texttt{getBalance()}-Aufrufe.
 
 \subsection{Nur schreibende Clients}
 \subsubsection{Szenario Code}
@@ -297,11 +297,11 @@ Die Messerwerte des RMI-Only-Systems: \newline
 \begin{tabular*}{6.5cm}[]{l l l l l l}
 Legende&2Clients&3Clients&4Clients&5Clients\\
 \cline{1-5}
-setBalance&88.75211&88.7898&88.6036&88.6205\\
-getBalance&0.1837&0.1845&0.1855&0.1842\\
+setBalance&88.752&88.789&88.603&88.620\\
+getBalance&0.183&0.184&0.185&0.184\\
 Konfliktanzahl&0&0&0&0\\
-TotalTime(with Delays)&80144.6425&80149.5192&79982.6941&80025.9731\\
-PureOperationTime&80131.1769&80136.1886&79969.4380&80012.8222\\
+TotalTime(with Delays)&80144.642&80149.519&79982.694&80025.973\\
+PureOperationTime&80131.176&80136.188&79969.438&80012.822\\
 \end{tabular*} }
 \newline
 \newline
@@ -310,11 +310,11 @@ PureOperationTime&80131.1769&80136.1886&79969.4380&80012.8222\\
 \begin{tabular*}{6.5cm}[]{l l l l}
 Legende&6Clients&7Clients&8Clients\\
 \cline{1-4}
-setBalance&88.6558&88.7662&88.9202\\
-getBalance&0.1895&0.1803&0.1925\\
+setBalance&88.655&88.766&88.920\\
+getBalance&0.189&0.180&0.192\\
 Konfliktanzahl&0&0&0\\
-TotalTime(with Delays)&80003.7567&80093.1801&80244.8572\\
-Pure Operation Time&79990.5427&80081.5939&80231.3191\\
+TotalTime(with Delays)&80003.756&80093.180&80244.857\\
+Pure Operation Time&79990.542&80081.593&80231.319\\
 \end{tabular*} } \newline
 
 \subsubsection{Ergebnisse RMI-Only mit Cache System}
@@ -326,9 +326,9 @@ In der folgenden Tabelle sind die Werte des Cache-Systems dargestellt:\newline
 \begin{tabular*}{6.5cm}[]{l l l l l l}
 Legende&2Clients&3Clients&4Clients&5Clients\\
 \cline{1-5}
-setBalance&104.2852&130.9624&247.2939&427.0246\\
-getBalance&0.1346&0.1007&0.1014&0.0993\\
-Konfliktanzahl&681.5&1532.2222&1916.5&2243.8\\
+setBalance&104.285&130.962&247.293&427.024\\
+getBalance&0.134&0.1007&0.101&0.099\\
+Konfliktanzahl&681.5&1532.2&1916.5&2243.8\\
 TotalTime(with Delays)&176070.64&331890.26&721508.42&1385805\\
 PureOperationTime&176052.29&331868.2&721482.83&1385777\\
 \end{tabular*} }
@@ -345,6 +345,8 @@ Konfliktanzahl&2534.5&2871.3333&3254.7083\\
 TotalTime(with Delays)&2303134&3782179&5761716\\
 Pure Operation Time&2303103&3800575&5761681\\
 \end{tabular*} } \newline
+
+
 
 \subsubsection{Interpretation}
 

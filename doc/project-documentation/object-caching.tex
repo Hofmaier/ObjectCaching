@@ -1,12 +1,14 @@
-\chapter{Object Caching}
+\chapter{Objectcaching}
 \label{sec:object-caching}
 
-In einem zweiten Schritt haben wir ein RMI-System entwickelt, das Objekte bei den Clients lokal speichert. Lesezugriffe können vom Cache verarbeitet werden. Schreibzugriffe werden an den Server gesendet. Bei der Erstellung des Konzept mussten Designentscheide in den Bereichen Replica Placement, Update Distribution und Konsistenzprotokoll getroffen werden.
+Um die Dauer von Lesezugriffen im RMI-System zu verkürzen, wurde eine erweiterte Version des RMI-Systems mit integriertem Objectcaching erstellt. Schreibzugriffe werden an den Server gesendet. 
+
+Bei der Erstellung des Konzeptes mussten Designentscheide in den Bereichen Replica Placement, Update Distribution und Konsistenzprotokoll getroffen werden.
 
 \section{Replica Placement}
 \label{sec:replica-management}
 
-Ziel des Object Caching ist es die Zugriffszeit auf Objekte für Client zu verringern. Deshalb macht es Sinn, dass Repliken vom Client initiiert werden. Die Alternative wäre dass der Server die Repliken initiiert. Werden die Replikas vom Client initiiert spricht man von Client Caches. Client Caches verbessern die Zugriffszeit der Clients auf die Daten.
+Ziel des Object Caching ist es die Zugriffszeit auf Objekte für Client zu verringern. Deshalb macht es Sinn, dass Repliken vom Client initiiert werden. Die Alternative wäre dass der Server die Repliken initiiert. Das macht Sinn, wenn der Server von Anfragen, die von den Repliken beantwortet werden können, entlastet werden soll,  Werden die Replikas vom Client initiiert spricht man von Client Caches. Client Caches verbessern die Zugriffszeit der Clients auf die Daten.
 
 In unserem RMIwithObjectCaching-System besitzt jeder Client einen lokalen Cache auf derselben Maschine. Der Cache ist nicht in der Grösse limitiert, da die Testcases keine Szenarien mit vielen Objekten 
 
@@ -21,16 +23,16 @@ Werden Kopien von Objekten in einem lokalen Cache angelegt, müssen diese Kopien
 \label{sec:inval-vers-data}
 
 \begin{description}
-\item[Invalidation protocol] Bei einem Invalidation protocol werden nur Meldungen an die lokalen Caches gesendet, die dem Cache mitteilen, dass ein Objekt nicht mehr aktuell ist. Der Vorteil dieser Möglichkeit ist, das eine Invalidierungsmeldung nur beim ersten Write versendet werden muss. Ausserdem müssen keine Objektdaten übertragen werden. Das Verfahren spart also Bandbreite. Ein invalidation protocol macht ist sinnvoll, wenn das read-to-write-Verhältnis klein ist.
+\item[Invalidation-Protocol] Bei einem Invalidation protocol werden nur Meldungen an die lokalen Caches gesendet, die dem Cache mitteilen, dass ein Objekt nicht mehr aktuell ist. Der Vorteil dieser Möglichkeit ist, das eine Invalidierungsmeldung nur beim ersten Write versendet werden muss. Ausserdem müssen keine Objektdaten übertragen werden. Das Verfahren spart also Bandbreite. Ein Invalidation-Protocol macht ist Sinn, wenn das read-to-write-Verhältnis klein ist.
 \item[Transfer Data] Der zweite Ansatz ist bei jedem Update die kompletten Daten eines Objektes an die lokalen Caches zu versenden. In diesem Fall kann der Client immer aus dem lokalen Cache lesen. Dieser Ansatz macht Sinn bei einem hohen read-to-write Verhältnis.
 \end{description}
 
-Unser System verwendet Transfer Data Ansatz.
+Unser System verwendet Transfer Data Ansatz, da in unseren Testszenarien sehr viele Lesezugriffe vorhanden sind. Das heisst, dass die Informationen in einem Update mit grosser Wahrscheinlichkeit im Cache gelesen werden. In diesem Fall müssen weniger Nachrichten versendet werden, wenn die aktualisierten Objekte bereits im lokalen Cache liegen. Bei einem Invalidation-Protocol müsste man jedes mal eine aktualisierte Version anfordern.
 
 \subsection{Pull versus Push}
 \label{sec:pull-versus-push}
 
-Die Verantwortung, der Cache Aktualisierung kann entweder beim Server oder beim Client liegen. Man unterscheided zwischen push-based und pull-based Protokollen.
+Die Verantwortung, der Cache-Aktualisierung kann entweder beim Server oder beim Client liegen. Man unterscheided zwischen push-based und pull-based Protokollen.
 
 \begin{description}
 \item[push-based] Der Server sendet dem Client Updates ohne, dass der Client diese anfordert. Der Server muss Buch darüber führen, in welchen Caches Kopien aller Objekte vorhanden sind.
@@ -47,16 +49,16 @@ In unsererem Cache werden Aktualisierungen durch push-based updated realisiert, 
 
 Ein Konsistenzmodel beschreibt unter anderem in welcher Reihenfolge unterschiedliche Prozesse, die auf die selben Objekte in einem verteilten System zugreifen, die Operationen, die auf den Objekte ausgeführt wurden sehen. Das Konsistenzprotokoll implementiert das Konsistenzmodel.
 
-Sequenzielle Konsistenz ist ein Konsistenzmodel. Es definiert, dass alle Prozesse in einem verteilten System die selbe Reihenfolge der Operationen auf einem Objekt sehen \cite{tanenbaum07}.  Das Konsistenzprotokoll des Objectcaching-Systems implementiert sequenzielle Konsistenz.
+Sequenzielle Konsistenz ist ein Konsistenzmodel. Es definiert, dass alle Prozesse in einem verteilten System die selbe Reihenfolge der Operationen auf einem Objekt sehen \cite{tanenbaum07}.  Das Konsistenzprotokoll unseres Object-Caching-Systems implementiert sequenzielle Konsistenz.
 
 \subsection{Primary-Based Protokol}
 \label{sec:prim-based-prot}
 
-In unserem System sind alle Objekte zentral auf dem Server abgespeichert. Das Objekt auf dem Server ist das Referenzobjekt. Alle Schreiboperationen werden von den Clients an den Server gesendet. Die Reihenfolge der Schreiboperationen auf einem Objekt ist die Reihenfolge, wie sie beim Server eintreffen. Nachdem der Server eine Schreiboperation verarbeitet hat, sendet er ein Update an alle Clients, die das aktualisierte Objekt bei sich im Cache haben. Damit sehen alle Clients die selbe Updatereihenfolge und die Anforderung für die sequenzielle Konsistenz ist damit erfüllt. 
+In unserem System sind alle Objekte zentral auf einem Server abgespeichert. Das Objekt auf dem Server ist das Referenzobjekt. Alle Schreiboperationen werden von den Clients an den Server gesendet. Die Reihenfolge der Schreiboperationen auf einem Objekt ist die Reihenfolge, wie sie beim Server eintreffen. Nachdem der Server eine Schreiboperation verarbeitet hat, sendet er ein Update an alle Clients, die das aktualisierte Objekt bei sich im Cache haben. Damit sehen alle Clients die selbe Updatereihenfolge und die Anforderung für die sequenzielle Konsistenz ist damit erfüllt. 
 
 Ein Problem im Zusammenhang mit dem primary-based Protokol, ist dass das System mehr Netzwerkbandbreite benötigt, da es mehr Nachrichten versendet, um die Kopien aktuell zu halten.
 
-Ist jedem Objekt eine Maschine für die Koordination zugeordnet, nennt man das Protokol primary-based\cite{tanenbaum07}. Die Maschine, die das Objekt verwaltet nennt man primary. Ist der primary eine fixer Server werden alle Schreiboperationen an diesen Server gesendet. In diesem Fall spricht man von Remote-Write Protocol.
+Ist jedem Objekt eine Maschine für die Koordination zugeordnet, nennt man das Protokol primary-based\cite{tanenbaum07}. Die Maschine, die das Objekt verwaltet nennt man primary. Ist der primary eine fixer Server werden alle Schreiboperationen an diesen Server gesendet. In diesem Fall spricht man von Remote-Write-Protocol. Unser System realisiert ein Remote-Write-Protocol.
 
 \section{Implementierung des Object-Caching}
 \label{sec:impl-object-kons}
@@ -69,14 +71,14 @@ Ruft ein Client eine Methode auf einem Objekt auf, überprüft das System zuerst
 \subsection{Implementierung Update Distribution}
 \label{sec:impl-update-distr}
 
-Methoden mit Seiteneffekten werden direkt an den Server gesendet. Der Server merkt sich bei einem \verb|ObjectRequest|, an welche Client er das Objekt gesendet hat. Er führt für jede Objekt-ID eine \verb|ArrayList| die alle Clients enthält, die das Objekt bereits angefordert haben. Wird auf einem Objekt ein Methode mit Seiteneffekt ausgeführt, sendet der Server allen Clients in der Liste eine \verb|ObjectUpdate|-Message.
+Da wir die Update Distribution push-based implementieren, informiert der Server alle Clients bei jedem Schreibzugriff. Damit der Server die Updates an die richtigen Clients sendet, merkt er sich bei einem \verb|ObjectRequest|, an welche Client er das Objekt gesendet hat. Er führt für jede Objekt-ID eine \verb|ArrayList| die alle Clients enthält, die das Objekt bereits angefordert haben. Wird auf einem Objekt eine Methode mit Seiteneffekt ausgeführt, sendet der Server allen Clients in der Liste eine \verb|ObjectUpdate|-Message.
 
 \subsubsection{Implementierung des Nachrichtenaustausch}
 \label{sec:impl-des-nachr}
 
-Augrund der \verb|ObjectUpdate|-Nachrichten muss der Client in der Lage sein, eine Nachricht zu empfangen, ohne dass er explizit darauf wartet. Im RMI-only System schreibt ein Client die Nachricht für einen Methodenaufruf in den Stream zum Server und wartet anschliessen auf die Antwort. Das ist möglich, weil das nächste Objekt, das der Client aus dem Stream zum Server ausliest, ist immer die Antwort.
+Augrund der \verb|ObjectUpdate|-Nachrichten muss der Client in der Lage sein, eine Nachricht zu empfangen, ohne dass er explizit darauf wartet. Im RMI- System ohne Cache schreibt ein Client die Nachricht für einen Methodenaufruf in den Stream zum Server und wartet anschliessen auf die Antwort. Er weiss, dass das nächte Objekt im Stream vom Typ \texttt{ReturnValue} und die Antwort auf den vorangegangenen Methodenaufruf sein wird. Das ist möglich, weil das nächste Objekt, das der Client aus dem Stream vom Server ausliest, immer die Antwort auf den Methodenaufruf ist.
 
-Im Object-Caching System muss der Client in der Lage sein, Object\-Update\--Messages zu empfangen und zu verarbeiten ohne, dass er weiss, wann er ein \verb|ObjectUpdate| über den Stream gesendet wird. Damit eintreffende Nach\-richten im Client nicht von der ausgehenden Nachricht abhängig ist, wird der Nach\-richt\-enaustausch im System in der Klasse \verb|MessageManager| gekapselt. \newline \verb|MessageManager| bietet folgende Methoden an.
+Im Object-Caching System muss der Client in der Lage sein, Object\-Update\--Messages zu empfangen und zu verarbeiten ohne, dass es weiss, wann es ein \verb|ObjectUpdate| über den Stream gesendet wird. Der Client kann sich nicht mehr darauf verlassen, dass Objekte aus dem TCP-Stream zum Server, die Antwort auf einen Methodaufruf sind. Es könnte auch ein \texttt{ObjectUpdate} sein. Damit die Verarbeitung von eintreffenden Nach\-richten im Client nicht von der ausgehenden Nachricht abhängig ist, wird der Nach\-richt\-enaustausch im System in der Klasse \verb|MessageManager| gekapselt. \texttt{MessageManager} bietet folgende Methoden an.
 
 \begin{description}
 \item[sendMessageCall] Diese Methode nimmt alle Nachrichten entgegen, die an den Client gesendet werden sollen. Die Methode platziert alle Nachrichten in einer \verb|BlockingQueue| 
@@ -95,21 +97,15 @@ Der Cache enthält ein Thread, der in einer Endlosschleife receiveUpdate aufruft
 \subsection{Beispielablaufszenario}
 \label{sec:beisp}
 
-Der Prozess Kontostand erhöhen läuft wie folgt ab.
+Die Funktionsweise des Protokolls und des Systems soll anhand eine Beispiels erklärt werden. Ein Client holt sich den aktuellen Wert eines Kontos mit \texttt{getBalance()} und setzt danach den Kontostand mit \texttt{setBalance()}. Das betreffende \texttt{Account}-Objekt ist zuerst noch nicht im Cache des Clients. Der Prozess läuft wie folgt ab.
 
 \begin{enumerate}
 \item Client $C1$ ruft \verb+getBalance()+ auf.
 \item RMI-Stub führt einen Lookup für das Objekt im Cache aus.
-\item Ist das Objekt nicht Cache, fordert es der Cache beim Server an.
-\item \verb+getBalance()+ wird auf auf dem Objekt ausgeführt. Der Wert wird an den Stub zurückgegeben und der Stub leitet ihn an den Client weiter.
-\item \verb+setBalance()+ wird an den lokalen Cache weitergeleitet. Dieser enthält eine eigene Concurrency Control. Die überprüft, ob das Objekt sich seit dem letzen \verb+getBalance+ nicht verändert hat. Hat es sich verändert, wird eine Exception ausgelöst. Die Methode ändert den lokalen Cache nicht, weil zu diesem Zeitpunkt noch nicht klar ist, ob die Methode ausgeführt werden kann. Ein anderer Client könnte, das Objekt inzwischen verändert haben. Nur der Server kann entscheiden, ob die Methode ausgeführt werden kann.
-\item Die \verb+setBalance()+-Methode invalidiert das Objekt. Der Wert im Cache kann noch nicht festgeschrieben werden, da noch nicht sicher ist, ob die Update Methode ausgeführt werden kann. Der Wert wird sich sicher ändern. Entweder aufgrund des lokalen \verb+setBalance()+-Aufruf oder weil ein anderer Client \verb+setBalance()+ aufgerufen hat. Solange das Objekt invalidiert ist, muss es bei einem \verb+getBalance()+-Aufruf neu beim Server angeforder werden. Damit verhindert man eine unnötige Exception.
-\item Erhält ein Client Cache ein Update \verb+update()+
+\item Ist das Objekt nicht im Cache vorhanden, wird es mit einem \texttt{ObjectRequest}-Nachricht angefordert.
+\item Ist das \texttt{Account}-Objekt beim Client eingetroffen, wird \verb+getBalance()+ auf auf dem Objekt ausgeführt. Der Wert wird an den Stub zurückgegeben und der Stub leitet ihn an den Client weiter.
+\item \verb+setBalance()+ wird an den lokalen Cache weitergeleitet. Dieser enthält eine eigene Concurrency Control. Die überprüft, ob das Objekt seit dem letzen \verb+getBalance+ nicht durch ein Update vom Server verändert wurde. Hat es sich verändert, wird eine Exception ausgelöst. Wenn in Zwischenzeit kein Update eingetroffen ist, wird ein \texttt{MethodCall} an den Server gesendet. Nachdem der Methodenaufruf an den Server gesendet wurde, wartet der Client auf die \texttt{ReturnValue}-Nachricht. Diese trifft erst ein, wenn der Server den Methodenaufruf bereits verarbeitet hat und ein Update verschickt hat. Die Methode ändert den lokalen Cache nicht, weil zu diesem Zeitpunkt noch nicht klar ist, ob die Methode ausgeführt werden kann. Ein anderer Client könnte, das Objekt inzwischen verändert haben. Nur der Server kann entscheiden, ob die Methode ausgeführt werden kann. Das Objekt im Cache ändert erst, wenn die \texttt{ObjectUpdate}-Nachricht vom Server eintrifft.
 \end{enumerate}
-
-\begin{description}
-\item [setBalance] Das Object muss im Cache invalidiert werden. Mit ConcurrencyControl kann überprüft werden, ob mit einer alten Version gearbeitet wurde.
-\end{description}
 
 \subsection{Implementierung der Concurrency Control}
 \label{sec:impl-der-conc}

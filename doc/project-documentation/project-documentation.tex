@@ -6,17 +6,30 @@
 \usepackage[german]{babel}
 \usepackage{booktabs}
 \usepackage{lscape}
+\usepackage{hsrita}
 
 
+%Title page
 \title{Object Caching}
 \date{\today}
-\author{Lukas Hofmaier, Raphael Kohler, Timon Brüllmann}
+\author{Lukas Hofmaier\\ Raphael Kohler\\ Timon Brüllmann}
+\supervision{Prof. Dr. Josef M. Joller}
 
+
+%Begin of dokument
 \begin{document}
+
+%Title
 \maketitle
 
+%Preamble
+\pagenumbering{roman} 
 \tableofcontents
+\cleardoublepage
 
+%Content
+\pagestyle{plain} 
+\pagenumbering{arabic}
 \include{introduction}
 \include{rmiWithConcurrencyControl}
 \include{object-caching} 
@@ -24,9 +37,7 @@
 \include{MessErgebnisse}
 \include{appendix}
 \listoffigures
-
 \bibliographystyle{plain}
-
 \bibliography{bibliography}
 
 \end{document}

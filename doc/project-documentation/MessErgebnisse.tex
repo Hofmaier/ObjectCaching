@@ -346,6 +346,37 @@ TotalTime(with Delays)&2303134&3782179&5761716\\
 Pure Operation Time&2303103&3800575&5761681\\
 \end{tabular*} } \newline
 
+<<<<<<< HEAD
+=======
+Die folgende Grafik zeigt die Entwicklung der Messwerte der \texttt{setBalance()}-Aufrufe:
+\begin{figure}[H]
+\begin{center}
+\includegraphics[scale=0.6]{images_MessErgebnisse/incrementCacheSetBalance.png}
+\end{center}
+\end{figure}
+
+Zu erwarten war eine zeitliche Erhöhung bei einer steigenden Anzahl Clients. Dass die Kurve aber so krass steigen wird, ja fast einen exponentiellen Verlauf einnehmen würde, wurde nicht erwartet. Wenn alle beteiligten Clients schreibende Zugriffe tätigen, skaliert das System also schlecht. Es bleibt zu erahnen, wie die Kurve bei 20 Cleints aussehen würde. Sehr wahrscheinlich würde der Kurvenverlauf analog der oben gezeigten Grafik mit der gleichen Steigung weitersteigen. \newline
+
+In der nächsten Grafik wird die durchschnittliche Anzahl Konflikte pro Client gezeigt:
+\begin{figure}[H]
+\begin{center}
+\includegraphics[scale=0.6]{images_MessErgebnisse/incrementCacheKonfliktzahl.png}
+\end{center}
+\end{figure}
+
+Es ist spannend zu sehen, dass die Konfliktanzahl linear mit der Anazhl Clients zunimmt. Leider ist auch dies ein schlechtes Verhalten bezüglich der Skalierbarkeit des Systems. Wahrscheinlich würde die Funktion linear weitersteigen, würden noch mehr Clients in den Test einbezogen. \newline
+Pro zusätzlicher Client ergibt sich eine zunahme der Konflikte um 250. Würde die Funktion analog weitersteigen, und davon ist auszugehen, würde die Anzahl Konflikte pro Client auf über 6000 ansteigen, bei 20 Clients. Dennoch sollte bedacht werden, dass dieser Testcase ein Extrem darstellt, da jeder Client mit vollem Tempo zu schreiben versucht. \newline
+Interessant ist die Tatsache, dass die Zeiten der \texttt{setBalance()}-Aufrufe exponentiell steigen, die Anzahl der Konflikte aber nur linear. Scheinbar verursachen also 3000 Konflikte eine ungememein höheren Zeitverzögerung, als dies 2000 Konflikte tun. \newline
+
+Die nächste Grafik beschäftigt sich mit der reinen Durchführungszeit:
+\begin{figure}[H]
+\begin{center}
+\includegraphics[scale=0.6]{images_MessErgebnisse/incrementCachePureOperationTime.png}
+\end{center}
+\end{figure}
+
+Auch diese Funktion steigt exponentiell, was aufgrund der exponentiellen \texttt{setBalance()}-Funktion zu erwarten war. Logischerweise braucht die ganze Durchführung des Testcases mehr Zeit, wenn die \texttt{setBalance()}-Aufrufe mehr Zeit benötigen. Es ist trotzdem spannend zu sehen, dass zwischen diesen zwei Grafik eine direkte Verbindung besteht.
+>>>>>>> d282486110ba30dd4342f5fe9367d71c05383e76
 
 
 \subsubsection{Interpretation}

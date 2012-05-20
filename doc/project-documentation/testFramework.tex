@@ -392,7 +392,7 @@ In der konkreten Im\-p\-le\-men\-ta\-ti\-on der Me\-tho\-de \texttt{initialize(S
 Das Sequenzdiagramm ist eine vereinfachte Darstellung des Testlaufs. Der Server startet den Testdurchlauf parallel auf allen ClientController über die Methode \verb+startTest()+. Diese ruft auf dem TestClient \verb+runScenario()+ auf, eine detailierte Erklärung was in dieser Methode passiert, ist im Kapitel "Test Client" zu finden. Sind alle Aktionen des gegeben Szenarios abgearbeitet, wird das gesamte Szenario mit den gesammelten Messresultaten über die Methode \verb+setResults(Scenario scenario, String IP)+ zurück an den Server geschickt.
 
 \subsubsection{Herunterfahren des ClientController}
-Die Methode \verb+shutdown()+ be\-endet den Test\-framework\-Client und das Client\-System\-Under\-Test. Die \verb+shutdown()+ Me\-tho\-de besteht aus mehreren Teil\-schritten:
+Die Methode \texttt{shutdown()} be\-endet den Test\-frame\-work\-Client und das Client\-System\-Under\-Test. Die \texttt{shut\allowbreak down()} Me\-tho\-de be\-steht aus mehreren Teil\-schrit\-ten:
 \begin{enumerate}
 \item Das ClientSystemUnderTest wird heruntergefahren.
 \item Die Verbindung zwischen dem spezifizierten Binding Namen und dem damit verbundenen ClientController Remoteobjekt wird im Name Service von Java gelöscht.

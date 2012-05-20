@@ -70,70 +70,83 @@ Das System soll Lost-Updates verhindern, indem es das Verfahren
 Optimistic Concurrency \cite{wiki:optimistic-concurrency} einsetzt. Clients
 können jederzeit \verb|setBalance()| aufrufen. Hat der Datensatz seit
 dem letzen Lesezugriff dieses Clients geändert, wird die Methode
-abgebrochen und der Client wird benachrichtigt. Er muss die Daten
-selbständig mit \verb|getBalance()| aktualisieren und kann es dann
-nochmals propieren.
+abgebrochen und der Client wird benachrichtigt. Er muss die aktuellen Daten
+selbständig mit \verb|getBalance()|beim Server holen und kann es dann
+nochmals propieren. Hat zwischen dem letzen \texttt{getBalance()} und
+dem \texttt{setBalance()} kein anderer Client das Objekt verändert,
+läuft die Schreiboperation fehlerfrei durch.
 
 \section{Implementierung des RMI Systems}
 \label{sec:impl-des-eigen}
 
-Das RMI-System wurde als Middleware implementiert. Die Middleware soll es
-ermöglichen, dass Objekte in unterschiedlichen Prozessen miteinander kommunizieren können. Clientsysteme können mit Objekte arbeiten, die\-
-nicht in der selben Virtual Machine leben, sondern auf einem Server. Sie bietet ein Programmiermodel
-und macht den Nachrichtenaustausch zwischen den Prozessen
-transparent. Die RMI-System nutzt ein ein Request-Reply Protocol \cite{coulouris88}.
+Das RMI-System wurde als Middleware implementiert. Clients fordern \newline
+\texttt{Ac\-co\-unt}\--Objekte von der Klasse \texttt{AccountService} über die
+Methode \newline \texttt{Collection<Account> getAllAccounts()}. Mit diesen
+Account-Ob\-jek\-ten\- arbeitet der Client, wie mit lokalen Objekten, obwohl
+die Objekte auf einem entfernten Server in einer anderen Virtual
+Machine leben. Die
+Middleware sorgt für Lokalitätstransparenz. Sie 
+ermöglicht es, dass Objekte in unterschiedlichen Prozessen miteinander
+kommunizieren können. Methodenaufrufe werden in Nachrichten umgesetzt.
+Für den Nachrichtenaustausch wird ein Request-Reply Protocol eingesetzt \cite{coulouris88}.
 
 \subsection{Clientimplementation}
 \label{sec:clientimplementation}
 
-Die Clients arbeiten mit dem Interface Account. Dieses Interface wird
-von der Klasse AccountStub implementiert. Der Stub macht aus den
-Methodenaufrufen
-\verb|getBalance()|und \verb|setBalance()| ein Objekt des Typs
-MethodCall. Methodcall ist ein Data Transfer Object. Es enthält
-Informationen darüber, welche Methoden aufgerufen werden soll, auf
+Die Clients programmieren gegen das Interface \texttt{Account}. Dieses Interface wird
+von der Klasse \texttt{AccountStub} implementiert. Der Stub setzt alle
+Methodenaufrufe in Nachrichten um, die über einen TCP-Stream an den
+Server gesendet werden. 
+
+\subsubsection{Nachrichten}
+\label{sec:nachrichten}
+
+
+Bei den Nachrichten handelt es sich um
+serialisierte Objekte des Typs \-\texttt{Method\-Call}. \texttt{MethodCall} ist ein Data Transfer Object. Es enthält
+Informationen darüber, welche Methode aufgerufen werden soll, auf
 welchem Objekt die Methoden aufgerufen werden soll und mit welchen
 Argumenten die Methode aufrufen wird. Nachdem der Methodenauruf dem
 Netzwerkstream übergeben wurde, wartet der Client bis er eine Antwort
 auf dem selben Stream erhält. Die Antwort wird mit einem
-ReturnValue-Objekt übertragen.
+\texttt{ReturnValue}-Objekt übertragen.
 
-Objekte der Klasse MethodCall und ReturnValue müssen serialisiert
+\subsubsection{Serialisierung}
+\label{sec:serialisierung}
+
+Objekte der Klasse \texttt{MethodCall} und \texttt{ReturnValue} müssen
+serialisiert werden,
 da\-mit sie über einen TCP Stream zwischen Client und Server übertragen
 werden können. Die Java Platform bietet dafür die Java Serialization
-API an. Objekte die serialisiert werden mit dem Serializable Interface
-markiert und mit einem ObjectOutputStream-Objekt serialisiert. Zu
-serialisierende Objekte können einfach der Methode
-\verb|writeObject(Object object)| übergeben werden.
+API\cite{greanier00} an. Objekte die serialisiert werden mit dem Serializable Interface
+markiert. Möchte man die Objekte in einen Stream schreiben, übergibt
+man sie der Methode
+\verb|writeObject(Object object)| eines
+\texttt{ObjectOutputStream}-Objekt.
+
+\subsubsection{Objekt Identifikation}
+\label{sec:objekt-ident}
 
 Ruft der Client eine Methode auf einem Account-Objekt auf, muss er dem
 Server mitteilen, auf welchem Objekt die Methode aufgerufen werden
-soll. Dafür teilt er dem Server die Objekt-ID im MethodCall-Objekt
-mit. Diese Objekt-ID müssen in den Stubs auf Clientseite bei
+soll. Dafür teilt er dem Server eine Objekt-ID im MethodCall-Objekt
+mit. Diese Objekt-ID's wurden künstlich eingeführt. Der Server ordnet
+jedem Objekt eine Objekt-ID zu. Diese Objekt-ID müssen in den Stubs auf Clientseite bei
 Methodenaufruf bekannt sein und sie müssen mit den Objekt-ID's auf dem
 Server übereinstimmen. Der Client kann Account-Objekte beim Server
 anfordern. Das Interface AccountService bietet dafür die Methode
-\verb|getAllAccounts()| an. AccountServiceStub
-sendet bei Aufruf von \verb|getAllAccounts()|
-einen entsprechenden MethodCall an den Server. Dieser MethodCall
-enthält keine Objekt-ID. Er returniert immer alle Account-Objekte des
-Servers unabhängig davon welches AccountService-Objekt die Methode
-aufgerufen hat. Das ReturnValue des Servers enthält eine ArrayList von
+\verb|getAllAccounts()| an. Das ReturnValue-Objekt, das auf
+\newline \texttt{get\-All\-Accounts()} vom Server an den Client gesendet wird, enthält eine ArrayList von
 Objekt-ID's. Aus diesen ID's werden die AccountStubs auf dem Client generiert.
 
 \subsection{Serverimplementation}
 \label{sec:serverimplementation}
 
-Der Server hört akzeptiert eingehende TCP-Verbindungen und liest aus
-dem Stream MethodCall-Objekte, sobald welche vom Client gesendet
-werden. Der TCP-Stream wird erst geschlossen, wenn der Client ein EOF
-sendet.
-
 Für jede Klasse, die RMI-Methoden anbietet, hat der Server ein
 zuge\-hö\-ri\-ges Skeletonobjekt. Für die Methodenaufrufe
-der Klasse Account ist ein Objekt vom Typ
-AccountSkeleton zuständig. Das Skeletonobjekt hat eine HashMap. Die
-HashMap enthält alle Account-Objekte des Systems. Die Objekt-ID's
+der Klasse \texttt{Account} ist ein Objekt vom Typ
+\texttt{AccountSkeleton} zuständig. Das Skeletonobjekt hat eine HashMap. Die
+HashMap enthält alle \texttt{Account}-Objekte des Systems. Die Objekt-ID's
 werden als Key's der HashMap eingesetzt. Der AccountSkeleton ist damit
 in der Lage ein MethodCall-Objekt, das ein Client versendet hat, an
 das richtige Objekt weiterzuleiten. 
@@ -145,14 +158,28 @@ ausgeführt hat, beschafft sich der Skeleton aus der HashMap. Die
 Argumente werden im MethodCall Objekt übermittelt. Der Rückgabewert
 wird in ein ReturnValue-Objekt gepackt und an den Client zurückgesendet.
 
+Der Server akzeptiert eingehende TCP-Verbindungen und liest aus
+dem Stream MethodCall-Objekte, sobald welche vom Client gesendet
+werden. Der TCP-Stream wird erst geschlossen, wenn der Client ein EOF
+sendet. Für jede TCP-Verbindung, dass heisst für jeden Client, wird
+ein \texttt{ClientHandler}-Objekt erstellt. Dieses enthält die Input-
+und OutputStream um mit dem Client zu kommunizieren. Der
+\texttt{ClientHandler} liest die \texttt{MethodCall}-Objekte aus dem
+Stream und leitet sie an das \texttt{AccountSkeleton}-Objekt weiter. Die
+\texttt{Method\-Call}-Objekte von verschiedenen Clients werden an das selbe
+\-\texttt{Ac\-count\-Skeleton}-Objekt weitergeleitet.
+
+\begin{figure}[ht]
+  \centering
+\includegraphics[scale = 0.5]{images_objectcaching/rmiServerImpl}  
+  \caption{RMI-Serverimplementation Domain Class Diagramm}
+  \label{fig:rmiserverimpl}
+\end{figure}
+
 \subsubsection{Schnittstelle zum Framework}
 \label{sec:schn-zum-fram}
 
-Für jeden Client muss der Server ein Streamobjekt erstellen. Die
-Method\-Call-Objekte aus dem Streamobjekt müssen an das selbe
-AccountSkeleton-Objekt weitergeleitet werden. Streamobjekte speichern
-und Methodenauf\-rufe an das richtige Skeleton weiterzuleiten ist
-Aufgabe der Clienthandler. Damit diese Clienthandler-Objekte mit den
+Damit diese Clienthandler-Objekte mit den
 richtigen Skeleton-Objekte initialisiert werden, bietet das System
 eine zentrale ServerSystem-Klasse. Das Framework erzeugt eine Instanz
 der ServerSystem-Klasse. Wenn sich Client mit dem Server verbindet,
@@ -163,8 +190,8 @@ initialisiert. Das Framework übergibt dem Clienthandler die Input- und OutputSt
 \section{Concurrency Control Implementierung }
 \label{sec:conc-contr-impl}
 
-Das System soll Lost-Updates verhindern, indem es bei Schreizugriffen
-feststellt, ob die Daten zwischenzeitlich verändert wurden. Dazu
+Das System soll Lost-Updates verhindern, indem Optimistic Concurrency
+einsestzt. Das heisst bei Schreizugriffen wird überprüft, ob die Daten zwischenzeitlich verändert wurden. Dazu
 versioniert der Server die Objekte, deren Methoden auf entfernten
 Clients aufgerufen werden können. Die Versionen werden in der HashMap
 $W$ gespeichert. Die HashMap $W$ verwendet als Key die ID der Objekte
@@ -172,7 +199,7 @@ und als Value die Version. Bei jedem Schreibzugriff, das heisst bei
 einem \verb|setBalance()|, der ohne Konflikt ausgeführt wird, wird die
 Version des Objektes inkrementiert. Zusätzlich merkt sich der Server
 für jeden Client und für jedes Objekt, auf welcher Version des
-Objektes ein Lesezugriff (\verb|getBalance()| stattgefunden hat. Dafür
+Objektes zuletzt ein Lesezugriff (\verb|getBalance()|) stattgefunden hat. Dafür
 wird eine zweite HashMap $R$ verwendet. In der HashMap $R$ wird als Key
 ein String verwendet, der sich aus der IP-Adresse und der
 Objekt-ID des Methodenaufrufs zusammensetzt. Als Value speichert die HashMap $R$ die Version ab.
@@ -181,9 +208,7 @@ Ruft ein Client
 der HashMap $W$ und speichert sie in mit der entsprechenden IP und
 Objekt-ID in der HashMap $R$ ab.
 
-Mit den beiden HashMaps $W$ und $R$, weiss der Server welches die
-aktuellste Version eines Objektes und mit welcher Version jeder Client
-arbeitet. Ruft ein Client \verb|setBalance()| prüft der Server, ob die
+Ruft ein Client \verb|setBalance()| prüft der Server, ob die
 Version des Clients aus der HashMap $R$ tiefer ist als die aktuelle
 Version aus der HashMap $W$. Ist dies der Fall wird der Methodenaufruf
 abgebrochen und der Client erhält eine Nachricht, dass die Methode

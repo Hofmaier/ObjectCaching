@@ -191,7 +191,7 @@ initialisiert. Das Framework übergibt dem Clienthandler die Input- und OutputSt
 \label{sec:conc-contr-impl}
 
 Das System soll Lost-Updates verhindern, indem Optimistic Concurrency
-einsestzt. Das heisst bei Schreizugriffen wird überprüft, ob die Daten zwischenzeitlich verändert wurden. Dazu
+eingesetzt wird. Das heisst bei Schreizugriffen wird überprüft, ob die Daten zwischenzeitlich verändert wurden. Dazu
 versioniert der Server die Objekte, deren Methoden auf entfernten
 Clients aufgerufen werden können. Die Versionen werden in der HashMap
 $W$ gespeichert. Die HashMap $W$ verwendet als Key die ID der Objekte

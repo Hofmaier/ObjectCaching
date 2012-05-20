@@ -417,3 +417,19 @@ Bei diesem Testcase hat zu grossem erstaunen das RMI-Only System die besseren We
  Bei diesem extremen Testcase wurde eigentlich erwartet, dass der Cache um einiges besser skalieren würde, da er die Konfliktanzahl mindern würde. Dies hat der Cache zwar getan, doch durch die einiges langsameren \texttt{setBalance()}-Aufrufe, war das System mit Cache schlussendlich trotzdem um einiges schlechter. \newline
 Es bleibt also anzumerken, dass es bei acht Clients zu sehr vielen Konflikten kommt, egal welches System angewendet wird. Bei sehr vielen Schreibzugriffen, macht der Cache aber bei einer steigenden Anzahl Clients immer weniger Sinn, da die Geschwindigkeit der  \texttt{setBalance()}-Methode immer kleiner wird.
 
+\subsection{Messerfahrungen}
+Die Auswertung der Messdaten und deren Interpretation nahm sehr viel Zeit in Anspruch. Wie bereits im Kapitel Report Generator erläutert, hätte das Speichern der Resultate in einer anderen Art als Textdateien sehr viel weniger Zeit gekostet. Da die Resultate pro Szenario in einer einzelnen Textdatei vorhanden waren, mussten zusätlich ein kleines Script geschrieben werden, welches  aus jedem Szenario die Zusammenfassungen liest und diese in einer gemeinsamen Datei abspeichert. Jedoch war der Aufwand für das Zusammenführen der Daten trotzdem extrem hoch, da die Daten manuell aus der Zusammenfassung nach Excel exportiert werden musste. 
+
+\paragraph{Start Script}
+Zu Begin der Messphase nutzte man das bereits vorhandene Start-Script für die einzelnen TestCases. Schon nach kurzer Zeit, musste das Script jedoch so anpassen werden, dass es selbstständig alle Tests für eine Testcase ausführt. Das heisst, es skaliert den Test von zwei bis acht Clients selbstständig und führt dabei jeweils dreimal denselben Test durch um eine verlässlichen Mittelwert pro Anzahl Clients ermitteln zu können.
+
+\paragraph{Read Aktion}
+Während des ersten Testlaufs des Szenarios bei welchem ein Client schreibt und die restlichen nur lesen, stellte sich ein Problem mit dem Szenario Aufbau heraus. Da alle lesenden Client mit der Cache Variante viel schneller fertig als der schreibende Client musste das Szenario angepasst werden.
+\begin{enumerate}
+\item In einer ersten Variante wurde die Anzahl der Reads von 1'000 auf 1'000'000 vergrösserte. Das Problem mit dieser Lösung war, dass das Szenario Objekt, welches auf dem Server für die einzelnen Clients erzeugt wir zu gross wurde und zu einem Heap Space Fehler führte.
+\item Die Erkenntnis aus dem ersten Versuch führt dazu, das die Read Aktion modifiziert werden musste. Wie bereits in der Increment Aktion wurde auch in der Read Aktion eine Delay eingebaut, der dabei helfen soll, die Dauer eines Szenarios vorhersagbar zu machen und das Szenario Objekt nicht zu gross werden lässt.
+\end{enumerate}
+
+\paragraph{Logger}
+Bereits zu Begin der Messungen kamen erste Zweifel hoch, über den Speicherplatz Verbrauch der einzelne Testcases. Wie sich später herausstellte, lag der Grund für den grossen Speicherplatz Verbrauch in der extrem grossen Logdatei die vom Testframework Server generiert wurde. Die Datei wurde teilweise so gross, dass das Betriebssystem keine Platz mehr für sich selber besass und den Testcase einfach beendet hat. Die Lösung lag in der Deaktivierung des Logger in der Methode \verb+methodCalled()+. Was jedoch zur folge hatte, das alle Messungen nochmals gemacht werden musste um eine Verfälschung der Daten auszuschliessen.
+

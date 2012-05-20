@@ -178,7 +178,7 @@ Für diesen Testcase wurde bei der Leseaktion extra noch ein Delay eingebaut. Di
 \subsubsection{Szenariobeschreibung}
 In diesem Szenario geht es darum, dass nur ein Client den Balance-Wert erhöht und alle anderen Clients diesen Wert lesen. Beim RMI-Only-System wird bei steigender Anzahl Clients der Verkehr zum Server hin zunehmen. Es ist zu erwarten, dass durch diese Erhöhung die \texttt{SetBalance()}-Aufrufe bei steigender Anzahl Clients langsamer werden. \newline
 Beim Cache-System ist wiederum auch eine kleine Steigung der Messwerte zu erwarten, da bei mehreren aktiven Clients, bei einer Änderung des Balance-Wertes, auch mehr Updates verschickt werden müssen. Dieser Testcase soll also zeigen, wie die Update-Funktion der Client-Caches skaliert, daher, ob das System bei acht Clients langsamer ist, als wenn nur zwei Clients beteiligt sind. \newline
-Die folgende Auswertung der Messresultate beschränkt sich auf den schreibenden Client. Es soll ja untersucht werden, ob und wie stark sich eine steigende Anzahl lesender Clients auf die Schreibdauer eines Clients auswirkt. 
+Die folgende Auswertung der Mess\-resultate be\-schränkt sich auf den schrei\-ben\-den Client. Es soll ja unter\-sucht werden, ob und wie stark sich eine stei\-gen\-de Anzahl le\-sen\-der Clients auf die Schreib\-dauer eines Clients auswirkt. 
 
 \subsubsection{Ergebnisse RMI-Only System}
 
@@ -260,7 +260,7 @@ Wieder Erwarten steigt die gemessene Zeit mit zunehmenden Clients beim \texttt{s
 
 \subsubsection{Interpretation}
 
-Dass das Cache-System bei diesem Testcase so gut skaliert war eigentlich zu erwarten. Mit einem leichten Anstieg der Messwerte wurde gerechnet, doch auch dieser blieb ansich aus. Mit dem Problem der Zeitmessung in Java im Hinterkopf, kann man sagen, dass \texttt{setBalance()}-Aufrufe immer gleich schnell sind, egal, ob zwei oder acht Clients über den neuen Betrag des Balance-Wertes benachrichtigt werden müssen.\newline
+Dass das Cache-System bei diesem Testcase so gut ska\-liert war eigentlich zu erwarten. Mit einem leichten An\-s\-tieg der Mess\-werte wurde gerechnet, doch auch dieser blieb ansich aus. Mit dem Pro\-blem der Zeit\-messung in Java im Hinter\-kopf, kann man sagen, dass \texttt{setBalance()}-Aufrufe immer gleich schnell sind, egal, ob zwei oder acht Clients über den neuen Betrag des Balance-Wertes benachrichtigt werden müssen.\newline
 Erstaundlicherweise skaliert jedoch auch das RMI-Only-System sehr gut. Die Werte der \texttt{setBalance()}-Aufrufe sind im Durch\-schnitt sogar noch etwas tiefer als die Werte, welche mit dem Cache-System gemessen wurden. Natürlich sind die \texttt{getBalance()}-Werte um ein vielfaches höher als im verglichenen Cache-System, dies war jedoch aufgrund des im vorhergehenden Testcases gezeigten Mechanismuses zu erwarten.\newline
 Abschliessend lässt sich zu diesem Testcase sagen, dass weder das eine, noch das andere System abfällt. Beide arbeiten stabil und fehlerlos und wenn nur die \texttt{setBalance()}-Werte betrachtet werden, auch fast gleich schnell. Der Nachteil des RMI-Only-System bleibt wie erwähnt, die langsamen \texttt{getBalance()}-Aufrufe.
 
@@ -317,6 +317,41 @@ TotalTime(with Delays)&80003.756&80093.180&80244.857\\
 Pure Operation Time&79990.542&80081.593&80231.319\\
 \end{tabular*} } \newline
 
+Die nächste Grafik zeigt die Messdaten der \texttt{setBalance()}-Methode:
+\begin{figure}[H]
+\begin{center}
+\includegraphics[scale=0.6]{images_MessErgebnisse/incrementRMISetBalance.png}
+\end{center}
+\end{figure}
+
+Diese Grafik stellt eine grosse Überraschung dar. Es wurde mit einer stark ansteigenden Kurve gerechnet, da bei einer wachsenden Anzahl Clients die Konflikte stark zunehmen. Anscheinend bleiben die Aufrufe aber immer etwa gleich schnell. \newline
+Es scheint, als könne der Server noch viel mehr Anfragen befriedigen, die Latenz von etwa 80ms kommt aber auf Grund des Netzwerks zustande. Das heisst also nicht, dass der RMI-Only Server irgendwo an seine Grenzen stösst, sondern der Umstand das jeder Aufruf über das Netzwerk erfolgt, lässt das System teilweise schwach aussehen.\newline
+Folgende Grafik stellt die durchschnittliche Anzahl Konflikte dar:
+
+\begin{figure}[H]
+\begin{center}
+\includegraphics[scale=0.6]{images_MessErgebnisse/incrementRMIKonfliktzahl.png}
+\end{center}
+\end{figure}
+
+Wie zu erwarten steigt die Kurve in etwa linear an. Jeder dazukommende Client verursacht im ganzen System circa 1000 Konflikte mehr, bei einer Operationsanzahl von 1000 Operationen. Diese Entwicklung der Kurve entspricht in etwa den Erwartungen. \newline
+Schlussendlich die wohl spannendste Grafik. Die "Pure Operation Time" ist die Summe der Zeiten aller ausgeführten Operationen:
+
+\begin{figure}[H]
+\begin{center}
+\includegraphics[scale=0.6]{images_MessErgebnisse/incrementRMIPureOperationTime.png}
+\end{center}
+\end{figure}
+
+Obwohl die \texttt{setBalance()}-Aufrufe immer konstant gleich viel Zeit benötigen, steigt durch die Konfliktanzahl die "Pure Operation Time" an. Da die Gerade der \texttt{setBalance()}-Methode keine Steigung aufweist und die Konfliktanzahl linear steigt, ist bei der "Pure Operation Time" auch eine linear steigende Gerade zu sehen. Der Zusammenhang wird hier noch einmal dargelegt:
+\begin{itemize}
+\item Bei steigender Clientanzahl, steigt auch die Anzahl der Konflikte.
+\item Für jeden Konflikt muss noch einmal eine Operation getätigt werden. Das heisst, die Anzahl Operationen, steigt mit der Anzahl Konflikte.
+\item Da die Zeit, welche für eine Operation benötigt wird, immer gleich bleibt, steigt die Gerade der "Pure Operation Time" analog zu der Geraden der Konfliktanzahl.
+\end{itemize}
+
+Abschliessend muss bemerkt werden, dass das RMI-Only System um einiges besser abschneidet, als es erwartet wurde. 
+
 \subsubsection{Ergebnisse RMI-Only mit Cache System}
 
 In der folgenden Tabelle sind die Werte des Cache-Systems dargestellt:\newline
@@ -326,11 +361,11 @@ In der folgenden Tabelle sind die Werte des Cache-Systems dargestellt:\newline
 \begin{tabular*}{6.5cm}[]{l l l l l l}
 Legende&2Clients&3Clients&4Clients&5Clients\\
 \cline{1-5}
-setBalance&104.285&130.962&247.293&427.024\\
-getBalance&0.134&0.1007&0.101&0.099\\
-Konfliktanzahl&681.5&1532.2&1916.5&2243.8\\
-TotalTime(with Delays)&176070.64&331890.26&721508.42&1385805\\
-PureOperationTime&176052.29&331868.2&721482.83&1385777\\
+setBalance&80.119&80.245&80.301&80.341\\
+getBalance&79.877&79.774&79.754&79.772\\
+Konfliktanzahl&500&1208.4&1661.3&2367\\
+TotalTime(with Delays)&240019.37&353423&415639.3&539152.12\\
+PureOperationTime&240003.2&353400.4&425985.2&539121.2\\
 \end{tabular*} }
 \newline
 \newline
@@ -339,15 +374,14 @@ PureOperationTime&176052.29&331868.2&721482.83&1385777\\
 \begin{tabular*}{6.5cm}[]{l l l l}
 Legende&6Clients&7Clients&8Clients\\
 \cline{1-4}
-setBalance&648.4426&981.2542&1353.4886\\
-getBalance&0.1008&0.0972&0.0907\\
-Konfliktanzahl&2534.5&2871.3333&3254.7083\\
-TotalTime(with Delays)&2303134&3782179&5761716\\
-Pure Operation Time&2303103&3800575&5761681\\
+setBalance&80.308&80.276&80.307\\
+getBalance&79.700&79.732&79.710\\
+Konfliktanzahl&2902.3&3242.9&4371.6\\
+TotalTime(with Delays)&624456.7&67874738&859636.2\\
+Pure Operation Time&624422.5&678712.1&859593.5\\
 \end{tabular*} } \newline
 
-<<<<<<< HEAD
-=======
+
 Die folgende Grafik zeigt die Entwicklung der Messwerte der \texttt{setBalance()}-Aufrufe:
 \begin{figure}[H]
 \begin{center}
@@ -376,8 +410,10 @@ Die nächste Grafik beschäftigt sich mit der reinen Durchführungszeit:
 \end{figure}
 
 Auch diese Funktion steigt exponentiell, was aufgrund der exponentiellen \texttt{setBalance()}-Funktion zu erwarten war. Logischerweise braucht die ganze Durchführung des Testcases mehr Zeit, wenn die \texttt{setBalance()}-Aufrufe mehr Zeit benötigen. Es ist trotzdem spannend zu sehen, dass zwischen diesen zwei Grafik eine direkte Verbindung besteht.
->>>>>>> d282486110ba30dd4342f5fe9367d71c05383e76
-
 
 \subsubsection{Interpretation}
+
+Bei diesem Testcase hat zu grossem erstaunen das RMI-Only System die besseren Werte erzielt, als das System mit Cache. Obwohl die \texttt{getBalance()}-Aufrufe gewohnt um einiges langsamer waren, als beim Cache, konnte das RMI-Only System schlussendlich durch die stabilen Werte der \texttt{setBalance()}-Aufrufe die besseren Ergebnisse liefern.\newline
+ Bei diesem extremen Testcase wurde eigentlich erwartet, dass der Cache um einiges besser skalieren würde, da er die Konfliktanzahl mindern würde. Dies hat der Cache zwar getan, doch durch die einiges langsameren \texttt{setBalance()}-Aufrufe, war das System mit Cache schlussendlich trotzdem um einiges schlechter. \newline
+Es bleibt also anzumerken, dass es bei acht Clients zu sehr vielen Konflikten kommt, egal welches System angewendet wird. Bei sehr vielen Schreibzugriffen, macht der Cache aber bei einer steigenden Anzahl Clients immer weniger Sinn, da die Geschwindigkeit der  \texttt{setBalance()}-Methode immer kleiner wird.
 

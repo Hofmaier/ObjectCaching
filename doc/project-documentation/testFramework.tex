@@ -353,7 +353,7 @@ Beim Start der client.jar Datei kann das Startup-Skript zwei Argumente mitgeben:
 \item Pflicht Argument: Binding Namen
 \item Optionales Argument: spezifischer RMI-Port
 \end{enumerate}
-Die Kommunikation zwischen dem Testframework Client und dem Testframework Server ist über das in Java bereits vorhandene RMI realisiert. Der Startvorgang eines Clients sieht wie folgt aus:
+Die Kommunikation zwischen dem Testframework Client und dem Testframework Server ist über das in Java bereits vorhandene RMI \cite{java_rmi} realisiert. Der Startvorgang eines Clients sieht wie folgt aus:
 \begin{enumerate}
 \item Es wird ein neues ClientController Objekt instanziiert. Der ClientController implementiert das Client Interface, welches mit Remote markiert ist.
 \item Aus dem instanziierten ClientController Objekte wird ein Remoteobjekt generiert.

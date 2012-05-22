@@ -1,9 +1,11 @@
-\chapter{Objectcaching}
+\chapter{Object-Caching}
 \label{sec:object-caching}
 
 Um die Dauer von Lesezugriffen im RMI-System zu verkürzen, wurde eine erweiterte Version des RMI-Systems mit integriertem Objectcaching erstellt. Schreibzugriffe werden an den Server gesendet. 
 
-Bei der Erstellung des Konzeptes mussten Designentscheide in den Bereichen Replica Placement, Update Distribution und Konsistenzprotokoll getroffen werden.
+Bei der Erstellung des Konzeptes mussten Designentscheide in den Bereichen Replica Placement, Update Distribution und Konsistenzprotokoll getroffen werden. Im ersten Teil dieses Kapitels werden diese Entscheidungen beschrieben. Der zweite Teil beschreibt, wie diese Entscheide implementiert wurde.
+
+Mit der Replikation von Objekten treten neue Probleme im Zusammenhang mit der Concurrency Control auf. Im Abschnitt \ref{sec:impl-der-conc} werden verschieden Ablaufszenarien untersucht, die zu Lost Updates führen.
 
 \section{Replica Placement}
 \label{sec:replica-management}
@@ -81,7 +83,7 @@ Augrund der \verb|ObjectUpdate|-Nachrichten muss der Client in der Lage sein, ei
 Im Object-Caching System muss der Client in der Lage sein, Object\-Update\--Messages zu empfangen und zu verarbeiten ohne, dass es weiss, wann es ein \verb|ObjectUpdate| über den Stream gesendet wird. Der Client kann sich nicht mehr darauf verlassen, dass Objekte aus dem TCP-Stream zum Server, die Antwort auf einen Methodaufruf sind. Es könnte auch ein \texttt{ObjectUpdate} sein. Damit die Verarbeitung von eintreffenden Nach\-richten im Client nicht von der ausgehenden Nachricht abhängig ist, wird der Nach\-richt\-enaustausch im System in der Klasse \verb|MessageManager| gekapselt. \texttt{MessageManager} bietet folgende Methoden an.
 
 \begin{description}
-\item[sendMessageCall] Diese Methode nimmt alle Nachrichten entgegen, die an den Client gesendet werden sollen. Die Methode platziert alle Nachrichten in einer \verb|BlockingQueue| 
+\item[sendMessageCall] Diese Methode nimmt alle Nachrichten entgegen, die an den Server gesendet werden sollen. Die Methode platziert alle Nachrichten in einer \verb|BlockingQueue| 
 \item[receiveReturnValue] Hat ein Client eine Nachricht für einen Methodenaufruf an den Server gesendet, liefert diese Methode die darauffolgende ReturnValue-Nachricht. Da der \verb+MessageManager+ nur von einem Client benutzt wird, kann sich ein Client darauf verlassen, dass die ReturnValue-Nachricht zum vorhergehenden MethodCall-Nach\-richt \-passt.  Die Methode blockiert bis ein ReturnValue empfangen wird.
 \item[receiveObject] Antwortnachrichten für einen ObjectRequest können über diese Methode entgegengenommen werden. 
 \item[receiveUpdate] Die Methode blockiert bis eine ObjectUpdate-Nachricht vom Server eintrifft. Wird eine ObjectUpdate-Nachricht empfangen, liefert die Methode ein ObjectUpdate-Objekt als Rückgabewert.
@@ -135,7 +137,6 @@ Im ersten Szenario treten keine Konsistenzprobleme auf. Nur ein Client ruft nach
   \label{fig:oneclient}
 \end{figure}
 
-
 \subsubsection{Konflikt wird lokal festgestellt}
 \label{sec:szenario-mit-zwei}
 
@@ -182,7 +183,7 @@ In diesem Szenario wird der \texttt{setBalance()}-Aufruf unterbrochen bevor er d
 \subsubsection{Update und setBalance überkreuzen sich}
 \label{sec:update-und-set}
 
-Bei allen Fällen kann Inkonsistenz festgestellt werden, indem sich der Server und der Clientcache merkt, welche Version an den Client vor dem \verb|setBalance()|herausgegeben wurde und überprüft, ob die Version des Objektes mittlerweile höher ist. Dabei müssen die Versionnummern im Cache und auf dem Server nicht synchron sein. Es gibt jedoch eine Aufrufabfolgemöglichkeit bei der Inkonsistenz entstehen kann (siehe \ref{fig:messagecross}.
+Bei allen Fällen kann Inkonsistenz festgestellt werden, indem sich der Server und der Clientcache merkt, welche Version an den Client vor dem \verb|setBalance()| heraus\-gegeben wurde und überprüft, ob die Version des Objektes mittlerweile höher ist. Dabei müssen die Versionnummern im Cache und auf dem Server nicht synchron sein. Es gibt jedoch eine Aufrufabfolgemöglichkeit bei der Inkonsistenz entstehen kann (siehe \ref{fig:messagecross}.
 
 \begin{enumerate}
 \item Client 2 sendet ein \verb|setBalance()|. Der Server versendet das Update und aktualisiert die Versionsnummern der Clients.
@@ -200,16 +201,4 @@ Bei allen Fällen kann Inkonsistenz festgestellt werden, indem sich der Server u
 Um Inkonsistenz bei diesem Szenario zu erkennen und zu verhindern, muss die Nachricht die den \verb|setBalance()| Methodenaufruf enthält, die Versionnummer des Clients, der die Methode aufruft, mitsenden. Ist diese Versionnummer tiefer als die aktuelle Versionnummer des Objektes wird eine Exception geworfen. Damit die Versionnummern auf Server und auf Client immer synchron sind muss bei einem ObjectRequest die aktuelle Versionnummer an den Client gesendet werden. Bei einem Update wird die Nummer einfach inkrementiert.
 
 Alternative zu der Lösung mit der Versionsnummer, die bei einem Methodenaufruf mitgesendet wird, könnte der Server auch eine Bestätigung des Client, dass er das Update erhalten hat, abwarten und erst nach dieser Bestätigung die Version des entsprechende Client aktualisieren.
-
-
-\section{Domain Klassen des Client}
-\label{sec:domain-klassen}
-
-\begin{description}
-\item[Cache] Die Stubs, z.B. AccountStub, fordern beim Cache Objekte an. Der Cache holt die Objekte aus dem Memory oder er fodert sie über Netzwerk beim Server an. Er fordert sie beim Server an, wenn sie noch nicht vorhanden sind oder wenn ein Objekt invalidiert wurde. Der Cache muss bei einem Update, die Objekte im Hauptspeicher aktualisieren.
-\item[Concurrency Control] Überprüft ob \verb+getBalance+ und \verb+setBalance()+ ausgeführt werden können, ohne dass Inkonsistenzen entstehen.
-
-\item[Message Manager] Nimmt Messages für Remote-Methodenaufruf und Ob\-jekt\- -Request entgegen und sorgt dafür dass sie an den Server versendet werden und die Antwort darauf an den Absender weitergeleitet werden. Nimmt vom Server Update-Messages entgegen und leitet sie an den Cache weiter.
-
-\end{description}
 

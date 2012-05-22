@@ -2,6 +2,8 @@
 
 Die Idee ein RMI-System mit integriertem Client-Cache zu entwickeln, ist bei der Arbeit an Mercury entstanden. Mercury ist ein Datenverarbeitungssystem. Clients können sich an einen Server anmelden und Methoden auf Objekten ausführen, die auf dem Server vorhanden sind. 
 
+Führen mehrere Clients Methoden der gemeinsam genutzen Objekte aus, kann es vorkommen, das Daten unabsichtlich überschrieben werden. Dieser Fehler kann auftreten, weil Clients Daten über Methoden auslesen und diese Daten später in Methoden mit Schreibzugriff weiterverwenden, obwohl die Daten inzwischen veraltet sind.
+
 Ein Ziel dieser Arbeit ist es ein Konzept zu entwickeln um
 diese Fehler zu verhindern. Anhand dieses Konzeptes wird ein Prototyp
 diese Systems erstellt. Dieses System ist eine vereinfachte

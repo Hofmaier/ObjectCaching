@@ -55,12 +55,12 @@ Die Kommunikation des Frameworkservers mit den Frameworkclients ist in folgendem
 Die im Diagramm dargestellten Operationen lassen sich wie folgt erklären:
 
 \begin{itemize}
-\item Die Methode \texttt{generateTestCase()} ruft eine Factory auf, welche aus einer XML-Datei einen Testcase generiert. Diese Factory wird unter dem Ka\-pi\-tel Testcase-Factory genauer be\-schrie\-ben.
-\item Alle Konfigurationsparameter welche der Server braucht, sind in einer Konfigurations\-datei ab\-ge\-legt. Durch eine Configurationfactory wird durch mit Hilfe der Konfig\-urationsdatei ein Configuration- Objekt er\-zeugt. Unter dem Kapi\-tel "Configuration-Factory" wird dies näher beschrieben.
-\item Nachdem die Konfigurationsparameter ausgelesen wurden, kann der Dis\-patcher in einem seper\-aten Thread ge\-startet werden. Weitere Aus\-füh\-run\-gen sind unter dem Kapitel "Der Dispatcher" zu finden.
-\item Bei der Initialisierung der Clients, wird diesen je ein Szenario und ein Configuration-Objekt gesendet. Das Configuration-Objekt umfasst alle für den Client wichtigen Konfigurationsparameter, wie etwa die Ports, unter welchen der Server seine Dienste zur Verfügung stellt. Was ein Szenario genau ist, wird unter dem "Kapitel Testcase-Factory" genauer beschrieben.
-\item Pro Client hat der Server beim Auslesen der Konfigurationsdatei ein Client-Objekt instanziert. Dies wurde voral\-lem zur Kon\-trol\-le der Cli\-ents durch den Server so implementiert. Darauf wird im Kapitel "'ClientObjekt" eingegangen.
-\item Nachdem alle Clients \texttt{setReady()} aufgerufen haben, ruft der Server \texttt{start()} auf allen Clients auf. Dieser Vorgang wird unter dem Kapitel die "'Start-Methode" genauer erläutert.
+\item Die Methode \texttt{generateTestCase()} ruft eine Factory auf, welche aus einer XML-Datei einen Testcase generiert. Diese Factory wird unter dem Ka\-pi\-tel \ref{sec:testCaseFactory} "'Testcase-Factory" genauer be\-schrie\-ben.
+\item Alle Konfigurationsparameter welche der Server braucht, sind in einer Konfigurations\-datei ab\-ge\-legt. Durch eine Configurationfactory wird durch mit Hilfe der Konfig\-urationsdatei ein Configuration- Objekt er\-zeugt. Unter dem Kapi\-tel \ref{sec:configurationFactory} "'Configuration Factory" wird dies näher beschrieben.
+\item Nachdem die Konfigurationsparameter ausgelesen wurden, kann der Dis\-patcher in einem seper\-aten Thread ge\-startet werden. Weitere Aus\-füh\-run\-gen sind unter dem Kapitel \ref{sec:dispatcher} "'Der Dispatcher" zu finden.
+\item Bei der Initialisierung der Clients, wird diesen je ein Szenario und ein Configuration-Objekt gesendet. Das Configuration-Objekt umfasst alle für den Client wichtigen Konfigurationsparameter, wie etwa die Ports, unter welchen der Server seine Dienste zur Verfügung stellt. Was ein Szenario genau ist, wird unter dem Kapitel \ref{sec:testCaseFactory} "'Testcase-Factory" genauer beschrieben.
+\item Pro Client hat der Server beim Auslesen der Konfigurationsdatei ein Client-Objekt instanziert. Dies wurde voral\-lem zur Kon\-trol\-le der Cli\-ents durch den Server so implementiert. Darauf wird im Kapitel \ref{sec:clientObjekt} "'ClientObjekt" eingegangen.
+\item Nachdem alle Clients \texttt{setReady()} aufgerufen haben, ruft der Server \texttt{start()} auf allen Clients auf. Dieser Vorgang wird unter dem Kapitel \ref{sec:startMethode} "'Start-Methode" genauer erläutert.
 \end{itemize}
 
 \subsubsection{Testcase-Factory}
@@ -89,7 +89,7 @@ Durch die ein\-ge\-lesenen In\-for\-ma\-tio\-nen er\-stellt die Fac\-tory die Sz
 
 Das Attribut "'SystemUnderTest" definiert das zu testende System. Der Vorteil dieser Methode ist, dass das zu testende System einfach in XML angegeben wird und dann getestet werden kann. Es müssen so keine Anpassungen am Code vorgenommen werden, egal welches System getestet werden soll. Somit spielt es für das Framework keine Rolle, welches System getestet werden soll.\newline
 Eine TestCase-Datei beschreibt genau einen TestCase. Ein Test\-Case kann ver\-schie\-dene Sze\-na\-ri\-en be\-in\-hal\-ten, oder aber auch nur ein Szena\-rio be\-schrei\-ben. Ist nur ein Sz\-enario definiert, werden beide Clients mit dem\-selben Szenario arbeiten. Falls mehrere Szenarien beschrieben sind, werden die Clients unterschiedliche Szenarien durchführen. \newline
-Aus obigem XML-Code generiert die Factory nun ein Objekt vom Typ TestCase. Dieses Objekt definiert nun zwei Szenarien, welche wiederum aus mehreren Actions bestehen. Was genau eine Action ist, ist unter dem Kapitel "'Actions" beschrieben. Die Factory wird nun bei diesem Beispielcode eine Abfolge von 100 "'Increment-Action" erstellen und diese in das Scenario-Objekt ablegen.
+Aus obigem XML-Code generiert die Factory nun ein Objekt vom Typ TestCase. Dieses Objekt definiert nun zwei Szenarien, welche wiederum aus mehreren Actions bestehen. Was genau eine Action ist, ist unter dem Kapitel \ref{sec:action} "'Actions" beschrieben. Die Factory wird nun bei diesem Beispielcode eine Abfolge von 100 "'Increment-Action" erstellen und diese in das Scenario-Objekt ablegen.
 
 
 \subsubsection{Configuration-Factory}
@@ -110,7 +110,7 @@ Aus diesen Informationen erstellt die Factory ein Configuration- Objekt, welches
 Pro Client, welcher in der Konfigurationsdatei definiert ist, wird ein Client-Objekt instanziert, was im folgenden Kapitel beschrieben wird.
 
 \subsubsection{ClientObjekt}
-\label{sec:ClientObjekt}
+\label{sec:clientObjekt}
 
 Das Clientobjekt besitzt unter anderem ein Datenfeld, welches genau zwei Zustände annehmen kann: Ready und NotReady. Führt der Frameworkclient die Methode \texttt{setReady()} auf dem Server aus, wird der Status auf dem jeweiligen Objekt auf Ready gesetzt. Folgend die Implementation der setReady-Methode:
 \begin{lstlisting}[language=Java, breaklines=true]
@@ -195,9 +195,9 @@ Nach Beendigung eines Testlaufs, muss der Server mehrere Arbeiten erledigen. Nac
 Die im Diagramm ersichtlichen Operationen können folgender\-massen er\-läu\-tert werden:
 \begin{itemize}
 \item Die Methode \texttt{setResults(Scenario)} wird vom Client auf dem Server auf\-ge\-rufen, durch den Aufruf dieser Methode weiss der Server, dass der aufrufende Client sein Szenario durchgespielt hat. Weiter wird mit dem Aufruf der Methode wiederum ein Thread durch den RMI-Daemon gestartet, welcher die weiter folgenden Methoden anstösst.
-\item Aus der \texttt{setResults(Scenario)}- Methode wird di\-rekt "'stopClient()" auf\-ge\-rufen. Was diese Methode genau macht, wird im Kapitel "'Stoppen eines Clients" genau beschrieben.
-\item Die Methode \texttt{shutDown()} wird auf dem Client aufgerufen. Der Client trennt daraufhin die RMI-Verbindung zum Server und schaltet sich selber ab. Nähere Informationen zum Abschaltungsprozess eines Clients kann unter dem Kapitel "Testframework Client" nachgelesen werden.
-\item Die Methode \texttt{printSummary()} verwertet die Ergebnisse, welche die Clients in ihrem Szenario gespeichert und wieder übertragen haben. Mehr Informationen dazu im Kapitel "'Report Generator". Weiter wird auf der Console ausgegeben, ob es "Lost-Update"-Probleme gegeben hat oder nicht. Mehr zu diesem Thema unter "'Result Generator".
+\item Aus der \texttt{setResults(Scenario)}- Methode wird di\-rekt "'stopClient()" auf\-ge\-rufen. Was diese Methode genau macht, wird im Kapitel \ref{sec:stopClient} "'Stoppen eines Clients" genau beschrieben.
+\item Die Methode \texttt{shutDown()} wird auf dem Client aufgerufen. Der Client trennt daraufhin die RMI-Verbindung zum Server und schaltet sich selber ab. Nähere Informationen zum Abschaltungsprozess eines Clients kann unter dem Kapitel \ref{sec:test-FW Client} "'Testframework Client" nachgelesen werden.
+\item Die Methode \texttt{printSummary()} verwertet die Ergebnisse, welche die Clients in ihrem Szenario gespeichert und wieder übertragen haben. Mehr Informationen dazu im Kapitel \ref{sec:reportGenerator} "'Report Generator". Weiter wird auf der Console ausgegeben, ob es "Lost-Update"-Probleme gegeben hat oder nicht. Mehr zu diesem Thema unter dem Kapitel \ref{sec:resultGenerator}"'Result Generator".
 \end{itemize}
 
 \subsubsection{Stoppen eines Clients}
@@ -389,7 +389,7 @@ In der konkreten Im\-p\-le\-men\-ta\-ti\-on der Me\-tho\-de \texttt{initialize(S
 \end{center}
 \caption{Start eines Testlauf durch den Testframework Server}
 \end{figure}
-Das Sequenzdiagramm ist eine vereinfachte Darstellung des Testlaufs. Der Server startet den Testdurchlauf parallel auf allen ClientController über die Methode \verb+startTest()+. Diese ruft auf dem TestClient \verb+runScenario()+ auf, eine detailierte Erklärung was in dieser Methode passiert, ist im Kapitel "Test Client" zu finden. Sind alle Aktionen des gegeben Szenarios abgearbeitet, wird das gesamte Szenario mit den gesammelten Messresultaten über die Methode \verb+setResults(Scenario scenario, String IP)+ zurück an den Server geschickt.
+Das Sequenzdiagramm ist eine vereinfachte Darstellung des Testlaufs. Der Server startet den Testdurchlauf parallel auf allen ClientController über die Methode \verb+startTest()+. Diese ruft auf dem TestClient \verb+runScenario()+ auf, eine detailierte Erklärung was in dieser Methode passiert, ist im Kapitel "'Test Client" \ref{sec:testclient} zu finden. Sind alle Aktionen des gegeben Szenarios abgearbeitet, wird das gesamte Szenario mit den gesammelten Messresultaten über die Methode \verb+setResults(Scenario scenario, String IP)+ zurück an den Server geschickt.
 
 \subsubsection{Herunterfahren des ClientController}
 Die Methode \texttt{shutdown()} be\-endet den Test\-frame\-work\-Client und das Client\-System\-Under\-Test. Die \texttt{shut\allowbreak down()} Me\-tho\-de be\-steht aus mehreren Teil\-schrit\-ten:
@@ -471,7 +471,7 @@ Die Lösung dieses Problem lag in einer Wartephase vor dem eigentlichen Abarbeit
 
 \section{Action}
 \label{sec:action}
-Ein Szenario beinhaltet eine Menge von Aktionen, welche auf ein Account Objekt ausgeführt werden können. Für eine einfache Erweiterbarkeit von neuen Aktionen, ist hierfür das Command-Pattern benutzt worden. Alle konkreten Implementierungen einer Aktion müssen von der abstrakte Klasse Action ableiten. Im Konstruktor dieser abstrakten Klasse wird ein neues Result Objekt (siehe Kapitel Result) instanziert. Dieses Objekt dient als Datenkontainer für alle Zeitmessungen die während dieser Aktion gesammelt werden sollen. Desweiteren deklariert Action drei abstrakte Methoden die von Subklassen implementiert werden müssen.
+Ein Szenario beinhaltet eine Menge von Aktionen, welche auf ein Account Objekt ausgeführt werden können. Für eine einfache Erweiterbarkeit von neuen Aktionen, ist hierfür das Command-Pattern benutzt worden. Alle konkreten Implementierungen einer Aktion müssen von der abstrakte Klasse Action ableiten. Im Konstruktor dieser abstrakten Klasse wird ein neues Result Objekt instanziert. Im Kapitel "'Result" \ref{sec:result} wird dieser Typ genauer beschrieben. Dieses Objekt dient als Datenkontainer für alle Zeitmessungen die während dieser Aktion gesammelt werden sollen. Desweiteren deklariert Action drei abstrakte Methoden die von Subklassen implementiert werden müssen.
 \begin{lstlisting}[language=java, breaklines=true] 	
 public abstract ActionTyp getActionTyp();
 public abstract int getMinimalNumberOfTimeRecords();

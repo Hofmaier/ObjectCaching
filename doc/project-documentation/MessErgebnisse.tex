@@ -88,6 +88,7 @@ Diese Zahlen sind Durch\-schnitt\-swer\-te von drei Messungen. Die genauen Mess\
 \begin{figure}[H]
 \begin{center}
 \includegraphics[scale=0.6]{images_MessErgebnisse/getBalance_RMI.png}
+\caption{\texttt{getBalance()}-Zeitaufwand, System ohne Cache(nur lesende Zugriffe)}
 \end{center}
 \end{figure}
 Es wird schnell ersichtlich, dass das System mit einer steigenden Anzahl Clients langsamer wird. Dies erscheint durchaus logisch, da jeder getBalance-Aufruf an den Server gesendet wird. Wird der Server nun von mehreren Clients angefragt, verschlechtern sich auch dessen Antwortzeiten, was eine verlangsamung des Aufrufs zur Folge hat.
@@ -127,6 +128,7 @@ Diese Zahlen sind wiederum Durch\-schnitts\-wer\-te.  In der folgenden Grafik we
 \begin{center}
 \includegraphics[scale=0.6]{images_MessErgebnisse/getBalance_03ms.png}
 \end{center}
+\caption{\texttt{getBalance()}-Zeitaufwand, System mit Cache(nur lesende Zugriffe)}
 \end{figure}
 
 Damit die Grafik einen Sinn ergibt, mussten die Zeiten auf der Y-Achse an\-ge\-passt werden. Hätte man die Skala aus dem RMI-Only-System über\-nom\-men, wäre auf der Grafik nur eine Linie er\-sicht\-lich. Es muss dennoch bemerkt werden, dass bei dieser Grafik die Skala auf der Y-Achse extrem klein ist und Mess\-un\-ter\-schiede, wenn auch nur Mi\-ni\-male, in dieser Grafik stark zum tragen kommen. Ein Ver\-gleich mit der vor\-her\-gehenden Grafik des Systems ohne Cache ist also mit Vorsicht zu geniessen.
@@ -215,6 +217,7 @@ Die Ergebnisse der \texttt{setBalance()}-Aurufe werden in dieser Abbildung grafi
 \begin{center}
 \includegraphics[scale=0.6]{images_MessErgebnisse/incrementAndReadRMI.png}
 \end{center}
+\caption{\texttt{setBalance()}-Zeitaufwand, System ohne Cache(lesende/schreibende Zugriffe)}
 \end{figure}
 
 Erstaunlicherweise skaliert das System ohne Cache sehr gut. Die Werte für einen sch\-rei\-ben\-den Zugriff bleiben in etwa immer gleich. Anscheinend wurde das System etwas unterschätzt, denn augen\-scheinlich hätte man noch weit mehr Rechner lesen lassen können, ohne dass man eine Verlangsamung registriert hätte.
@@ -254,6 +257,7 @@ In der folgenden Grafik ist der Verlauf der Messwerte der \texttt{setBalance()}-
 \begin{center}
 \includegraphics[scale=0.6]{images_MessErgebnisse/incrementAndReadCache.png}
 \end{center}
+\caption{\texttt{setBalance()}-Zeitaufwand, System mit Cache(lesende/schreibende Zugriffe)}
 \end{figure}
 
 Wieder Erwarten steigt die gemessene Zeit mit zunehmenden Clients beim \texttt{setBalance()}-Aufruf nicht an. Die gemessene Zeit bleibt circa immer gleich, was darauf schliessen lässt, dass das Cache-System prima skaliert. Es scheint, als könnten noch einige Clients mehr "lesen", ohne eine spürbare Verlangsamung in Kauf nehmen zu müssen.
@@ -322,6 +326,7 @@ Die nächste Grafik zeigt die Messdaten der \texttt{setBalance()}-Methode:
 \begin{center}
 \includegraphics[scale=0.6]{images_MessErgebnisse/incrementRMISetBalance.png}
 \end{center}
+\caption{\texttt{setBalance()}-Zeitaufwand, System ohne Cache(nur schreibende Zugriffe)}
 \end{figure}
 
 Diese Grafik stellt eine grosse Überraschung dar. Es wurde mit einer stark ansteigenden Kurve gerechnet, da bei einer wachsenden Anzahl Clients die Konflikte stark zunehmen. Anscheinend bleiben die Aufrufe aber immer etwa gleich schnell. \newline
@@ -332,6 +337,7 @@ Folgende Grafik stellt die durchschnittliche Anzahl Konflikte dar:
 \begin{center}
 \includegraphics[scale=0.6]{images_MessErgebnisse/incrementRMIKonfliktzahl.png}
 \end{center}
+\caption{Anzahl Konflikte, System ohne Cache(nur schreibende Zugriffe)}
 \end{figure}
 
 Wie zu erwarten steigt die Kurve in etwa linear an. Jeder dazukommende Client verursacht im ganzen System circa 1000 Konflikte mehr, bei einer Operationsanzahl von 1000 Operationen. Diese Entwicklung der Kurve entspricht in etwa den Erwartungen. \newline
@@ -341,6 +347,7 @@ Schlussendlich die wohl spannendste Grafik. Die "Pure Operation Time" ist die Su
 \begin{center}
 \includegraphics[scale=0.6]{images_MessErgebnisse/incrementRMIPureOperationTime.png}
 \end{center}
+\caption{Pure Operation Time System ohne Cache(nur schreibende Zugriffe)}
 \end{figure}
 
 Obwohl die \texttt{setBalance()}-Aufrufe immer konstant gleich viel Zeit benötigen, steigt durch die Konfliktanzahl die "Pure Operation Time" an. Da die Gerade der \texttt{setBalance()}-Methode keine Steigung aufweist und die Konfliktanzahl linear steigt, ist bei der "Pure Operation Time" auch eine linear steigende Gerade zu sehen. Der Zusammenhang wird hier noch einmal dargelegt:
@@ -387,6 +394,7 @@ Die folgende Grafik zeigt die Entwicklung der Messwerte der \texttt{setBalance()
 \begin{center}
 \includegraphics[scale=0.6]{images_MessErgebnisse/incrementCacheSetBalance.png}
 \end{center}
+\caption{\texttt{setBalance()}-Zeitaufwand, System mit Cache(nur schreibende Zugriffe)}
 \end{figure}
 
 Zu erwarten war eine zeitliche Erhöhung bei einer steigenden Anzahl Clients. Dass die Kurve aber so krass steigen wird, ja fast einen exponentiellen Verlauf einnehmen würde, wurde nicht erwartet. Wenn alle beteiligten Clients schreibende Zugriffe tätigen, skaliert das System also schlecht. Es bleibt zu erahnen, wie die Kurve bei 20 Clients aussehen würde. Sehr wahrscheinlich würde der Kurvenverlauf analog der oben gezeigten Grafik mit der gleichen Steigung weitersteigen. \newline
@@ -396,6 +404,7 @@ In der nächsten Grafik wird die durchschnittliche Anzahl Konflikte pro Client g
 \begin{center}
 \includegraphics[scale=0.6]{images_MessErgebnisse/incrementCacheKonfliktzahl.png}
 \end{center}
+\caption{Anzahl Konflikte, System mit Cache(nur schreibende Zugriffe)}
 \end{figure}
 
 Es ist spannend zu sehen, dass die Konfliktanzahl linear mit der Anzahl Clients zunimmt. Leider ist auch dies ein schlechtes Verhalten bezüglich der Skalierbarkeit des Systems. Wahrscheinlich würde die Funktion linear weitersteigen, würden noch mehr Clients in den Test einbezogen. \newline
@@ -407,6 +416,7 @@ Die nächste Grafik beschäftigt sich mit der reinen Durchführungszeit:
 \begin{center}
 \includegraphics[scale=0.6]{images_MessErgebnisse/incrementCachePureOperationTime.png}
 \end{center}
+\caption{Pure Operation Time, System ohne Cache(nur schreibende Zugriffe)}
 \end{figure}
 
 Auch diese Funktion steigt exponentiell, was aufgrund der exponentiellen \texttt{setBalance()}-Funktion zu erwarten war. Logischerweise braucht die ganze Durchführung des Testcases mehr Zeit, wenn die \texttt{setBalance()}-Aufrufe mehr Zeit benötigen. Es ist trotzdem spannend zu sehen, dass zwischen diesen zwei Grafik eine direkte Verbindung besteht.

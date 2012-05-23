@@ -7,7 +7,7 @@
 \usepackage{booktabs}
 \usepackage{lscape}
 \usepackage{hsrita}
-
+\usepackage[xindy]{glossaries}
 
 %Title page
 \title{Object Caching}
@@ -33,12 +33,16 @@
 %Content
 \pagestyle{plain} 
 \pagenumbering{arabic}
+\include{glossary}
+
+\makeglossaries
 \include{introduction}
 \include{rmiWithConcurrencyControl}
 \include{object-caching} 
 \include{testFramework}
 \include{MessErgebnisse}
 \include{appendix}
+\printglossaries
 \listoffigures
 \bibliographystyle{plain}
 \bibliography{bibliography}

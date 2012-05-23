@@ -18,3 +18,7 @@ dist/*
 */textLog.txt.1
 */textLog.txt.1.lck
 *.toc
+*.glg
+*.glo
+*.gls
+*.xdy

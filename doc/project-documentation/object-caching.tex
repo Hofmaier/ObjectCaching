@@ -90,12 +90,20 @@ Im Object-Caching System muss der Client in der Lage sein, Object\-Update\--Mess
 \item[receiveUpdate] Die Methode blockiert bis eine ObjectUpdate-Nachricht vom Server eintrifft. Wird eine ObjectUpdate-Nachricht empfangen, liefert die Methode ein ObjectUpdate-Objekt als Rückgabewert.
 \end{description}
 
+Die Verarbeitung der Nachrichten wird von mehrere Threads durchgeführt (siehe Abbildung \ref{fig:msgmng}.
 Für ausgehende Nachrichten enthält der \verb|MessageManager| eine BlockingQueue. Bei Aufruf von sendMessageCall wird die zu sendende Nachricht in der Queue platziert. Ein Thread ist nur dafür zuständig Nachrichten aus dieser Queue zu nehmen und in den Stream zum Server zu schreiben.
 
 
 Für eintreffende Nachrichten hat der Server mehrere BlockingQueues. Für jede der Nachrichtentypen ObjectRequestResponse, ReturnValue und ObjectUpdate gibt es eine BlockingQueue. Trifft eine Nachricht beim Client ein, muss sie einfach in die richtige Queue geschoben werden. Ein Client holt sie mit der entsprechenden receive-Methode wieder raus. Ein Thread ist dafür zuständig eintreffende Nachrichten aus dem Stream zu lesen und der richtigen Queue hinzuzufügen. 
 
 Der Cache enthält ein Thread, der in einer Endlosschleife receiveUpdate aufruft. Diese Methode blockiert die meiste Zeit, da nicht andauernd Updates empfangen werden. Kommt eine ObjectUpdate-Nachricht rein, wird sie im MessageManager in der BlockingQueue für ObjectUpdates hinzugefügt. Der receiveUpdate-Methodenaufruf kommt zurück und aktualisiert den Cache.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[scale=0.3]{images_objectcaching/messageManager}  
+  \caption{MessageManager Threads}
+  \label{fig:msgmng}
+\end{figure}
 
 \subsection{Beispielablaufszenario}
 \label{sec:beisp}

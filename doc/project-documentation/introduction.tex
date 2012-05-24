@@ -10,7 +10,7 @@ Ein weiteres Ziel der Arbeit ist die Verbesserung der Performance in einer RMI U
 
 Mit der Replikation von Objekten entstehen neue Probleme. Gibt es mehrere Kopien von Objekten, müssen Änderungen an einer Kopie an die anderen Kopien weitergegeben werden. Dieser Aktualisierungsprozess kann die Performance wiederum mindern, da ein Server oft damit beschäftigt ist, Kopien zu aktualisieren. Es wurde ein Konzept erstellt, wie ein Caching von Objekten in einem RMI-System realisiert werden kann. Um die Funktionalität zu testen und die Performance zu messen wurde das Konzept implementiert. 
 
-Ein weiteres Problem im Zusammenhang mit Objektcaching ist, dass das System mehr Netzwerkbandbreite benötigt, da es mehr Nachrichten versendet, um die Kopien aktuell zu halten.
+Ein weiteres Problem im Zu\-sam\-men\-hang mit Objekt\-caching ist, dass das Sy\-stem mehr Netzwerkbandbreite benötigt, da es mehr Nachrichten versendet, um die Kopien aktuell zu halten.
 
 Um die Vor -und Nachteile der beschriebenen Konzepte zu finden, muss ein Test-Framework geschrieben werden. Dieses Framework soll Zeitmessungen der einzelnen Methodenaufrufe ermöglichen, was Fehler in den Konzepten schonungslos aufdecken wird. Das Framework soll also zeigen, in welchen Anwendungsfällen sich ein System mit einem Cache lohnt und in welchem Anwendungsfall dies purer Ballast wäre.
 

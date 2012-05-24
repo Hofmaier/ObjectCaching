@@ -49,7 +49,8 @@ In unsererem Cache werden Aktualisierungen durch "'push-based" Updateds realisie
 \subsection{Konsistenzmodell}
 \label{sec:konsistenzmodell}
 
-Ein Konsistenzmodel beschreibt unter anderem, in welcher Reihenfolge unterschiedliche Prozesse, die auf die selben Objekte in einem verteilten System zugreifen, die Operationen, die auf den Objekte ausgeführt wurden sehen. Das Konsistenzprotokoll implementiert das Konsistenzmodel.
+In unserem System greifen Client auf gemeinsame Objekte zu, indem sie Schreib- und Leseoperationen darauf ausführen. Jeder Client kann eine lokale Kopie eines Objektes bei sich im Cache haben. Führt eine Client eine Schreiboperation auf einem Objekt aus, muss diese durch das ganze verteilte System propagiert werden.
+Ein Konsistenzmodel beschreibt unter anderem in welcher Reihenfolge die Clients die Schreiboperationen sehen. Das Konsistenzprotokoll implementiert das Konsistenzmodel.
 
 Sequenzielle Konsistenz ist ein Konsistenzmodel. Es definiert, dass alle Prozesse in einem verteilten System die selbe Reihenfolge der Operationen auf einem Objekt sehen \cite{tanenbaum07}.  Das Konsistenzprotokoll unseres Object-Caching-Systems implementiert sequenzielle Konsistenz.
 

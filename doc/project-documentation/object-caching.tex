@@ -3,7 +3,7 @@
 
 Um die Dauer von Lesezugriffen im RMI-System zu verkürzen, wurde eine erweiterte Version des RMI-Systems mit integriertem Objectcaching erstellt. Schreibzugriffe werden an den Server gesendet. 
 
-Bei der Erstellung des Konzeptes mussten Designentscheide in den Bereichen Replica Placement, Update Distribution und Konsistenzprotokoll getroffen werden. Im ersten Teil dieses Kapitels werden diese Entscheidungen beschrieben. Der zweite Teil beschreibt, wie diese Entscheide implementiert wurde.
+Bei der Erstellung des Konzeptes mussten Designentscheide in den Bereichen Replica Placement, Update Distribution und Konsistenzprotokoll getroffen werden. Im ersten Teil dieses Ka\-pi\-tels werden diese Ent\-schei\-dun\-gen be\-schrie\-ben. Der zweite Teil beschreibt, wie diese Entscheide implementiert wurde.
 
 Mit der Replikation von Objekten treten neue Probleme im Zusammenhang mit der Concurrency Control auf. Im Abschnitt \ref{sec:impl-der-conc} werden verschieden Ablaufszenarien untersucht, die zu Lost Updates führen.
 
@@ -98,7 +98,7 @@ Der Cache enthält ein Thread, der in einer Endlosschleife receiveUpdate aufruft
 
 \begin{figure}[ht]
   \centering
-  \includegraphics[scale=0.3]{images_objectcaching/messageManager}  
+  \includegraphics[scale=0.4]{images_objectcaching/messageManager}  
   \caption{MessageManager Threads}
   \label{fig:msgmng}
 \end{figure}

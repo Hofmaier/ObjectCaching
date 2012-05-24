@@ -442,7 +442,7 @@ Auch diese Funktion steigt exponentiell, was aufgrund der exponentiellen \texttt
 
 Bei diesem Testcase hat zu grossem erstaunen das System ohne Cache die besseren Werte erzielt, als das System mit Cache. Obwohl die \texttt{getBalance()}-Aufrufe gewohnt um einiges langsamer waren, als beim Cache, konnte das System ohne Cache schlussendlich durch die stabilen Werte der \texttt{setBalance()}-Aufrufe die besseren Ergebnisse liefern.
 
- Bei diesem extremen Testcase wurde eigentlich erwartet, dass der Cache um einiges besser skalieren würde, da er die Konfliktanzahl mindern würde. Dies hat der Cache zwar getan, doch durch die einiges langsameren \texttt{setBalance()}-Aufrufe, war das System mit Cache schlussendlich trotzdem um einiges schlechter. 
+ Bei diesem extremen Testcase wurde eigentlich erwartet, dass der Cache um einiges besser skalieren würde, da er die Konfliktanzahl mindern würde. Dies hat der Cache zwar getan, doch durch die einiges lang\-sa\-mer\-en \texttt{set\-Balance()}-Auf\-ru\-fe, war das System mit Cache schlus\-send\-lich trotz\-dem um ei\-nig\-es sch\-lech\-ter. 
 
 Es bleibt also anzumerken, dass es bei acht Clients zu sehr vielen Konflikten kommt, egal welches System angewendet wird. Bei sehr vielen Schreibzugriffen, macht der Cache aber bei einer steigenden Anzahl Clients immer weniger Sinn, da die Geschwindigkeit der  \texttt{setBalance()}-Methode stetig abnehmen wird.
 

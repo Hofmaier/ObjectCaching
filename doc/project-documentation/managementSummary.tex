@@ -6,7 +6,7 @@ Die Firma staila technologies ent\-wick\-elt ein neuartigs Daten\-ver\-arbeitung
 Im Rahmen der Entwicklungsarbeit an Mercury, soll mit dieser Arbeit ein weiteres Puzzleteil hinzugefügt werden. Um eine möglichst performante Kommunikation zwischen Client und Server in Mercury herstellen zu können, gibt es verschiedenste Algorithmen, welche für verteilte Systeme geeignet sind. Das Ziel dieser Arbeit ist für viel versprechende Ansätze einen Prototypen zu entwickeln und diesen dann zu testen. Aus den verschiedensten Tests soll dann ersichtlich werden, welcher Algorithmus sich für Mercury am besten eignet.
 
 \section*{Vorgehen / Technologien}
-Anfangs wurde ein einfaches, zuverlässiges System entwickelt, um Referenzwerte für die folgenden Zeitmessungen zu erlangen. In einem nächsten Schritt wurde ein Prototyp gebaut, welcher einen lokalen Cache besitzt. Mit diesem Prototyp wurden wiederum Zeitmessungen durchgeführt und die Werte wurden miteinander verglichen.
+Anfangs wurde ein System mit integrierter Concurrency control gebaut. In einem nächsten Schritt wurde ein Prototyp gebaut, welcher zusätzlich einen lokalen Cache besitzt. Mit diesen Prototypen wurden Zeitmessungen durchgeführt und die Werte wurden miteinander verglichen.
 
 Parallel zur Ent\-wick\-lung der oben ge\-nannten Pro\-to\-typ\-en, wur\-de ein Frame\-work entwickelt, welches die Systeme testet. Es wurde dabei darauf geachtet, dass die Prototypen ohne Anpassung von Programmcode an das Framework angehängt werden können. Das Framework ist für die Zeitmessungen und die Ausgabe der Resultate, sowie für viele weitere Aufgaben, verantwortlich.
 
@@ -14,9 +14,7 @@ Alle Prototypen und das Framework wurden in Java entwickelt. Da keine andere Pro
 \section*{Ergebnisse}
 Das Ziel dieser Arbeit, zwei Prototypen und ein Framework zu entwickeln, wurde erreicht. Die Probleme, welche sich während der Entwicklungsarbeit stellten wurden in den folgenden Seiten dokumentiert. Weiter wurden die Entscheidungen und die Gründe, warum genau dieser Weg eingeschlagen wurde, genaustens dokumentiert.
 
-Am Ender dieser Arbeit werden die Messergebnisse ausgewiesen. Aus den Messergebnissen werden Schlüsse und Interpretationen gezogen. Zusätzlich wurde das Kapitel mit einzelnen Grafiken versehen, um die Auswertung der Daten ansehlicher und besser verständlich zu machen.
-
-Durch diese Arbeit wurde bewiesen, dass es sich lohnt einen Cache einzubauen, wenn es zu vielen lesenden Zugriffen kommt. Falls das Einsatzszenario aus einer Umgebung stammt, in welcher alle Clients permanent nur schreiben müssen, lohnt sich ein Cache nicht. Für diese Art der Anwendung skaliert ein System mit Cache einfach zu schlecht. 
+Durch diese Arbeit wurde bewiesen, dass es sich lohnt einen Cache einzubauen, wenn es zu vielen lesenden Zugriffen kommt. Falls im Einsatzszenario alle Clients permanent nur schreiben müssen, lohnt sich ein Cache nicht. Für diese Art der Anwendung skaliert ein System mit Cache einfach zu schlecht. 
 
 Auf der anderen Seite wurde ein System getestet, welches ähnlich wie Java RMI funktioniert, aber zusätzlich mit einer Concurrency Control versehen wurde. Dieses System sendet alle Anfragen, egal ob lesend oder schreibend, über das Netzwerk. Diese Vorgehensweise beweist seine Stärke in einem Umfeld, in welchem dauernd geschrieben werden muss. Die lesenden Zugriffe sind im Vergleich zu einem System mit Cache extrem langsamer, bedingt durch die Übertragung über das Netzwerk.
 

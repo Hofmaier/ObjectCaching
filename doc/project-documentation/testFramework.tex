@@ -24,18 +24,18 @@ Das  Startup-Script ist ein Shell-Script in der Bash-Sprache geschrieben. Das Sc
 \begin{enumerate}
 \item Ein ant- Script wird an\-ge\-stos\-sen, wel\-ches die Pro\-jek\-te kom\-pi\-liert. Durch die\-sen Schritt ent\-stehen die .jar- Dateien, welche im nächs\-ten Schritt benötigt werden.
 \item Das Script prüft die in der Config-Datei eingetragenen Zielrechner auf bereits vorhandene "client.jar"-Dateien und löscht diese Dateien, falls vorhanden.
-\item Durch die Applikation "'Secure Copy" wird die zuvor im Buildprozess erstellte Datei "'client.jar" auf die Zielrechner kopiert.
+\item Durch die Applikation "'Secure Copy" wird die zuvor im Buildprozess erstellte Datei "'client.jar"' auf die Zielrechner kopiert.
 \item Via SSH wird der Frameworkclient auf den Zielrechnern gestartet.
 \item Der Frameworkserver wird gestartet.
 \end{enumerate}
 Sind diese Schritte abgeschlossen, beendet das Startupscript und die weitere Ausführung des Testlaufs wird durch den Frameworkserver orchestriert.
 Beim Starten des Scripts wird der Name der Datei mitgegeben, in welcher der genaue Testlauf definiert ist. Wird kein Argument mitgegeben, läuft der Standardtestlauf ab, welcher in der Datei "'testCases.xml" beschrieben ist.\newline
 Probleme beim Schreiben des Scripts waren selten. Ein Problem, welches gelöst werden musste, war der Umstand, dass das Script nach dem Starten eines Clients nicht mehr weiterlief, sondern einfach wartete. Dies war bei folgende Zeile der Fall:
-\begin{lstlisting}[breaklines=true]
+\begin{lstlisting}[language=bash, breaklines=true]
  ssh student@${i} "java -jar ${remotePath}/${clientJar}"
 \end{lstlisting}	
 Offensichtlich wartet das Script beim Ausführen eines Befehls auf einem fremden Rechner auf einen Rückgabewert in irgendeiner Form; also auf einen Errorcode oder aber auf einen Exitstatus. Das Absetzen dieses Befehls musste in einem seperaten Kind-Prozess stattfinden, damit der Eltern-Prozess die weiteren Aufgaben des Scripts abarbeiten konnte und nicht auf einen Rückgabewert wartete. Dies kann in der Bash-Shell mit einem "\&" erreicht werden. Die simple Lösung des Problems sieht schlussendlich fast gleich aus:
-\begin{lstlisting}[breaklines=true]
+\begin{lstlisting}[language=bash, breaklines=true]
  ssh student@${i} "java -jar ${remotePath}/${clientJar}" &
 \end{lstlisting}
 
@@ -55,17 +55,17 @@ Die Kommunikation des Frameworkservers mit den Frameworkclients ist in folgendem
 Die im Diagramm dargestellten Operationen lassen sich wie folgt erklären:
 
 \begin{itemize}
-\item Die Methode \texttt{generateTestCase()} ruft eine Factory auf, welche aus einer XML-Datei einen Testcase generiert. Diese Factory wird unter dem Ka\-pi\-tel \ref{sec:testCaseFactory} "'Testcase-Factory" genauer be\-schrie\-ben.
-\item Alle Konfigurationsparameter welche der Server braucht, sind in einer Konfigurations\-datei ab\-ge\-legt. Durch eine Configurationfactory wird durch mit Hilfe der Konfig\-urationsdatei ein Configuration- Objekt er\-zeugt. Unter dem Kapi\-tel \ref{sec:configurationFactory} "'Configuration Factory" wird dies näher beschrieben.
-\item Nachdem die Konfigurationsparameter ausgelesen wurden, kann der Dis\-patcher in einem seper\-aten Thread ge\-startet werden. Weitere Aus\-füh\-run\-gen sind unter dem Kapitel \ref{sec:dispatcher} "'Der Dispatcher" zu finden.
+\item Die Methode \texttt{generateTestCase()} ruft eine Factory auf, welche aus einer XML-Datei einen Testcase generiert. Diese Factory wird unter dem Ka\-pi\-tel \ref{sec:testCaseFactory} "'Testcase-Factory"' genauer be\-schrie\-ben.
+\item Alle Konfigurationsparameter welche der Server braucht, sind in einer Konfigurations\-datei ab\-ge\-legt. Durch eine Configurationfactory wird durch mit Hilfe der Konfig\-urationsdatei ein Configuration- Objekt er\-zeugt. Unter dem Kapi\-tel \ref{sec:configurationFactory} "'Configuration Factory"' wird dies näher beschrieben.
+\item Nachdem die Konfigurationsparameter ausgelesen wurden, kann der Dis\-patcher in einem seper\-aten Thread ge\-startet werden. Weitere Aus\-füh\-run\-gen sind unter dem Kapitel \ref{sec:dispatcher} "'Der Dispatcher"' zu finden.
 \item Bei der Initialisierung der Clients, wird diesen je ein Szenario und ein Configuration-Objekt gesendet. Das Configuration-Objekt umfasst alle für den Client wichtigen Konfigurationsparameter, wie etwa die Ports, unter welchen der Server seine Dienste zur Verfügung stellt. Was ein Szenario genau ist, wird unter dem Kapitel \ref{sec:testCaseFactory} "'Testcase-Factory" genauer beschrieben.
-\item Pro Client hat der Server beim Auslesen der Konfigurationsdatei ein Client-Objekt instanziert. Dies wurde voral\-lem zur Kon\-trol\-le der Cli\-ents durch den Server so implementiert. Darauf wird im Kapitel \ref{sec:clientObjekt} "'ClientObjekt" eingegangen.
-\item Nachdem alle Clients \texttt{setReady()} aufgerufen haben, ruft der Server \texttt{start()} auf allen Clients auf. Dieser Vorgang wird unter dem Kapitel \ref{sec:startMethode} "'Start-Methode" genauer erläutert.
+\item Pro Client hat der Server beim Auslesen der Konfigurationsdatei ein Client-Objekt instanziert. Dies wurde voral\-lem zur Kon\-trol\-le der Cli\-ents durch den Server so implementiert. Darauf wird im Kapitel \ref{sec:clientObjekt} "'ClientObjekt"' eingegangen.
+\item Nachdem alle Clients \texttt{setReady()} aufgerufen haben, ruft der Server \texttt{start()} auf allen Clients auf. Dieser Vorgang wird unter dem Kapitel \ref{sec:startMethode} "'Start-Methode"' genauer erläutert.
 \end{itemize}
 
 \subsubsection{Testcase-Factory}
 \label{sec:testCaseFactory}
-Die Testcase-Factory liest ein XML-File, in welchem ein sogenannter "TestCase" definiert ist. Wird beim Starten des Frameworkservers kein Paramter mitgegeben, wird der Standard-Testcase gewählt, welcher in der Datei "'testCases.xml" abgelegt ist. Wird aber ein Parameter mitgegeben, beschreibt dieser den Namen der auszuführenden TestCase-Datei.\newline
+Die Testcase-Factory liest ein XML-File, in welchem ein sogenannter "TestCase"' definiert ist. Wird beim Starten des Frameworkservers kein Paramter mitgegeben, wird der Standard-Testcase gewählt, welcher in der Datei "'test\-Cases\-.xml"' abgelegt ist. Wird aber ein Parameter mitgegeben, beschreibt dieser den Namen der auszuführenden TestCase-Datei.\newline
 Durch die ein\-ge\-lesenen In\-for\-ma\-tio\-nen er\-stellt die Fac\-tory die Szena\-rien, wel\-che dann wei\-ter an die ver\-schie\-denen Clients ge\-sendet werden. Folgender Block ist ein Auszug aus einer TestCase-Datei:
 
 \begin{lstlisting}[language=XML, breaklines=true] 	
@@ -116,16 +116,16 @@ Das Clientobjekt besitzt unter anderem ein Datenfeld, welches genau zwei Zustän
 \begin{lstlisting}[language=Java, breaklines=true]
 public void setReady(String ip) 
 {
-	logger.info("Setted ready with: " + ip);
-	Client temp;
-	if((temp = clientList.getClientByIp(ip)) != null)
-	{
-		temp.setStartingState(StartingState.READY);
-	}
-	if(checkAllReady())
-	{
-		start();
-	}
+  logger.info("Setted ready with: " + ip);
+  Client temp;
+  if((temp = clientList.getClientByIp(ip)) != null)
+  {
+    temp.setStartingState(StartingState.READY);
+  }
+  if(checkAllReady())
+  {
+    start();
+  }
 }
 \end{lstlisting}
 
@@ -139,11 +139,11 @@ Die Methode \texttt{start()} gibt dem Client an, mit der Abarbeitung des Szenari
 \begin{lstlisting}[language=java, breaklines=true]
 private void start()
 {
-	logger.info("Method start() invoked");
-	for(int i = 0; i < clientList.size(); i++)
-	{
-		clientList.getClient(i).getClientStub().startTest();
-	}
+  logger.info("Method start() invoked");
+  for(int i = 0; i < clientList.size(); i++)
+  {
+    clientList.getClient(i).getClientStub().startTest();
+  }
 }
 \end{lstlisting}
 
@@ -152,22 +152,23 @@ Die jetzige Implementation und somit die Lösung des Problems sieht wie folgt au
 \begin{lstlisting}[language=java, breaklines=true]
 private void start()
 {
-	logger.info("Method start() invoked");
-	for(int i = 0; i < clientList.size(); i++)
-	{
-		ClientStart clientStart = new ClientStart(clientList.getClient(i));
-		new Thread(clientStart).start();
-	}
+  logger.info("Method start() invoked");
+  for(int i = 0; i < clientList.size(); i++)
+  {
+    ClientStart clientStart = new ClientStart(clientList.getClient(i));
+    new Thread(clientStart).start();
+  }
 }
 \end{lstlisting}
 Um das Problem mit der Erstellung eines neuen Threads für jeden zu startenden Client zu umgehen, musste eine weitere Klasse Namens "'ClientStart" ge\-schrie\-ben wer\-den. Die Klas\-se im\-p\-le\-men\-tiert natür\-lich das Inter\-face "'Run\-nable" und im\-p\-le\-men\-tiert die "'run()"'-Methode wie folgt:
 \begin{lstlisting}[language=java, breaklines=true]
-public void run() {
-	try {
-		client.getClientStub().startTest();
-	} catch (RemoteException e) {
-		logger.log(Level.SEVERE, "Uncaught exception", e);
-	}
+public void run() 
+{
+  try{
+      client.getClientStub().startTest();
+  } catch (RemoteException e){
+      logger.log(Level.SEVERE, "Uncaught exception", e);
+  }
 }
 \end{lstlisting}
 
@@ -206,21 +207,20 @@ Ruft ein Client die Methode \texttt{setResults(Scenario)} auf dem Server auf, wi
 \begin{lstlisting}[language=java, breaklines=true]
 private void stopClient(String clientIp)
 {
-	Client temp;
-	try {
-		
-		if((temp = clientList.getClientByIp(clientIp)) != null)
-		{
-			logger.info("stop client with ip: " + clientIp);
-			temp.setClientRunning(ShutedDown.DOWN);
-			temp.getClientStub().shutdown();
-		}
+  Client temp;
+  try {
+	if((temp = clientList.getClientByIp(clientIp)) != null)
+        {
+	  logger.info("stop client with ip: " + clientIp);
+	  temp.setClientRunning(ShutedDown.DOWN);
+	  temp.getClientStub().shutdown();
+	}
 	} catch (RemoteException e) {
-		logger.log(Level.SEVERE, "Uncaught exception", e);
+	    logger.log(Level.SEVERE, "Uncaught exception", e);
 	}
 	if(checkAllShutedDown())
 	{
-		printSummary();
+	  printSummary();
 	}
 }
 \end{lstlisting}
@@ -229,11 +229,11 @@ Durch die Prüfung \texttt{checkAllShutedDown()}, wird nur der letzte aller Thre
 Weiter wird beim Abarbeiten dieser Methode die Methode \texttt{shutdown()} auf dem Client aufgerufen. Nach diesem Aufruf fährt sich der Client herunter und kappt alle akiven Verbindungen zum Server. Weitere Informationen zum Shutdown-Prozess des Clients sind unter der Kapitel des Frameworkclients ersichtlich.\newline
 Oben genannte Implementation der \texttt{stopClient(String clientIP)}-Methode hat lange funktioniert. Während des Entwicklungsprozesses der RMI-Only Lösung lief das Framework mit der erwähnten Methode ohne Probleme. Bei den ersten Testläufen der RMI-Cache Lösung wurden beim Herunterfahren der Umgebung allerdings Exceptions generiert. Da die Fehlersuche bei Software mit einer Vielzahl von Threads sehr langwierig ist, nahm die Analyse des Fehlers viel Zeit in Anspruch.\newline 
 Schlussendlich wurde bemerkt, dass die Methode \texttt{printSummary()} trotz aller Vorsichtsmassnahmen von jedem Client ein Mal ausgeführt wurde, was dazu führte, dass mehrere Zusammenfassungen generiert wurden und probiert wurde, den FrameworkServer mehrere Male herunterzufahren. Der Versuch den FrameworkServer mehrmals herunterzufahren war natürlich der Grund für die Ex\-cep\-tions, da dem zweiten Client ein\-fach der Ver\-bin\-dungs\-part\-ner weggerissen wurde.\newline
-Der Grund des Fehlverhaltens lag in der nicht-funktionierenden Barriere \texttt{checkAllShutedDown()}. Nachdem der Methodenkopf durch "'synchronized" erweitert wurde, funktionierte das Framework wieder problemlos:
+Der Grund des Fehlverhaltens lag in der nicht-funktionierenden Barriere \texttt{checkAllShutedDown()}. Nachdem der Methodenkopf durch "'synchronized"' erweitert wurde, funktionierte das Framework wieder problemlos:
 \begin{lstlisting}[language=java, breaklines=true]
 synchronized private void stopClient(String clientIp)
 \end{lstlisting}
-Anscheinend sind die Clients bei der Cache- Implementation immer zum fast gleichen Zeit\-punkt fer\-tig, was dazu führte, dass der Sta\-tus "'ShutedDown.DOWN" nur un\-zu\-ver\-läs\-sig gesetzt wurde.\newline
+Anscheinend sind die Clients bei der Cache- Implementation immer zum fast gleichen Zeit\-punkt fer\-tig, was dazu führte, dass der Sta\-tus "'ShutedDown.DOWN"' nur un\-zu\-ver\-läs\-sig gesetzt wurde.\newline
 Das Fehlerszenario lief wie folgt ab:
 \begin{itemize}
 \item Thread1 betritt die \texttt{stopClient(String clientIp)}-Methode und setzt seinen Status auf DOWN.
@@ -298,7 +298,7 @@ INFO: No Lost-Updates!
 
 \subsubsection{Logger}
 \label{sec:logger}
-Wie in dem Konsolenauszug unter "'Result Generator" gesehen werden kann, wurde ein Logger eingebaut, welcher alle Methodenaufrufe protokoliert. Der Logger schreibt die Ereignisse erstens auf die Konsole und zweitens schreibt er alle Informationen zu einem Methodenaufruf in eine Datei. Diese Logdatei ist sehr Informationsreich:
+Wie in dem Konsolenauszug unter \ref{sec:resultGenerator} "'Result Generator"' gesehen werden kann, wurde ein Logger eingebaut, welcher alle Methodenaufrufe protokoliert. Der Logger schreibt die Ereignisse erstens auf die Konsole und zweitens schreibt er alle Informationen zu einem Methodenaufruf in eine Datei. Diese Logdatei ist sehr Informationsreich:
 
 \begin{lstlisting}[language=XML, breaklines=true]
 <record>
@@ -404,27 +404,26 @@ Die Methode \texttt{shutdown()} be\-endet den Test\-frame\-work\-Client und das 
 Beim Testen der shutdown()-Funktionalität konnte festgestellt werden, dass bei der Umsetzung wie oben beschrieben, der Server immer eine Exception bekommt. Es stellte sich heraus, dass das sofortige Herunterfahren des ClientControllers nach dem Unbinding und dem Unexport des ClientController Objekts dem Server keine Zeit lässt, seine RMI Verbindung zum ClientController korrekt zu schliessen. Die Lösung des Problems lag in einer Pause zwischen dem Unexport und dem Beenden des ClientControllers. Die Dauer der Verzögerung von zwei Sekunden stellte sich als ausreichen heraus. Folgender Codeausschnitt zeigt die Lösung des Problems:
 \begin{lstlisting}[language=java, breaklines=true]
 private void shutdownClientController() throws RemoteException {
-		try {
-			Naming.unbind("rmi://localhost:" + ClientRmiPort + "/Client");
-		} catch (MalformedURLException e1) {
-			throw new RemoteException("Malformed URL has occurred in ClientController", e1);
-		} catch (NotBoundException e1) {
-			throw new RemoteException("Unbinding the ClientController failed", e1);
-		}
-		UnicastRemoteObject.unexportObject(this, true);
-		closeClientController(2000);
+  try {
+	Naming.unbind("rmi://localhost:" + ClientRmiPort + "/Client");
+      } catch (MalformedURLException e1) {
+	  throw new RemoteException("Malformed URL has occurred in ClientController", e1);
+	} catch (NotBoundException e1) {
+	    throw new RemoteException("Unbinding the ClientController failed", e1);
+	}
+	  UnicastRemoteObject.unexportObject(this, true);
+	  closeClientController(2000);
 	}
 
-	private void closeClientController(final long delay) {
-		new Thread() {
-			@Override
-			public void run() {
-				logger.info("ClientController is shutting down");
-				try {
-					sleep(delay);
-				} catch (InterruptedException e) {
-				}
-				System.exit(0);
+private void closeClientController(final long delay) {
+  new Thread() {
+		  @Override
+		  public void run() {
+		    logger.info("ClientController is shutting down");
+		    try {
+			  sleep(delay);
+			} catch (InterruptedException e) {}
+			  System.exit(0);
 			}
 		}.start();
 	}
@@ -439,9 +438,9 @@ Die TestClient Klasse ist die Schnittstelle zwischen dem ClientController und de
 Das ClientSystemUnderTest Interface ist wie folgt definiert:
 \begin{lstlisting}[language=java, breaklines=true] 	
 public interface ClientSystemUnderTest {	
-	public AccountService getAccountService();
-	public void setServerSocketAdress(InetSocketAddress socketAdress);
-	public void shutdown();
+  public AccountService getAccountService();
+  public void setServerSocketAdress(InetSocketAddress socketAdress);
+  public void shutdown();
 }	
 \end{lstlisting}
 \subsubsection{Ablauf}
@@ -507,24 +506,24 @@ Die Aktion \verb+IncrementAction+ ist die Kernaktion für alle Szenarien. Sie be
 \begin{lstlisting}[language=java, breaklines=true] 
 @Override
 public void execute(Account account) {
-	boolean successful = false;
-	double balance = 0;
-	int numberOfTry = 0;
-	while (!successful) {
-		result.startTimeMeasurement(BasicAction.READ);
-		balance = account.getBalance();
-		result.stopTimeMeasurement();
-		sleep(numberOfTry);
-		try {
-			result.startTimeMeasurement(BasicAction.WRITE);
-			account.setBalance(balance * factor);
-			result.stopTimeMeasurement();
-			successful = true;
-		} catch (RuntimeException e) {
-			successful = false;
-			result.stopTimeMeasurement(ActionResult.FAILED);
-		}
-		numberOfTry++;
+  boolean successful = false;
+  double balance = 0;
+  int numberOfTry = 0;
+  while (!successful) {
+    result.startTimeMeasurement(BasicAction.READ);
+    balance = account.getBalance();
+    result.stopTimeMeasurement();
+    sleep(numberOfTry);
+    try {
+	  result.startTimeMeasurement(BasicAction.WRITE);
+	  account.setBalance(balance * factor);
+	  result.stopTimeMeasurement();
+	  successful = true;
+	} catch (RuntimeException e) {
+  	    successful = false;
+	    result.stopTimeMeasurement(ActionResult.FAILED);
+	}
+	  numberOfTry++;
 	}
 }
 \end{lstlisting}

@@ -15,11 +15,17 @@ Der Concurrency-Mechanismus soll es ermöglichen, dass Anfragen parallel ausgef�
 \label{sec:local-write-prot}
 
 Unser System realisiert ein Remote-Write-Protocol. Alle Schreiboperationen werden an einen einzigen fixen Server weitergeleitet.
-Eine Variante des primary-based Protokol wäre, dass das Referenzobjekt (primary) zwischen unterschiedlichen Prozessen (oder Clients und Server) hin und her wandern kann. Dies nennt man ein Local-Write Protokoll \cite{tanenbaum07}. Wenn ein Client ein Objekt updaten möchte, lokalisiert er es und holt das Objekt in seinen Cache. Schreibzugriffe könnten somit lokal ausgeführt werden und es wäre kein zentraler Server mehr nötig. Nachdem ein Objekt beim Client lokal verändert wurde, werden Updatenachrichten an alle anderen Kopien gesendet.
+Eine Variante des primary-based Protokoll wäre, dass das Referenzobjekt (primary) zwischen unterschiedlichen Prozessen (oder Clients und Server) hin und her wandern kann. Dies nennt man ein Local-Write Protokoll \cite{tanenbaum07}. Wenn ein Client ein Objekt updaten möchte, lokalisiert er es und holt das Objekt in seinen Cache. Schreibzugriffe könnten somit lokal ausgeführt werden und es wäre kein zentraler Server mehr nötig. Nachdem ein Objekt beim Client lokal verändert wurde, werden Updatenachrichten an alle anderen Kopien gesendet.
 
 \section{Generierung von nativen Java Objekten}
 \label{sec:gener-von-nativ}
 
-Die Stub- und die Skeletonklassen wurden in beiden implementierten Prototypen von Hand programmiert. Das heisst für jeden zusätzlichen Typen zu \texttt{Account} muss man die zugehörigen Stub und Skeletonklassen schreiben. Diesen Vorgang könnte man automatisieren, indem man einen Compiler schreibt der Stub- und Skeletonclass-Files generiert (ähnlich wie der Java RMI Compiler).
+Die Stub- und die Skeletonklassen wurden in beiden implementierten Prototypen von Hand programmiert. Das heisst für jeden zusätzlichen Typ zu \texttt{Account} muss man die zugehörigen Stub und Skeletonklassen schreiben. Diesen Vorgang könnte man automatisieren, indem man einen Compiler schreibt der Stub- und Skeletonclass-Files generiert (ähnlich wie der Java RMI Compiler).
 
 Objekttypen könnten zum Client mittels eines speziellen Class-Loaders übertragen werden. Damit wäre es nicht mehr nötig, dass der Client bereits mit den Objekttypen ausgeliefert wird. Man könnte neue Objekttypen zur Laufzeit hinzufügen und an die Clients senden.
+
+\section{Speichern der Messdaten in eine Datenbank}
+\label{sec:DBspeichern}
+Anstelle der momentanen Ausgabe der Messergebnisse in Textdateien, könnte man eine Datenbankanbindung bauen. Das würde bedeuten, dass nach einem erfolgreichen Testlauf, der Frameworkserver die zurückgegebenen Daten in einer Datenbank ablegt. Dies würde die Auswertung der Messdaten extrem vereinfachen und somit effizienter machen.
+
+

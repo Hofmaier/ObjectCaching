@@ -90,15 +90,13 @@ Im Object-Caching System muss der Client in der Lage sein, Object\-Update\--Mess
 \item[receiveUpdate] Die Methode blockiert bis eine ObjectUpdate-Nachricht vom Server eintrifft. Wird eine ObjectUpdate-Nachricht empfangen, liefert die Methode ein ObjectUpdate-Objekt als Rückgabewert.
 \end{description}
 
-Die Verarbeitung der Nachrichten wird von mehrere Threads durchgeführt (siehe Abbildung \ref{fig:msgmng}.
-Für ausgehende Nachrichten enthält der \verb|MessageManager| eine BlockingQueue. Bei Aufruf von sendMessageCall wird die zu sendende Nachricht in der Queue platziert. Ein Thread ist nur dafür zuständig Nachrichten aus dieser Queue zu nehmen und in den Stream zum Server zu schreiben.
-
-
+Die Verarbeitung der Nachrichten wird von mehreren Threads durch\-ge\-führt (siehe Abbildung \ref{fig:msgmng}.
+Für ausgehende Nachrichten enthält der \-\texttt{Mes\-sage\-Manager} eine BlockingQueue. Bei Aufruf von sendMessageCall wird die zu sendende Nachricht in der Queue platziert. Ein Thread ist nur dafür zu\-ständig Nachrichten aus dieser Queue zu nehmen und in den Stream zum Server zu schreiben.
 Für eintreffende Nachrichten hat der Server mehrere BlockingQueues. Für jede der Nachrichtentypen ObjectRequestResponse, ReturnValue und ObjectUpdate gibt es eine BlockingQueue. Trifft eine Nachricht beim Client ein, muss sie einfach in die richtige Queue geschoben werden. Ein Client holt sie mit der entsprechenden receive-Methode wieder raus. Ein Thread ist dafür zuständig eintreffende Nachrichten aus dem Stream zu lesen und der richtigen Queue hinzuzufügen. 
 
 Der Cache enthält ein Thread, der in einer Endlosschleife receiveUpdate aufruft. Diese Methode blockiert die meiste Zeit, da nicht andauernd Updates empfangen werden. Kommt eine ObjectUpdate-Nachricht rein, wird sie im MessageManager in der BlockingQueue für ObjectUpdates hinzugefügt. Der receiveUpdate-Methodenaufruf kommt zurück und aktualisiert den Cache.
 
-\begin{figure}[h]
+\begin{figure}[ht]
   \centering
   \includegraphics[scale=0.3]{images_objectcaching/messageManager}  
   \caption{MessageManager Threads}
@@ -115,7 +113,7 @@ Die Funktionsweise des Protokolls und des Systems soll anhand eines Beispiels er
 \item RMI-Stub führt einen Lookup für das Objekt im Cache aus.
 \item Ist das Objekt nicht im Cache vorhanden, wird es mit einem \texttt{Object\-Request}-Nachricht angefordert.
 \item Ist das \texttt{Account}-Objekt beim Client eingetroffen, wird \verb+getBalance()+ auf auf dem Objekt ausgeführt. Der Wert wird an den Stub zurück\-gegeben und der Stub leitet ihn an den Client weiter.
-\item \verb+setBalance()+ wird an den lokalen Cache weitergeleitet. Dieser enthält eine eigene Concurrency Control. Diese überprüft, ob das Objekt seit dem letzen \verb+getBalance+ nicht durch ein Update vom Server verändert wurde. Hat es sich verändert, wird eine Exception ausgelöst. Wenn in Zwischenzeit kein Update eingetroffen ist, wird ein \texttt{MethodCall} an den Server gesendet. Nachdem der Methodenaufruf an den Server gesendet wurde, wartet der Client auf die \texttt{ReturnValue}-Nachricht. Diese trifft erst ein, wenn der Server den Methodenaufruf bereits verarbeitet hat und ein Update verschickt hat. Die Methode ändert den lokalen Cache nicht, weil zu diesem Zeitpunkt noch nicht klar ist, ob die Methode ausgeführt werden kann. Ein anderer Client könnte das Objekt inzwischen verändert haben. Nur der Server kann entscheiden, ob die Methode ausgeführt werden kann. Das Objekt im Cache ändert erst, wenn die \texttt{ObjectUpdate}-Nachricht vom Server eintrifft.
+\item \verb+setBalance()+ wird an den lokalen Cache weitergeleitet. Dieser enthält eine eigene Concurrency Control. Diese überprüft, ob das Objekt seit dem letzen \verb+getBalance()+ nicht durch ein Update vom Server verändert wurde. Hat es sich verändert, wird eine Exception ausgelöst. Wenn in Zwischenzeit kein Update eingetroffen ist, wird ein \texttt{MethodCall} an den Server gesendet. Nachdem der Methodenaufruf an den Server gesendet wurde, wartet der Client auf die \texttt{ReturnValue}-Nachricht. Diese trifft erst ein, wenn der Server den Methodenaufruf bereits verarbeitet hat und ein Update verschickt hat. Die Methode ändert den lokalen Cache nicht, weil zu diesem Zeitpunkt noch nicht klar ist, ob die Methode ausgeführt werden kann. Ein anderer Client könnte das Objekt inzwischen verändert haben. Nur der Server kann entscheiden, ob die Methode ausgeführt werden kann. Das Objekt im Cache ändert erst, wenn die \texttt{ObjectUpdate}-Nachricht vom Server eintrifft.
 \end{enumerate}
 
 \subsection{Implementierung der Concurrency Control}
@@ -192,7 +190,7 @@ In diesem Szenario wird der \texttt{setBalance()}-Aufruf unterbrochen bevor er d
 \subsubsection{Update und setBalance überkreuzen sich}
 \label{sec:update-und-set}
 
-Bei allen Fällen kann Inkonsistenz festgestellt werden, indem sich der Server und der Clientcache merkt, welche Version an den Client vor dem \verb|setBalance()| heraus\-gegeben wurde und überprüft, ob die Version des Objektes mittlerweile höher ist. Dabei müssen die Versionnummern im Cache und auf dem Server nicht synchron sein. Es gibt jedoch eine Aufrufabfolgemöglichkeit bei der Inkonsistenz entstehen kann (siehe \ref{fig:messagecross}.
+Bei allen Fällen kann Inkonsistenz festgestellt werden, indem sich der Server und der Clientcache merkt, welche Version an den Client vor dem \texttt{set\-Balance()} heraus\-gegeben wurde und überprüft, ob die Version des Objektes mittlerweile höher ist. Dabei müssen die Versionnummern im Cache und auf dem Server nicht synchron sein. Es gibt jedoch eine Aufrufabfolgemöglichkeit bei der Inkonsistenz entstehen kann (siehe \ref{fig:messagecross}.
 
 \begin{enumerate}
 \item Client 2 sendet ein \verb|setBalance()|. Der Server versendet das Update und aktualisiert die Versionsnummern der Clients.

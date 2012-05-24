@@ -85,7 +85,7 @@ läuft die Schreiboperation fehlerfrei durch.
 Das RMI-System wurde als \gls{middleware} implementiert. Clients fordern \newline
 \texttt{Ac\-co\-unt}\--Objekte von der Klasse \texttt{AccountService} über die
 Methode \newline \texttt{Collection<Account> getAllAccounts()}. Mit diesen
-Account-Ob\-jek\-ten arbeitet der Client, wie mit lokalen Objekten, obwohl
+Account-Ob\-jek\-ten \-ar\-bei\-tet der Client, wie mit lokalen Objekten, obwohl
 die Objekte auf einem entfernten Server in einer anderen "'\gls{virtualMachine}" leben. Die
 Middleware sorgt für Lokalitätstransparenz. Sie 
 ermöglicht es, dass Objekte in unterschiedlichen Prozessen miteinander
@@ -105,7 +105,7 @@ Server gesendet werden.
 
 
 Bei den Nachrichten handelt es sich um
-serialisierte Objekte des Typs \texttt{Method\-Call}. \texttt{MethodCall} ist ein Data-Transfer-Object. Es enthält
+serialisierte Objekte des Typs\- \texttt{Me\-thod\-Call}. \texttt{MethodCall} ist ein Data-Transfer-Object. Es enthält
 Informationen darüber, welche Methode aufgerufen werden soll, auf
 welchem Objekt die Methoden aufgerufen werden soll und mit welchen
 Argumenten die Methode aufgerufen wird. Nachdem der Methodenauruf dem
@@ -160,7 +160,7 @@ ausgeführt hat, beschafft sich der Skeleton aus der HashMap. Die
 Argumente werden im MethodCall-Objekt übermittelt. Der Rückgabewert
 wird in ein ReturnValue-Objekt gepackt und an den Client zurückgesendet.
 
-Der Server akzeptiert eingehende TCP-Verbindungen und liest MethodCall-Objekte aus
+Der Server akzeptiert eingehende TCP-Verbindungen und liest Method\-Call\--Objekte aus
 dem Stream, sobald welche vom Client gesendet
 werden. Der TCP-Stream wird erst geschlossen, wenn der Client ein EOF
 sendet. Für jede TCP-Verbindung, das heisst für jeden Client, wird

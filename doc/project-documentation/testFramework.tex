@@ -159,7 +159,8 @@ private void start()
   logger.info("Method start() invoked");
   for(int i = 0; i < clientList.size(); i++)
   {
-    ClientStart clientStart = new ClientStart(clientList.getClient(i));
+    ClientStart clientStart = new ClientStart(clientList.
+    getClient(i));
     new Thread(clientStart).start();
   }
 }

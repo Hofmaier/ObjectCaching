@@ -427,7 +427,7 @@ Bei diesem Testcase hat zu grossem erstaunen das System ohne Cache die besseren 
  Bei diesem extremen Testcase wurde eigentlich erwartet, dass der Cache um einiges besser skalieren würde, da er die Konfliktanzahl mindern würde. Dies hat der Cache zwar getan, doch durch die einiges langsameren \texttt{setBalance()}-Aufrufe, war das System mit Cache schlussendlich trotzdem um einiges schlechter. \newline
 Es bleibt also anzumerken, dass es bei acht Clients zu sehr vielen Konflikten kommt, egal welches System angewendet wird. Bei sehr vielen Schreibzugriffen, macht der Cache aber bei einer steigenden Anzahl Clients immer weniger Sinn, da die Geschwindigkeit der  \texttt{setBalance()}-Methode stetig abnehmen wird.
 
-\subsection{Messerfahrungen}
+\section{Messerfahrungen}
 Die Auswertung der Messdaten und deren Interpretation nahm sehr viel Zeit in Anspruch. Wie bereits im Kapitel Report Generator erläutert, hätte das Speichern der Resultate in einer anderen Art als Textdateien sehr viel weniger Zeit gekostet. Da die Resultate pro Szenario in einer einzelnen Textdatei vorhanden waren, mussten zusätlich ein kleines Script geschrieben werden, welches  aus jedem Szenario die Zusammenfassungen liest und diese in einer gemeinsamen Datei abspeichert. Jedoch war der Aufwand für das Zusammenführen der Daten trotzdem extrem hoch, da die Daten manuell aus der Zusammenfassung nach Excel exportiert werden musste. 
 
 \paragraph{Start Script}

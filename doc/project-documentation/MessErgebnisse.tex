@@ -93,7 +93,7 @@ Pure Operation Time&24595.381&26286.969&30073.691\\
 Diese Zahlen sind Durch\-schnitt\-swer\-te von drei Messungen. Die genauen Mess\-daten können im Anhang gefunden werden. Die folgende Grafik zeigt den Verlauf des Zeit\-auf\-wandes mit einer steigenden Anzahl Clients von zwei bis acht Clients:
 \begin{figure}[H]
 \begin{center}
-\includegraphics[scale=0.6]{images_MessErgebnisse/getBalance_RMI.png}
+\includegraphics[scale=0.55]{images_MessErgebnisse/getBalance_RMI.png}
 \caption{\texttt{getBalance()}-Zeitaufwand, System ohne Cache(nur lesende Zugriffe)}
 \end{center}
 \end{figure}
@@ -132,7 +132,7 @@ Diese Zahlen sind wiederum Durch\-schnitts\-wer\-te.  In der folgenden Grafik we
 
 \begin{figure}[H]
 \begin{center}
-\includegraphics[scale=0.6]{images_MessErgebnisse/getBalance_03ms.png}
+\includegraphics[scale=0.7]{images_MessErgebnisse/getBalance_03ms.png}
 \end{center}
 \caption{\texttt{getBalance()}-Zeitaufwand, System mit Cache(nur lesende Zugriffe)}
 \end{figure}
@@ -222,7 +222,7 @@ Die Ergebnisse der \texttt{setBalance()}-Aurufe werden in dieser Abbildung grafi
 
 \begin{figure}[H]
 \begin{center}
-\includegraphics[scale=0.6]{images_MessErgebnisse/incrementAndReadRMI.png}
+\includegraphics[scale=0.7]{images_MessErgebnisse/incrementAndReadRMI.png}
 \end{center}
 \caption{\texttt{setBalance()}-Zeitaufwand, System ohne Cache(lesende/schreibende Zugriffe)}
 \end{figure}
@@ -262,7 +262,7 @@ Pure Operation Time&79990.542&80081.593&80231.319\\
 In der folgenden Grafik ist der Verlauf der Messwerte der \texttt{setBalance()}-Aufrufe des schreibenden Clients zu sehen:
 \begin{figure}[H]
 \begin{center}
-\includegraphics[scale=0.6]{images_MessErgebnisse/incrementAndReadCache.png}
+\includegraphics[scale=0.55]{images_MessErgebnisse/incrementAndReadCache.png}
 \end{center}
 \caption{\texttt{setBalance()}-Zeitaufwand, System mit Cache(lesende/schreibende Zugriffe)}
 \end{figure}
@@ -336,7 +336,7 @@ Pure Operation Time&79990.542&80081.593&80231.319\\
 Die nächste Grafik zeigt die Messdaten der \texttt{setBalance()}-Methode:
 \begin{figure}[H]
 \begin{center}
-\includegraphics[scale=0.6]{images_MessErgebnisse/incrementRMISetBalance.png}
+\includegraphics[scale=0.7]{images_MessErgebnisse/incrementRMISetBalance.png}
 \end{center}
 \caption{\texttt{setBalance()}-Zeitaufwand, System ohne Cache(nur schreibende Zugriffe)}
 \end{figure}
@@ -349,7 +349,7 @@ Folgende Grafik stellt die durchschnittliche Anzahl Konflikte dar:
 
 \begin{figure}[H]
 \begin{center}
-\includegraphics[scale=0.6]{images_MessErgebnisse/incrementRMIKonfliktzahl.png}
+\includegraphics[scale=0.7]{images_MessErgebnisse/incrementRMIKonfliktzahl.png}
 \end{center}
 \caption{Anzahl Konflikte, System ohne Cache(nur schreibende Zugriffe)}
 \end{figure}
@@ -360,7 +360,7 @@ Schlussendlich die wohl spannendste Grafik. Die "'Pure Operation Time"' ist die 
 
 \begin{figure}[H]
 \begin{center}
-\includegraphics[scale=0.6]{images_MessErgebnisse/incrementRMIPureOperationTime.png}
+\includegraphics[scale=0.7]{images_MessErgebnisse/incrementRMIPureOperationTime.png}
 \end{center}
 \caption{Pure Operation Time System ohne Cache(nur schreibende Zugriffe)}
 \end{figure}
@@ -407,7 +407,7 @@ Pure Operation Time&624422.5&678712.1&859593.5\\
 Die folgende Grafik zeigt die Entwicklung der Messwerte der \texttt{set\-Balance()}-Aufrufe:
 \begin{figure}[H]
 \begin{center}
-\includegraphics[scale=0.6]{images_MessErgebnisse/incrementCacheSetBalance.png}
+\includegraphics[scale=0.7]{images_MessErgebnisse/incrementCacheSetBalance.png}
 \end{center}
 \caption{\texttt{setBalance()}-Zeitaufwand, System mit Cache(nur schreibende Zugriffe)}
 \end{figure}
@@ -417,7 +417,7 @@ Zu erwarten war eine zeitliche Erhöhung bei einer steigenden Anzahl Clients. Da
 In der nächsten Grafik wird die durchschnittliche Anzahl Konflikte pro Client gezeigt:
 \begin{figure}[H]
 \begin{center}
-\includegraphics[scale=0.6]{images_MessErgebnisse/incrementCacheKonfliktzahl.png}
+\includegraphics[scale=0.7]{images_MessErgebnisse/incrementCacheKonfliktzahl.png}
 \end{center}
 \caption{Anzahl Konflikte, System mit Cache(nur schreibende Zugriffe)}
 \end{figure}
@@ -431,7 +431,7 @@ Interessant ist die Tatsache, dass die Zeiten der \texttt{setBalance()}-Aufrufe 
 Die nächste Grafik beschäftigt sich mit der reinen Durchführungszeit:
 \begin{figure}[H]
 \begin{center}
-\includegraphics[scale=0.6]{images_MessErgebnisse/incrementCachePureOperationTime.png}
+\includegraphics[scale=0.8]{images_MessErgebnisse/incrementCachePureOperationTime.png}
 \end{center}
 \caption{Pure Operation Time, System ohne Cache(nur schreibende Zugriffe)}
 \end{figure}

@@ -32,13 +32,13 @@ Das  Startup-Script ist ein Shell-Script in der Bash-Sprache geschrieben. Das Sc
 Sind diese Schritte abgeschlossen, beendet das Startupscript und die weitere Ausführung des Testlaufs wird durch den Frameworkserver orchestriert.
 Beim Starten des Scripts wird der Name der Datei mitgegeben, in welcher der genaue Testlauf definiert ist. Wird kein Argument mitgegeben, läuft der Standardtestlauf ab, welcher in der Datei "'testCases.xml" beschrieben ist.\newline
 Probleme beim Schreiben des Scripts waren selten. Ein Problem, welches gelöst werden musste, war der Umstand, dass das Script nach dem Starten eines Clients nicht mehr weiterlief, sondern einfach wartete. Dies war bei folgende Zeile der Fall:
-\begin{lstlisting}[language=bash, breaklines=true]
+\begin{verbatim}
  ssh student@${i} "java -jar ${remotePath}/${clientJar}"
-\end{lstlisting}	
+\end{verbatim}	
 Offensichtlich wartet das Script beim Aus\-füh\-ren ei\-nes Be\-fehls auf ein\-em frem\-den Rech\-ner auf einen Rück\-ga\-be\-wert in irgendeiner Form; also auf einen Errorcode oder aber auf einen Exitstatus. Das Absetzen dieses Befehls musste in einem seperaten Kind-Prozess stattfinden, damit der Eltern-Prozess die weiteren Aufgaben des Scripts abarbeiten konnte und nicht auf einen Rückgabewert wartete. Dies kann in der Bash-Shell mit einem "\&" erreicht werden. Die simple Lösung des Problems sieht schlussendlich fast gleich aus:
-\begin{lstlisting}[language=bash, breaklines=true]
+\begin{verbatim}
  ssh student@${i} "java -jar ${remotePath}/${clientJar}" &
-\end{lstlisting}
+\end{verbatim}
 
 \subsection{Startprozess des Frameworkservers}
 \label{sec:startFramework}
@@ -98,7 +98,7 @@ Aus obigem XML-Code generiert die Factory nun ein Objekt vom Typ TestCase. Diese
 \subsubsection{Configuration-Factory}
 \label{sec:configurationFactory}
 Die Configuration-Factory liest alle Daten aus der Konfigurationsdatei aus und erstellt mit diesen Informationen ein Configuration-Objekt. Die Konfigurationsdatei sieht wie folgt aus:
-\begin{lstlisting}
+\begin{verbatim}
 Client0=152.96.193.18
 Client1=152.96.193.19
 Clientport=36927
@@ -106,7 +106,7 @@ ServerRmiPort=36925
 ServerSocketPort=36926
 ServerRegistryName=Server
 ClientRegistryName=Client
-\end{lstlisting}
+\end{verbatim}
 
 In der Konfigurationsdatei ist definiert, welche Clients auf welchem Port kontaktiert werden können. Weiter ist der Registry-Name definiert, damit der Server weiss, über welche Registry er die Methoden auf dem Client aufrufen muss. \newline
 Aus diesen Informationen erstellt die Factory ein Configuration- Objekt, welches sie dem Client als erstes sendet. Damit ist gewährleistet, dass der Frameworkserver und die Frameworkclients miteinander über RMI kommunizieren können. \newline
@@ -116,7 +116,7 @@ Pro Client, welcher in der Konfigurationsdatei definiert ist, wird ein Client-Ob
 \label{sec:clientObjekt}
 
 Das Clientobjekt besitzt unter anderem ein Datenfeld, welches genau zwei Zustände annehmen kann: Ready und NotReady. Führt der Frameworkclient die Methode \texttt{setReady()} auf dem Server aus, wird der Status auf dem jeweiligen Objekt auf Ready gesetzt. Folgend die Implementation der setReady-Methode:
-\begin{lstlisting}[language=Java, breaklines=true]
+\begin{verbatim}
 public void setReady(String ip) 
 {
   logger.info("Setted ready with: " + ip);
@@ -130,7 +130,7 @@ public void setReady(String ip)
     start();
   }
 }
-\end{lstlisting}
+\end{verbatim}
 
 Interessant an dieser Methode ist die Funktion der \texttt{checkAllReady}-Me\-tho\-de. Dieser Mecha\-nismus ist nicht nur dazu da, um alle Clients mög\-lichst gleichzeitig zu starten, sondern auch, um die Threads zu steuern. Die Methode \texttt{setReady()} wird durch mehrere verschiedene Threads aufgerufen, von jedem Client genau ein Mal. Durch die Implementation von \texttt{checkAllReady()} wird aber nur der letzte Thread, welcher \texttt{setReady()} aufruft, weiterleben und \texttt{start()} ausführen können. Somit ist garantiert, dass auch danach nur ein Thread aktiv ist und keine Seiteneffekte entstehen können.
 
@@ -140,7 +140,7 @@ Die Implementation dieser Logik war nicht schwer, doch das Bewusstsein für die 
 \label{sec:startMethode}
 
 Die Methode \texttt{start()} gibt dem Client an, mit der Abarbeitung des Szenarios zu beginnen. Die erste Implementation dieser Methode sah wie folgt aus:
-\begin{lstlisting}[language=java, breaklines=true]
+\begin{verbatim}
 private void start()
 {
   logger.info("Method start() invoked");
@@ -149,11 +149,11 @@ private void start()
     clientList.getClient(i).getClientStub().startTest();
   }
 }
-\end{lstlisting}
+\end{verbatim}
 
 Nach einigen Testdurchläufen konnte festgestellt werden, dass die Clients ihre Szenarien nur sequentiell abarbeiteten und die Operationen auf dem Server nicht gleichzeitig geschehen. Schuld an diesem Umstand war obige Implementation der \texttt{start}-Methode. Der Server-Thread, welcher \texttt{startTest()} auf dem Client aufrief, wartete solange, bis die Methode zurückkehrte. Da die Methode natürlich erst nach der Beendigung des Szenarios zurückkehrt, konnte nur immer genau ein Client zu einem gewissen Zeitpunkt aktiv sein.\newline
 Die jetzige Implementation und somit die Lösung des Problems sieht wie folgt aus:
-\begin{lstlisting}[language=java, breaklines=true]
+\begin{verbatim}
 private void start()
 {
   logger.info("Method start() invoked");
@@ -163,9 +163,9 @@ private void start()
     new Thread(clientStart).start();
   }
 }
-\end{lstlisting}
+\end{verbatim}
 Um das Problem mit der Er\-stel\-lung ei\-nes neu\-en Th\-reads für je\-den zu startenden Client zu umgehen, musste eine weitere Klasse Namens "'Client\-Start" ge\-schrie\-ben wer\-den. Die Klas\-se im\-p\-le\-men\-tiert natür\-lich das Inter\-face "'Run\-nable" und im\-p\-le\-men\-tiert die "'run()"'-Methode wie folgt:
-\begin{lstlisting}[language=java, breaklines=true]
+\begin{verbatim}
 public void run() 
 {
   try{
@@ -174,7 +174,7 @@ public void run()
       logger.log(Level.SEVERE, "Uncaught exception", e);
   }
 }
-\end{lstlisting}
+\end{verbatim}
 
 Mit dieser Im\-ple\-men\-ta\-tion wird der Me\-tho\-den\-auf\-ruf "start()" nun von einem se\-pe\-rat\-en Thread ausgeführt. Dies führt dazu, dass die Clients nun zeitlich parallel gestartet werden und nicht nacheinander. Da die einzelnen Threads nach Beendigung der \texttt{run()}-Methode sterben, ist die Art der Implementation unbedenklich bezüglich Seiteneffekte oder "'Zombie-Threads".
 
@@ -208,16 +208,16 @@ Die im Diagramm ersichtlichen Operationen können folgender\-massen er\-läu\-te
 \subsubsection{Stoppen eines Clients}
 \label{sec:stopClient}
 Ruft ein Client die Methode \texttt{setResults(Scenario)} auf dem Server auf, wird Serverintern der Status des Clients auf "Down" gesetzt. Da die Methode \texttt{stopClient()} wiederum pro Client genau ein Mal aufgerufen wird, entsteht das Problem, dass mehrere Threads am Leben sind. Um dies ab einem gewissen Punkt zu verhindern, wurde ähnlich zur \texttt{setReady()}-Methode, folgende Implementation gewählt:
-\begin{lstlisting}[language=java, breaklines=true]
+\begin{verbatim}
 private void stopClient(String clientIp)
 {
   Client temp;
   try {
 	if((temp = clientList.getClientByIp(clientIp)) != null)
         {
-	  logger.info("stop client with ip: " + clientIp);
-	  temp.setClientRunning(ShutedDown.DOWN);
-	  temp.getClientStub().shutdown();
+	  	logger.info("stop client with ip: " + clientIp);
+	  	temp.setClientRunning(ShutedDown.DOWN);
+	  	temp.getClientStub().shutdown();
 	}
 	} catch (RemoteException e) {
 	    logger.log(Level.SEVERE, "Uncaught exception", e);
@@ -227,7 +227,7 @@ private void stopClient(String clientIp)
 	  printSummary();
 	}
 }
-\end{lstlisting}
+\end{verbatim}
 
 Durch die Prüfung \texttt{checkAllShutedDown()}, wird nur der letzte aller Threads weiterleben. Somit wird auch nur ein Thread fähig sein die Methode \texttt{printSummary()} auszuführen, während die anderen Threads die Methode zu Ende abarbeiten und am Ende der Methode sterben. Durch diese Implementation wird sichergestellt, dass nur ein Thread weiterlebt und keine "'Zombi-Prozesse" mehr vorhanden sind.
 
@@ -238,9 +238,9 @@ Oben genannte Implementation der \texttt{stopClient(String clientIP)}-\-Me\-tho\
 Schlussendlich wurde bemerkt, dass die Methode \texttt{printSummary()} trotz aller Vorsichtsmassnahmen von jedem Client ein Mal ausgeführt wurde, was dazu führte, dass mehrere Zusammenfassungen generiert wurden und probiert wurde, den FrameworkServer mehrere Male herunterzufahren. Der Versuch den FrameworkServer mehrmals herunterzufahren war natürlich der Grund für die Ex\-cep\-tions, da dem zweiten Client ein\-fach der Ver\-bin\-dungs\-part\-ner weggerissen wurde.
 
 Der Grund des Fehlverhaltens lag in der nicht-funktionierenden Barriere \texttt{checkAllShutedDown()}. Nachdem der Methodenkopf durch "'synchronized"' erweitert wurde, funktionierte das Framework wieder problemlos:
-\begin{lstlisting}[language=java, breaklines=true]
+\begin{verbatim}
 synchronized private void stopClient(String clientIp)
-\end{lstlisting}
+\end{verbatim}
 Anscheinend sind die Clients bei der Cache- Implementation immer zum fast gleichen Zeit\-punkt fer\-tig, was dazu führte, dass der Sta\-tus "'Shuted\-Down\-.DOWN"' nur un\-zu\-ver\-läs\-sig gesetzt wurde.
 
 Das Fehlerszenario lief wie folgt ab:
@@ -264,7 +264,7 @@ Beim Aufruf der Methode \texttt{printSummary()}, wird ein ReportGenerator instan
 
 Pro Client wird eine Datei erstellt, in welcher die Daten dargestellt werden. Folgend einen kurzen Auszug eines solchen Reports:
 
-\begin{lstlisting}[breaklines=true]
+\begin{verbatim}
 **************************************************
 Result for Client: 152.96.193.18 with ScenarioID: 1
 OS: Linux / 3.0.0-17-generic-pae
@@ -281,8 +281,9 @@ Total actions executed: 2, number of unsuccessful action 0
 Total getBalance calls: 2, avg. execution time 61.179245
 Total setBalance calls: 2, avg. execution time 79.9767365
 
-Total Conflict: 0 / Gesamt Dauer: 282.311963 ms / durch. Dauer pro Operation: 141.1559815
-\end{lstlisting}
+Total Conflict: 0 / Gesamt Dauer: 282.311963 ms / 
+durch. Dauer pro Operation: 141.1559815
+\end{verbatim}
 
 Die genaue Messerwerte, mit Durch\-schnitts\-wer\-ten und Ver\-gleiche zwischen den verschiedenen Systemen sind am Schluss dieser Arbeit zu finden. 
 
@@ -298,14 +299,17 @@ Die Ausgabe der Ergebnisse in eine Datenbank wäre die sauberste Lösung, ist je
 \subsubsection{Result Generator}
 \label{sec:resultGenerator}
 Der ResultGenerator ist ein Generator, welcher für die Berechnung des zu erwartenden Endbestandes des Account-Objektes verantwortlich ist. Wenn alle Clients ihre Operationen abgeschlossen haben, wird das aktuelle Ergebnis des Account-Objektes und das erwartete Ergebnis auf der Konsole ausgegeben. Zusätzlich wird kontrolliert, ob die Ergebnisse übereinstimmen und eine entsprechende Meldung wird auf der Konsole ausgegeben:
-\begin{lstlisting}[breaklines=true]
-19.04.2012 18:33:38 ch.hsr.objectCaching.testFrameworkServer.Server printSummary
+\begin{verbatim}
+19.04.2012 18:33:38 ch.hsr.objectCaching.testFrameworkServer.
+Server printSummary
 INFO: AccountBalance is: 1.4641001269340557
-19.04.2012 18:33:38 ch.hsr.objectCaching.testFrameworkServer.Server printSummary
+19.04.2012 18:33:38 ch.hsr.objectCaching.testFrameworkServer.
+Server printSummary
 INFO: AccountBalance should be: 1.4641001269340557
-19.04.2012 18:33:38 ch.hsr.objectCaching.testFrameworkServer.Server printSummary
+19.04.2012 18:33:38 ch.hsr.objectCaching.testFrameworkServer.
+Server printSummary
 INFO: No Lost-Updates!
-\end{lstlisting}
+\end{verbatim}
 
 \subsubsection{Logger}
 \label{sec:logger}
@@ -372,11 +376,12 @@ Die Kommunikation zwischen dem Testframework Client und dem Testframework Server
 \end{enumerate}
 
 Über folgendes Client Interface wird der ClientController konfiguriert und gesteuert:
-\begin{lstlisting}[language=java, breaklines=true] 	
-public void initialize(Scenario scenario, Configuration configuration) throws RemoteException;
+\begin{verbatim} 	
+public void initialize(Scenario scenario, 
+Configuration configuration) throws RemoteException;
 public void startTest() throws RemoteException;
 public void shutdown() throws RemoteException;
-\end{lstlisting}
+\end{verbatim}
 Die Grundidee zu Beginn des Projekts war, dass alle Konfigurationswerte einzeln als Parameter an den ClientController übergeben werden. Es stellte sich je\-doch schon nach kurzer Zeit her\-aus, dass eine Kap\-se\-lung der be\-nötigen Para\-meter in einem seperaten Objekt eine wesentlich bessere Lösung darstellt. Dieses neue Datatransfer Objekt, beinhaltet sowohl alle nötigen Informationen für die Konfiguration des ClientSystemUnderTest als auch die des ClientControllers.
 
 \subsubsection{Initialize des ClientControllers}
@@ -411,14 +416,16 @@ Die Methode \texttt{shutdown()} be\-endet den Test\-frame\-work\-Client und das 
 \end{enumerate}
 
 Beim Testen der shutdown()-Funktionalität konnte festgestellt werden, dass bei der Umsetzung wie oben beschrieben, der Server immer eine Exception bekommt. Es stellte sich heraus, dass das sofortige Herunterfahren des ClientControllers nach dem Unbinding und dem Unexport des ClientController Objekts dem Server keine Zeit lässt, seine RMI Verbindung zum ClientController korrekt zu schliessen. Die Lösung des Problems lag in einer Pause zwischen dem Unexport und dem Beenden des ClientControllers. Die Dauer der Verzögerung von zwei Sekunden stellte sich als ausreichen heraus. Folgender Codeausschnitt zeigt die Lösung des Problems:
-\begin{lstlisting}[language=java, breaklines=true]
+\begin{verbatim}
 private void shutdownClientController() throws RemoteException {
   try {
 	Naming.unbind("rmi://localhost:" + ClientRmiPort + "/Client");
       } catch (MalformedURLException e1) {
-	  throw new RemoteException("Malformed URL has occurred in ClientController", e1);
+	  throw new RemoteException("Malformed URL has occurred 
+	  in ClientController", e1);
 	} catch (NotBoundException e1) {
-	    throw new RemoteException("Unbinding the ClientController failed", e1);
+	    throw new RemoteException("Unbinding the ClientController 
+	    failed", e1);
 	}
 	  UnicastRemoteObject.unexportObject(this, true);
 	  closeClientController(2000);
@@ -437,7 +444,7 @@ private void closeClientController(final long delay) {
 		}.start();
 	}
 }
-\end{lstlisting}
+\end{verbatim}
 Die Beendigung des ClientControllers wird in einem seperaten Thread ausgeführt, so\-dass der Main- Thread noch ge\-nü\-gend Zeit hat, alle of\-fe\-nen Ver\-bin\-dun\-gen ord\-nungs\-gemäss zu schliessen. Der Shutdown Thread beendet den ClientController nach der definierten Dauer mit \verb+System.exit()+.   
 
 \subsection{Test Client}
@@ -445,13 +452,14 @@ Die Beendigung des ClientControllers wird in einem seperaten Thread ausgeführt,
 Die TestClient Klasse ist die Schnittstelle zwischen dem ClientController und dem ClientSystemUnderTest. Alle Clientvarianten die getestet werden sollen, müssen das Interface ClientSystemUnderTest implementieren, so lassen sich alle Varianten von ClientSystemUnderTest einheitlich mit einer TestClient Klasse testen. Desweiteren kann auf dem TestClient das Szenario gesetzt werden, welches der TestClient beim Aufruf von \verb+runScenario()+ durch den ClientController abarbeitet.
 
 Das ClientSystemUnderTest Interface ist wie folgt definiert:
-\begin{lstlisting}[language=java, breaklines=true] 	
+\begin{verbatim}
 public interface ClientSystemUnderTest {	
   public AccountService getAccountService();
-  public void setServerSocketAdress(InetSocketAddress socketAdress);
+  public void setServerSocketAdress(InetSocketAddress 
+  socketAdress);
   public void shutdown();
 }	
-\end{lstlisting}
+\end{verbatim}
 \subsubsection{Ablauf}
 \label{sec:ablauf}
 \begin{enumerate}
@@ -480,11 +488,11 @@ Die Lösung dieses Problem lag in einer Wartephase vor dem eigentlichen Abarbeit
 \section{Action}
 \label{sec:action}
 Ein Szenario beinhaltet eine Menge von Aktionen, welche auf ein Account Objekt ausgeführt werden können. Für eine einfache Erweiterbarkeit von neuen Aktionen, ist hierfür das Command-Pattern benutzt worden. Alle konkreten Implementierungen einer Aktion müssen von der abstrakte Klasse Action ableiten. Im Konstruktor dieser abstrakten Klasse wird ein neues Result Objekt instanziert. Im Kapitel "'Result" \ref{sec:result} wird dieser Typ genauer beschrieben. Dieses Objekt dient als Datenkontainer für alle Zeitmessungen die während dieser Aktion gesammelt werden sollen. Desweiteren deklariert Action drei abstrakte Methoden die von Subklassen implementiert werden müssen.
-\begin{lstlisting}[language=java, breaklines=true] 	
+\begin{verbatim}	
 public abstract ActionTyp getActionTyp();
 public abstract int getMinimalNumberOfTimeRecords();
 public abstract void execute(Account account);	
-\end{lstlisting}
+\end{verbatim}
 
 \begin{itemize}
 \item Für eine detailierte Auswertung muss der Typ der Aktion zugänglich gemacht werden, dies ist über die Methode \verb+getActionTyp()+ möglich.
@@ -512,7 +520,7 @@ Die Aktion \verb+IncrementAction+ ist die Kernaktion für alle Szenarien. Sie be
 \item Versuchen den neuen Wert via \verb+setBalance(balance)+ Methode zurück in das Konto, welches auf dem Server liegt, zu schreiben. 
 \end{itemize}
 
-\begin{lstlisting}[language=java, breaklines=true] 
+\begin{verbatim}
 @Override
 public void execute(Account account) {
   boolean successful = false;
@@ -535,7 +543,7 @@ public void execute(Account account) {
 	  numberOfTry++;
 	}
 }
-\end{lstlisting}
+\end{verbatim}
 Im Laufe der Rea\-li\-sie\-rung stellte sich her\-aus das zwi\-schen dem \verb+getBalance()+ und dem \verb+setBalance()+-Auf\-ruf eine mi\-ni\-mal de\-fi\-nier\-ba\-re Zeit\-dauer ge\-wartet werden können muss. Diese Warteperiode ist nötig, damit sich leichter ein Konflikt erzeugen lässt und so gezeigt werden kann, dass der Fehler serverseitig zu keinem Lost-Updates führt. Tritt serverseitig ein Concurrency Fehler auf, wird eine RuntimeExeption zurück an den Client geworfen. Dieser Fehler veranlasst, dass die Aktion nochmals neu gestartet wird. Die Aktion wird solange wiederholt bis diese erfolgreich aus der While-Schleife kommt. Die Verzögerung zwischen dem Lesen und Schreiben, welche über die Methode \verb+sleep()+ realisiert ist, führt nur beim ersten Druchlauf der IncrementAction zu einer zeitlichen Verzögerung.
 
 \subsection{WriteAction}

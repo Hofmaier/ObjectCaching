@@ -24,7 +24,7 @@ Um möglichst genaue Messdaten zu erlangen, wird das ganze System nach einem Tes
 Das  Startup-Script ist ein Shell-Script in der Bash-Sprache geschrieben. Das Script führt mehrere Methoden nacheinander aus:
 \begin{enumerate}
 \item Ein ant- Script wird an\-ge\-stos\-sen, wel\-ches die Pro\-jek\-te kom\-pi\-liert. Durch die\-sen Schritt ent\-stehen die .jar- Dateien, welche im nächs\-ten Schritt benötigt werden.
-\item Das Script prüft die in der Config-Datei eingetragenen Zielrechner auf bereits vorhandene "client.jar"-Dateien und löscht diese Dateien, falls vorhanden.
+\item Das Script prüft die in der Config-\-Datei ein\-ge\-tra\-gen\-en Ziel\-rechner auf bereits vorhandene "client.jar"-Dateien und löscht diese Dateien, falls vorhanden.
 \item Durch die Applikation "'Secure Copy" wird die zuvor im Buildprozess erstellte Datei "'client.jar"' auf die Zielrechner kopiert.
 \item Via SSH wird der Frameworkclient auf den Zielrechnern gestartet.
 \item Der Frameworkserver wird gestartet.
@@ -35,7 +35,7 @@ Probleme beim Schreiben des Scripts waren selten. Ein Problem, welches gelöst w
 \begin{lstlisting}[language=bash, breaklines=true]
  ssh student@${i} "java -jar ${remotePath}/${clientJar}"
 \end{lstlisting}	
-Offensichtlich wartet das Script beim Ausführen eines Befehls auf einem fremden Rechner auf einen Rückgabewert in irgendeiner Form; also auf einen Errorcode oder aber auf einen Exitstatus. Das Absetzen dieses Befehls musste in einem seperaten Kind-Prozess stattfinden, damit der Eltern-Prozess die weiteren Aufgaben des Scripts abarbeiten konnte und nicht auf einen Rückgabewert wartete. Dies kann in der Bash-Shell mit einem "\&" erreicht werden. Die simple Lösung des Problems sieht schlussendlich fast gleich aus:
+Offensichtlich wartet das Script beim Aus\-füh\-ren ei\-nes Be\-fehls auf ein\-em frem\-den Rech\-ner auf einen Rück\-ga\-be\-wert in irgendeiner Form; also auf einen Errorcode oder aber auf einen Exitstatus. Das Absetzen dieses Befehls musste in einem seperaten Kind-Prozess stattfinden, damit der Eltern-Prozess die weiteren Aufgaben des Scripts abarbeiten konnte und nicht auf einen Rückgabewert wartete. Dies kann in der Bash-Shell mit einem "\&" erreicht werden. Die simple Lösung des Problems sieht schlussendlich fast gleich aus:
 \begin{lstlisting}[language=bash, breaklines=true]
  ssh student@${i} "java -jar ${remotePath}/${clientJar}" &
 \end{lstlisting}
@@ -164,7 +164,7 @@ private void start()
   }
 }
 \end{lstlisting}
-Um das Problem mit der Erstellung eines neuen Threads für jeden zu startenden Client zu umgehen, musste eine weitere Klasse Namens "'Client\-Start" ge\-schrie\-ben wer\-den. Die Klas\-se im\-p\-le\-men\-tiert natür\-lich das Inter\-face "'Run\-nable" und im\-p\-le\-men\-tiert die "'run()"'-Methode wie folgt:
+Um das Problem mit der Er\-stel\-lung ei\-nes neu\-en Th\-reads für je\-den zu startenden Client zu umgehen, musste eine weitere Klasse Namens "'Client\-Start" ge\-schrie\-ben wer\-den. Die Klas\-se im\-p\-le\-men\-tiert natür\-lich das Inter\-face "'Run\-nable" und im\-p\-le\-men\-tiert die "'run()"'-Methode wie folgt:
 \begin{lstlisting}[language=java, breaklines=true]
 public void run() 
 {
@@ -176,7 +176,7 @@ public void run()
 }
 \end{lstlisting}
 
-Mit dieser Implementation wird der Methodenaufruf "start()" nun von einem seperaten Thread ausgeführt. Dies führt dazu, dass die Clients nun zeitlich parallel gestartet werden und nicht nacheinander. Da die einzelnen Threads nach Beendigung der \texttt{run()}-Methode sterben, ist die Art der Implementation unbedenklich bezüglich Seiteneffekte oder "'Zombie-Threads".
+Mit dieser Im\-ple\-men\-ta\-tion wird der Me\-tho\-den\-auf\-ruf "start()" nun von einem se\-pe\-rat\-en Thread ausgeführt. Dies führt dazu, dass die Clients nun zeitlich parallel gestartet werden und nicht nacheinander. Da die einzelnen Threads nach Beendigung der \texttt{run()}-Methode sterben, ist die Art der Implementation unbedenklich bezüglich Seiteneffekte oder "'Zombie-Threads".
 
 \subsubsection{Der Dispatcher}
 \label{sec:dispatcher}

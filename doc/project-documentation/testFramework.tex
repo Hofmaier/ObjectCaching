@@ -129,7 +129,7 @@ public void setReady(String ip)
 }
 \end{lstlisting}
 
-Interessant an dieser Methode ist die Funktion der \texttt{checkAllReady}-Methode. Dieser Mecha\-nismus ist nicht nur dazu da, um alle Clients mög\-lichst gleichzeitig zu starten, sondern auch, um die Threads zu steuern. Die Methode \texttt{setReady()} wird durch mehrere verschiedene Threads aufgerufen, von jedem Client genau ein Mal. Durch die Implementation von \texttt{checkAllReady()} wird aber nur der letzte Thread, welcher \texttt{setReady()} aufruft, weiterleben und \texttt{start()} ausführen können. Somit ist garantiert, dass auch danach nur ein Thread aktiv ist und keine Seiteneffekte entstehen können.\newline
+Interessant an dieser Methode ist die Funktion der \texttt{checkAllReady}-Me\-tho\-de. Dieser Mecha\-nismus ist nicht nur dazu da, um alle Clients mög\-lichst gleichzeitig zu starten, sondern auch, um die Threads zu steuern. Die Methode \texttt{setReady()} wird durch mehrere verschiedene Threads aufgerufen, von jedem Client genau ein Mal. Durch die Implementation von \texttt{checkAllReady()} wird aber nur der letzte Thread, welcher \texttt{setReady()} aufruft, weiterleben und \texttt{start()} ausführen können. Somit ist garantiert, dass auch danach nur ein Thread aktiv ist und keine Seiteneffekte entstehen können.\newline
 Die Implementation dieser Logik war nicht schwer, doch das Bewusstsein für die Problematik mit mehreren Threads muss ständig vorhanden sein. Die Einflüsse der parallelen Programmierung stellten ohnehin einen spannenden Aspekt dieser Arbeit dar. 
 
 \subsubsection{Die Start-Methode}
@@ -195,7 +195,7 @@ Nach Beendigung eines Testlaufs, muss der Server mehrere Arbeiten erledigen. Nac
 Die im Diagramm ersichtlichen Operationen können folgender\-massen er\-läu\-tert werden:
 \begin{itemize}
 \item Die Methode \texttt{setResults(Scenario)} wird vom Client auf dem Server auf\-ge\-rufen, durch den Aufruf dieser Methode weiss der Server, dass der aufrufende Client sein Szenario durchgespielt hat. Weiter wird mit dem Aufruf der Methode wiederum ein Thread durch den RMI-Daemon gestartet, welcher die weiter folgenden Methoden anstösst.
-\item Aus der \texttt{setResults(Scenario)}- Methode wird di\-rekt "'stopClient()" auf\-ge\-rufen. Was diese Methode genau macht, wird im Kapitel \ref{sec:stopClient} "'Stoppen eines Clients" genau beschrieben.
+\item Aus der \texttt{setResults(Scenario)}- Me\-tho\-de wird di\-rekt "'stopClient()" auf\-ge\-rufen. Was diese Me\-tho\-de genau macht, wird im Kapitel \ref{sec:stopClient} "'Stop\-pen eines Clients" genau be\-schrie\-ben.
 \item Die Methode \texttt{shutDown()} wird auf dem Client aufgerufen. Der Client trennt daraufhin die RMI-Verbindung zum Server und schaltet sich selber ab. Nähere Informationen zum Abschaltungsprozess eines Clients kann unter dem Kapitel \ref{sec:test-FW Client} "'Testframework Client" nachgelesen werden.
 \item Die Methode \texttt{printSummary()} verwertet die Ergebnisse, welche die Clients in ihrem Szenario gespeichert und wieder übertragen haben. Mehr Informationen dazu im Kapitel \ref{sec:reportGenerator} "'Report Generator". Weiter wird auf der Console ausgegeben, ob es "Lost-Update"-Probleme gegeben hat oder nicht. Mehr zu diesem Thema unter dem Kapitel \ref{sec:resultGenerator}"'Result Generator".
 \end{itemize}

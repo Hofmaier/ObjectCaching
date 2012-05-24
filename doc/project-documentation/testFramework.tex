@@ -417,9 +417,10 @@ Die Methode \texttt{shutdown()} be\-endet den Test\-frame\-work\-Client und das 
 
 Beim Testen der shutdown()-Funktionalität konnte festgestellt werden, dass bei der Umsetzung wie oben beschrieben, der Server immer eine Exception bekommt. Es stellte sich heraus, dass das sofortige Herunterfahren des ClientControllers nach dem Unbinding und dem Unexport des ClientController Objekts dem Server keine Zeit lässt, seine RMI Verbindung zum ClientController korrekt zu schliessen. Die Lösung des Problems lag in einer Pause zwischen dem Unexport und dem Beenden des ClientControllers. Die Dauer der Verzögerung von zwei Sekunden stellte sich als ausreichen heraus. Folgender Codeausschnitt zeigt die Lösung des Problems:
 \begin{verbatim}
-private void shutdownClientController() throws RemoteException {
+private void shutdownClientController() throws RemoteException 
+{
   try {
-	Naming.unbind("rmi://localhost:" + ClientRmiPort + "/Client");
+		Naming.unbind("rmi://localhost:" + ClientRmiPort + "/Client");
       } catch (MalformedURLException e1) {
 	  throw new RemoteException("Malformed URL has occurred 
 	  in ClientController", e1);

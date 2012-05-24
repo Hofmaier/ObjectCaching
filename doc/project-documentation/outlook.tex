@@ -1,0 +1,25 @@
+\chapter{Ausblick}
+
+Die Concurrency control und das Object-Caching könnten noch optimiert und erweitert werden.
+
+
+\section{Feingranulares Locking}
+\label{sec:feingr-lock}
+
+Bei den realisierten Prototypen wird Lese- und Schreibzugriffe auf dem Server seriel ausgeführt. Der Ablauf des Methodenaufrufs inklusive der Aktualisierung der Concurrency control wird ohne die Unterbrechung durch einen anderen Remote-Methodenaufruf ausgeführt. Damit sollen Inkonsistenzen vermieden werden. Die betreffenden Methoden werden zurzeit mit \texttt{synchronized} markiert. Dies kann sich negativ auf die Performance auswirken. 
+
+Der Concurrency control Mechanismus könnte so erweitert werden, dass Methodenaufrufe auf dem Server wenn möglich parallel ablaufen. 
+Der Concurrency-Mechanismus soll es ermöglichen, dass Anfragen parallel ausgeführt werden können.
+
+\section{Local-Write Protokoll}
+\label{sec:local-write-prot}
+
+Unser System realisiert ein Remote-Write-Protocol. Alle Schreiboperationen werden an einen einzigen fixen Server weitergeleitet.
+Eine Variante des primary-based Protokol wäre, dass das Referenzobjekt (primary) zwischen unterschiedlichen Prozessen (oder Clients und Server) hin und her wandern kann. Dies nennt man ein Local-Write Protokoll \cite{tanenbaum07}. Wenn ein Client ein Objekt updaten möchte, lokalisiert er es und holt das Objekt in seinen Cache. Schreibzugriffe könnten somit lokal ausgeführt werden und es wäre kein zentraler Server mehr nötig. Nachdem ein Objekt beim Client lokal verändert wurde, werden Updatenachrichten an alle anderen Kopien gesendet.
+
+\section{Generierung von nativen Java Objekten}
+\label{sec:gener-von-nativ}
+
+Die Stub- und die Skeletonklassen wurden in beiden implementierten Prototypen von Hand programmiert. Das heisst für jeden zusätzlichen Typen zu \texttt{Account} muss man die zugehörigen Stub und Skeletonklassen schreiben. Diesen Vorgang könnte man automatisieren, indem man einen Compiler schreibt der Stub- und Skeletonclass-Files generiert (ähnlich wie der Java RMI Compiler).
+
+Objekttypen könnten zum Client mittels eines speziellen Class-Loaders übertragen werden. Damit wäre es nicht mehr nötig, dass der Client bereits mit den Objekttypen ausgeliefert wird. Man könnte neue Objekttypen zur Laufzeit hinzufügen und an die Clients senden.

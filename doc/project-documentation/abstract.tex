@@ -1,0 +1,8 @@
+\chapter*{Abstract}
+Bei der Firma staila technologies wird das Datenverarbeitungssystem Mercury entwickelt, welches Clients ermöglicht Methoden von Objekten, die auf dem Server sind, über das Netzwerk aufzurufen. Um „Lost Update“-Fehler zu verhindern und die Performance durch Objektreplikation zu steigern, wurde ein Konzept entwickelt.\\ \\
+Anhand des Konzeptes wurden zwei Prototypen erstellt. Beim ersten Prototypen handelt es sich um ein vereinfachtes RMI-System, welches eine „Concurrency control“ beinhaltet. Um „Lost Updates“ zu verhindern, wird das Verfahren „Optimistic Concurrency“ eingesetzt. \\ \\
+Beim zweiten Prototypen wurde zusätzlich zur „Concurrency Control“ ein lokaler Cache implementiert.\\ \\
+Um die Funktionalität und die Performance der Prototypen zu vergleichen, wurde ein Test-Framework implementiert.\\ \\
+Mit Hilfe des Frameworks wurden mehrere, praxisbezogene Szenarien durchgespielt. Gemessen wurden dabei die Zeiten, welche zur Ausführung der Lese –und Schreiboperationen gebraucht wurde, sowie die Anzahl der aufgetretenen Konflikte.\\
+Grundsätzlich kann gesagt werden, dass sich das Cache-System bei allen Szenarien als sehr gut bewährt hat, in welchen viele Lesezugriffe getätigt werden mussten. Dies war zu erahnen, da der Zugriff auf den lokalen Speicher natürlich viel schneller ist, als der Zugriff über das Netzwerk.\\ \\
+Bei permanent nur schreibenden Clients, skaliert das System ohne Cache hingegen besser. Die Zeit, um einen schreibenden Zugriff abzuwickeln, ist bei diesem System immer gleich gross. Beim System mit Cache, steigt die benötigte Zeit für schreibende Zugriffe bei steigender Anzahl Clients, exponentiell.

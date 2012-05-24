@@ -141,7 +141,7 @@ Im ersten Szenario treten keine Konsistenzprobleme auf. Nur ein Client ruft nach
 
 \begin{figure}[h]
   \centering
-\includegraphics[scale=0.3]{image_testFramework/conflictscenario_noconflict}  
+\includegraphics[scale=0.5]{image_testFramework/conflictscenario_noconflict}  
   \caption{Szenario mit einem Client}
   \label{fig:oneclient}
 \end{figure}
@@ -161,7 +161,7 @@ In diesem Szenario versucht Client 1 ein \texttt{setBalance()} und das Objekt im
 
 \begin{figure}[h]
   \centering
-\includegraphics[scale=0.3]{images_objectcaching/conflictInCache}  
+\includegraphics[scale=0.6]{images_objectcaching/conflictInCache}  
   \caption{Konflikt wird in lokal behoben}
   \label{fig:localconflict}
 \end{figure}
@@ -184,7 +184,7 @@ In diesem Szenario wird der \texttt{setBalance()}-Aufruf unterbrochen bevor er d
 
 \begin{figure}[h]
   \centering
-\includegraphics[scale=0.3]{images_objectcaching/conflictOnServer}  
+\includegraphics[scale=0.6]{images_objectcaching/conflictOnServer}  
   \caption{Konflikt wird auf Server festgestellt}
   \label{fig:conflictonserver}
 \end{figure}
@@ -201,7 +201,7 @@ Bei allen Fällen kann Inkonsistenz festgestellt werden, indem sich der Server u
 
 \begin{figure}[h]
   \centering
-\includegraphics[scale=0.3]{images_objectcaching/conflictCross}  
+\includegraphics[scale=0.6]{images_objectcaching/conflictCross}  
   \caption{Update und setBalance überkreuzen sich}
   \label{fig:messagecross}
 \end{figure}

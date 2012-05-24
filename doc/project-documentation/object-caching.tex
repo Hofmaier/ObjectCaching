@@ -55,7 +55,7 @@ Ein Konsistenzmodel beschreibt unter anderem in welcher Reihenfolge die Clients 
 Sequenzielle Konsistenz ist ein Konsistenzmodel. Es definiert, dass alle Prozesse in einem verteilten System die selbe Reihenfolge der Operationen auf einem Objekt sehen \cite{tanenbaum07}.  Das Konsistenzprotokoll unseres Object-Caching-Systems implementiert sequenzielle Konsistenz.
 
 \subsection{Primary-Based Protokol}
-\label{sec:prim-based-prot}
+\label{sec:prim-bnased-prot}
 
 In unserem System sind alle Objekte zentral auf einem Server abgespeichert. Das Objekt auf dem Server ist das Referenzobjekt. Alle Schreiboperationen werden von den Clients an den Server gesendet. Die Reihenfolge der Schreiboperationen auf einem Objekt ist die Reihenfolge, wie sie beim Server chronologisch eintreffen. Nachdem der Server eine Schreiboperation verarbeitet hat, sendet er ein Update an alle Clients, die das aktualisierte Objekt bei sich im Cache haben. Damit sehen alle Clients die selbe Updatereihenfolge und die Anforderung für die sequenzielle Konsistenz ist damit erfüllt. 
 
@@ -128,7 +128,7 @@ Im ersten Szenario treten keine Konsistenzprobleme auf. Nur ein Client ruft nach
 \item Beim ersten \verb|getBalance()| fordert der Cache ein neues Objekt an und speichert es.
 \item Beim zweiten \verb|getBalance()|  liegt das Objekt bereits im Cache und muss nicht nochmals vom Server angefordert werden.
 \item Ruft der Client ein \verb|setBalance()| auf, wird dieser Aufruf direkt an der Server weitergeleitet. Der Aufruf blockiert, bis der Server eine Antwort sendet. Der Server sendet zuerst allen Clients das Update danach sendet er das ReturnValue des Methode-Message wird also vor dem ReturnValue versendet. Im ClientCache wird das Update und das ReturnValue verarbeitet. Es kann nicht gesagt werden, ob der Cache bereits ein Update erfahren hat, wenn  \verb|setBalance()|  zurückkehrt.
-\item Nachdem der ClientCache die Update Nachricht des Server verarbeitet hat, ruft der Client nochmals \verb|getBalance()| auf, erhält er den Kontostand des neuesten Objektes.
+\item Wenn der Client nochmals \texttt{getBalance()} aufruft, wird die Methode auf dem aktualisierten Objekt im Cache ausgeführt.
 \end{enumerate}
 
 \begin{figure}[h]

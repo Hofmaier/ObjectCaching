@@ -53,7 +53,7 @@ public class TestAccountStub {
 		ObjectOutputStream streamToReadbyCUT = new ObjectOutputStream(byteArrayStreamWithReturnValue);
 		
 		ReturnValue returnValue = new ReturnValue();
-		returnValue.setValue(300);
+		returnValue.setValue(300.0);
 		streamToReadbyCUT.writeObject(returnValue);
 		
 		objectInputStream = new ObjectInputStream(new ByteArrayInputStream(byteArrayStreamWithReturnValue.toByteArray()));

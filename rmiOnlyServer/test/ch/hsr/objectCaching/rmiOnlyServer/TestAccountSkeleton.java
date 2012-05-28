@@ -74,8 +74,8 @@ public class TestAccountSkeleton {
 		methodCall.setMethodName(getBalanceMethod.getName());
 		methodCall.setParameterTypes(parameterTypes);
 		
-		int returnValue = (Integer) skeleton.invokeMethodOnObject(skeleton.getMethod(methodCall) ,testAccount, null);
-		assertEquals(balance, returnValue);
+		double returnValue = (Double) skeleton.invokeMethodOnObject(skeleton.getMethod(methodCall) ,testAccount, null);
+		assertEquals(balance, returnValue, 0.01);
 		
 		methodCall.setMethodName(setBalanceMethod.getName());
 		methodCall.setParameterTypes(setBalanceMethod.getParameterTypes());
@@ -83,7 +83,7 @@ public class TestAccountSkeleton {
 		Object[] args = {newBalanceValue};
 		skeleton.invokeMethodOnObject(skeleton.getMethod(methodCall), testAccount, args);
 		
-		assertEquals(newBalanceValue, testAccount.getBalance());
+		assertEquals(newBalanceValue, testAccount.getBalance(), 0.01);
 	}
 
 	private void initMethods() {
@@ -105,7 +105,7 @@ public class TestAccountSkeleton {
 		ReturnValue returnValue = skeleton.invokeMethod(methodCall);
 		
 		assertEquals(testAccount.getBalance(), returnValue.getValue());
-		assertEquals(int.class, returnValue.getType());
+		assertEquals(double.class, returnValue.getType());
 		
 		methodCall.setMethodName(setBalanceMethod.getName());
 		methodCall.setParameterTypes(setBalanceMethod.getParameterTypes());
@@ -114,7 +114,7 @@ public class TestAccountSkeleton {
 		methodCall.setArguments(args);
 		skeleton.invokeMethod(methodCall);
 		
-		assertEquals(excpectedValue, testAccount.getBalance());
+		assertEquals(excpectedValue, testAccount.getBalance(), 0.01);
 	}
 	
 	@Test
@@ -177,7 +177,7 @@ public class TestAccountSkeleton {
 		int expectedBalance = 266;
 		Object[] setBalanceArgs = {expectedBalance};
 		setBalanceCall.setArguments(setBalanceArgs);
-		ReturnValue returnValue = skeleton.invokeMethod(setBalanceCall);
-		assertEquals(expectedBalance, testAccount.getBalance());
+		skeleton.invokeMethod(setBalanceCall);
+		assertEquals(expectedBalance, testAccount.getBalance(), 0.01);
 	}
 }

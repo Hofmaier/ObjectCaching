@@ -1,16 +1,15 @@
 package ch.hsr.objectCaching.rmiWithCacheClient;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.net.InetSocketAddress;
 
 import ch.hsr.objectCaching.account.AccountService;
 import ch.hsr.objectCaching.interfaces.ClientSystemUnderTest;
+import ch.hsr.objectCaching.rmiOnlyClient.IStreamProvider;
 import ch.hsr.objectCaching.rmiOnlyClient.StreamProvider;
 
 
 public class RMIwithCacheClientSystem implements ClientSystemUnderTest {
 	
-	private StreamProvider streamProvider = new StreamProvider();
+	private IStreamProvider streamProvider = new StreamProvider();
 	private MessageManager messageManager;
 
 	@Override
@@ -40,5 +39,11 @@ public class RMIwithCacheClientSystem implements ClientSystemUnderTest {
 	public void shutdown() {
 		messageManager.shutDown();
 	}
+
+	public void setStreamProvider(IStreamProvider streamProvider) {
+		this.streamProvider = streamProvider;
+	}
+	
+	
 
 }

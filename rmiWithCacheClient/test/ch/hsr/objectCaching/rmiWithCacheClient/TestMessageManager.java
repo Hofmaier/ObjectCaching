@@ -15,7 +15,6 @@ import org.junit.Test;
 import ch.hsr.objectCaching.account.AccountImpl;
 import ch.hsr.objectCaching.account.AccountService;
 import ch.hsr.objectCaching.dto.MethodCall;
-import ch.hsr.objectCaching.dto.ObjectRequest;
 import ch.hsr.objectCaching.dto.ObjectRequestResponse;
 import ch.hsr.objectCaching.rmiOnlyClient.IStreamProvider;
 
@@ -54,7 +53,6 @@ public class TestMessageManager {
 	public void testReceiveMethodCallResponse() throws IOException, ClassNotFoundException {
 		messageManager.setStreamProvider(streamProvider);
 		ObjectRequestResponse request = new ObjectRequestResponse();
-		int objectID = 3;
 		AccountImpl requestedObject = new AccountImpl();
 		double balance = 230.0;
 		requestedObject.setBalance(balance );
@@ -64,8 +62,8 @@ public class TestMessageManager {
 		objectInputStream = new ObjectInputStream(new ByteArrayInputStream(byteArrayOutputStream.toByteArray()));
 		ReceiverThread receiver = new ReceiverThread(messageManager);
 		new Thread(receiver).start();
-		Object actualRequestedObject =  messageManager.receiveObject();
-		AccountImpl actualAcc = (AccountImpl) actualRequestedObject;
+		ObjectRequestResponse actualRequestedObject =  messageManager.receiveObject();
+		AccountImpl actualAcc = (AccountImpl) actualRequestedObject.getRequestedObject();
 		assertEquals(balance, actualAcc.getBalance(), 0.1);
 	}
 	

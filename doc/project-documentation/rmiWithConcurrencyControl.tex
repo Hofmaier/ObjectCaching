@@ -1,8 +1,5 @@
 \chapter{RMI mit Concurrency Control}
 
-
-Führen mehrere Clients Methoden auf diesen Objekten auf dem Server aus,
-kann es zu sogenannten \gls{lostupdate} Fehlern kommen. Dieser Fehler  und eine Lösung wird im Abschnitt \ref{sec:concurrency-control}
 Führen mehrere Clients Methoden auf diesen Objekten auf dem Server aus,
 kann es zu sogenannten "'\gls{lostupdate}"' Fehlern kommen. Dieser Fehler und eine Lösung wird im Abschnitt \ref{sec:concurrency-control}
 genauer beschrieben. 
@@ -15,7 +12,7 @@ die der \gls{concurrencyControl} werden in den Abschnitten
 \ref{sec:impl-des-eigen} und \ref{sec:conc-contr-impl} erklärt.
 
 Die Dauer, die Methodenaufrufe in diesem RMI-System benötigen, werden
-später mit einem zweiten RMI-System, welches \gls{objectCaching} einsetzt
+später mit einem zweiten RMI-System, welches \gls{objectCaching} einsetzt,
 verglichen. Auf diese Weise wird ersichtlich, welchen
 Performancegewinn Object-Caching bringt.
 
@@ -86,7 +83,7 @@ Das RMI-System wurde als \gls{middleware} implementiert. Clients fordern \newlin
 \texttt{Ac\-co\-unt}\--Objekte von der Klasse \texttt{AccountService} über die
 Methode \newline \texttt{Collection<Account> getAllAccounts()}. Mit diesen
 Account-Ob\-jek\-ten \-ar\-bei\-tet der Client, wie mit lokalen Objekten, obwohl
-die Objekte auf einem entfernten Server in einer anderen "'\gls{virtualMachine}" leben. Die
+die Objekte auf einem entfernten Server in einer anderen "'\gls{virtualMachine}"' leben. Die
 Middleware sorgt für Lokalitätstransparenz. Sie 
 ermöglicht es, dass Objekte in unterschiedlichen Prozessen miteinander
 kommunizieren können. Methodenaufrufe werden in Nachrichten umgesetzt.
@@ -107,9 +104,9 @@ Server gesendet werden.
 Bei den Nachrichten handelt es sich um
 serialisierte Objekte des Typs\- \texttt{Me\-thod\-Call}. \texttt{MethodCall} ist ein Data-Transfer-Object. Es enthält
 Informationen darüber, welche Methode aufgerufen werden soll, auf
-welchem Objekt die Methoden aufgerufen werden soll und mit welchen
+welchem Objekt die Methoden aufgerufen werden sollen und mit welchen
 Argumenten die Methode aufgerufen wird. Nachdem der Methodenauruf dem
-Netzwerkstream übergeben wurde, wartet der Client bis er eine Antwort
+Netzwerkstream übergeben wurde, wartet der Client, bis er eine Antwort
 auf demselben Stream erhält. Die Antwort wird mit einem
 \texttt{ReturnValue}-Objekt übertragen.
 
@@ -134,7 +131,7 @@ Server mitteilen, auf welchem Objekt die Methode aufgerufen werden
 soll. Dafür teilt er dem Server eine Objekt-ID im MethodCall-Objekt
 mit. Diese Objekt-IDs wurden künstlich eingeführt. Der Server ordnet
 jedem Objekt eine Objekt-ID zu. Diese Objekt-ID müssen in den Stubs auf Clientseite bei
-Methodenaufruf bekannt sein und sie müssen mit den Objekt-IDs auf dem
+Methodenaufruf bekannt sein, und sie müssen mit den Objekt-IDs auf dem
 Server übereinstimmen. Der Client kann Account-Objekte beim Server
 anfordern. Das Interface AccountService bietet dafür die Methode
 \texttt{get\-All\-Accounts()} an. Das ReturnValue-Objekt, das auf
@@ -182,11 +179,11 @@ Stream und leitet sie an das \texttt{AccountSkeleton}-Objekt weiter. Die
 \label{sec:schn-zum-fram}
 
 Damit diese Clienthandler-Objekte mit den
-richtigen Skeleton-Objekte initialisiert werden, bietet das System
+richtigen Skeleton-Objekten initialisiert werden, bietet das System
 eine zentrale ServerSystem-Klasse. Das Framework erzeugt eine Instanz
 der ServerSystem-Klasse. Wenn sich Client mit dem Server verbindet,
-fordert das Framework von diese Serversystem\-instanz einen
-Clienthandler an. Dieser wird mit den richtigen SkeletonObjekte
+fordert das Framework von dieser Serversystem\-instanz einen
+Clienthandler an. Dieser wird mit den richtigen Skeleton-Objekten
 initialisiert. Das Framework übergibt dem Clienthandler die Input- und OutputStreamobjekte.
 
 \section{Concurrency Control Implementierung }
@@ -206,8 +203,7 @@ wird eine zweite HashMap $R$ verwendet. In der HashMap $R$ wird als Key
 ein String verwendet, der sich aus der IP-Adresse und der
 Objekt-ID des Methodenaufrufs zusammensetzt. Als Value speichert die HashMap $R$ die Version ab.
 Ruft ein Client
-\verb|getBalance()| auf, holt der Server die aktuelle Version aus dem
-der HashMap $W$ und speichert sie in mit der entsprechenden IP und
+\verb|getBalance()| auf, holt der Server die aktuelle Version aus der HashMap $W$ und speichert sie mit der entsprechenden IP und
 Objekt-ID in der HashMap $R$ ab.
 
 Ruft ein Client \verb|setBalance()| auf, prüft der Server, ob die

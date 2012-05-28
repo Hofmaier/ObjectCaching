@@ -7,7 +7,7 @@ import ch.hsr.objectCaching.dto.TransferObject;
 public class MessageManagerFake extends MessageManager {
 	TransferObject transferObject;
 	ReturnValue returnValue;
-	Object requestedObject;
+	ObjectRequestResponse requestedObject;
 	int sendMessageCount = 0;
 	
 	@Override
@@ -15,18 +15,19 @@ public class MessageManagerFake extends MessageManager {
 		this.transferObject = transferObj;
 		sendMessageCount++;
 	}
-	
-	
-	
 
 	@Override
 	public ObjectRequestResponse receiveObject() {
-		return null;
+		return requestedObject;
 	}
 
 	@Override
 	public ReturnValue receiveReturnValue() {
 		return returnValue;
+	}
+
+	public void setRequestedObject(ObjectRequestResponse requestedObject) {
+		this.requestedObject = requestedObject;
 	}
 	
 	

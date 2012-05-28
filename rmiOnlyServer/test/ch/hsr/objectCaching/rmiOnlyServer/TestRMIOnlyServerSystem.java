@@ -23,7 +23,6 @@ public class TestRMIOnlyServerSystem {
 		RMIOnlyClientHandler rmiClientHandler = (RMIOnlyClientHandler) clientHandler;
 		
 		assertNotNull("null object", clientHandler);
-		assertNotNull("skeleton is null", rmiClientHandler.getSkeleton());
 		
 		RMIOnlyClientHandler secondHandler = (RMIOnlyClientHandler) system.getClientHandlerInstance();
 		assertTrue(secondHandler.getSkeleton() == rmiClientHandler.getSkeleton());

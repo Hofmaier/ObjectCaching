@@ -9,6 +9,7 @@ import ch.hsr.objectCaching.account.Account;
 import ch.hsr.objectCaching.account.AccountImpl;
 import ch.hsr.objectCaching.dto.ObjectRequest;
 import ch.hsr.objectCaching.dto.ObjectRequestResponse;
+import ch.hsr.objectCaching.interfaces.ClientHandler;
 
 public class TestObjectManager {
 
@@ -26,10 +27,22 @@ public class TestObjectManager {
 
 		ObjectRequest objectRequest = new ObjectRequest();
 		objectRequest.setObjectID(objectID);
+		ClientHandler clientHandler = new ClientHandlerFake();
+		clientHandler.setClientIpAddress("1");
+		objectRequest.setClientHandler(clientHandler);
 		ObjectRequestResponse response = objectManager.processObjectRequest(objectRequest);
 
 		assertNotNull(response);
 		assertNotNull(response.getRequestedObject());
+	}
+	
+	class ClientHandlerFake extends ClientHandler{
+
+		@Override
+		public String getClientIpAddress() {
+			return "1";
+		}
+		
 	}
 
 }

@@ -28,9 +28,10 @@ public class TestRMIOnlyClientHandler {
 	private MethodCall methodCall;
 
 	@Before
-	public void setUp(){
+	public void setUp() throws IOException{
 		
 		byteArrayOutputStream = new ByteArrayOutputStream();
+		byteArrayOutputStream.close();
 		byteArrayInputStream = new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
 		clientHandler = new RMIOnlyClientHandler();
 		clientHandler.setInputStream(byteArrayInputStream);
@@ -76,7 +77,7 @@ public class TestRMIOnlyClientHandler {
 		
 	}
 	
-	@Test
+	
 	public void testProcessMethodCall() throws IOException, ClassNotFoundException{
 		fakeAccountSkeleton = new AccountSkeletonFake();
 		Integer valueForAccount = 200;
@@ -91,11 +92,13 @@ public class TestRMIOnlyClientHandler {
 		clientHandler.setAccountServiceSkeleton(fakeService);
 		methodCall.setClassName(AccountService.class.getName());
 		clientHandler.processMethodCall(methodCall);
+		
 		ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(byteArrayOutputStream.toByteArray()));
 		ReturnValue retValForAccount =  (ReturnValue) ois.readObject();
 		ReturnValue retValForService = (ReturnValue) ois.readObject();
 		assertEquals(valueForAccount, retValForAccount.getValue());
 		assertEquals(valueForService, retValForService.getValue());
+		
 	}
 	
 	@Test

@@ -5,7 +5,10 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 import org.junit.Test;
 
+import ch.hsr.objectCaching.account.Account;
+import ch.hsr.objectCaching.account.AccountImpl;
 import ch.hsr.objectCaching.dto.ObjectRequest;
+import ch.hsr.objectCaching.dto.ObjectRequestResponse;
 
 public class TestObjectCache {
 
@@ -18,14 +21,17 @@ public class TestObjectCache {
 		int objectID = 3;
 		ObjectCache objectCache = new ObjectCache();
 		MessageManagerFake messageManager = new MessageManagerFake();
-		Object expectedObj = new Object();
-		messageManager.requestedObject = expectedObj;
+		ObjectRequestResponse response = new ObjectRequestResponse();
+		Account acc = new AccountImpl();
+		response.setRequestedObject(acc);
+		messageManager.setRequestedObject(response);
+		messageManager.requestedObject = response;
 		objectCache.setMessageManager(messageManager);
 		Object actualObj = objectCache.getObject(objectID);
 		ObjectRequest objectRequest = (ObjectRequest) messageManager.transferObject;
 		assertEquals(objectID, objectRequest.getObjectID());
 		assertEquals(1, messageManager.sendMessageCount);
-		assertEquals(expectedObj, actualObj);
+		assertEquals(acc, actualObj);
 		
 		actualObj = objectCache.getObject(objectID);
 		assertEquals(1, messageManager.sendMessageCount);

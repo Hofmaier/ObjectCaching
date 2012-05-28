@@ -50,7 +50,7 @@ Die Kommunikation des Frameworkservers mit den Frameworkclients ist in folgendem
 \begin{center}
 \includegraphics[scale=0.7]{image_testFramework/TestFWInit.png}
 \end{center}
-\caption{Testframework Init}
+\caption{Initialisierung des Testframework}
 \end{figure}
 
 Die im Diagramm dargestellten Operationen lassen sich wie folgt erklären:
@@ -356,7 +356,7 @@ Folgende Abbildung zeigt die wichtigsten Interaktionen zwischen dem Test\-framew
 \begin{center}
 \includegraphics[scale=0.6]{image_testFramework/Server_Client_Communication.png}
 \end{center}
-\caption{Server Client Kommunikation}
+\caption{Kommunikation zwischen Server und Client}
 \end{figure}
 
 Die Umsetzung des Testframeworks wurde über das bewährte Client / Server Konzept realisiert, was zu einer schlanken Lösung auf Seiten des Clients führt. Der FrameworkClient und das ClientSystemUnderTest lassen sich dank die\-sem Konzept komplett vom Framework Server aus konfigurieren und steuern. Ein weiterer Vorteil dieses Designs liegt darin, dass sich neue Anforderungen jederzeit leicht umsetzen lassen.
@@ -404,7 +404,7 @@ In der konkreten Im\-p\-le\-men\-ta\-ti\-on der Me\-tho\-de \texttt{initialize(S
 \begin{center}
 \includegraphics[scale=0.55]{image_testFramework/startTest.png}
 \end{center}
-\caption{Start eines Testlauf durch den Testframework Server}
+\caption{Start eines Testlauf durch den Testframework-Server}
 \end{figure}
 Das Sequenzdiagramm ist eine vereinfachte Darstellung des Testlaufs. Der Server startet den Testdurchlauf parallel auf allen ClientController über die Methode \verb+startTest()+. Diese ruft auf dem TestClient \verb+runScenario()+ auf, eine detailierte Erklärung, was in dieser Methode passiert, ist im Kapitel "'Test Client"' \ref{sec:testclient} zu finden. Sind alle Aktionen des gegeben Szenarios abgearbeitet, wird das gesamte Szenario mit den gesammelten Messresultaten über die Methode \verb+setResults(Scenario scenario, String IP)+ zurück an den Server geschickt.
 

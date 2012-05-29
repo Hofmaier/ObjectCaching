@@ -145,7 +145,13 @@ Vergleicht man die Messergebnisse der zwei Systeme miteinander, fallen zwei Merk
 \item Das Cache-System skaliert viel besser als das System ohne Cache
 \end{itemize}
 
-Da jeder getBalance-Aufruf zum Server, das heisst über das Netzwerk, übertragen werden muss, ist es logisch, dass das System im Durchschnitt viel langsamer ist. Beim Cache-System wird nur der erste Aufruf zum Server übertragen, alle folgenden Aufrufe werden lokal aus dem Cache beantwortet. Dies erklärt den enormen Geschwindigkeitsvorteil des Cache-Systems bei jedem einzelnen Aufruf. \newline
+Da jeder getBalance-Aufruf zum Server, das heisst über das Netzwerk,
+übertragen werden muss, ist es logisch, dass das System im
+Durchschnitt viel langsamer ist. Beim Cache-System wird nur der erste
+Aufruf zum Server übertragen, alle folgenden Aufrufe werden lokal aus
+dem Cache beantwortet. Dies erklärt den enormen
+Geschwindigkeitsvorteil des Cache-Systems bei jedem einzelnen Aufruf.
+
 Weiter skaliert das Cache-System bei diesem Testcase um einiges besser. Dadurch, dass bei steigender Anzahl Clients auch immer mehr Clients ein Update erhalten müssen, hätte man auch eine leichte Steigung der Messwerte beim Cache-System erwarten können. Da die Werte aber so klein sind und die Messmethode mit der in Java implementierten Funktion \texttt{nanoTime()} gemacht wurde, können kleine Ungenauigkeiten in diesem Bereich nicht ganz ausgeschlossen werden. Es kann also durchaus sein, dass das Cache-System bei einer steigenden Anzahl Clients eine linear, leicht ansteigende Gerade zeigen würde, dies aber durch die Ungenauigkeiten beim Messen nicht genau abgebildet wird. Es bleibt auf jeden Fall zu beachten, dass das Cache-System wunderbar skaliert und man den Testcase mit einer Vielzahl der Clients durchführen könnte, ohne grosse Geschwindigkeitseinbussen in Kauf nehmen zu müssen.
 
 Auf der anderen Seite skaliert das System ohne Cache weitaus schlechter. Bei der Erhöhung der Clients von vier bis acht, also rund eine Verdopplung der Clients, wächst die durchschnittliche Zeit zum Ausführen der getBalance-Methode um etwa 30ms. Dies entspricht einem Drittel der Zeit, welche ein \texttt{getBalance()}-Aufruf bei vier Clients benötigt. Würde man die An\-zahl Cli\-ents noch verdoppeln oder sogar verdreifachen, würde die benötigte Zeit zum Ausführen der \texttt{getBalance()}-Methode wohl bald eine Schmerzgrenze der Wartezeiten durchbrechen.

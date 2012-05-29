@@ -1,5 +1,5 @@
 \chapter{Testing Framework}
-Im folgenden Kapitel wird auf die einzelnen Komponenten des Test Frameworks eingegangen und deren Funktionsweise erläutert. Die Aufgabe des Test Frameworks liegt darin, die verschiedenen Prototypen, welche im Laufe dieser Semesterarbeit entwickelt wurden, mit diesem Framework einheitlich testen zu lassen. Das Test Framework wurde parallel zum RMIOnly- Systems mit Concurrency Control entwickelt.
+Im folgenden Kapitel wird auf die einzelnen Komponenten des Test Frameworks eingegangen und deren Funktionsweise erläutert. Die Aufgabe des Test Frameworks liegt darin, die verschiedenen Prototypen, welche im Laufe dieser Studienarbeit entwickelt wurden, mit diesem Framework einheitlich testen zu lassen. Das Test Framework wurde parallel zum RMIOnly- Systems mit Concurrency Control entwickelt.
 
 \section{Konzept}
 Das Framework lässt sich über eine Konfigurationsdatei konfigurieren und kann Testfälle, welche in einer XML Datenstruktur vorliegen, interpretieren und daraus die einzelnen Testszenarien generieren. Die Testszenarien werden vom Server auf die verfügbaren Testframework Clients verteilt und dort gestartet. Das Framework startet das zu testende System auf den verschiedenen Rechnern. Das zu testende System führt unmittelbar danach die Aktionen durch, welche im übergebenen Szenario definiert wurden.
@@ -15,7 +15,7 @@ Die mit den Messwerten ausgefüllten Szenarien werden an den Server zurück\-ges
 \section{Allgemeine Informationen}
 \label{sec:allgInformationen}
 
-Um möglichst genaue Messdaten zu erlangen, wird das ganze System nach einem Testlauf beendet. Eine Aneinanderreihung von verschiedenen Test\-läufen würde die Messdaten aufgrund der JavaVirtualMachine be\-ein\-träch\-ti\-gen. Es besteht die Möglichkeit, dass für einen zweiten Testlauf weniger Speicher zur Verfügung steht, weil der Speicher immer noch mit Objekten des ersten Testlaufs besetzt ist. Da dies nicht mit Sicherheit überprüft werden kann, daher es kann nicht gewährleistet werden, dass die Grundvoraussetzungen für beide Testläufe gleich sind, wurde auf eine Aneinanderreihung von Testläufen verzichtet.
+Um möglichst genaue Messdaten zu erlangen, wird das ganze System nach einem Testlauf beendet. Eine Aneinanderreihung von verschiedenen Test\-läufen würde die Messdaten aufgrund der Java Virtual Machine be\-ein\-träch\-ti\-gen. Es besteht die Möglichkeit, dass für einen zweiten Testlauf weniger Speicher zur Verfügung steht, weil der Speicher immer noch mit Objekten des ersten Testlaufs besetzt ist. Da dies nicht mit Sicherheit überprüft werden kann, daher es kann nicht gewährleistet werden, dass die Grundvoraussetzungen für beide Testläufe gleich sind, wurde auf eine Aneinanderreihung von Testläufen verzichtet.
 
 \section{Der Frameworkserver}
 \label{sec:test-FW Server}
@@ -24,7 +24,7 @@ Um möglichst genaue Messdaten zu erlangen, wird das ganze System nach einem Tes
 Das  Startup-Script ist ein in der Bash-Sprache geschriebenes Shell-Script. Das Script führt mehrere Methoden nacheinander aus:
 \begin{enumerate}
 \item Ein ant- Script wird an\-ge\-stos\-sen, wel\-ches die Pro\-jek\-te kom\-pi\-liert. Durch die\-sen Schritt ent\-stehen die .jar- Dateien, welche im nächs\-ten Schritt benötigt werden.
-\item Das Script prüft die in der Config-\-Datei ein\-ge\-tra\-gen\-en Ziel\-rechner auf bereits vorhandene "client.jar"-Dateien und löscht diese Dateien, falls vorhanden.
+\item Das Script prüft die in der Config-\-Datei ein\-ge\-tra\-gen\-en Ziel\-rechner auf bereits vorhandene "'client.jar"'-Dateien und löscht diese Dateien, falls vorhanden.
 \item Durch die Applikation "'Secure Copy" wird die zuvor im Buildprozess erstellte Datei "'client.jar"' auf die Zielrechner kopiert.
 \item Via SSH wird der Frameworkclient auf den Zielrechnern gestartet.
 \item Der Frameworkserver wird gestartet.
@@ -50,7 +50,7 @@ Die Kommunikation des Frameworkservers mit den Frameworkclients ist in folgendem
 \begin{center}
 \includegraphics[scale=0.7]{image_testFramework/TestFWInit.png}
 \end{center}
-\caption{Testframework Init}
+\caption{Initialisierung des Testframework}
 \end{figure}
 
 Die im Diagramm dargestellten Operationen lassen sich wie folgt erklären:
@@ -66,7 +66,7 @@ Die im Diagramm dargestellten Operationen lassen sich wie folgt erklären:
 
 \subsubsection{Testcase-Factory}
 \label{sec:testCaseFactory}
-Die Testcase-Factory liest ein XML-File, in welchem ein sogenannter "TestCase"' definiert ist. Wird beim Starten des Frameworkservers kein Paramter mitgegeben, wird der Standard-Testcase gewählt, welcher in der Datei "'test\-Cases\-.xml"' abgelegt ist. Wird aber ein Parameter mitgegeben, beschreibt dieser den Namen der auszuführenden TestCase-Datei.
+Die Testcase-Factory liest ein XML-File, in welchem ein sogenannter "TestCase"' definiert ist. Wird beim Starten des Frameworkservers kein Parameter mitgegeben, wird der Standard-Testcase gewählt, welcher in der Datei "'test\-Cases\-.xml"' abgelegt ist. Wird aber ein Parameter mitgegeben, beschreibt dieser den Namen der auszuführenden TestCase-Datei.
 
 Durch die ein\-ge\-lesenen In\-for\-ma\-tio\-nen er\-stellt die Fac\-tory die Szena\-rien, wel\-che dann wei\-ter an die ver\-schie\-denen Clients ge\-sendet werden. Folgender Block ist ein Auszug aus einer TestCase-Datei:
 
@@ -178,7 +178,7 @@ public void run()
 \end{verbatim}
 
 
-Mit dieser Im\-ple\-men\-ta\-tion wird der Me\-tho\-den\-auf\-ruf "start()" nun von einem se\-pe\-rat\-en Thread ausgeführt. Dies führt dazu, dass die Clients nun zeitlich parallel gestartet werden und nicht nacheinander. Da die einzelnen Threads nach Beendigung der \texttt{run()}-Methode sterben, ist die Art der Implementation unbedenklich bezüglich Seiteneffekte oder "'Zombie-Threads".
+Mit dieser Im\-ple\-men\-ta\-tion wird der Me\-tho\-den\-auf\-ruf "'start()"' nun von einem se\-pe\-rat\-en Thread ausgeführt. Dies führt dazu, dass die Clients nun zeitlich parallel gestartet werden und nicht nacheinander. Da die einzelnen Threads nach Beendigung der \texttt{run()}-Methode sterben, ist die Art der Implementation unbedenklich bezüglich Seiteneffekte oder "'Zombie-Threads".
 
 \subsubsection{Der Dispatcher}
 \label{sec:dispatcher}
@@ -204,7 +204,7 @@ Die im Diagramm ersichtlichen Operationen können folgender\-massen er\-läu\-te
 \item Die Methode \texttt{setResults(Scenario)} wird vom Client auf dem Server auf\-ge\-rufen, durch den Aufruf dieser Methode weiss der Server, dass der aufrufende Client sein Szenario durchgespielt hat. Weiter wird mit dem Aufruf der Methode wiederum ein Thread durch den RMI-Daemon gestartet, welcher die weiter folgenden Methoden anstösst.
 \item Aus der \texttt{setResults(Scenario)}- Me\-tho\-de wird di\-rekt "'stopClient()"' auf\-ge\-rufen. Was diese Me\-tho\-de genau macht, wird im Kapitel \ref{sec:stopClient} "'Stop\-pen eines Clients" genau be\-schrie\-ben.
 \item Die Methode \texttt{shutDown()} wird auf dem Client aufgerufen. Der Client trennt daraufhin die RMI-Verbindung zum Server und schaltet sich selber ab. Nähere Informationen zum Abschaltungsprozess eines Clients kann unter dem Kapitel \ref{sec:test-FW Client} "'Testframework Client"' nachgelesen werden.
-\item Die Methode \texttt{printSummary()} verwertet die Ergebnisse, welche die Clients in ihrem Szenario gespeichert und wieder übertragen haben. Mehr Informationen dazu im Kapitel \ref{sec:reportGenerator} "'Report Generator". Weiter wird auf der Console ausgegeben, ob es "Lost-Update"-Probleme gegeben hat oder nicht. Mehr zu diesem Thema unter dem Kapitel \ref{sec:resultGenerator}"'Result Generator".
+\item Die Methode \texttt{printSummary()} verwertet die Ergebnisse, welche die Clients in ihrem Szenario gespeichert und wieder übertragen haben. Mehr Informationen dazu im Kapitel \ref{sec:reportGenerator} "'Report Generator"'. Weiter wird auf der Konsole ausgegeben, ob es "'Lost-Update"'-Probleme gegeben hat oder nicht. Mehr zu diesem Thema unter dem Kapitel \ref{sec:resultGenerator}"'Result Generator".
 \end{itemize}
 
 \subsubsection{Stoppen eines Clients}
@@ -287,7 +287,7 @@ Total Conflict: 0 / Gesamt Dauer: 282.311963 ms /
 durch. Dauer pro Operation: 141.1559815
 \end{verbatim}
 
-Die genauen Messerwerte, mit Durch\-schnitts\-wer\-ten und Ver\-gleichen zwischen den verschiedenen Systemen sind am Schluss dieser Arbeit zu finden. 
+Die genauen Messerwerte, mit Durch\-schnitts\-wer\-ten und Ver\-gleichen zwischen den verschiedenen Systemen sind im Kapitel \ref{sec:messresultate} dieser Arbeit zu finden. 
 
 Während der Entwicklung des Frameworks und der verschiedenen Systeme, schien die Ausgabe der Testergebnisse in eine Textdatei eine gute Idee zu sein. Während den Messungen des Systems wurde aber bemerkt, dass dies eine äusserst zeitraubende und mühsame Arbeit nach sich zieht: Für einen Testcase mit acht Clients, bei welchem der Messgenauigkeit zu liebe drei Durchläufe getätigt werden, fallen insgesamt 24 Textdateien an. Um einen Mittelwert der Ergebnisse zu bekommen, müssen alle Textdateien geöffnet werden, die Mittelwerte müssen berechnet und in einer weiteren Datei abgelegt werden. 
 
@@ -356,7 +356,7 @@ Folgende Abbildung zeigt die wichtigsten Interaktionen zwischen dem Test\-framew
 \begin{center}
 \includegraphics[scale=0.6]{image_testFramework/Server_Client_Communication.png}
 \end{center}
-\caption{Server Client Kommunikation}
+\caption{Kommunikation zwischen Server und Client}
 \end{figure}
 
 Die Umsetzung des Testframeworks wurde über das bewährte Client / Server Konzept realisiert, was zu einer schlanken Lösung auf Seiten des Clients führt. Der FrameworkClient und das ClientSystemUnderTest lassen sich dank die\-sem Konzept komplett vom Framework Server aus konfigurieren und steuern. Ein weiterer Vorteil dieses Designs liegt darin, dass sich neue Anforderungen jederzeit leicht umsetzen lassen.
@@ -364,15 +364,15 @@ Die Umsetzung des Testframeworks wurde über das bewährte Client / Server Konze
 \subsection{ClientController}
 \label{sec:clientController}
  
-Beim Start der client.jar Datei kann das Startup-Skript zwei Argumente mitgeben:
+Beim Start der client.jar Datei kann das Startup-Script zwei Argumente mitgeben:
 \begin{enumerate}
 \item Pflicht Argument: Binding Namen
 \item Optionales Argument: spezifischer RMI-Port
 \end{enumerate}
 Die Kommunikation zwischen dem Testframework Client und dem Testframework Server ist über das in Java bereits vorhandene RMI \cite{java_rmi} realisiert. Der Startvorgang eines Clients sieht wie folgt aus:
 \begin{enumerate}
-\item Es wird ein neues ClientController Objekt instanziiert. Der ClientController implementiert das Client Interface, welches mit Remote markiert ist.
-\item Aus dem instanziierten ClientController Objekte wird ein Remoteobjekt generiert.
+\item Es wird ein neues ClientController-Objekt instanziiert. Der ClientController implementiert das Client Interface, welches mit Remote markiert ist.
+\item Aus dem instanziierten ClientController-Objekte wird ein Remoteobjekt generiert.
 \item Der lokale Name Service wird auf dem spezifizierten Port gestartet, ist kein Port als Argument mitgegeben worden, wird der Defaultport 1099 verwendet.
 \item Das ClientController Remoteobjekt lässt sich nun in dem Java Name Service unter dem angegeben Binding Name veröffentlichen. Der Server ist jetzt in der Lage ein ClientController Stub über die IP Adresse und den Binding Name zu lokalisieren.
 \end{enumerate}
@@ -389,7 +389,7 @@ Die Grundidee zu Beginn des Projekts war, dass alle Konfigurationswerte einzeln 
 \subsubsection{Initialize des ClientControllers}
 In der konkreten Im\-p\-le\-men\-ta\-ti\-on der Me\-tho\-de \texttt{initialize(Scenario sce\allowbreak na\allowbreak rio, Configuration configuration)} werden mehrer Auf\-gaben er\-le\-digt:
 \begin{enumerate}
-\item Aus dem Configuration Objekt wird die Server IP, der RMI Port und der Name, unter dem der Framework Server registriert ist, ausgelesen. Aus diesen Informationen wird eine neue RMI Verbindung zum Framework Server erzeugt.
+\item Aus dem Configuration Objekt wird die Server IP, der RMI Port und der Name, unter dem der FrameworkServer registriert ist, ausgelesen. Aus diesen Informationen wird eine neue RMI Verbindung zum Framework Server erzeugt.
 \item Die Instanziierung des konkreten ClientSystemUnderTest übernimmt eine einzelne Klasse, welche als Factory implementiert ist. Der Factory wird nur der \verb+fully qualified name+, welcher im Configuration Objekt gespeichert ist, übergeben. Die Factory selbst instanziiert den ge\-wünschten Client\-System\-Under\-Test via Re\-flec\-ti\-on und re\-turniert das erzeugte Objekt.
 \item Auf dem ClientSystemUnderTest Objekt wird nun ein neues Socket, welches zum ServerSystemUnderTest zeigt, gesetzt.
 \item Ein neues Objekt vom Typ TestClient wird erzeugt und das aktuelle ClientSystemUnderTest Objekt wird im Konstruktor mitgegeben. Der TestClient ist die Schnittstelle zwischen dem ClientController und dem ClientSystemUnderTest.
@@ -404,9 +404,9 @@ In der konkreten Im\-p\-le\-men\-ta\-ti\-on der Me\-tho\-de \texttt{initialize(S
 \begin{center}
 \includegraphics[scale=0.55]{image_testFramework/startTest.png}
 \end{center}
-\caption{Start eines Testlauf durch den Testframework Server}
+\caption{Start eines Testlauf durch den Testframework-Server}
 \end{figure}
-Das Sequenzdiagramm ist eine vereinfachte Darstellung des Testlaufs. Der Server startet den Testdurchlauf parallel auf allen ClientController über die Methode \verb+startTest()+. Diese ruft auf dem TestClient \verb+runScenario()+ auf, eine detailierte Erklärung, was in dieser Methode passiert, ist im Kapitel "'Test Client" \ref{sec:testclient} zu finden. Sind alle Aktionen des gegeben Szenarios abgearbeitet, wird das gesamte Szenario mit den gesammelten Messresultaten über die Methode \verb+setResults(Scenario scenario, String IP)+ zurück an den Server geschickt.
+Das Sequenzdiagramm ist eine vereinfachte Darstellung des Testlaufs. Der Server startet den Testdurchlauf parallel auf allen ClientController über die Methode \verb+startTest()+. Diese ruft auf dem TestClient \verb+runScenario()+ auf, eine detailierte Erklärung, was in dieser Methode passiert, ist im Kapitel "'Test Client"' \ref{sec:testclient} zu finden. Sind alle Aktionen des gegeben Szenarios abgearbeitet, wird das gesamte Szenario mit den gesammelten Messresultaten über die Methode \verb+setResults(Scenario scenario, String IP)+ zurück an den Server geschickt.
 
 \subsubsection{Herunterfahren des ClientController}
 Die Methode \texttt{shutdown()} be\-endet den Test\-frame\-work\-Client und das Client\-System\-Under\-Test. Die \texttt{shut\allowbreak down()} Me\-tho\-de be\-steht aus mehreren Teil\-schrit\-ten:
@@ -478,10 +478,10 @@ public interface ClientSystemUnderTest {
 Während den ersten Testmessungen mit den Cache-System zeigte sich folgendes Problem: Der letzte TestClient, der sich beim Server als bereit meldet, benötigte für die ersten Aktionen im Durchschnitt etwa 40 Milisekunden länger als die restlichen Clients. Durch die Analyse des Codes konnte das Problem lokalisiert werden. Die folgenden Schritte zeigen die Ursache des Problems auf:
 \begin{enumerate}
 \item Der letzte Client meldet sich über die Methode \verb+setReady()+ beim Server als bereit. 
-\item Beim Aufruf der \verb+setReady()+ Methode auf dem Server wird nun ge\-prüft, ob alle Clients bereit sind. Haben sich zuvor alle Clients als bereit für den Test\-lauf ge\-meldet, startet der Server auf jedem Client den Testlauf über die Methode \verb+startTest()+.
+\item Beim Aufruf der \verb+setReady()+-Methode auf dem Server wird nun ge\-prüft, ob alle Clients bereit sind. Haben sich zuvor alle Clients als bereit für den Test\-lauf ge\-meldet, startet der Server auf jedem Client den Testlauf über die Methode \verb+startTest()+.
 \item Zu diesem Zeitpunkt wartet der setReady Thread des letzten Clients immer noch auf die Rückkehr des Aufrufs.
-\item Gleich\-zeit wird auf dem letzten Client die \verb+startTest()+ Methode auf\-gerufen. Da\-durch ent\-stehen beim letzten Client, der sich beim Server gemeldet hat, für kurze Zeit zwei Threads.
-\item Ist die Methode \verb+setReady()+ erfolg\-reich durch\-laufen, kehrt der Auf\-ruf zum letzten Client zu\-rück. Da\-rauf\-hin be\-endet der Thread auf dem Client, welcher die \verb+setReady()+ Methode ge\-startet hat.
+\item Gleich\-zeit wird auf dem letzten Client die \verb+startTest()+ Methode auf\-gerufen. Da\-durch ent\-stehen auf dem letzten Client, der sich beim Server gemeldet hat, für kurze Zeit zwei Threads.
+\item Ist die Methode \verb+setReady()+ erfolg\-reich durch\-laufen, kehrt der Auf\-ruf zum letzten Client zu\-rück. Da\-rauf\-hin be\-endet der Thread auf dem Client, welcher die \verb+setReady()+-Methode auf\-ge\-rufen hat.
 \item Gleichzeitig hat der \verb+startTest()+ Thread mit dem abarbeiten des Szenarios bereits begonnen. Da nun der Thread vom \verb+setReady()+ beendet wird, wird dem Szenario Thread die CPU-Ressource weggenommen. Dies führt nun zu einer Verlängerung der Ausführungsdauer der ersten Aktionen.
 \end{enumerate}
 Die Lösung dieses Problem lag in einer Wartephase vor dem eigentlichen Abarbeiten des Szenarios. Diese Pause wurde über \verb+Thread.sleep()+ um\-ge\-setzt und wird vor der eingent\-lichen Messung ge\-macht. Da\-durch haben alle Client\-Controller Zeit, den \verb+setReady()+ Th\-read zu be\-enden, ohne den \verb+startTest()+ Th\-read zu be\-ein\-träch\-ti\-gen.
@@ -514,7 +514,7 @@ Der ActionTyp wird zur Indentifizierung der Aktion benutzt und ist als Enum real
 Die Werte dieses Enums werden zur Erkennung des Aktiontyps genutzt und werden bei der Report Generierung verwendet, um die einzelnen Aktionen zu unterscheiden.
 
  
-\subsection{Increment Action}
+\subsection{IncrementAction}
 \label{sec:incrementAction}
 Die Aktion \verb+IncrementAction+ ist die Kernaktion für alle Szenarien. Sie besteht aus drei Teilschritten:
 \begin{itemize}
@@ -563,11 +563,11 @@ Für die möglichst genaue Zeitmessung einer Aktion wird die von Java bereitgest
 
 \subsection{TimeRecord}
 \label{sec:timeRecord}
-Der TimeRecordtyp ist als reines Data Tranfer Object implementiert worden. Es beinhaltet die Start- und die Stopzeit von genau einem Methodenaufruf. Für eine genaue Auswertung einer Aktion sind noch weitere Daten nötig. Daher besitzt dieser Typ zwei weitere Felder. Der BasicActiontyp beinhaltet Informationen für welche Account Methode, also \verb+getBalance()+ oder \verb+setBalance()+, dieser Record gilt und in dem ActionResult kann die Information über den Erfolg der BasicAction gespeichert werden. Dadurch lassen sich zusammengesetzte Aktionen, welche aus \verb+getBalance()+ und \verb+setBalance()+ zusammengesetzt sind, einfach unterteilen. Ein weiterer Vorteil liegt in der Möglichkeit, ein Szenario bis in die einzelnen Methodenaufrufe einer Aktion zu analysieren.
+Der TimeRecordtyp ist als reines Data Container implementiert worden. Es beinhaltet die Start- und die Stopzeit von genau einem Methodenaufruf. Für eine genaue Auswertung einer Aktion sind noch weitere Daten nötig. Daher besitzt dieser Typ zwei weitere Felder. Der BasicActiontyp beinhaltet Informationen für welche Account Methode, also \verb+getBalance()+ oder \verb+setBalance()+, dieser Record gilt und in dem ActionResult kann die Information über den Erfolg der BasicAction gespeichert werden. Dadurch lassen sich zusammengesetzte Aktionen, welche aus \verb+getBalance()+ und \verb+setBalance()+ zusammengesetzt sind, einfach unterteilen. Ein weiterer Vorteil liegt in der Möglichkeit, ein Szenario bis in die einzelnen Methodenaufrufe einer Aktion zu analysieren.
 
 \subsection{BasicAction}
 \label{sec:BasicAction}
-Damit eine genaue Analyse der Aktionen ge\-macht werden kann, ist es nö\-tig, dass zwi\-schen \verb+getBalance()+ und \verb+setBalance()+ un\-ter\-schieden wer\-den kann. Eine Aktion kann aus einer Abfolge von Methoden\-auf\-rufen bestehen, daher muss bei jeder Zeitmessung angegeben werden können, ob es sich um eine "'setter"' oder "'getter"' Methode handelt; diese Information lässt sich daher ebenfalls im TimeRecord speichern.
+Damit eine genaue Analyse der Aktionen ge\-macht werden kann, ist es nö\-tig, dass zwi\-schen \verb+getBalance()+ und \verb+setBalance()+ un\-ter\-schieden wer\-den kann. Eine Aktion kann aus einer Abfolge von Methoden\-auf\-rufen bestehen, daher muss bei jeder Zeitmessung angegeben werden können, ob es sich um eine "'setter"' oder "'getter"' Methode handelt; diese Information lässt sich daher ebenso im TimeRecord speichern.
 
 \subsection{ActionResult}
 \label{sec:ActionResult}

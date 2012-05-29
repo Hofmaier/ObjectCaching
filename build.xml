@@ -38,7 +38,7 @@
 		<mkdir dir="${build.prod.server.dir}" />
 		<mkdir dir="${build.prod.client.dir}" />
 		<mkdir dir="${build.test.dir}" />
-		<mkdir dir="${result.dir}" />
+		<!-- <mkdir dir="${result.dir}" /> -->
 	</target>
 
 	<target name="compileCommonData" depends="prepare">
@@ -168,14 +168,19 @@
 	</target>
 
 	<target name="copytestCases" depends="copyConfig">
-		<copy file="testFrameworkServer/testCases.xml" tofile="build/testCases.xml" />
+		<copy todir="template">
+					<fileset dir="testFrameworkServer/template" includes="*testCases.xml" />
+				</copy>
 	</target>
 
-	<target name="run-junit" depends="compile-commonDataTest, compile-rmiOnlyClientTest, compile-rmiOnlyServerTest, compile-rmiWithCacheClientTest, compile-rmiWithCacheServerTest, compile-testframeworkClientTest, compile-testFrameworkServerTest">
-		<junit printsummary="yes" haltonfailure="false">
+	<!--remove the FrameworkServerTest
+	copytestCases, compile-testFrameworkServerTest-->
+	
+	<target name="run-junit" depends="compile-commonDataTest, compile-rmiOnlyClientTest, compile-rmiOnlyServerTest, compile-rmiWithCacheClientTest, compile-rmiWithCacheServerTest, compile-testframeworkClientTest">
+		<junit printsummary="no" haltonfailure="true">
 			<classpath refid="project.classpath">
 			</classpath>
-			<formatter type="plain"/>
+			<!--<formatter type="plain"/>-->
 			<batchtest fork="no" todir="${result.dir}">
 				<fileset dir="${build.test.dir}" includes="**/Test*.class" excludes="**/*$*.class" />
 			</batchtest>

@@ -1,5 +1,5 @@
 \chapter{Testing Framework}
-Im folgenden Kapitel wird auf die einzelnen Komponenten des Test Frameworks eingegangen und deren Funktionsweise erläutert. Die Aufgabe des Test Frameworks liegt darin, die verschiedenen Prototypen, welche im Laufe dieser Studienarbeit entwickelt wurden, mit diesem Framework einheitlich testen zu lassen. Das Test Framework wurde parallel zum RMI-System mit Concurrency Control entwickelt.
+Im folgenden Kapitel wird auf die einzelnen Komponenten des Test Frameworks eingegangen und deren Funktionsweise erläutert. Die Aufgabe des Test Frameworks liegt darin, die verschiedenen Prototypen, welche im Laufe dieser Studienarbeit entwickelt wurden, mit diesem Framework einheitlich testen zu lassen. Das Test Framework wurde parallel zum RMI-System entwickelt.
 
 \section{Konzept}
 Das Framework lässt sich über eine Konfigurationsdatei konfigurieren und kann Testfälle, welche in einer XML Datenstruktur vorliegen, interpretieren und daraus die einzelnen Testszenarien generieren. Die Testszenarien werden vom Server auf die verfügbaren Testframework Clients verteilt und dort gestartet. Das Framework startet das zu testende System auf den verschiedenen Rechnern. Das zu testende System führt unmittelbar danach die Aktionen durch, welche im übergebenen Szenario definiert wurden.

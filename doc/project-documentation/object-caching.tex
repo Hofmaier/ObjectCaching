@@ -1,7 +1,7 @@
 \chapter{Object-Caching}
 \label{sec:object-caching}
 
-Um die Dauer von Lesezugriffen im RMI-System zu verkürzen, wurde eine erweiterte Version des RMI-Systems mit integriertem Objectcaching erstellt. Schreibzugriffe werden an den Server gesendet. 
+Um die Dauer von Lesezugriffen im RMI-System zu verkürzen, wurde eine erweiterte Version des RMI-Systems mit integriertem Objectcaching erstellt. Lesezugriffe werden auf Objekten, die in den Cache kopiert wurden, ausgeführt. Schreibzugriffe werden an den Server gesendet. 
 
 Bei der Erstellung des Konzeptes mussten Designentscheide in den Bereichen Replica Placement, Update Distribution und Konsistenzprotokoll getroffen werden. Im ersten Teil dieses Ka\-pi\-tels werden diese Ent\-schei\-dun\-gen be\-schrie\-ben. Der zweite Teil beschreibt, wie diese Entscheide implementiert wurden.
 
@@ -69,7 +69,7 @@ Ist jedem Objekt eine Maschine für die Koordination zugeordnet, nennt man das P
 \subsection{Implementierung des Replica Placement}
 \label{sec:impl-des-repl-1}
 
-Ruft ein Client eine Methode auf einem Objekt auf, überprüft das System zuerst, ob das Objekt bereits im lokalen Cache vorhanden ist. Der Cache hat eine HashMap $C$, die als Keys Objekt-IDs und als Values Objekte enthält. Ist ein Objekt nicht in dieser HashMap vorhanden, wird eine \verb+ObjectRequest+-Message an den Server gesendet. Der Server antwortet, indem er das ge\-wünsch\-te Objekt serialisiert an den Client zurücksendet. Der Client legt es in der HashMap $C$ ab. 
+Ruft ein Client eine Methode auf einem Objekt auf, überprüft das System zuerst, ob das Objekt bereits im lokalen Cache vorhanden ist. Der Cache hat eine HashMap, die als Keys Objekt-IDs und als Values Objekte enthält. Ist ein Objekt nicht in dieser HashMap vorhanden, wird eine \verb+ObjectRequest+-Message an den Server gesendet. Der Server antwortet, indem er das ge\-wünsch\-te Objekt serialisiert an den Client zurücksendet. Der Client legt es in der HashMap $C$ ab. 
 
 \subsection{Implementierung Update Distribution}
 \label{sec:impl-update-distr}
@@ -81,7 +81,7 @@ Da wir die Update Distribution push-based implementieren, informiert der Server 
 
 Aufgrund der \verb|ObjectUpdate|-Nachrichten muss der Client in der Lage sein, eine Nachricht zu empfangen, ohne dass er explizit darauf wartet. Im RMI- System ohne Cache schreibt ein Client die Nachricht für einen Methodenaufruf in den Stream zum Server und wartet anschliessend auf die Antwort. Er weiss, dass das nächste Objekt im Stream vom Typ \texttt{ReturnValue} und die Antwort auf den vorangegangenen Methodenaufruf sein wird. Das ist möglich, weil das nächste Objekt, das der Client aus dem Stream vom Server aus liest, immer die Antwort auf den Methodenaufruf ist.
 
-Im Object-Caching System muss der Client in der Lage sein, Object\-Update\--Messages zu empfangen und zu verarbeiten, ohne dass es weiss, wann ein \verb|ObjectUpdate| über den Stream gesendet wird. Der Client kann sich nicht mehr darauf verlassen, dass Objekte aus dem TCP-Stream zum Server die Antwort auf einen Methodaufruf sind. Es könnte auch ein \texttt{ObjectUpdate} sein. Damit die Verarbeitung von eintreffenden Nach\-richten im Client nicht von der ausgehenden Nachricht abhängig ist, wird der Nach\-richt\-enaustausch im System in der Klasse \verb|MessageManager| gekapselt. \texttt{MessageManager} bietet folgende Methoden an:
+Im Object-Caching System muss der Client in der Lage sein, \texttt{Object\-Update}\--Messages zu empfangen und zu verarbeiten, ohne dass das System weiss, wann ein \verb|ObjectUpdate| über den Stream gesendet wird. Der Client kann sich nicht mehr darauf verlassen, dass Objekte aus dem TCP-Stream zum Server die Antwort auf einen Methodaufruf sind. Es könnte auch ein \texttt{ObjectUpdate} sein. Damit die Verarbeitung von eintreffenden Nach\-richten im Client nicht von der ausgehenden Nachricht abhängig ist, wird der Nach\-richt\-enaustausch im System in der Klasse \verb|MessageManager| gekapselt. \texttt{MessageManager} bietet folgende Methoden an:
 
 \begin{description}
 \item[sendMessageCall] Diese Methode nimmt alle Nachrichten entgegen, die an den Server gesendet werden sollen. Die Methode platziert alle Nachrichten in einer \verb|BlockingQueue| 
@@ -112,7 +112,7 @@ Die Funktionsweise des Protokolls und des Systems soll anhand eines Beispiels er
 \item Client $C1$ ruft \verb+getBalance()+ auf.
 \item RMI-Stub führt einen Lookup für das Objekt im Cache aus.
 \item Ist das Objekt nicht im Cache vorhanden, wird es mit einem \texttt{Object\-Request}-Nachricht angefordert.
-\item Ist das \texttt{Account}-Objekt beim Client eingetroffen, wird \verb+getBalance()+ auf auf dem Objekt ausgeführt. Der Wert wird an den Stub zurück\-gegeben und der Stub leitet ihn an den Client weiter.
+\item Ist das \texttt{Account}-Objekt beim Client eingetroffen, wird \verb+getBalance()+ auf dem Objekt ausgeführt. Der Wert wird an den Stub zurück\-gegeben und der Stub leitet ihn an den Client weiter.
 \item \verb+setBalance()+ wird an den lokalen Cache weitergeleitet. Dieser enthält eine eigene Concurrency Control. Diese überprüft, ob das Objekt seit dem letzen \verb+getBalance()+ nicht durch ein Update vom Server verändert wurde. Hat es sich verändert, wird eine Exception ausgelöst. Wenn in der Zwischenzeit kein Update eingetroffen ist, wird ein \texttt{MethodCall} an den Server gesendet. Nachdem der Methodenaufruf an den Server gesendet wurde, wartet der Client auf die \texttt{ReturnValue}-Nachricht. Diese trifft erst ein, wenn der Server den Methodenaufruf bereits verarbeitet hat und ein Update verschickt hat. Die Methode ändert den lokalen Cache nicht, weil zu diesem Zeitpunkt noch nicht klar ist, ob die Methode ausgeführt werden kann. Ein anderer Client könnte das Objekt inzwischen verändert haben. Nur der Server kann entscheiden, ob die Methode ausgeführt werden kann. Das Objekt im Cache ändert erst, wenn die \texttt{ObjectUpdate}-Nachricht vom Server eintrifft.
 \end{enumerate}
 
@@ -128,12 +128,12 @@ Um mögliche Probleme zu finden, sollen verschieden Aufrufszenarien untersucht w
 \subsubsection{Szenario mit einzelnem Client}
 \label{sec:mogl-aufr}
 
-Im ersten Szenario treten keine Konsistenzprobleme auf. Nur ein Client ruft nacheinander \texttt{getBalance()} und \texttt{setBalance()} auf (siehe \ref{fig:oneclient}). Laufen die Methodenaufrufe in dieser Reihenfolge ab, benötigt das System keine Concurrency Control.
+Im ersten Szenario treten keine Konsistenzprobleme auf. Nur ein Client ruft nacheinander \texttt{getBalance()} und \texttt{setBalance()} auf (siehe Abbildung \ref{fig:oneclient}). Laufen die Methodenaufrufe in dieser Reihenfolge ab, benötigt das System keine Concurrency Control.
 
 \begin{enumerate}
 \item Beim ersten \verb|getBalance()| fordert der Cache ein neues Objekt an und speichert es.
 \item Beim zweiten \verb|getBalance()|  liegt das Objekt bereits im Cache und muss nicht nochmals vom Server angefordert werden.
-\item Ruft der Client ein \verb|setBalance()| auf, wird dieser Aufruf direkt an den Server weitergeleitet. Der Aufruf blockiert, bis der Server eine Antwort sendet. Der Server sendet zuerst allen Clients das Update. Danach sendet er das ReturnValue des Methode-Calls an den Client, der den Method-Call verschickt hat. Das Update wird also vor dem ReturnValue versendet. Im ClientCache wird das Update und das ReturnValue verarbeitet. Es kann nicht gesagt werden, ob der Cache bereits ein Update erfahren hat, wenn  \verb|setBalance()|  zurückkehrt.
+\item Ruft der Client ein \verb|setBalance()| auf, wird dieser Aufruf direkt an den Server weitergeleitet. Der Aufruf blockiert, bis der Server eine Antwort sendet. Der Server sendet zuerst allen Clients das Update. Danach sendet er den Rückgabewert des Methodenaufrufs an den Client, der das \texttt{MethodCall}-Objekt verschickt hat. Das Update wird also vor dem ReturnValue versendet. Im ClientCache wird das Update und das ReturnValue verarbeitet. Es kann nicht gesagt werden, ob der Cache bereits ein Update erfahren hat, wenn  \verb|setBalance()|  zurückkehrt.
 \item Wenn der Client nochmals \texttt{getBalance()} aufruft, wird die Methode auf dem aktualisierten Objekt im Cache ausgeführt.
 \end{enumerate}
 

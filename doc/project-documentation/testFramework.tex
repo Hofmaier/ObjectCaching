@@ -215,19 +215,19 @@ private void stopClient(String clientIp)
 {
   Client temp;
   try {
-	if((temp = clientList.getClientByIp(clientIp)) != null)
-        {
-	  	logger.info("stop client with ip: " + clientIp);
-	  	temp.setClientRunning(ShutedDown.DOWN);
-	  	temp.getClientStub().shutdown();
-	}
-	} catch (RemoteException e) {
-	    logger.log(Level.SEVERE, "Uncaught exception", e);
-	}
-	if(checkAllShutedDown())
-	{
-	  printSummary();
-	}
+    if((temp = clientList.getClientByIp(clientIp)) != null)
+    {
+      logger.info("stop client with ip: " + clientIp);
+      temp.setClientRunning(ShutedDown.DOWN);
+      temp.getClientStub().shutdown();
+    }
+  } catch (RemoteException e) {
+    logger.log(Level.SEVERE, "Uncaught exception", e);
+  }
+  if(checkAllShutedDown())
+  {
+    printSummary();
+  }
 }
 \end{verbatim}
 

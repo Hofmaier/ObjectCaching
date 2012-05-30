@@ -18,12 +18,12 @@ Alle Mes\-ser\-ge\-bnis\-se stam\-men aus einer Labor\-umgebung, mit folgenden E
 \item Server: Ubuntu, Version 11.10
 \item Auf beiden Clients: Fedora Linux, Release 16
 \end{itemize}
-\item Die Netzwerkinfrastruktur im Laborraum ist kaum belastet, daher nur durch den gebräuchlichen Leerlaufverkehr(\gls{STP}, \gls{ARP} usw.)
+\item Die Netzwerkinfrastruktur im Laborraum ist kaum belastet, nur durch den gebräuchlichen Leerlaufverkehr(\gls{STP}, \gls{ARP} usw.)
 \item Die Hardware-Ressourcen der Rechner, auf welchen die Applikation getestet wird, sind ausschliesslich nur durch die Applikation belegt und durch einzelne, übliche Prozesse vom  Betriebsystem.
 \end{itemize}
 
 \section{Testvorgaben}
-Die in dieser Arbeit ausgewiesenen Zahlen wurden alle in der La\-bor\-um\-gebung ge\-mes\-sen. Dabei wurde für jeden Test\-Case die An\-zahl der Clients schritt\-weise von zwei bis acht Clients erhöht. Jeder Test\-lauf mit der gleichen Anzahl Clients, wurde drei Mal durchgeführt, um einen exakten Mittel\-wert der Er\-geb\-nis\-se aus\-weisen zu können. Drei Test\-durchläufe pro Szenario und Clientanzahl wurden aufgrund der sehr nahe liegenden Er\-geb\-nis\-se der Testdurchläufe als genügend eingestuft. Wären die einzelnen Ergebnisse der Durchläufe extrem unterschiedlich ausgefallen, hätten fünf oder mehr Durchläufe stattfinden müssen.
+Die in dieser Arbeit ausgewiesenen Zahlen wurden alle in der La\-bor\-um\-gebung ge\-mes\-sen. Dabei wurde für jeden Test\-Case die An\-zahl der Clients schritt\-weise von zwei bis acht Clients erhöht. Jeder Test\-lauf mit der gleichen Anzahl Clients, wurde drei Mal durchgeführt, um einen exakten Mittel\-wert der Er\-geb\-nis\-se aus\-weisen zu können. Drei Test\-durchläufe pro Szenario und Clientanzahl wurden aufgrund der sehr dicht beieinander liegenden Er\-geb\-nis\-se der Testdurchläufe als genügend eingestuft. Wären die einzelnen Ergebnisse der Durchläufe extrem unterschiedlich ausgefallen, hätten fünf oder mehr Durchläufe stattfinden müssen.
 
 \section{Testergebnisse}
 In den folgenden Kapiteln werden die getesteten Szenarios und deren Ergebnisse gezeigt. \\
@@ -60,10 +60,7 @@ Dieser TestCase sieht folgendermassen aus:
 Bei diesem Testcase führen alle Clients die gleichen Operationen aus. Alle Clients lesen das Objekt auf dem Server genau 250 Mal. Das Account-Objekt wird mit dem Wert "'1"' initialisiert, welcher bis zum Schluss unverändert bleiben wird. 
 
 
-Zu erwarten ist ein enormer Geschwindigkeitsvorteil des Systems mit Cache. Da bei diesem Testcase keine Schreiboperationen getätigt werden, wird ein Update der Clients nie nötig sein. Dadurch muss der Cache nur beim ersten Lesezugriff aktualisiert werden und die weiteren Lesezugriffe können lokal auf dem Rechner abgewickelt werden. Daher scheint es nur logisch, dass das Cache-System um einiges schneller ist.
-
-
-Weiter soll aufgezeigt werden, dass das Cache-System zumindest bei nur Lesezugriffen um einiges besser skaliert, als das System ohne Cache. Es wird also erwartet, dass beim Cache-System die Lesezugriffe gleich schnell bleiben, egal wieviele Clients beim Testdurchlauf involviert sind. Beim System ohne Cache jedoch, wird eine lineare Verschlechterung der Zugriffszeit erwartet.
+Dieses Testszenario wurde entworfen, um zu beweisen, dass das Cache-System bei nur Lesezugriffen um einiges besser skaliert, als das System ohne Cache. Diese Annahme liegt in der Tatsache begründet, dass ein Zugriff auf den lokalen Speicher viel schneller ist, als ein Zugriff über das Netzwerk.
 
 \subsubsection{Ergebnisse System ohne Cache}
 
@@ -101,7 +98,7 @@ Diese Zahlen sind Durch\-schnitt\-swer\-te von drei Messungen. Die genauen Mess\
 \caption{\texttt{getBalance()}-Zeitaufwand, System ohne Cache(nur lesende Zugriffe)}
 \end{center}
 \end{figure}
-Es wird schnell ersichtlich, dass das System mit einer steigenden Anzahl Clients langsamer wird. Dies erscheint durchaus logisch, da jeder getBalance-Aufruf an den Server gesendet wird. Wird der Server nun von mehreren Clients angefragt, verschlechtern sich auch dessen Antwortzeiten, was eine Verlangsamung des Aufrufs zur Folge hat.
+Es wird schnell ersichtlich, dass das System mit einer steigenden Anzahl Clients langsamer wird. Dies erscheint durchaus logisch, da jeder \texttt{getBalance()}-Aufruf an den Server gesendet wird. Wird der Server nun von mehreren Clients angefragt, verschlechtern sich auch dessen Antwortzeiten, was eine Verlangsamung des Aufrufs zur Folge hat.
 
 \subsubsection{Ergebnisse System mit Cache}
 
@@ -141,9 +138,9 @@ Diese Zahlen sind wiederum Durch\-schnitts\-wer\-te.  In der folgenden Grafik we
 \caption{\texttt{getBalance()}-Zeitaufwand, System mit Cache(nur lesende Zugriffe)}
 \end{figure}
 
-Damit die Grafik einen Sinn ergibt, mussten die Zeiten auf der Y-Achse an\-ge\-passt werden. Hätte man die Skala aus dem RMI-Only-System über\-nom\-men, wäre auf der Grafik nur eine Linie er\-sicht\-lich. Es muss dennoch bemerkt werden, dass bei dieser Grafik die Skala auf der Y-Achse extrem klein ist und Mess\-un\-ter\-schiede, wenn auch nur Mi\-ni\-male, in dieser Grafik stark zum Tragen kommen. Ein Ver\-gleich mit der vor\-her\-gehenden Grafik des Systems ohne Cache ist also mit Vorsicht zu geniessen.
+Damit die Grafik einen Sinn ergibt, mussten die Zeiten auf der Y-Achse an\-ge\-passt werden. Hätte man die Skala aus dem RMI-Only-System über\-nom\-men, wäre auf der Grafik nur eine Linie er\-sicht\-lich. Es muss dennoch bemerkt werden, dass bei dieser Grafik die Skala auf der Y-Achse extrem klein ist und Mess\-un\-ter\-schiede, wenn auch nur mi\-ni\-male, in dieser Grafik stark zum Tragen kommen. Ein Ver\-gleich mit der vor\-her\-gehenden Grafik des Systems ohne Cache ist also mit Vorsicht zu geniessen.
 
-Aus der Grafik wird ersichtlich, dass bei nur lesenden Zu\-griffen das System perfekt skaliert. Die Werte betragen circa alle, egal wieviele Clients beteiligt sind, 0.3ms. Anzunehmen ist, dass noch viele weitere Clients dazugeschaltet werden könnten, ohne dass die Zugriffszeit markant zunehmen würde.
+Aus der Grafik wird ersichtlich, dass bei nur lesenden Zu\-griffen das System perfekt skaliert. Die Werte betragen circa alle, egal wieviele Clients beteiligt sind, 0.3ms. 
 
 
 \subsubsection{Interpretation}
@@ -161,9 +158,9 @@ Aufruf zum Server übertragen, alle folgenden Aufrufe werden lokal aus
 dem Cache beantwortet. Dies erklärt den enormen
 Geschwindigkeitsvorteil des Cache-Systems bei jedem einzelnen Aufruf.
 
-Weiter skaliert das Cache-System bei diesem Testcase um einiges besser. Dadurch, dass bei steigender Anzahl Clients auch immer mehr Clients ein Update erhalten müssen, hätte man auch eine leichte Steigung der Messwerte beim Cache-System erwarten können. Da die Werte aber so klein sind und die Messmethode mit der in Java implementierten Funktion \texttt{nanoTime()} gemacht wurde, können kleine Ungenauigkeiten in diesem Bereich nicht ganz ausgeschlossen werden. Es kann also durchaus sein, dass das Cache-System bei einer steigenden Anzahl Clients eine linear, leicht ansteigende Gerade zeigen würde, dies aber durch die Ungenauigkeiten beim Messen nicht genau abgebildet wird. Es bleibt auf jeden Fall zu beachten, dass das Cache-System wunderbar skaliert und man den Testcase mit einer Vielzahl der Clients durchführen könnte, ohne grosse Geschwindigkeitseinbussen in Kauf nehmen zu müssen.
+Weiter skaliert das Cache-System bei diesem Testcase um einiges besser. Dadurch, dass bei steigender Anzahl Clients auch immer mehr Clients ein Update erhalten müssen, hätte man auch eine leichte Steigung der Messwerte beim Cache-System erwarten können. Da die Werte aber so klein sind und die Messmethode mit der in Java implementierten Funktion \texttt{nanoTime()} gemacht wurde, können kleine Ungenauigkeiten in diesem Bereich nicht ganz ausgeschlossen werden. Es kann also durchaus sein, dass das Cache-System bei einer steigenden Anzahl Clients eine linear, leicht ansteigende Gerade zeigen würde, dies aber durch die Ungenauigkeiten beim Messen nicht genau abgebildet wird. Es bleibt auf jeden Fall zu beachten, dass das Cache-System wunderbar skaliert. Vermutlich hätte das Szenario mit einer Vielzahl der Clients durchgeführt werden können, ohne grosse Geschwindigkeitseinbussen in Kauf nehmen zu müssen.
 
-Auf der anderen Seite skaliert das System ohne Cache weitaus schlechter. Bei der Erhöhung der Clients von vier bis acht, also rund eine Verdopplung der Clients, wächst die durchschnittliche Zeit zum Ausführen der getBalance-Methode um etwa 30ms. Dies entspricht einem Drittel der Zeit, welche ein \texttt{getBalance()}-Aufruf bei vier Clients benötigt. Würde man die An\-zahl Cli\-ents noch verdoppeln oder sogar verdreifachen, würde die benötigte Zeit zum Ausführen der \texttt{getBalance()}-Methode wohl bald eine Schmerzgrenze der Wartezeiten durchbrechen.
+Auf der anderen Seite skaliert das System ohne Cache weitaus schlechter. Bei der Erhöhung der Clients von vier bis acht, also rund eine Verdopplung der Clients, wächst die durchschnittliche Zeit zum Ausführen der getBalance-Methode um etwa 30ms. Dies entspricht einem Drittel der Zeit, welche ein \texttt{getBalance()}-Aufruf bei vier Clients benötigt. Würde man die An\-zahl Cli\-ents noch verdoppeln oder sogar verdreifachen, würde die benötigte Zeit zum Ausführen der \texttt{getBalance()}-Methode vermutlich bald eine Schmerzgrenze der Wartezeiten durchbrechen.
 
 \subsection{Ein schreibender, mehrere lesende Clients}
 \subsubsection{Szenario Code}
@@ -197,8 +194,8 @@ Das Szenario ist wie folgt aufgebaut:
 Das Szenario ist nicht abschliessend dargestellt, da sich nun bis zum Szenario mit der Id acht, die Szenariodefinitionen wiederholen. Der erste in der Clientliste eingetragene Client, wird immer den schreibenden Auftrag bekommen. Die anderen eins bis sieben Clients werden nur den Auftrag bekommen zu lesen. \newline
 Für diesen Testcase wurde bei der Leseaktion extra noch ein Delay eingebaut. Die Clients müssen so lange lesen, wie der schreibende Client am Arbeiten ist. Wären die lesenden Clients schon vor dem schreibenden Client fertig, würden sie sich herunterfahren und keine Updates mehr erhalten. Dies würde den Testcase verfälschen und somit nutzlos machen. Damit nun keine Million Reads angegeben werden mussten, wurde ein Delay eingebaut, damit die Clients lange genug aktiv bleiben. 
 \subsubsection{Szenariobeschreibung}
-In diesem Szenario geht es darum, dass nur ein Client den Balance-Wert erhöht und alle anderen Clients diesen Wert lesen. Beim System ohne Cache wird bei steigender Anzahl Clients der Verkehr zum Server hin zunehmen. Es ist zu erwarten, dass durch diese Erhöhung die \texttt{SetBalance()}-Aufrufe bei steigender Anzahl Clients langsamer werden. \newline
-Beim Cache-System ist wiederum auch eine kleine Steigung der Messwerte zu erwarten, da bei mehreren aktiven Clients, bei einer Änderung des Balance-Wertes, auch mehr Updates verschickt werden müssen. Dieser Testcase soll also zeigen, wie die Update-Funktion der Client-Caches skaliert, daher, ob das System bei acht Clients langsamer ist, als wenn nur zwei Clients beteiligt sind. \newline
+In diesem Szenario geht es darum, dass nur ein Client den Balance-Wert erhöht und alle anderen Clients diesen Wert lesen. Es soll daher gezeigt werden, wie stark sich die Updates, welche beim System mit Cache versendet werden, auf die Performance des Systems auswirken. Weiter ist von Interesse, wie stark die Performance bei einer steigenden Anzahl Clients, daher einer steigenden Anzahl Updates, tangiert wird. \\
+
 Die folgende Auswertung der Mess\-resultate be\-schränkt sich auf den schrei\-ben\-den Client. Es soll ja unter\-sucht werden, ob und wie stark sich eine stei\-gen\-de Anzahl le\-sen\-der Clients auf die Schreib\-dauer eines Clients auswirkt. 
 
 \subsubsection{Ergebnisse System ohne Cache}
@@ -239,8 +236,7 @@ Die Ergebnisse der \texttt{setBalance()}-Aurufe werden in dieser Abbildung grafi
 \caption{\texttt{setBalance()}-Zeitaufwand, System ohne Cache(lesende/schreibende Zugriffe)}
 \end{figure}
 
-Erstaunlicherweise skaliert das System ohne Cache sehr gut. Die Werte für einen sch\-rei\-ben\-den Zugriff bleiben in etwa immer gleich. Anscheinend wurde das System etwas unterschätzt, denn augen\-scheinlich hätte man noch weit mehr Rechner lesen lassen können, ohne dass man eine Verlangsamung registriert hätte.
-
+Das System ohne Cache skaliert sehr gut. Die Werte für einen sch\-rei\-ben\-den Zugriff bleiben stabil.
 
 \subsubsection{Ergebnisse System mit Cache}
 
@@ -279,13 +275,13 @@ In der folgenden Grafik ist der Verlauf der Messwerte der \texttt{setBalance()}-
 \caption{\texttt{setBalance()}-Zeitaufwand, System mit Cache(lesende/schreibende Zugriffe)}
 \end{figure}
 
-Wieder Erwarten steigt die gemessene Zeit mit zunehmenden Clients beim \texttt{setBalance()}-Aufruf nicht an. Die gemessene Zeit bleibt circa immer gleich, was darauf schliessen lässt, dass das Cache-System prima skaliert. Es scheint, als könnten noch einige Clients mehr "'lesen"', ohne eine spürbare Verlangsamung in Kauf nehmen zu müssen.
+Das System mit Cache skaliert sehr gut. Die gemessenen Zeiten der \texttt{setBalance()}-Aufrufe steigen auch mit zunehmenden Clients nicht an.
 
 \subsubsection{Interpretation}
 
-Dass das Cache-System bei diesem Testcase so gut ska\-liert, war eigentlich zu erwarten. Mit einem leichten An\-s\-tieg der Mess\-werte wurde gerechnet, doch auch dieser blieb an sich aus. Mit dem Pro\-blem der Zeit\-messung in Java im Hinter\-kopf, kann man sagen, dass \texttt{setBalance()}-Aufrufe immer gleich schnell sind, egal, ob zwei oder acht Clients über den neuen Betrag des Balance-Wertes benachrichtigt werden müssen.
+Aufgrund der Messergebnisse kann geschlossen werden, dass die Updates des Servers keinen Einfluss auf die Performance der Systeme hat. Da die Ergebnisse stabil bleiben, egal wie viele Clients beteiligt sind, kann eine starke Beeinträchtigung des Servers und der Clients ausgeschlossen werden. Es ist daher anzunehmen, dass die Performancewerte weiter stabil bleiben würden, auch wenn die Anzahl Clients um ein Vielfaches steigen würde.\\
 
-Erstaunlicherweise skaliert jedoch auch das System ohne Cache sehr gut. Die Werte der \texttt{setBalance()}-Aufrufe sind im Durch\-schnitt sogar noch etwas tiefer als die Werte, welche mit dem Cache-System gemessen wurden. Natürlich sind die \texttt{getBalance()}-Werte um ein vielfaches höher als im verglichenen Cache-System, dies war jedoch aufgrund des im vorhergehenden Testcases gezeigten Mechanismusses zu erwarten.
+Auch das System ohne Cache skaliert sehr gut. Die Werte der \texttt{setBalance()}-Aufrufe sind stabil und liegen alle nahe beieinander. Aufgrund der Zahlen ist ersichtlich, dass der Server die Anfragen schnell und zuverlässig abfertigen kann. Trotz der Steigerung der Clients, konnten keine Performanceverluste ausgemacht werden. Dies lässt darauf schliessen, dass der Server durch die Anfragen nicht stark belastet wurde.\\
 
 Abschliessend lässt sich zu diesem Testcase sagen, dass weder das eine, noch das andere System abfällt. Beide arbeiten stabil und fehlerlos und wenn nur die \texttt{setBalance()}-Werte betrachtet werden, auch fast gleich schnell. Der Nachteil des Systems ohne Cache bleibt wie erwähnt, die langsamen \texttt{getBalance()}-Aufrufe.
 
@@ -312,9 +308,9 @@ In diesem Testcase führt jeder Client 1000 Mal ein Increment auf den Balance-We
 
 Ziel dieses Szenarios ist zu zeigen, wie sich die zwei Systeme bei permanentem Schreibzugriff verhalten. Dieses Szenario stellt eine enorme Belastung für den Server dar, da er mit Anfragen geradezu bombadiert wird. Durch die vielen Anfragen wird das System auch eine längere Zeit arbeiten müssen und so zum Vorschein bringen, ob es stabil und über längere Zeit sicher und fehlerlos läuft. 
 
-Bei steigender Anzahl Clients, wird es auch mehr Schreibzugriffe auf den Server geben. Dies führt zu mehr Netzwerkverkehr und vor allem zu mehr Last auf dem Server, welcher alle Anfragen beantworten muss. Aus diesen Gründen wird erwartet, dass beide Systeme mit steigender Anzahl Clients eine steigende Antwortzeit ausweisen werden. Durch die schnelleren Lesezugriffe des Cache-Systems, wird aber eben dieses System insgesamt schneller arbeiten und somit besser skalieren.
+Bei steigender Anzahl Clients, wird es auch mehr Schreibzugriffe auf den Server geben. Dies führt zu mehr Netzwerkverkehr und vor allem zu mehr Last auf dem Server, welcher alle Anfragen beantworten muss. Es soll ersichtlich werden, welches Serversystem mit dieser erhöhten Last besser umgehen kann.
 
-Ein weiterer Vorteil des Cache-Systems wird sein, dass es durch die Implementierung von zwei Concurrency-Control Mechanismen zu weniger Konflikten kommen wird. Wenn man sich vor Augen führt, dass bei acht Clients mit je 1000 Schreibzugriffen insgesamt 8000 Schreibzugriffe stattfinden, wird dies wohl ein grosser Vorteil für das Cache-System sein. Es wird also erwartet, dass das Cache-System um einiges besser skaliert.
+Ein weiteres Ziel dieses Szenarios ist zu testen, ob und wie stark sich die unterschiedliche Implementierung des Concurrency-Control Mechanismusses auf die Performance auswirkt. Das System mit Cache verfügt über zwei Mechanismen, einer im Cache und der zweite auf dem Server. Beim System ohne Cache ist nur ein Concurrency-Control auf dem Server implementiert. 
 
 \subsubsection{Ergebnisse System ohne Cache}
 
@@ -353,9 +349,9 @@ Die nächste Grafik zeigt die Messdaten der \texttt{setBalance()}-Methode:
 \caption{\texttt{setBalance()}-Zeitaufwand, System ohne Cache(nur schreibende Zugriffe)}
 \end{figure}
 
-Diese Grafik stellt eine grosse Überraschung dar. Es wurde mit einer stark ansteigenden Kurve gerechnet, da bei einer wachsenden Anzahl Clients die Konflikte stark zunehmen. Anscheinend bleiben die Aufrufe aber immer etwa gleich schnell.
+Die Werte der \texttt{setBalance()}-Aufrufe bleiben stabil bei 80ms. Die Anzahl der Konflikte steigt mit der steigenden Anzahl Clients.\\
 
-Es scheint, als könne der Server noch viel mehr Anfragen befriedigen, die Latenz von etwa 80ms kommt aber auf Grund des Netzwerks zustande. Das heisst also nicht, dass der Server des Systems ohne Cache irgendwo an seine Grenzen stösst, sondern der Umstand, dass jeder Aufruf über das Netzwerk erfolgt, lässt das System teilweise schwach aussehen.
+Die Latenz von etwa 80ms kommt auf Grund des Netzwerks zustande. Wie in den ausgewiesenen Zahlen der vorhergehenden Testcases gesehen werden konnte, benötigt der durchschnittliche Aufruf über das Netzwerk etwa 80ms.\\
 
 Folgende Grafik stellt die durchschnittliche Anzahl Konflikte dar:
 
@@ -366,9 +362,9 @@ Folgende Grafik stellt die durchschnittliche Anzahl Konflikte dar:
 \caption{Anzahl Konflikte, System ohne Cache(nur schreibende Zugriffe)}
 \end{figure}
 
-Wie zu erwarten steigt die Kurve in etwa linear an. Jeder dazukommende Client verursacht im ganzen System circa 1000 Konflikte mehr, bei einer Operationsanzahl von 1000 Operationen. Diese Entwicklung der Kurve entspricht in etwa den Erwartungen. 
+Die Grafik zeigt eine lineare steigende Gerade. Jeder dazukommende Client verursacht im ganzen System circa 1000 Konflikte mehr, bei einer Operationsanzahl von 1000 Operationen. Die Gerade würde vermutlich linear weiter steigen, würde die Anzahl Clients weiter steigen.\\
 
-Schlussendlich die wohl spannendste Grafik. Die "'Pure Operation Time"' ist die Summe der Zeiten aller ausgeführten Operationen:
+Die "'Pure Operation Time"' ist die Summe der Zeiten aller ausgeführten Operationen:
 
 \begin{figure}[H]
 \begin{center}
@@ -384,7 +380,7 @@ Obwohl die \texttt{setBalance()}-Aufrufe immer konstant gleich viel Zeit be\-nö
 \item Da die Zeit, welche für eine Operation benötigt wird, immer gleich bleibt, steigt die Gerade der "'Pure Operation Time"' analog zu der Geraden der Konfliktanzahl.
 \end{itemize}
 
-Abschliessend muss bemerkt werden, dass das System ohne Cache um einiges besser abschneidet, als es erwartet wurde. 
+Es ist anzunehmen, dass die Werte des Systems ohne Cache linear weiter steigen würden, bei einer steigenden Anzahl Clients.
 
 \subsubsection{Ergebnisse System mit Cache}
 
@@ -424,7 +420,8 @@ Die folgende Grafik zeigt die Entwicklung der Messwerte der \texttt{set\-Balance
 \caption{\texttt{setBalance()}-Zeitaufwand, System mit Cache(nur schreibende Zugriffe)}
 \end{figure}
 
-Zu erwarten war eine zeitliche Erhöhung bei einer steigenden Anzahl Clients. Dass die Kurve aber so krass steigen wird, ja fast einen exponentiellen Verlauf einnehmen würde, wurde nicht erwartet. Wenn alle beteiligten Clients schreibende Zugriffe tätigen, skaliert das System also schlecht. Es bleibt zu erahnen, wie die Kurve bei 20 Clients aussehen würde. Sehr wahrscheinlich würde der Kurvenverlauf analog der oben gezeigten Grafik mit der gleichen Steigung weitersteigen.
+Wenn alle beteiligten Clients schreibende Zugriffe tätigen, skaliert das System mit Cache sehr schlecht. Es bleibt zu erahnen, wie die Kurve bei 20 Clients aussehen würde. Sehr wahrscheinlich würde der Kurvenverlauf analog der oben gezeigten Grafik mit der gleichen Steigung weitersteigen.
+
 
 In der nächsten Grafik wird die durchschnittliche Anzahl Konflikte pro Client gezeigt:
 \begin{figure}[H]
@@ -434,11 +431,11 @@ In der nächsten Grafik wird die durchschnittliche Anzahl Konflikte pro Client g
 \caption{Anzahl Konflikte, System mit Cache(nur schreibende Zugriffe)}
 \end{figure}
 
-Es ist spannend zu sehen, dass die Konfliktanzahl linear mit der Anzahl Clients zunimmt. Leider ist auch dies ein schlechtes Verhalten bezüglich der Skalierbarkeit des Systems. Wahrscheinlich würde die Funktion linear weitersteigen, würden noch mehr Clients in den Test einbezogen. 
+Die Anzahl der Konflikte nimmt linear mit der Anzahl Clients zu. Dies zeugt von einer schwachen Skalierbarkeit, da davon ausgegangen werden kann, dass diese Funktion linear weitersteigen würde, würden noch mehr Clients in den Test einbezogen.  
 
 Pro zusätzlicher Client ergibt sich eine Zunahme der Konflikte um 250. Würde die Funktion analog weitersteigen, und davon ist auszugehen, würde die Anzahl Konflikte pro Client auf über 6000 ansteigen, bei 20 Clients. Dennoch sollte bedacht werden, dass dieser Testcase ein Extrem darstellt, da jeder Client mit vollem Tempo zu schreiben versucht. 
 
-Interessant ist die Tatsache, dass die Zeiten der \texttt{setBalance()}-Aufrufe exponentiell steigen, die Anzahl der Konflikte aber nur linear. Scheinbar verursachen also 3000 Konflikte eine ungememein höhere Zeitverzögerung, als dies 2000 Konflikte tun. 
+Die Zeiten der \texttt{setBalance()}-Aufrufe steigen stark an, während die Anzahl der Konflikte nur linear steigt. Die Behandlung von 3000 Konflikten verursacht also eine ungemein höhere Zeitverzögerung, als dies 2000 Konflikte tun. 
 
 Die nächste Grafik beschäftigt sich mit der reinen Durchführungszeit:
 \begin{figure}[H]
@@ -448,15 +445,16 @@ Die nächste Grafik beschäftigt sich mit der reinen Durchführungszeit:
 \caption{Pure Operation Time, System ohne Cache(nur schreibende Zugriffe)}
 \end{figure}
 
-Auch diese Funktion steigt exponentiell, was aufgrund der exponentiellen \texttt{setBalance()}-Funktion zu erwarten war. Logischerweise braucht die ganze Durchführung des Testcases mehr Zeit, wenn die \texttt{setBalance()}-Aufrufe mehr Zeit benötigen. Es ist trotzdem spannend zu sehen, dass zwischen diesen zwei Grafiken eine direkte Verbindung besteht.
+Die starke Steigung dieser Funktion war durch die starke Steigung der \texttt{setBalance()}-Funktion abzusehen. Zwischen diesen zwei Grafiken besteht ein direkter Zusammenhang. Eine stark ansteigende \texttt{setBalance()}-Funktion führt unweigerlich zu einer stark ansteigenden Funktion der Durchführungszeit. Da die \texttt{setBalance()}-Aufrufe mehr Zeit benötigen, wird der Testcase auch mehr Zeit in Anspruch nehmen.
 
 \subsubsection{Interpretation}
 
-Bei diesem Testcase hat zum grossen Erstaunen das System ohne Cache die besseren Werte erzielt, als das System mit Cache. Obwohl die \texttt{getBalance()}-Aufrufe gewohnt um einiges langsamer waren, als beim Cache, konnte das System ohne Cache schlussendlich durch die stabilen Werte der \texttt{setBalance()}-Aufrufe die besseren Ergebnisse liefern.
 
-Bei diesem extremen Testcase wurde eigentlich erwartet, dass der Cache um einiges besser skalieren würde, da er die Konfliktanzahl mindern würde. Dies hat der Cache zwar getan, doch durch die einiges lang\-sa\-mer\-en \texttt{set\-Balance()}-Auf\-ru\-fe, war das System mit Cache schlus\-send\-lich trotz\-dem um ei\-nig\-es sch\-lech\-ter. 
+Die \texttt{setBalance()}-Werte des System ohne Cache sind sehr stabil. Obwohl die \texttt{getBalance()}-Aufrufe gewohnt um einiges langsamer waren, als beim System mit Cache, konnte das System ohne Cache schlussendlich durch die stabilen Werte der \texttt{setBalance()}-Aufrufe die besseren Ergebnisse liefern.
 
-Es bleibt also anzumerken, dass es bei acht Clients zu sehr vielen Konflikten kommt, egal welches System angewendet wird. Bei sehr vielen Schreibzugriffen, macht der Cache aber bei einer steigenden Anzahl Clients immer weniger Sinn, da die Geschwindigkeit der  \texttt{setBalance()}-Methode stetig abnehmen wird.
+Das Anzahl der Konflikte beim System mit Cache weisen ansich einen besseren Verlauf, als die Konfliktanzahl des Systems ohne Cache, aus. Da aber die \texttt{set\-Balance()}-Auf\-ru\-fe des Systems mit Cache viel schlechter skalierten, als die Werte des Systems ohne Cache, blieb der Performancevorteil aus. Insgesamt skaliert bei diesem Szenario das System ohne Cache um einiges besser.
+
+Bei beiden Systemen treten sehr viele Konflikte auf, vor allem natürlich bei acht Clients. Bei einem solchen Einsatzszenario scheinen beide Systeme nicht ideal zu sein, da die Konfliktbewältigung viel Performance frisst. Bei sehr vielen Schreibzugriffen, macht der Cache aber bei einer steigenden Anzahl Clients immer weniger Sinn, da die Geschwindigkeit der  \texttt{setBalance()}-Methode stetig abnehmen wird.
 
 \section{Messerfahrungen}
 Die Auswertung der Messdaten und deren Interpretation nahm sehr viel Zeit in Anspruch. Wie bereits im Kapitel \ref{sec:reportGenerator} "'Report Generator"' erläutert, hätte das Speichern der Resultate in einer anderen Art als Textdateien sehr viel weniger Zeit gekostet. Da die Resultate pro Szenario in einer einzelnen Textdatei vorhanden waren, mussten zusätzlich ein kleines Script geschrieben werden, welches  aus jedem Szenario die Zusammenfassungen liest und diese in einer gemeinsamen Datei abspeichert. Jedoch war der Aufwand für das Zusammenführen der Daten trotzdem extrem hoch, da die Daten manuell aus der Zusammenfassung nach Excel exportiert werden mussten. 

@@ -28,13 +28,13 @@ Die in dieser Arbeit ausgewiesenen Zahlen wurden alle in der La\-bor\-um\-gebung
 \section{Testergebnisse}
 In den folgenden Kapiteln werden die getesteten Szenarios und deren Ergebnisse gezeigt. \\
 Die ausgewiesenen Werte in den Tabellen sind alle in Millisekunden angegeben. Die in der Legende der Tabellen beschriebenen Funktionen lassen sich wie folgt erklären:
-\begin{itemize}
+\begin{description}
 \item[setBalance()] Die durchschnittliche Zeit, welche benötigt wird, um einen schreibenden Zugriff zu tätigen.
-\item[getBalance()] Die durchschnittliche Dauer, um einen lesen Zugriff zu tätigen.
+\item[getBalance()] Die durchschnittliche Dauer, um einen lesenden Zugriff zu tätigen.
 \item[Number of Conflict] Anzahl Konflikte, welche während des Testlaufs aufgetreten sind.
 \item[Total Time(with Delays)] Beschreibt die Zeit, welche gebraucht wurde, um das gesamte Szenario, inklusive Konfliktbewältigung und konfigurierte Verzögerung, durchzuspielen.
 \item[Pure Operation Time] Die für das Durchspielen des Szenarios benötigte Zeit, ohne die konfigurierten Verzögerungen.
-\end{itemize}
+\end{description}
 
 
 \subsection{Nur lesende Clients}
@@ -190,6 +190,8 @@ Das Szenario ist wie folgt aufgebaut:
 	    <Read count="3000" delay="100"></Read>
 	  </ActionSequence>
 	</Scenario>
+	...
+	...
 \end{lstlisting}
 
 Das Szenario ist nicht abschliessend dargestellt, da sich nun bis zum Szenario mit der Id acht, die Szenariodefinitionen wiederholen. Der erste in der Clientliste eingetragene Client, wird immer den schreibenden Auftrag bekommen. Die anderen eins bis sieben Clients werden nur den Auftrag bekommen zu lesen. \newline
@@ -277,7 +279,7 @@ In der folgenden Grafik ist der Verlauf der Messwerte der \texttt{setBalance()}-
 \caption{\texttt{setBalance()}-Zeitaufwand, System mit Cache(lesende/schreibende Zugriffe)}
 \end{figure}
 
-Wieder Erwarten steigt die gemessene Zeit mit zunehmenden Clients beim \texttt{setBalance()}-Aufruf nicht an. Die gemessene Zeit bleibt circa immer gleich, was darauf schliessen lässt, dass das Cache-System prima skaliert. Es scheint, als könnten noch einige Clients mehr "lesen", ohne eine spürbare Verlangsamung in Kauf nehmen zu müssen.
+Wieder Erwarten steigt die gemessene Zeit mit zunehmenden Clients beim \texttt{setBalance()}-Aufruf nicht an. Die gemessene Zeit bleibt circa immer gleich, was darauf schliessen lässt, dass das Cache-System prima skaliert. Es scheint, als könnten noch einige Clients mehr "'lesen"', ohne eine spürbare Verlangsamung in Kauf nehmen zu müssen.
 
 \subsubsection{Interpretation}
 
@@ -375,11 +377,11 @@ Schlussendlich die wohl spannendste Grafik. Die "'Pure Operation Time"' ist die 
 \caption{Pure Operation Time System ohne Cache(nur schreibende Zugriffe)}
 \end{figure}
 
-Obwohl die \texttt{setBalance()}-Aufrufe immer konstant gleich viel Zeit be\-nö\-t\-i\-gen, steigt durch die Konfliktanzahl die "'Pure Operation Time"' an. Da die Gerade der \texttt{setBalance()}-Methode keine Steigung aufweist und die Konfliktanzahl linear steigt, ist bei der "Pure Operation Time"' auch eine linear steigende Gerade zu sehen. Der Zusammenhang wird hier noch einmal dargelegt:
+Obwohl die \texttt{setBalance()}-Aufrufe immer konstant gleich viel Zeit be\-nö\-t\-i\-gen, steigt durch die Konfliktanzahl die "'Pure Operation Time"' an. Da die Gerade der \texttt{setBalance()}-Methode keine Steigung aufweist und die Konfliktanzahl linear steigt, ist bei der "'Pure Operation Time"' auch eine linear steigende Gerade zu sehen. Der Zusammenhang wird hier noch einmal dargelegt:
 \begin{itemize}
 \item Bei steigender Clientanzahl, steigt auch die Anzahl der Konflikte.
 \item Für jeden Konflikt muss noch einmal eine Operation getätigt werden. Das heisst, die Anzahl Operationen steigt mit der Anzahl Konflikte.
-\item Da die Zeit, welche für eine Operation benötigt wird, immer gleich bleibt, steigt die Gerade der "Pure Operation Time"' analog zu der Geraden der Konfliktanzahl.
+\item Da die Zeit, welche für eine Operation benötigt wird, immer gleich bleibt, steigt die Gerade der "'Pure Operation Time"' analog zu der Geraden der Konfliktanzahl.
 \end{itemize}
 
 Abschliessend muss bemerkt werden, dass das System ohne Cache um einiges besser abschneidet, als es erwartet wurde. 

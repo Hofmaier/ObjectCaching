@@ -91,7 +91,7 @@ Durch die ein\-ge\-lesenen In\-for\-ma\-tio\-nen er\-stellt die Fac\-tory die Sz
 
 Das Attribut "'SystemUnderTest" definiert das zu testende System. Der Vorteil dieser Methode ist, dass das zu testende System einfach in XML angegeben wird und dann getestet werden kann. Es müssen so keine Anpassungen am Code vorgenommen werden, egal welches System getestet werden soll. Somit spielt es für das Framework keine Rolle, welches System getestet werden soll.
 
-Eine TestCase-Datei beschreibt genau einen TestCase. Ein Test\-Case kann ver\-schie\-dene Sze\-na\-ri\-en be\-in\-hal\-ten oder aber auch nur ein Szena\-rio be\-schrei\-ben. Ist nur ein Sz\-enario definiert, werden beide Clients mit dem\-selben Szenario arbeiten. Falls mehrere Szenarien beschrieben sind, werden die Cli\-ents unterschiedliche Szenarien durchführen. 
+Eine TestCase-Datei beschreibt genau einen TestCase. Ein Test\-Case kann ver\-schie\-dene Sze\-na\-ri\-en be\-in\-hal\-ten oder aber auch nur ein Szena\-rio be\-schrei\-ben. Ist nur ein Sz\-enario definiert, werden alle beteiligten Clients mit dem\-selben Szenario arbeiten. Falls mehrere Szenarien beschrieben sind, werden die Cli\-ents unterschiedliche Szenarien durchführen. 
 
 Aus obigem XML-Code generiert die Factory nun ein Objekt vom Typ TestCase. Dieses Objekt definiert nun zwei Szenarien, welche wiederum aus mehreren Actions bestehen. Was genau eine Action ist, ist unter dem Kapitel \ref{sec:action} "'Actions" beschrieben. Die Factory wird nun bei diesem Beispielcode eine Abfolge von 100 "'Increment-Action"' erstellen und diese in das Scenario-Objekt ablegen.
 
@@ -132,7 +132,7 @@ public void setReady(String ip)
 }
 \end{verbatim}
 
-Interessant an dieser Methode ist die Funktion der \texttt{checkAllReady}-Me\-tho\-de. Dieser Mecha\-nismus ist nicht nur dazu da, um alle Clients mög\-lichst gleichzeitig zu starten, sondern auch, um die Threads zu steuern. Die Methode \texttt{setReady()} wird durch mehrere verschiedene Threads aufgerufen, von jedem Client genau ein Mal. Durch die Implementation von \texttt{checkAllReady()} wird aber nur der letzte Thread, welcher \texttt{setReady()} aufruft, weiterleben und \texttt{start()} ausführen können. Somit ist garantiert, dass auch danach nur ein Thread aktiv ist und keine Seiteneffekte entstehen können.
+Interessant an dieser Methode ist die Funktion der \texttt{checkAllReady()}-Me\-tho\-de. Dieser Mecha\-nismus ist nicht nur dazu da, um alle Clients mög\-lichst gleichzeitig zu starten, sondern auch, um die Threads zu steuern. Die Methode \texttt{setReady()} wird durch mehrere verschiedene Threads aufgerufen, von jedem Client genau ein Mal. Durch die Implementation von \texttt{checkAllReady()} wird aber nur der letzte Thread, welcher \texttt{setReady()} aufruft, weiterleben und \texttt{start()} ausführen können. Somit ist garantiert, dass auch danach nur ein Thread aktiv ist und keine Seiteneffekte entstehen können.
 
 Die Implementation dieser Logik war nicht schwer, doch das Bewusstsein für die Problematik mit mehreren Threads muss ständig vorhanden sein. Die Einflüsse der parallelen Programmierung stellten ohnehin einen spannenden Aspekt dieser Arbeit dar. 
 
@@ -178,7 +178,7 @@ public void run()
 \end{verbatim}
 
 
-Mit dieser Im\-ple\-men\-ta\-tion wird der Me\-tho\-den\-auf\-ruf "'start()"' nun von einem se\-pe\-rat\-en Thread ausgeführt. Dies führt dazu, dass die Clients nun zeitlich parallel gestartet werden und nicht nacheinander. Da die einzelnen Threads nach Beendigung der \texttt{run()}-Methode sterben, ist die Art der Implementation unbedenklich bezüglich Seiteneffekte oder "'Zombie-Threads".
+Mit dieser Im\-ple\-men\-ta\-tion wird der Me\-tho\-den\-auf\-ruf \texttt{start()} nun von einem se\-pe\-rat\-en Thread ausgeführt. Dies führt dazu, dass die Clients nun zeitlich parallel gestartet werden und nicht nacheinander. Da die einzelnen Threads nach Beendigung der \texttt{run()}-Methode sterben, ist die Art der Implementation unbedenklich bezüglich Seiteneffekte oder "'Zombie-Threads".
 
 \subsubsection{Der Dispatcher}
 \label{sec:dispatcher}
@@ -202,7 +202,7 @@ Nach Beendigung eines Testlaufs, muss der Server mehrere Arbeiten erledigen. Nac
 Die im Diagramm ersichtlichen Operationen können folgender\-massen er\-läu\-tert werden:
 \begin{itemize}
 \item Die Methode \texttt{setResults(Scenario)} wird vom Client auf dem Server auf\-ge\-rufen, durch den Aufruf dieser Methode weiss der Server, dass der aufrufende Client sein Szenario durchgespielt hat. Weiter wird mit dem Aufruf der Methode wiederum ein Thread durch den RMI-Daemon gestartet, welcher die weiter folgenden Methoden anstösst.
-\item Aus der \texttt{setResults(Scenario)}- Me\-tho\-de wird di\-rekt "'stopClient()"' auf\-ge\-rufen. Was diese Me\-tho\-de genau macht, wird im Kapitel \ref{sec:stopClient} "'Stop\-pen eines Clients" genau be\-schrie\-ben.
+\item Aus der \texttt{setResults(Scenario)}- Me\-tho\-de wird di\-rekt \texttt{stopClient()} auf\-ge\-rufen. Was diese Me\-tho\-de genau macht, wird im Kapitel \ref{sec:stopClient} "'Stop\-pen eines Clients" genau be\-schrie\-ben.
 \item Die Methode \texttt{shutDown()} wird auf dem Client aufgerufen. Der Client trennt daraufhin die RMI-Verbindung zum Server und schaltet sich selber ab. Nähere Informationen zum Abschaltungsprozess eines Clients kann unter dem Kapitel \ref{sec:test-FW Client} "'Testframework Client"' nachgelesen werden.
 \item Die Methode \texttt{printSummary()} verwertet die Ergebnisse, welche die Clients in ihrem Szenario gespeichert und wieder übertragen haben. Mehr Informationen dazu im Kapitel \ref{sec:reportGenerator} "'Report Generator"'. Weiter wird auf der Konsole ausgegeben, ob es "'Lost-Update"'-Probleme gegeben hat oder nicht. Mehr zu diesem Thema unter dem Kapitel \ref{sec:resultGenerator}"'Result Generator".
 \end{itemize}
@@ -280,11 +280,11 @@ ActionNr;#ofTries;Time[ms];ACTION
 ------------------------------------------------
 100% of all Action executed are successful
 Total actions executed: 2, number of unsuccessful action 0
-Total getBalance calls: 2, avg. execution time 61.179245
-Total setBalance calls: 2, avg. execution time 79.9767365
+Total getBalance calls: 2, avg. execution time 61.179245 ms
+Total setBalance calls: 2, avg. execution time 79.9767365 ms
 
 Total Conflict: 0 / Gesamt Dauer: 282.311963 ms / 
-durch. Dauer pro Operation: 141.1559815
+durch. Dauer pro Operation: 141.1559815 ms
 \end{verbatim}
 
 Die genauen Messerwerte, mit Durch\-schnitts\-wer\-ten und Ver\-gleichen zwischen den verschiedenen Systemen sind im Kapitel \ref{sec:messresultate} dieser Arbeit zu finden. 

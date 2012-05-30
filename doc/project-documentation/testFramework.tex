@@ -215,19 +215,19 @@ private void stopClient(String clientIp)
 {
   Client temp;
   try {
-    if((temp = clientList.getClientByIp(clientIp)) != null)
-    {
-      logger.info("stop client with ip: " + clientIp);
-      temp.setClientRunning(ShutedDown.DOWN);
-      temp.getClientStub().shutdown();
-    }
-  } catch (RemoteException e) {
-    logger.log(Level.SEVERE, "Uncaught exception", e);
-  }
-  if(checkAllShutedDown())
-  {
-    printSummary();
-  }
+	if((temp = clientList.getClientByIp(clientIp)) != null)
+        {
+	  	logger.info("stop client with ip: " + clientIp);
+	  	temp.setClientRunning(ShutedDown.DOWN);
+	  	temp.getClientStub().shutdown();
+	}
+	} catch (RemoteException e) {
+	    logger.log(Level.SEVERE, "Uncaught exception", e);
+	}
+	if(checkAllShutedDown())
+	{
+	  printSummary();
+	}
 }
 \end{verbatim}
 
@@ -547,7 +547,7 @@ public void execute(Account account) {
 	}
 }
 \end{verbatim}
-Im Laufe der Rea\-li\-sie\-rung stellte sich her\-aus, dass zwi\-schen dem \verb+getBalance()+ und dem \verb+setBalance()+-Auf\-ruf eine mi\-ni\-mal de\-fi\-nier\-ba\-re Zeit\-dauer ge\-wartet werden können muss. Diese Warteperiode ist nötig, damit sich leichter ein Konflikt erzeugen lässt und so gezeigt werden kann, dass der Fehler serverseitig zu keinem Lost-Updates führt. Tritt serverseitig ein Concurrency Fehler auf, wird eine RuntimeExeption zurück an den Client geworfen. Dieser Fehler veranlasst, dass die Aktion nochmals neu gestartet wird. Die Aktion wird solange wiederholt bis diese erfolgreich aus der While-Schleife kommt. Die Verzögerung zwischen dem Lesen und Schreiben, welche über die Methode \verb+sleep()+ realisiert ist, führt nur beim ersten Druchlauf der IncrementAction zu einer zeitlichen Verzögerung.
+Im Laufe der Rea\-li\-sie\-rung stellte sich her\-aus, dass zwi\-schen dem \texttt{get\-Balance\-()} und dem \verb+setBalance()+-Auf\-ruf eine mi\-ni\-mal de\-fi\-nier\-ba\-re Zeit\-dauer ge\-wartet werden können muss. Diese Warteperiode ist nötig, damit sich leichter ein Konflikt erzeugen lässt und so gezeigt werden kann, dass der Fehler serverseitig zu keinem Lost-Updates führt. Tritt serverseitig ein Concurrency Fehler auf, wird eine RuntimeExeption zurück an den Client geworfen. Dieser Fehler veranlasst, dass die Aktion nochmals neu gestartet wird. Die Aktion wird solange wiederholt bis diese erfolgreich aus der While-Schleife kommt. Die Verzögerung zwischen dem Lesen und Schreiben, welche über die Methode \verb+sleep()+ realisiert ist, führt nur beim ersten Druchlauf der IncrementAction zu einer zeitlichen Verzögerung.
 
 \subsection{WriteAction}
 \label{sec:writeAction}

@@ -126,15 +126,15 @@ man sie der Methode
 \subsubsection{Objekt Identifikation}
 \label{sec:objekt-ident}
 
-Ruft der Client eine Methode auf einem Account-Objekt auf, muss er dem
+Ruft der Client eine Methode auf einem \texttt{Account}-Objekt auf, muss er dem
 Server mitteilen, auf welchem Objekt die Methode aufgerufen werden
-soll. Dafür teilt er dem Server eine Objekt-ID im MethodCall-Objekt
+soll. Dafür teilt er dem Server eine Objekt-ID im \texttt{MethodCall}-Objekt
 mit. Diese Objekt-IDs wurden künstlich eingeführt. Der Server ordnet
 jedem Objekt eine Objekt-ID zu. Diese Objekt-ID müssen in den Stubs auf Clientseite bei
 Methodenaufruf bekannt sein, und sie müssen mit den Objekt-IDs auf dem
-Server übereinstimmen. Der Client kann Account-Objekte beim Server
+Server übereinstimmen. Der Client kann \texttt{Account}-Objekte beim Server
 anfordern. Das Interface \texttt{AccountService} bietet dafür die Methode
-\texttt{get\-All\-Accounts()} an. Das ReturnValue-Objekt, das auf
+\texttt{get\-All\-Accounts()} an. Das \texttt{ReturnValue}-Objekt, das auf
 \newline \texttt{get\-All\-Accounts()} vom Server an den Client gesendet wird, enthält eine ArrayList von
 Objekt-IDs. Aus diesen IDs werden die AccountStubs auf dem Client generiert.
 

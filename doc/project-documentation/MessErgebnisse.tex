@@ -449,7 +449,9 @@ Die starke Steigung dieser Funktion war durch die starke Steigung der \texttt{se
 \subsubsection{Interpretation}
 
 
-Die \texttt{setBalance()}-Werte des System ohne Cache sind sehr stabil. Obwohl die \texttt{getBalance()}-Aufrufe gewohnt um einiges langsamer waren, als beim System mit Cache, konnte das System ohne Cache schlussendlich durch die stabilen Werte der \texttt{setBalance()}-Aufrufe die besseren Ergebnisse liefern.
+Die \texttt{setBalance()}-Werte des System ohne Cache sind sehr stabil. Obwohl die \texttt{getBalance()}-Aufrufe gewohnt um einiges langsamer waren, als beim System mit Cache, konnte das System ohne Cache schlussendlich durch die stabilen Werte der \texttt{setBalance()}-Aufrufe die besseren Ergebnisse liefern.\\
+
+Die \texttt{setBalance()}-Werte des Systems mit Cache skalieren schlecht. Der Grund dafür liegt in der Tatsache, dass das System mit Cache bei jedem \texttt{set\-Balance()}-Auf\-ru\-f, Updates an die anderen Clients senden muss. Je mehr Clients involviert sind, umso mehr Updates müssen versendet werden, was die starke Steigung der Kurve erklärt.
 
 Das Anzahl der Konflikte beim System mit Cache weisen an sich einen besseren Verlauf, als die Konfliktanzahl des Systems ohne Cache, aus. Da aber die \texttt{set\-Balance()}-Auf\-ru\-fe des Systems mit Cache viel schlechter skalierten, als die Werte des Systems ohne Cache, blieb der Performancevorteil aus. Insgesamt skaliert bei diesem Szenario das System ohne Cache um einiges besser.
 

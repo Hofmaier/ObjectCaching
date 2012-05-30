@@ -206,6 +206,13 @@ Ruft ein Client
 \verb|getBalance()| auf, holt der Server die aktuelle Version aus der HashMap $W$ und speichert sie mit der entsprechenden IP und
 Objekt-ID in der HashMap $R$ ab.
 
+\begin{figure}[H]
+  \centering
+  \includegraphics[scale = 0.5]{images_objectcaching/hashmap}  
+  \caption{HashMaps für Concurrency Control}
+  \label{fig:hashmapsforconcurrency}
+\end{figure}
+
 Ruft ein Client \verb|setBalance()| auf, prüft der Server, ob die
 Version des Clients aus der HashMap $R$ tiefer ist, als die aktuelle
 Version aus der HashMap $W$. Ist dies der Fall, wird der Methodenaufruf

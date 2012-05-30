@@ -1,5 +1,5 @@
 \chapter{Testing Framework}
-Im folgenden Kapitel wird auf die einzelnen Komponenten des Test Frameworks eingegangen und deren Funktionsweise erläutert. Die Aufgabe des Test Frameworks liegt darin, die verschiedenen Prototypen, welche im Laufe dieser Studienarbeit entwickelt wurden, mit diesem Framework einheitlich testen zu lassen. Das Test Framework wurde parallel zum RMIOnly- Systems mit Concurrency Control entwickelt.
+Im folgenden Kapitel wird auf die einzelnen Komponenten des Test Frameworks eingegangen und deren Funktionsweise erläutert. Die Aufgabe des Test Frameworks liegt darin, die verschiedenen Prototypen, welche im Laufe dieser Studienarbeit entwickelt wurden, mit diesem Framework einheitlich testen zu lassen. Das Test Framework wurde parallel zum RMI-System mit Concurrency Control entwickelt.
 
 \section{Konzept}
 Das Framework lässt sich über eine Konfigurationsdatei konfigurieren und kann Testfälle, welche in einer XML Datenstruktur vorliegen, interpretieren und daraus die einzelnen Testszenarien generieren. Die Testszenarien werden vom Server auf die verfügbaren Testframework Clients verteilt und dort gestartet. Das Framework startet das zu testende System auf den verschiedenen Rechnern. Das zu testende System führt unmittelbar danach die Aktionen durch, welche im übergebenen Szenario definiert wurden.
@@ -15,7 +15,7 @@ Die mit den Messwerten ausgefüllten Szenarien werden an den Server zurück\-ges
 \section{Allgemeine Informationen}
 \label{sec:allgInformationen}
 
-Um möglichst genaue Messdaten zu erlangen, wird das ganze System nach einem Testlauf beendet. Eine Aneinanderreihung von verschiedenen Test\-läufen würde die Messdaten aufgrund der Java Virtual Machine be\-ein\-träch\-ti\-gen. Es besteht die Möglichkeit, dass für einen zweiten Testlauf weniger Speicher zur Verfügung steht, weil der Speicher immer noch mit Objekten des ersten Testlaufs besetzt ist. Da dies nicht mit Sicherheit überprüft werden kann, daher es kann nicht gewährleistet werden, dass die Grundvoraussetzungen für beide Testläufe gleich sind, wurde auf eine Aneinanderreihung von Testläufen verzichtet.
+Um möglichst genaue Messdaten zu erlangen, wird das ganze System nach einem Testlauf beendet. Eine Aneinanderreihung von verschiedenen Test\-läufen würde die Messdaten aufgrund der Java Virtual Machine be\-ein\-träch\-ti\-gen. Es besteht die Möglichkeit, dass für einen zweiten Testlauf weniger Speicher zur Verfügung steht, weil der Speicher immer noch mit Objekten des ersten Testlaufs besetzt ist. Da dies nicht mit Sicherheit überprüft werden kann, dass die Grundvoraussetzungen für beide Testläufe gleich sind, wurde auf eine Aneinanderreihung von Testläufen verzichtet.
 
 \section{Der Frameworkserver}
 \label{sec:test-FW Server}
@@ -183,7 +183,7 @@ Mit dieser Im\-ple\-men\-ta\-tion wird der Me\-tho\-den\-auf\-ruf \texttt{start(
 \subsubsection{Der Dispatcher}
 \label{sec:dispatcher}
 
-Der Dispatcher stellt die Verbindung zwischen dem Frameworkserver und dem Server des Systems, welches getestet werden soll, dar. Dem Dispatcher wird die Portnummer angegeben, unter welcher er ein Socket öffnen soll. Weiter wird ihm ein String übergeben, in welchem der Pfad des zu testenden Systems drinnsteht. Der Dispatcher instanziert daraufhin das zu testende System mit Hilfe des Strings und wartet danach in einem blockierten Zustand auf sich verbindende Clients. Nachdem ein Client auf dem geöffneten Socket eine Verbindung aufgebaut hat, übergibt der Dispatcher die Verbindung in Form eines Input und eines Outputstreams dem Server des zu testenden Systems.
+Der Dispatcher stellt die Verbindung zwischen dem Frameworkserver und dem Server des Systems, welches getestet werden soll, dar. Dem Dispatcher wird die Portnummer angegeben, unter welcher er ein Socket öffnen soll. Weiter wird ihm ein String übergeben, in welchem der Pfad des zu testenden Systems drinsteht. Der Dispatcher instanziert daraufhin das zu testende System mit Hilfe des Strings und wartet danach in einem blockierten Zustand auf sich verbindende Clients. Nachdem ein Client auf dem geöffneten Socket eine Verbindung aufgebaut hat, übergibt der Dispatcher die Verbindung in Form eines Input und eines Outputstreams dem Server des zu testenden Systems.
 
 Logischerweise läuft der Dispatcher wiederum in einem seperaten Thread.
 
@@ -201,7 +201,7 @@ Nach Beendigung eines Testlaufs, muss der Server mehrere Arbeiten erledigen. Nac
 
 Die im Diagramm ersichtlichen Operationen können folgender\-massen er\-läu\-tert werden:
 \begin{itemize}
-\item Die Methode \texttt{setResults(Scenario)} wird vom Client auf dem Server auf\-ge\-rufen, durch den Aufruf dieser Methode weiss der Server, dass der aufrufende Client sein Szenario durchgespielt hat. Weiter wird mit dem Aufruf der Methode wiederum ein Thread durch den RMI-Daemon gestartet, welcher die weiter folgenden Methoden anstösst.
+\item Die Methode \texttt{setResults(Scenario)} wird vom Client auf dem Server auf\-ge\-rufen. Durch den Aufruf dieser Methode weiss der Server, dass der aufrufende Client sein Szenario durchgespielt hat. Weiter wird mit dem Aufruf der Methode wiederum ein Thread durch den RMI-Daemon gestartet, welcher die nachfolgenden Methoden anstösst.
 \item Aus der \texttt{setResults(Scenario)}- Me\-tho\-de wird di\-rekt \texttt{stopClient()} auf\-ge\-rufen. Was diese Me\-tho\-de genau macht, wird im Kapitel \ref{sec:stopClient} "'Stop\-pen eines Clients" genau be\-schrie\-ben.
 \item Die Methode \texttt{shutDown()} wird auf dem Client aufgerufen. Der Client trennt daraufhin die RMI-Verbindung zum Server und schaltet sich selber ab. Nähere Informationen zum Abschaltungsprozess eines Clients kann unter dem Kapitel \ref{sec:test-FW Client} "'Testframework Client"' nachgelesen werden.
 \item Die Methode \texttt{printSummary()} verwertet die Ergebnisse, welche die Clients in ihrem Szenario gespeichert und wieder übertragen haben. Mehr Informationen dazu im Kapitel \ref{sec:reportGenerator} "'Report Generator"'. Weiter wird auf der Konsole ausgegeben, ob es "'Lost-Update"'-Probleme gegeben hat oder nicht. Mehr zu diesem Thema unter dem Kapitel \ref{sec:resultGenerator}"'Result Generator".
@@ -239,20 +239,20 @@ Die oben genannte Implementation der \texttt{stopClient(String clientIP)}-\-Me\-
 
 Schlussendlich wurde bemerkt, dass die Methode \texttt{printSummary()} trotz aller Vorsichtsmassnahmen von jedem Client ein Mal ausgeführt wurde, was dazu führte, dass mehrere Zusammenfassungen generiert wurden und probiert wurde, den FrameworkServer mehrere Male herunterzufahren. Der Versuch den FrameworkServer mehrmals herunterzufahren, war natürlich der Grund für die Ex\-cep\-tions, da dem zweiten Client ein\-fach der Ver\-bin\-dungs\-part\-ner weggerissen wurde.
 
-Der Grund des Fehlverhaltens lag in der nicht-funktionierenden Barriere \texttt{checkAllShutedDown()}. Nachdem der Methodenkopf durch "'synchronized"' erweitert wurde, funktionierte das Framework wieder problemlos:
+Der Grund des Fehlverhaltens lag in der nicht-funktionierenden Barriere \texttt{checkAllShutedDown()}. Nachdem der Methodenkopf durch "'synchronized"' erweitert wurde, funktionierte das Framework problemlos:
 \begin{verbatim}
 synchronized private void stopClient(String clientIp)
 \end{verbatim}
 Anscheinend sind die Clients bei der Cache- Implementation immer zum fast gleichen Zeit\-punkt fer\-tig, was dazu führte, dass der Sta\-tus "'Shuted\-Down\-.DOWN"' nur un\-zu\-ver\-läs\-sig gesetzt wurde.
 
-Das Fehlerszenario lief wie folgt ab:
+Fehleranalyse im Detail:
 \begin{itemize}
 \item Thread1 betritt die \texttt{stopClient(String clientIp)}-Methode und setzt seinen Status auf DOWN.
 \item Kurz nachdem Thread1 seinen Status gesetzt hat, wird ihm die Res\-sour\-ce entzogen und Thread2 kommt zum Zug.
 \item Thread2 betritt nun seinerseits die Methode und setzt seinen Status ebenfalls auf DOWN.
 \item Da nun alle Threads auf DOWN sind, wird die Barriere nicht mehr funktionieren und mehrere Threads führen \texttt{printSummary()} aus.
 \end{itemize}
-Dadurch, dass die Methode nun synchronized ist, ist gewährleistet, dass sich nur ein Thread in der Methode aufhalten kann. Das wiederum bedeutet, dass die Barriere \texttt{checkAllShutedDown()} nun wie gewohnt funktioniert, da die Stati der Threads wieder zuverlässig gesetzt werden.
+Dadurch, dass die Methode nun synchronized ist, ist gewährleistet, dass sich nur ein Thread in der Methode aufhalten kann. Das wiederum bedeutet, dass die Barriere \texttt{checkAllShutedDown()} nun wie erwartet funktioniert, da die Stati der Threads wieder zuverlässig gesetzt werden.
 
 \subsubsection{Report Generator}
 \label{sec:reportGenerator}
@@ -296,11 +296,11 @@ Dieser Umstand wurde erst am Ende der Arbeit bemerkt, weshalb auf eine aufwändi
 \item Die Ergebnisse werden in eine Datenbank geschrieben.
 \item Die Ausgabe erfolgt in ein XML-File.
 \end{itemize}
-Die Ausgabe der Ergebnisse in eine Datenbank wäre die sauberste Lösung; sie ist jedoch auch mit sehr viel Aufwand verbunden. Ein XML-File wäre sicher einfacher zu handhaben, als die Textdateien und hätte schlussendlich weniger Aufwand für die Messungen bedeutet.
+Die Ausgabe der Ergebnisse in eine Datenbank wäre die sauberste Lösung; sie ist jedoch auch mit sehr viel Aufwand verbunden. Ein XML-File wäre sicher einfacher zu handhaben als die Textdateien und hätte schlussendlich weniger Aufwand für die Messungen bedeutet.
 
 \subsubsection{Result Generator}
 \label{sec:resultGenerator}
-Der ResultGenerator ist ein Generator, welcher für die Berechnung des zu erwartenden Endbestandes des Account-Objektes verantwortlich ist. Wenn alle Clients ihre Operationen abgeschlossen haben, wird das aktuelle Ergebnis des Account-Objektes und das erwartete Ergebnis auf der Konsole ausgegeben. Zusätzlich wird kontrolliert, ob die Ergebnisse übereinstimmen und eine entsprechende Meldung wird auf der Konsole ausgegeben:
+Der ResultGenerator ist ein Generator, welcher für die Berechnung des zu erwartenden Endbestandes des Account-Objektes verantwortlich ist. Wenn alle Clients ihre Operationen abgeschlossen haben, wird das aktuelle Ergebnis des Account-Objektes und das erwartete Ergebnis auf der Konsole ausgegeben. Zusätzlich wird kontrolliert, ob die Ergebnisse übereinstimmen und eine entsprechende Meldung auf der Konsole ausgegeben:
 \begin{verbatim}
 19.04.2012 18:33:38 ch.hsr.objectCaching.testFrameworkServer.
 Server printSummary
@@ -373,7 +373,7 @@ Die Kommunikation zwischen dem Testframework Client und dem Testframework Server
 \begin{enumerate}
 \item Es wird ein neues ClientController-Objekt instanziiert. Der ClientController implementiert das Client Interface, welches mit Remote markiert ist.
 \item Aus dem instanziierten ClientController-Objekte wird ein Remoteobjekt generiert.
-\item Der lokale Name Service wird auf dem spezifizierten Port gestartet, ist kein Port als Argument mitgegeben worden, wird der Defaultport 1099 verwendet.
+\item Der lokale Name Service wird auf dem spezifizierten Port gestartet. Ist kein Port als Argument mitgegeben worden, wird der Defaultport 1099 verwendet.
 \item Das ClientController Remoteobjekt lässt sich nun in dem Java Name Service unter dem angegeben Binding Name veröffentlichen. Der Server ist jetzt in der Lage ein ClientController Stub über die IP Adresse und den Binding Name zu lokalisieren.
 \end{enumerate}
 
@@ -387,7 +387,7 @@ public void shutdown() throws RemoteException;
 Die Grundidee zu Beginn des Projekts war, dass alle Konfigurationswerte einzeln als Parameter an den ClientController übergeben werden. Es stellte sich je\-doch schon nach kurzer Zeit her\-aus, dass eine Kap\-se\-lung der be\-nötigen Para\-meter in einem seperaten Objekt eine wesentlich bessere Lösung darstellt. Dieses neue Datatransfer Objekt beinhaltet sowohl alle nötigen Informationen für die Konfiguration des ClientSystemUnderTest als auch die des ClientControllers.
 
 \subsubsection{Initialize des ClientControllers}
-In der konkreten Im\-p\-le\-men\-ta\-ti\-on der Me\-tho\-de \texttt{initialize(Scenario sce\allowbreak na\allowbreak rio, Configuration configuration)} werden mehrer Auf\-gaben er\-le\-digt:
+In der konkreten Im\-p\-le\-men\-ta\-ti\-on der Me\-tho\-de \texttt{initialize(Scenario sce\allowbreak na\allowbreak rio, Configuration configuration)} werden mehrere Auf\-gaben er\-le\-digt:
 \begin{enumerate}
 \item Aus dem Configuration Objekt wird die Server IP, der RMI Port und der Name, unter dem der FrameworkServer registriert ist, ausgelesen. Aus diesen Informationen wird eine neue RMI Verbindung zum Framework Server erzeugt.
 \item Die Instanziierung des konkreten ClientSystemUnderTest übernimmt eine einzelne Klasse, welche als Factory implementiert ist. Der Factory wird nur der \verb+fully qualified name+, welcher im Configuration Objekt gespeichert ist, übergeben. Die Factory selbst instanziiert den ge\-wünschten Client\-System\-Under\-Test via Re\-flec\-ti\-on und re\-turniert das erzeugte Objekt.
@@ -466,7 +466,7 @@ public interface ClientSystemUnderTest {
 \subsubsection{Ablauf}
 \label{sec:ablauf}
 \begin{enumerate}
-\item Der ClientController setzt die Socket-Adresse des Server in das Client\-System\-Under\-Test. Die nötigen Imformationen sind im Configuration Objekt gespeichert.
+\item Der ClientController setzt die Socket-Adresse des Server in das Client\-System\-Under\-Test. Die nötigen Informationen sind im Configuration Objekt gespeichert.
 \item Im Kon\-struk\-tor des Test\-Clients wird der Account\-Ser\-vice, des über\-ge\-be\-nen Client\-System\-Under\-Test über die Meth\-ode \texttt{get\allowbreak Account\allowbreak Ser\allowbreak vice()} ge\-la\-den. 
 \item Während der Initialisierungsphase des ClientController ruft dieser ebenfalls die \verb+init()+ Methode des TestClients auf, in dieser Methode wird eine Liste aller verfügbaren Accounts Objekte aus dem AccountService in den TestClient geladen.
 \item Startet der Server nun den Testlauf wird endlos durch die Liste der Accounts interiert bis alle Aktionen des gesetzten Szenarios abgearbeitet sind.
@@ -499,7 +499,7 @@ public abstract void execute(Account account);
 
 \begin{itemize}
 \item Für eine detailierte Auswertung muss der Typ der Aktion zugänglich gemacht werden, dies ist über die Methode \verb+getActionTyp()+ möglich.
-\item Eine Aktion be\-steht aus einer Ab\-folge von \texttt{get\allowbreak Balance()} und \texttt{set\allowbreak Balance()} Auf\-rufen. Je nach Aktion können mehrer Methodenaufrufe auf das Account Objekt nötig sein, um die Aktion erfolgreich aus\-zu\-füh\-ren. Um im Reporting fest\-zu\-stellen, ob die Aktion beim ersten Versuch erfolg\-reich war, muss die minimale Anzahl von Time\-Records in der Aktion ge\-speichert werden. Über die Me\-tho\-de \texttt{get\allowbreak Minimal\allowbreak Number\allowbreak Of\allowbreak Time\allowbreak Records()} lässt sich diese Zahl auslesen. So lassen sich Konflikte, die bei der Ausführung dieser Aktion auftreten, im Reporting feststellen.
+\item Eine Aktion be\-steht aus einer Ab\-folge von \texttt{get\allowbreak Balance()} und \texttt{set\allowbreak Balance()} Auf\-rufen. Je nach Aktion können mehrere Methodenaufrufe auf das Account Objekt nötig sein, um die Aktion erfolgreich aus\-zu\-füh\-ren. Um im Reporting fest\-zu\-stellen, ob die Aktion beim ersten Versuch erfolg\-reich war, muss die minimale Anzahl von Time\-Records in der Aktion ge\-speichert werden. Über die Me\-tho\-de \texttt{get\allowbreak Minimal\allowbreak Number\allowbreak Of\allowbreak Time\allowbreak Records()} lässt sich diese Zahl auslesen. So lassen sich Konflikte, die bei der Ausführung dieser Aktion auftreten, im Reporting feststellen.
 \item Die Methode \verb+execute(Account account)+ beinhaltet die eigentlichen Methodenaufrufe, die auf dem Account-Objekt ausgeführt werden sollen. Das Account Objekt wird von TestClient an die Methode übergeben.
 \end{itemize} 
 
@@ -571,7 +571,7 @@ Damit eine genaue Analyse der Aktionen ge\-macht werden kann, ist es nö\-tig, d
 
 \subsection{ActionResult}
 \label{sec:ActionResult}
-Der Erfolg eines \verb+getBalance()+ oder \verb+setBalance()+ Aufrufs lässt sich ebenfalls im TimeRecord speichern. Dies hilft die Fehlerrate eines Methodenaufrufes zu ermitteln, daher ist es nötig, dass beim Stoppen einer Messung der Erfolgstatus gespeichert wird.
+Der Erfolg eines \verb+getBalance()+ oder \verb+setBalance()+ Aufrufs lässt sich ebenfalls im TimeRecord speichern. Dies hilft die Fehlerrate eines Methodenaufrufes zu ermitteln. Daher ist es nötig, dass beim Stoppen einer Messung der Erfolgstatus gespeichert wird.
 
 
 

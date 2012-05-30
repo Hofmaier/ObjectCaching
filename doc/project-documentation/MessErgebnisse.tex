@@ -27,7 +27,7 @@ Die in dieser Arbeit ausgewiesenen Zahlen wurden alle in der La\-bor\-um\-gebung
 
 \section{Testergebnisse}
 In den folgenden Kapiteln werden die getesteten Szenarios und deren Ergebnisse gezeigt. \\
-Die ausgewiesenen Werte in den Tabellen sind alle in Millisekunden angegeben. Die in der Legende der Tabellen beschriebenen Funktionen lassen sich wie folgt erklären:
+Die in der Legende der Tabellen beschriebenen Funktionen lassen sich wie folgt erklären:
 \begin{description}
 \item[setBalance()] Die durchschnittliche Zeit, welche benötigt wird, um einen schreibenden Zugriff zu tätigen.
 \item[getBalance()] Die durchschnittliche Dauer, um einen lesenden Zugriff zu tätigen.
@@ -59,8 +59,7 @@ Dieser TestCase sieht folgendermassen aus:
 \subsubsection{Szenariobeschreibung}
 Bei diesem Testcase führen alle Clients die gleichen Operationen aus. Alle Clients lesen das Objekt auf dem Server genau 250 Mal. Das Account-Objekt wird mit dem Wert "'1"' initialisiert, welcher bis zum Schluss unverändert bleiben wird. 
 
-
-Dieses Testszenario wurde entworfen, um zu beweisen, dass das Cache-System bei nur Lesezugriffen um einiges besser skaliert, als das System ohne Cache. Diese Annahme liegt in der Tatsache begründet, dass ein Zugriff auf den lokalen Speicher viel schneller ist, als ein Zugriff über das Netzwerk.
+Dieses Testszenario soll zeigen, welches der beiden System bei nur Lesezugriffen besser skaliert.
 
 \subsubsection{Ergebnisse System ohne Cache}
 
@@ -71,11 +70,11 @@ Die folgende Tabelle stellt die Mess\-er\-geb\-nis\-se des Sys\-tems ohne Cache 
 \begin{tabular*}{6.5cm}[]{l l l l l l}
 Legende&2 Clients&3 Clients&4 Clients&5 Clients\\
 \cline{1-5}
-setBalance&0&0&0&0\\
-getBalance&86.182&89.502273&91.313&94.490998\\
+setBalance[ms]&0&0&0&0\\
+getBalance[ms]&86.182&89.502273&91.313&94.490998\\
 Number of Conflict&0&0&0&0\\
-TotalTime(with Delays)&21546.54&22376.494&22829.21&23623.678\\
-PureOperationTime&21545.686&22375.568&22828.264&23622.749\\
+TotalTime(with Delays)[ms]&21546.54&22376.494&22829.21&23623.678\\
+PureOperationTime[ms]&21545.686&22375.568&22828.264&23622.749\\
 \end{tabular*} }
 \newline
 \newline
@@ -84,11 +83,11 @@ PureOperationTime&21545.686&22375.568&22828.264&23622.749\\
 \begin{tabular*}{6.5cm}[]{l l l l}
 Legende&6 Clients&7 Clients&8 Clients\\
 \cline{1-4}
-setBalance&0&0&0\\
-getBalance&98.381525&105.14788&120.2947\\
+setBalance[ms]&0&0&0\\
+getBalance[ms]&98.381525&105.14788&120.2947\\
 Number of Conflict&0&0&0\\
-TotalTime(with Delays)&24596.331&26287.93&30074.669\\
-Pure Operation Time&24595.381&26286.969&30073.691\\
+TotalTime(with Delays)[ms]&24596.331&26287.93&30074.669\\
+Pure Operation Time[ms]&24595.381&26286.969&30073.691\\
 \end{tabular*} } \newline
 
 Diese Zahlen sind Durch\-schnitt\-swer\-te von drei Messungen. Die genauen Mess\-daten können im Anhang gefunden werden. Die folgende Grafik zeigt den Verlauf des Zeit\-auf\-wandes mit einer steigenden Anzahl Clients von zwei bis acht Clients:
@@ -109,11 +108,11 @@ In der folgenden Tabelle werden die Messdaten des Cache-Systems dar\-ge\-stellt:
 \begin{tabular*}{6.5cm}[]{l l l l l l}
 Legende&2 Clients&3 Clients&4 Clients&5 Clients\\
 \cline{1-5}
-setBalance&0&0&0&0\\
-getBalance&0.288&0.287&0.285&0.298\\
+setBalance[ms]&0&0&0&0\\
+getBalance[ms]&0.288&0.287&0.285&0.298\\
 Number of Conflict&0&0&0&0\\
-TotalTime(with Delays)&73.087&72.581&72.039&75.422\\
-PureOperationTime&72.249&71.855&71.304&74.603\\
+TotalTime(with Delays)[ms]&73.087&72.581&72.039&75.422\\
+PureOperationTime[ms]&72.249&71.855&71.304&74.603\\
 \end{tabular*} }
 \newline
 \newline
@@ -122,11 +121,11 @@ PureOperationTime&72.249&71.855&71.304&74.603\\
 \begin{tabular*}{6.5cm}[]{l l l l}
 Legende&6 Clients&7 Clients&8 Clients\\
 \cline{1-4}
-setBalance&0&0&0\\
-getBalance&0.3011&0.3201&0.281\\
+setBalance[ms]&0&0&0\\
+getBalance[ms]&0.3011&0.3201&0.281\\
 Number of Conflict&0&0&0\\
-TotalTime(with Delays)&76.014&80.838&71.001\\
-Pure Operation Time&75.289&80.041&70.262\\
+TotalTime(with Delays)[ms]&76.014&80.838&71.001\\
+Pure Operation Time[ms]&75.289&80.041&70.262\\
 \end{tabular*} } \newline
 
 Diese Zahlen sind wiederum Durch\-schnitts\-wer\-te.  In der folgenden Grafik werden die durch\-schnitt\-li\-chen Zeiten der \texttt{getBalance()}-Methode in Ab\-hän\-gig\-keit der Anzahl Clients aus\-ge\-geben:
@@ -158,7 +157,7 @@ Aufruf zum Server übertragen, alle folgenden Aufrufe werden lokal aus
 dem Cache beantwortet. Dies erklärt den enormen
 Geschwindigkeitsvorteil des Cache-Systems bei jedem einzelnen Aufruf.
 
-Weiter skaliert das Cache-System bei diesem Testcase um einiges besser. Dadurch, dass bei steigender Anzahl Clients auch immer mehr Clients ein Update erhalten müssen, hätte man auch eine leichte Steigung der Messwerte beim Cache-System erwarten können. Da die Werte aber so klein sind und die Messmethode mit der in Java implementierten Funktion \texttt{nanoTime()} gemacht wurde, können kleine Ungenauigkeiten in diesem Bereich nicht ganz ausgeschlossen werden. Es kann also durchaus sein, dass das Cache-System bei einer steigenden Anzahl Clients eine linear, leicht ansteigende Gerade zeigen würde, dies aber durch die Ungenauigkeiten beim Messen nicht genau abgebildet wird. Es bleibt auf jeden Fall zu beachten, dass das Cache-System wunderbar skaliert. Vermutlich hätte das Szenario mit einer Vielzahl der Clients durchgeführt werden können, ohne grosse Geschwindigkeitseinbussen in Kauf nehmen zu müssen.
+Weiter skaliert das Cache-System bei diesem Testcase um einiges besser. Dadurch, dass bei steigender Anzahl Clients auch immer mehr Clients ein Update erhalten müssen, hätte man auch eine leichte Steigung der Messwerte beim Cache-System erwarten können. Da die Werte aber so klein sind und die Messmethode mit der in Java implementierten Funktion \texttt{nanoTime()} gemacht wurde, können kleine Ungenauigkeiten in diesem Bereich nicht ganz ausgeschlossen werden. Es bleibt auf jeden Fall zu beachten, dass das Cache-System wunderbar skaliert. Vermutlich hätte das Szenario mit einer Vielzahl der Clients durchgeführt werden können, ohne grosse Geschwindigkeitseinbussen in Kauf nehmen zu müssen.
 
 Auf der anderen Seite skaliert das System ohne Cache weitaus schlechter. Bei der Erhöhung der Clients von vier bis acht, also rund eine Verdopplung der Clients, wächst die durchschnittliche Zeit zum Ausführen der getBalance-Methode um etwa 30ms. Dies entspricht einem Drittel der Zeit, welche ein \texttt{getBalance()}-Aufruf bei vier Clients benötigt. Würde man die An\-zahl Cli\-ents noch verdoppeln oder sogar verdreifachen, würde die benötigte Zeit zum Ausführen der \texttt{getBalance()}-Methode vermutlich bald eine Schmerzgrenze der Wartezeiten durchbrechen.
 
@@ -196,7 +195,7 @@ Für diesen Testcase wurde bei der Leseaktion extra noch ein Delay eingebaut. Di
 \subsubsection{Szenariobeschreibung}
 In diesem Szenario geht es darum, dass nur ein Client den Balance-Wert erhöht und alle anderen Clients diesen Wert lesen. Es soll daher gezeigt werden, wie stark sich die Updates, welche beim System mit Cache versendet werden, auf die Performance des Systems auswirken. Weiter ist von Interesse, wie stark die Performance bei einer steigenden Anzahl Clients, daher einer steigenden Anzahl Updates, tangiert wird. \\
 
-Die folgende Auswertung der Mess\-resultate be\-schränkt sich auf den schrei\-ben\-den Client. Es soll ja unter\-sucht werden, ob und wie stark sich eine stei\-gen\-de Anzahl le\-sen\-der Clients auf die Schreib\-dauer eines Clients auswirkt. 
+Die folgende Auswertung der Mess\-resultate be\-schränkt sich auf den schrei\-ben\-den Client. Es soll unter\-sucht werden, ob und wie stark sich eine stei\-gen\-de Anzahl le\-sen\-der Clients auf die Schreib\-dauer eines Clients auswirkt. 
 
 \subsubsection{Ergebnisse System ohne Cache}
 
@@ -207,11 +206,11 @@ Die Messwerte des schreibenden Clients sehen wie folgt aus: \newline
 \begin{tabular*}{6.5cm}[]{l l l l l l}
 Legende&2 Clients&3 Clients&4 Clients&5 Clients\\
 \cline{1-5}
-setBalance&79.870&79.951&79.821&79.858\\
-getBalance&80.124&80.140&80.114&80.142\\
+setBalance[ms]&79.870&79.951&79.821&79.858\\
+getBalance[ms]&80.124&80.140&80.114&80.142\\
 Number of Conflict&0&0&0&0\\
-TotalTime(with Delays)&80003.557&80051.669&79973.797&80006.288\\
-PureOperationTime&79997.736&80045.911&79968.060&80000.453\\
+TotalTime(with Delays)[ms]&80003.557&80051.669&79973.797&80006.288\\
+PureOperationTime[ms]&79997.736&80045.911&79968.060&80000.453\\
 \end{tabular*} }
 \newline
 \newline
@@ -220,11 +219,11 @@ PureOperationTime&79997.736&80045.911&79968.060&80000.453\\
 \begin{tabular*}{6.5cm}[]{l l l l}
 Legende&6 Clients&7 Clients&8 Clients\\
 \cline{1-4}
-setBalance&79.914&79.876&80.081\\
-getBalance&80.133&80.124&80.201\\
+setBalance[ms]&79.914&79.876&80.081\\
+getBalance[ms]&80.133&80.124&80.201\\
 Number of Conflict&0&0&0\\
-TotalTime(with Delays)&80029.782&80006.137&80105.944\\
-Pure Operation Time&80024.009&80000.355&80100.144\\
+TotalTime(with Delays)[ms]&80029.782&80006.137&80105.944\\
+Pure Operation Time[ms]&80024.009&80000.355&80100.144\\
 \end{tabular*} } \newline
 
 Die Ergebnisse der \texttt{setBalance()}-Aurufe werden in dieser Abbildung grafisch dargestellt:
@@ -247,11 +246,11 @@ Folgende Tabelle zeigt die Messer\-gebnisse des schreibenden Clients mit dem Cac
 \begin{tabular*}{6.5cm}[]{l l l l l l}
 Legende&2 Clients&3 Clients&4 Clients&5 Clients\\
 \cline{1-5}
-setBalance&88.7521&88.789&88.603&88.620\\
-getBalance&0.1837&0.184&0.185&0.184\\
+setBalance[ms]&88.7521&88.789&88.603&88.620\\
+getBalance[ms]&0.1837&0.184&0.185&0.184\\
 Number of Conflict&0&0&0&0\\
-TotalTime(with Delays)&80144.642&80149.519&79982.694&80025.973\\
-PureOperationTime&80131.176&80136.188&79969.438&80012.822\\
+TotalTime(with Delays)[ms]&80144.642&80149.519&79982.694&80025.973\\
+PureOperationTime[ms]&80131.176&80136.188&79969.438&80012.822\\
 \end{tabular*} }
 \newline
 \newline
@@ -260,11 +259,11 @@ PureOperationTime&80131.176&80136.188&79969.438&80012.822\\
 \begin{tabular*}{6.5cm}[]{l l l l}
 Legende&6 Clients&7 Clients&8 Clients\\
 \cline{1-4}
-setBalance&88.655&88.766&88.920\\
-getBalance&0.189&0.180&0.192\\
+setBalance[ms]&88.655&88.766&88.920\\
+getBalance[ms]&0.189&0.180&0.192\\
 Number of Conflict&0&0&0\\
-TotalTime(with Delays)&80003.756&80093.180&80244.857\\
-Pure Operation Time&79990.542&80081.593&80231.319\\
+TotalTime(with Delays)[ms]&80003.756&80093.180&80244.857\\
+Pure Operation Time[ms]&79990.542&80081.593&80231.319\\
 \end{tabular*} } \newline
 
 In der folgenden Grafik ist der Verlauf der Messwerte der \texttt{setBalance()}-Aufrufe des schreibenden Clients zu sehen:
@@ -275,15 +274,15 @@ In der folgenden Grafik ist der Verlauf der Messwerte der \texttt{setBalance()}-
 \caption{\texttt{setBalance()}-Zeitaufwand, System mit Cache(lesende/schreibende Zugriffe)}
 \end{figure}
 
-Das System mit Cache skaliert sehr gut. Die gemessenen Zeiten der \texttt{setBalance()}-Aufrufe steigen auch mit zunehmenden Clients nicht an.
+Das System mit Cache skaliert sehr gut. Die gemessenen Zeiten der \texttt{set\-Balance()}-Aufrufe steigen auch mit zunehmenden Clients nicht an.
 
 \subsubsection{Interpretation}
 
 Aufgrund der Messergebnisse kann geschlossen werden, dass die Updates des Servers keinen Einfluss auf die Performance der Systeme hat. Da die Ergebnisse stabil bleiben, egal wie viele Clients beteiligt sind, kann eine starke Beeinträchtigung des Servers und der Clients ausgeschlossen werden. Es ist daher anzunehmen, dass die Performancewerte weiter stabil bleiben würden, auch wenn die Anzahl Clients um ein Vielfaches steigen würde.\\
 
-Auch das System ohne Cache skaliert sehr gut. Die Werte der \texttt{setBalance()}-Aufrufe sind stabil und liegen alle nahe beieinander. Aufgrund der Zahlen ist ersichtlich, dass der Server die Anfragen schnell und zuverlässig abfertigen kann. Trotz der Steigerung der Clients, konnten keine Performanceverluste ausgemacht werden. Dies lässt darauf schliessen, dass der Server durch die Anfragen nicht stark belastet wurde.\\
+Auch das System ohne Cache skaliert sehr gut. Die Werte der \texttt{set\-Balance()}-Aufrufe sind stabil und liegen alle nahe beieinander. Aufgrund der Zahlen ist ersichtlich, dass der Server die Anfragen schnell und zuverlässig abfertigen kann. Trotz der Steigerung der Clients, konnten keine Performanceverluste ausgemacht werden. Dies lässt darauf schliessen, dass der Server durch die Anfragen nicht stark belastet wurde.\\
 
-Abschliessend lässt sich zu diesem Testcase sagen, dass weder das eine, noch das andere System abfällt. Beide arbeiten stabil und fehlerlos und wenn nur die \texttt{setBalance()}-Werte betrachtet werden, auch fast gleich schnell. Der Nachteil des Systems ohne Cache bleibt wie erwähnt, die langsamen \texttt{getBalance()}-Aufrufe.
+Abschliessend lässt sich zu diesem Testcase sagen, dass weder das eine, noch das andere System abfällt. Beide arbeiten stabil und fehlerlos und wenn nur die \texttt{setBalance()}-Werte betrachtet werden, auch fast gleich schnell. Die langsamen \texttt{getBalance()}-Aufrufe bleiben ein grosser Nachteil des Systems ohne Cache. 
 
 \subsection{Nur schreibende Clients}
 \subsubsection{Szenario Code}
@@ -304,7 +303,7 @@ Der XML-Code, welcher dieses Szenario beschreibt, ist hier zu sehen:
 </TestRun>
 \end{lstlisting}
 \subsubsection{Szenariobeschreibung}
-In diesem Testcase führt jeder Client 1000 Mal ein Increment auf den Balance-Wert aus. Ein Increment bedeutet den Wert zu lesen und ihn dann mit einem Faktor multipliziert wieder zu schreiben. 
+In diesem Testcase führt jeder Client 1'000 Mal ein Increment auf den Balance-Wert aus. Ein Increment bedeutet den Wert zu lesen und ihn dann mit einem Faktor multipliziert wieder zu schreiben. 
 
 Ziel dieses Szenarios ist zu zeigen, wie sich die zwei Systeme bei permanentem Schreibzugriff verhalten. Dieses Szenario stellt eine enorme Belastung für den Server dar, da er mit Anfragen geradezu bombadiert wird. Durch die vielen Anfragen wird das System auch eine längere Zeit arbeiten müssen und so zum Vorschein bringen, ob es stabil und über längere Zeit sicher und fehlerlos läuft. 
 
@@ -321,11 +320,11 @@ Die Messerwerte des RMI-Only-Systems: \newline
 \begin{tabular*}{6.5cm}[]{l l l l l l}
 Legende&2 Clients&3 Clients&4 Clients&5 Clients\\
 \cline{1-5}
-setBalance&80.119789&80.245101&80.301833&80.341942\\
-getBalance&79.877294&79.774314&79.754846&79.772539\\
+setBalance[ms]&80.119789&80.245101&80.301833&80.341942\\
+getBalance[ms]&79.877294&79.774314&79.754846&79.772539\\
 Number of Conflict&500&1208.44&1661.33&2367.0667\\
-TotalTime(with Delays)&240019.37&353423&415639.29&539152.12\\
-PureOperationTime&240003.25&353400.43&425985.248&539121.21\\
+TotalTime(with Delays)[ms]&240019.37&353423&415639.29&539152.12\\
+PureOperationTime[ms]&240003.25&353400.43&425985.248&539121.21\\
 \end{tabular*} }
 \newline
 \newline
@@ -334,11 +333,11 @@ PureOperationTime&240003.25&353400.43&425985.248&539121.21\\
 \begin{tabular*}{6.5cm}[]{l l l l}
 Legende&6 Clients&7 Clients&8 Clients\\
 \cline{1-4}
-setBalance&80.308807&80.276285&80.30729\\
-getBalance&79.700759&79.73294&79.710938\\
+setBalance[ms]&80.308807&80.276285&80.30729\\
+getBalance[ms]&79.700759&79.73294&79.710938\\
 Number of Conflict&2902.2778&3242.90&4371.66\\
-TotalTime(with Delays)&624456.67&678747.88&859636.25\\
-Pure Operation Time&624422.52&678712.13&859593.5\\
+TotalTime(with Delays)[ms]&624456.67&678747.88&859636.25\\
+Pure Operation Time[ms]&624422.52&678712.13&859593.5\\
 \end{tabular*} } \newline
 
 Die nächste Grafik zeigt die Messdaten der \texttt{setBalance()}-Methode:
@@ -362,7 +361,7 @@ Folgende Grafik stellt die durchschnittliche Anzahl Konflikte dar:
 \caption{Anzahl Konflikte, System ohne Cache(nur schreibende Zugriffe)}
 \end{figure}
 
-Die Grafik zeigt eine lineare steigende Gerade. Jeder dazukommende Client verursacht im ganzen System circa 1000 Konflikte mehr, bei einer Operationsanzahl von 1000 Operationen. Die Gerade würde vermutlich linear weiter steigen, würde die Anzahl Clients weiter steigen.\\
+Die Grafik zeigt eine lineare steigende Gerade. Jeder dazukommende Client verursacht im ganzen System circa 1000 Konflikte mehr, bei einer Operationsanzahl von 1000 Operationen. \\
 
 Die "'Pure Operation Time"' ist die Summe der Zeiten aller ausgeführten Operationen:
 
@@ -391,11 +390,11 @@ In der folgenden Tabelle sind die Werte des Cache-Systems dargestellt:\newline
 \begin{tabular*}{6.5cm}[]{l l l l l l}
 Legende&2 Clients&3 Clients&4 Clients&5 Clients\\
 \cline{1-5}
-setBalance&104.2852&130.9624&247.2939&427.0246\\
-getBalance&0.1346&0.1007&0.1014&0.0993\\
+setBalance[ms]&104.2852&130.9624&247.2939&427.0246\\
+getBalance[ms]&0.1346&0.1007&0.1014&0.0993\\
 Number of Conflict&681.5&1532.22&1916.5&2243.8\\
-TotalTime(with Delays)&17607.64&331890.26&721508.42&1385805\\
-PureOperationTime&176052.29&331868.2&721482.83&1385777\\
+TotalTime(with Delays)[ms]&17607.64&331890.26&721508.42&1385805\\
+PureOperationTime[ms]&176052.29&331868.2&721482.83&1385777\\
 \end{tabular*} }
 \newline
 \newline
@@ -404,11 +403,11 @@ PureOperationTime&176052.29&331868.2&721482.83&1385777\\
 \begin{tabular*}{6.5cm}[]{l l l l}
 Legende&6 Clients&7 Clients&8 Clients\\
 \cline{1-4}
-setBalance&648.4426&981.2542&1353.4886\\
-getBalance&0.1008&0.0972&0.0907\\
+setBalance[ms]&648.4426&981.2542&1353.4886\\
+getBalance[ms]&0.1008&0.0972&0.0907\\
 Number of Conflict&2534.5&2871.33&3254.70\\
-TotalTime(with Delays)&2303134&3782179&5761716\\
-Pure Operation Time&2303103&3800575&5761681\\
+TotalTime(with Delays)[ms]&2303134&3782179&5761716\\
+Pure Operation Time[ms]&2303103&3800575&5761681\\
 \end{tabular*} } \newline
 
 
@@ -420,7 +419,7 @@ Die folgende Grafik zeigt die Entwicklung der Messwerte der \texttt{set\-Balance
 \caption{\texttt{setBalance()}-Zeitaufwand, System mit Cache(nur schreibende Zugriffe)}
 \end{figure}
 
-Wenn alle beteiligten Clients schreibende Zugriffe tätigen, skaliert das System mit Cache sehr schlecht. Es bleibt zu erahnen, wie die Kurve bei 20 Clients aussehen würde. Sehr wahrscheinlich würde der Kurvenverlauf analog der oben gezeigten Grafik mit der gleichen Steigung weitersteigen.
+Wenn alle beteiligten Clients schreibende Zugriffe tätigen, skaliert das System mit Cache sehr schlecht. 
 
 
 In der nächsten Grafik wird die durchschnittliche Anzahl Konflikte pro Client gezeigt:
@@ -433,7 +432,7 @@ In der nächsten Grafik wird die durchschnittliche Anzahl Konflikte pro Client g
 
 Die Anzahl der Konflikte nimmt linear mit der Anzahl Clients zu. Dies zeugt von einer schwachen Skalierbarkeit, da davon ausgegangen werden kann, dass diese Funktion linear weitersteigen würde, würden noch mehr Clients in den Test einbezogen.  
 
-Pro zusätzlicher Client ergibt sich eine Zunahme der Konflikte um 250. Würde die Funktion analog weitersteigen, und davon ist auszugehen, würde die Anzahl Konflikte pro Client auf über 6000 ansteigen, bei 20 Clients. Dennoch sollte bedacht werden, dass dieser Testcase ein Extrem darstellt, da jeder Client mit vollem Tempo zu schreiben versucht. 
+Pro zusätzlicher Client ergibt sich eine Zunahme der Konflikte um 250. Würde die Funktion analog weitersteigen, und davon ist auszugehen, würde die Anzahl Konflikte pro Client vermutlich auf über 6000 ansteigen, bei 20 Clients. Dennoch sollte bedacht werden, dass dieser Testcase ein Extrem darstellt, da jeder Client mit vollem Tempo zu schreiben versucht. 
 
 Die Zeiten der \texttt{setBalance()}-Aufrufe steigen stark an, während die Anzahl der Konflikte nur linear steigt. Die Behandlung von 3000 Konflikten verursacht also eine ungemein höhere Zeitverzögerung, als dies 2000 Konflikte tun. 
 
@@ -445,16 +444,16 @@ Die nächste Grafik beschäftigt sich mit der reinen Durchführungszeit:
 \caption{Pure Operation Time, System ohne Cache(nur schreibende Zugriffe)}
 \end{figure}
 
-Die starke Steigung dieser Funktion war durch die starke Steigung der \texttt{setBalance()}-Funktion abzusehen. Zwischen diesen zwei Grafiken besteht ein direkter Zusammenhang. Eine stark ansteigende \texttt{setBalance()}-Funktion führt unweigerlich zu einer stark ansteigenden Funktion der Durchführungszeit. Da die \texttt{setBalance()}-Aufrufe mehr Zeit benötigen, wird der Testcase auch mehr Zeit in Anspruch nehmen.
+Die starke Steigung dieser Funktion war durch die starke Steigung der \texttt{setBalance()}-Funktion abzusehen. Zwischen diesen zwei Grafiken besteht ein direkter Zusammenhang. Eine stark ansteigende \texttt{setBalance()}-Funktion führt unweigerlich zu einer stark ansteigenden Funktion der Durch\-führungs\-zeit. Da die \texttt{setBalance()}-Aufrufe mehr Zeit benötigen, wird der Testcase auch mehr Zeit in Anspruch nehmen.
 
 \subsubsection{Interpretation}
 
 
 Die \texttt{setBalance()}-Werte des System ohne Cache sind sehr stabil. Obwohl die \texttt{getBalance()}-Aufrufe gewohnt um einiges langsamer waren, als beim System mit Cache, konnte das System ohne Cache schlussendlich durch die stabilen Werte der \texttt{setBalance()}-Aufrufe die besseren Ergebnisse liefern.
 
-Das Anzahl der Konflikte beim System mit Cache weisen ansich einen besseren Verlauf, als die Konfliktanzahl des Systems ohne Cache, aus. Da aber die \texttt{set\-Balance()}-Auf\-ru\-fe des Systems mit Cache viel schlechter skalierten, als die Werte des Systems ohne Cache, blieb der Performancevorteil aus. Insgesamt skaliert bei diesem Szenario das System ohne Cache um einiges besser.
+Das Anzahl der Konflikte beim System mit Cache weisen an sich einen besseren Verlauf, als die Konfliktanzahl des Systems ohne Cache, aus. Da aber die \texttt{set\-Balance()}-Auf\-ru\-fe des Systems mit Cache viel schlechter skalierten, als die Werte des Systems ohne Cache, blieb der Performancevorteil aus. Insgesamt skaliert bei diesem Szenario das System ohne Cache um einiges besser.
 
-Bei beiden Systemen treten sehr viele Konflikte auf, vor allem natürlich bei acht Clients. Bei einem solchen Einsatzszenario scheinen beide Systeme nicht ideal zu sein, da die Konfliktbewältigung viel Performance frisst. Bei sehr vielen Schreibzugriffen, macht der Cache aber bei einer steigenden Anzahl Clients immer weniger Sinn, da die Geschwindigkeit der  \texttt{setBalance()}-Methode stetig abnehmen wird.
+Bei beiden Systemen treten sehr viele Konflikte auf, vor allem natürlich bei acht Clients. Bei einem solchen Einsatzszenario scheinen beide Systeme nicht ideal zu sein, da die Konfliktbewältigung viel Performance benötigt. Bei sehr vielen Schreibzugriffen, macht der Cache aber bei einer steigenden Anzahl Clients immer weniger Sinn, da die Geschwindigkeit der  \texttt{setBalance()}-Methode stetig abnehmen wird.
 
 \section{Messerfahrungen}
 Die Auswertung der Messdaten und deren Interpretation nahm sehr viel Zeit in Anspruch. Wie bereits im Kapitel \ref{sec:reportGenerator} "'Report Generator"' erläutert, hätte das Speichern der Resultate in einer anderen Art als Textdateien sehr viel weniger Zeit gekostet. Da die Resultate pro Szenario in einer einzelnen Textdatei vorhanden waren, mussten zusätzlich ein kleines Script geschrieben werden, welches  aus jedem Szenario die Zusammenfassungen liest und diese in einer gemeinsamen Datei abspeichert. Jedoch war der Aufwand für das Zusammenführen der Daten trotzdem extrem hoch, da die Daten manuell aus der Zusammenfassung nach Excel exportiert werden mussten. 

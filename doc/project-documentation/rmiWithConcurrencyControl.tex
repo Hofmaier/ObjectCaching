@@ -133,7 +133,7 @@ mit. Diese Objekt-IDs wurden künstlich eingeführt. Der Server ordnet
 jedem Objekt eine Objekt-ID zu. Diese Objekt-ID müssen in den Stubs auf Clientseite bei
 Methodenaufruf bekannt sein, und sie müssen mit den Objekt-IDs auf dem
 Server übereinstimmen. Der Client kann Account-Objekte beim Server
-anfordern. Das Interface AccountService bietet dafür die Methode
+anfordern. Das Interface \texttt{AccountService} bietet dafür die Methode
 \texttt{get\-All\-Accounts()} an. Das ReturnValue-Objekt, das auf
 \newline \texttt{get\-All\-Accounts()} vom Server an den Client gesendet wird, enthält eine ArrayList von
 Objekt-IDs. Aus diesen IDs werden die AccountStubs auf dem Client generiert.
@@ -144,20 +144,20 @@ Objekt-IDs. Aus diesen IDs werden die AccountStubs auf dem Client generiert.
 Für jede Klasse, die RMI-Methoden anbietet, hat der Server ein
 zuge\-hö\-ri\-ges Skeletonobjekt. Für die Methodenaufrufe
 der Klasse \texttt{Account} ist ein Objekt vom Typ
-\texttt{AccountSkeleton} zuständig. Das Skeletonobjekt hat eine \gls{hashMap}. Diese
-HashMap enthält alle \texttt{Account}-Objekte des Systems. Die Objekt-IDs
-werden als Keys der HashMap eingesetzt. Der AccountSkeleton ist damit
-in der Lage ein MethodCall-Objekt, welches ein Client versendet hat, an
+\texttt{AccountSkeleton} zuständig. Das Skeletonobjekt enthält alle
+\texttt{Account}-Objekte des Systems in einer HashMap. Die Objekt-IDs
+werden als Keys der HashMap eingesetzt. Der \texttt{AccountSkeleton} ist damit
+in der Lage ein \texttt{MethodCall}-Objekt, welches ein Client versendet hat, an
 das richtige Objekt weiter zu leiten. 
 
 Die Skeletonklasse setzt Java Reflection ein, um Methoden auf den
-Objekten aufzurufen. Das MethodCall-Objekt enthält ein
+Objekten aufzurufen. Das \texttt{MethodCall}-Objekt enthält ein
 Method-Objekt. Method stellt eine Methode \verb|Object invoke(Object obj, Object[] args)|\- zur\- Ver\-füg\-ung. Das Objekt auf dem die Methode
-ausgeführt hat, beschafft sich der Skeleton aus der HashMap. Die
-Argumente werden im MethodCall-Objekt übermittelt. Der Rückgabewert
-wird in ein ReturnValue-Objekt gepackt und an den Client zurückgesendet.
+ausgeführt werden soll, beschafft sich der Skeleton aus der HashMap. Die
+Argumente werden im \texttt{MethodCall}-Objekt übermittelt. Der Rückgabewert
+wird in ein \texttt{ReturnValue}-Objekt gepackt und an den Client zurückgesendet.
 
-Der Server akzeptiert eingehende TCP-Verbindungen und liest Method\-Call\--Objekte aus
+Der Server akzeptiert eingehende TCP-Verbindungen und liest \texttt{Method\-Call\--Objekte} aus
 dem Stream, sobald welche vom Client gesendet
 werden. Der TCP-Stream wird erst geschlossen, wenn der Client ein EOF
 sendet. Für jede TCP-Verbindung, das heisst für jeden Client, wird
@@ -166,9 +166,9 @@ und OutputStream, um mit dem Client zu kommunizieren. Der
 \texttt{ClientHandler} liest die \texttt{MethodCall}-Objekte aus dem
 Stream und leitet sie an das \texttt{AccountSkeleton}-Objekt weiter. Die
 \texttt{Method\-Call}-Objekte von verschiedenen Clients werden an das selbe
-\-\texttt{Ac\-count\-Skeleton}-Objekt weitergeleitet.
+\-\texttt{Ac\-count\-Skeleton}-Objekt weitergeleitet (siehe Abbildung \ref{fig:rmiserverimpl}).
 
-\begin{figure}[ht]
+\begin{figure}[H]
   \centering
 \includegraphics[scale = 0.6]{images_objectcaching/rmiServerImpl}  
   \caption{RMI-Serverimplementation Domain Class Diagramm}
@@ -183,7 +183,7 @@ richtigen Skeleton-Objekten initialisiert werden, bietet das System
 eine zentrale ServerSystem-Klasse. Das Framework erzeugt eine Instanz
 der ServerSystem-Klasse. Wenn sich Client mit dem Server verbindet,
 fordert das Framework von dieser Serversystem\-instanz einen
-Clienthandler an. Dieser wird mit den richtigen Skeleton-Objekten
+Clienthandler an. Dieser wird mit den richtigen Ske\-leton-\-Objekten
 initialisiert. Das Framework übergibt dem Clienthandler die Input- und OutputStreamobjekte.
 
 \section{Concurrency Control Implementierung }

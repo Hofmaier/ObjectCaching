@@ -26,7 +26,16 @@ Alle Mes\-ser\-ge\-bnis\-se stam\-men aus einer Labor\-umgebung, mit folgenden E
 Die in dieser Arbeit ausgewiesenen Zahlen wurden alle in der La\-bor\-um\-gebung ge\-mes\-sen. Dabei wurde für jeden Test\-Case die An\-zahl der Clients schritt\-weise von zwei bis acht Clients erhöht. Jeder Test\-lauf mit der gleichen Anzahl Clients, wurde drei Mal durchgeführt, um einen exakten Mittel\-wert der Er\-geb\-nis\-se aus\-weisen zu können. Drei Test\-durchläufe pro Szenario und Clientanzahl wurden aufgrund der sehr nahe liegenden Er\-geb\-nis\-se der Testdurchläufe als genügend eingestuft. Wären die einzelnen Ergebnisse der Durchläufe extrem unterschiedlich ausgefallen, hätten fünf oder mehr Durchläufe stattfinden müssen.
 
 \section{Testergebnisse}
-In den folgenden Kapiteln werden die getesteten Szenarios und deren Ergebnisse gezeigt. 
+In den folgenden Kapiteln werden die getesteten Szenarios und deren Ergebnisse gezeigt. \\
+Die ausgewiesenen Werte in den Tabellen sind alle in Millisekunden angegeben. Die in der Legende der Tabellen beschriebenen Funktionen lassen sich wie folgt erklären:
+\begin{itemize}
+\item[setBalance()] Die durchschnittliche Zeit, welche benötigt wird, um einen schreibenden Zugriff zu tätigen.
+\item[getBalance()] Die durchschnittliche Dauer, um einen lesen Zugriff zu tätigen.
+\item[Number of Conflict] Anzahl Konflikte, welche während des Testlaufs aufgetreten sind.
+\item[Total Time(with Delays)] Beschreibt die Zeit, welche gebraucht wurde, um das gesamte Szenario, inklusive Konfliktbewältigung und konfigurierte Verzögerung, durchzuspielen.
+\item[Pure Operation Time] Die für das Durchspielen des Szenarios benötigte Zeit, ohne die konfigurierten Verzögerungen.
+\end{itemize}
+
 
 \subsection{Nur lesende Clients}
 \subsubsection{Szenario Code}
@@ -67,7 +76,7 @@ Legende&2 Clients&3 Clients&4 Clients&5 Clients\\
 \cline{1-5}
 setBalance&0&0&0&0\\
 getBalance&86.182&89.502273&91.313&94.490998\\
-Konfliktanzahl&0&0&0&0\\
+Number of Conflict&0&0&0&0\\
 TotalTime(with Delays)&21546.54&22376.494&22829.21&23623.678\\
 PureOperationTime&21545.686&22375.568&22828.264&23622.749\\
 \end{tabular*} }

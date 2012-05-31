@@ -36,7 +36,7 @@ public class ReportGenerator {
 		PARAMETER_SEPARATOR = ";";
 
 		try {
-			out = new BufferedWriter(new FileWriter("Client_" + clientIp + "_" + numberOfRun +".txt"));
+			out = new BufferedWriter(new FileWriter("Client_" + clientIp + "_" + this.numberOfRun +".txt"));
 		} catch (IOException e) {
 			System.out.println("IOException in ReportGenerator");
 		}

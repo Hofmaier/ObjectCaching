@@ -33,12 +33,10 @@ public class FakeClientUnderTest implements ClientSystemUnderTest{
 	
 	@Override
 	public void shutdown() {
-		// TODO Auto-generated method stub	
 	}
 
 	@Override
 	public void setServerSocketAdress(InetSocketAddress socketAdress) {
-		// TODO Auto-generated method stub	
 	}
 		
 	public class FakeAccount implements Account{

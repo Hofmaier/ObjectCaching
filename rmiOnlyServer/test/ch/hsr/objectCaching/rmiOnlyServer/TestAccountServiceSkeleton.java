@@ -22,6 +22,7 @@ public class TestAccountServiceSkeleton {
 		accountServiceSkeleton = new AccountServiceSkeleton();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Test
 	public void testInvokeMethod() { 
 		

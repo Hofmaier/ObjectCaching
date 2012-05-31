@@ -22,19 +22,8 @@ public class Configuration implements Serializable
 	public void setClientRmiPort(int clientRmiPort) {
 		this.clientRmiPort = clientRmiPort;
 	}
-
-	public Configuration(String serverIp, int serverRMIPort, int serverSocketPort, String nameOfSystemUnderTest, String serverRegistryName, int clientRmiPort)
-	{
-		this.serverIp = serverIp;
-		this.serverRMIPort = serverRMIPort;
-		this.serverSocketPort = serverSocketPort;
-		this.nameOfSystemUnderTest = nameOfSystemUnderTest;
-		this.serverRegistryName = serverRegistryName;
-		this.clientRmiPort = clientRmiPort;
-	}
 	
 	public Configuration() {
-		// TODO Auto-generated constructor stub
 	}
 
 	public int getServerRMIPort() {

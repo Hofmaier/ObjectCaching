@@ -3,6 +3,8 @@ package ch.hsr.objectCaching.dto;
 import java.io.Serializable;
 
 public class ObjectUpdate implements Serializable {
+	
+	private static final long serialVersionUID = -4021991854304975737L;
 	private Object object;
 	private int objectID;
 	public Object getObject() {

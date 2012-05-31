@@ -5,6 +5,8 @@ import java.io.Serializable;
 import ch.hsr.objectCaching.interfaces.ClientHandler;
 
 public class ObjectRequest implements TransferObject, Serializable {
+	
+	private static final long serialVersionUID = -4753239346104136442L;
 	private int objectID;
 	private ClientHandler clientHandler;
 	

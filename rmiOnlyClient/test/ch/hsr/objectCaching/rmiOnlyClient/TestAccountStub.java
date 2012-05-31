@@ -11,8 +11,6 @@ import java.io.ObjectOutputStream;
 import java.lang.reflect.Method;
 import java.net.InetSocketAddress;
 
-import javax.print.attribute.standard.MediaSize.Other;
-
 import org.junit.Before;
 import org.junit.Test;
 

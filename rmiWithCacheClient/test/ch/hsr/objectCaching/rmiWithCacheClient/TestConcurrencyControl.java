@@ -8,14 +8,13 @@ import ch.hsr.objectCaching.util.ConcurrencyControl;
 
 public class TestConcurrencyControl 
 {
-	private ConcurrencyControl concurrencyControl;
 	private ObjectCache objectCache;
 	
 	@Before
 	public void setUp()
 	{
 		objectCache = new ObjectCache();
-		concurrencyControl = new ConcurrencyControl();
+		new ConcurrencyControl();
 	}
 	
 	@Test

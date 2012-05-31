@@ -1,6 +1,5 @@
  package ch.hsr.objectCaching.rmiWithCacheClient;
 
-import java.io.IOException;
 
 
 public class SenderThread implements Runnable

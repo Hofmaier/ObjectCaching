@@ -22,6 +22,7 @@ public class AccountServiceStub extends ch.hsr.objectCaching.rmiOnlyClient.Accou
 		messageManager.sendMessageCall(methodCall);
 	}
 
+	@SuppressWarnings("unchecked")
 	protected Collection<Account> composeCollection(ReturnValue returnValue) {
 		ArrayList<Account> retValCollection = new ArrayList<Account>();
 		Collection<Integer> objectIDcollection = (Collection<Integer>) returnValue.getValue(); 
